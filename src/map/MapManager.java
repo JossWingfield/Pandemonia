@@ -1,0 +1,453 @@
+package map;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import javax.imageio.ImageIO;
+
+import entity.buildings.Building;
+import entity.buildings.Door;
+import entity.buildings.EscapeHole;
+import entity.buildings.Fridge;
+import entity.buildings.StorageFridge;
+import entity.npc.NPC;
+import main.GamePanel;
+import net.packets.Packet02Move;
+import net.packets.Packet05ChangeRoom;
+import utility.RoomHelperMethods;
+import utility.Season;
+
+public class MapManager {
+
+	  GamePanel gp;
+
+	  int screenWidth, screenHeight; //The size of the screen
+      public Tile[] tiles; //The array of tiles, the index corresponding to the number in the map text file
+	  public int currentMapWidth, currentMapHeight; //The height of the current map
+	  public boolean drawPath = false;
+	  public Room currentRoom;
+	  private Room[] rooms;
+	  
+	  private int arrayIndex = 0;
+
+	    public MapManager(GamePanel gp) { //Sets default variables
+	        this.gp = gp;
+
+	        tiles = new Tile[2500];
+
+	        currentRoom = new Room(gp, 0);
+	        gp.buildingM.setBuildings(currentRoom.getBuildings());
+	        gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
+	        
+	        rooms = new Room[10];
+	        rooms[0] = currentRoom; //Main
+	        rooms[1] = new Room(gp, 1); //Stores
+	        //rooms[2] = new Room(gp, 2); //Outdoors
+	        rooms[3] = new Room(gp, 3); //Electrics
+	        rooms[4] = new Room(gp, 4); //Toilet
+	        rooms[5] = new Room(gp, 5); //Bedroom
+	        
+	        currentMapHeight = currentRoom.mapHeight;
+	        currentMapWidth = currentRoom.mapWidth;
+
+	        screenWidth = gp.tilesInWidth;
+	        screenHeight = gp.tilesInHeight;
+
+	        importTiles();
+	    }
+	    //Imports each individual tile
+	    public void importTiles() {
+	        //Sets the booleans for each tile    
+	    	tiles[arrayIndex] = new Tile(gp, "/tiles/Air.png", null);
+	    	tiles[arrayIndex].solid = true;
+	        arrayIndex++;
+	        
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor1.png", 8, 7, false);
+	        importWallFromSpriteSheet("/tiles/walls/Wall18.png", 6, 4, true);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 1.png", 3, 6, true);
+	        importTilesFromSpriteSheet("/tiles/beams/Column.png", 6, 14, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor5.png", 8, 7, false);
+	        importWallFromSpriteSheet("/tiles/walls/Wall19.png", 6, 4, true);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 2.png", 3, 6, true);
+	        importTilesFromSpriteSheet("Grass1.png", 5, 11, false, true);
+	        importTilesFromSpriteSheet("Grass2.png", 5, 11, false, true);
+	        importTilesFromSpriteSheet("/tiles/dirt/Dirt1.png", 5, 11, false);
+	        importTilesFromSpriteSheet("/tiles/dirt/Dirt2.png", 5, 11, false);
+	        importTilesFromSpriteSheet("oldwater1.png", 10, 11, true, true);
+	        importTilesFromSpriteSheet("Water.png", 1, 1, true, true);
+	        importTilesFromSpriteSheet("altwater1.png", 5, 11, true, true);
+	        importTilesFromSpriteSheet("/tiles/dirt/Dirt Wall.png", 4, 4, true);
+	        importTilesFromSpriteSheet("Grass3.png", 5, 11, false, true);
+	        importTilesFromSpriteSheet("Grass4.png", 5, 11, false, true);
+	        importTilesFromSpriteSheet("/environment/Pavement.png", 7, 9, false);
+	        importTilesFromSpriteSheet("water1.png", 3, 5, true, true);
+	        importTilesFromSpriteSheet("/tiles/dirt/DirtWall2.png", 6, 8, true);
+	        importTilesFromSpriteSheet("/buildings/Stairs.png", 5, 12, false);
+	        importTilesFromSpriteSheet("/tiles/dirt/SimpleDirt1.png", 4, 5, false);
+	        importTilesFromSpriteSheet("/tiles/dirt/SimpleDirt3.png", 5, 11, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor12.png", 8, 7, false);
+	        importWallFromSpriteSheet("/tiles/walls/Wall20.png", 6, 4, true);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor8.png", 8, 7, false);
+	        importWallFromSpriteSheet("/tiles/walls/Wall2.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall10.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/StoneWall.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/StoneWall.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall1.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall3.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall4.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall5.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall6.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall7.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall8.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall9.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall11.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall12.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall13.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall14.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall15.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall16.png", 6, 4, true);
+	        importWallFromSpriteSheet("/tiles/walls/Wall17.png", 6, 4, true);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor2.png", 8, 7, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor3.png", 8, 7, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor4.png", 8, 7, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor6.png", 8, 7, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor7.png", 8, 7, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor9.png", 8, 7, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor10.png", 8, 7, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor11.png", 8, 7, false);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 3.png", 3, 6, true);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 4.png", 3, 6, true);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 5.png", 3, 6, true);
+	    }
+	    public Room getRoom(int i) {
+	    	return rooms[i];
+	    }
+	    private void importTilesFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
+	        BufferedImage img = importImage(filePath);
+	        int tileSize = 16;
+	        for(int j = 0; j < rows; j++) {
+	            for(int i = 0; i < columns; i++) {
+	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+	                tiles[arrayIndex].solid = solid;
+	                arrayIndex++;
+	            }
+	        }
+	    }
+	    private void importWallFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
+	        BufferedImage img = importImage(filePath);
+	        int tileSize = 16;
+	        for(int j = 0; j < rows; j++) {
+	            for(int i = 0; i < columns; i++) {
+	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+	                tiles[arrayIndex].solid = solid;
+	                tiles[arrayIndex].isWall = true;
+	                arrayIndex++;
+	            }
+	        }
+	    }
+	    private void importFloorFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
+	        BufferedImage img = importImage(filePath);
+	        int tileSize = 16;
+	        for(int j = 0; j < rows; j++) {
+	            for(int i = 0; i < columns; i++) {
+	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+	                tiles[arrayIndex].solid = solid;
+	                tiles[arrayIndex].isFloor = true;
+	                arrayIndex++;
+	            }
+	        }
+	    }
+	    private void importBeamFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
+	        BufferedImage img = importImage(filePath);
+	        int tileSize = 16;
+	        for(int j = 0; j < rows; j++) {
+	            for(int i = 0; i < columns; i++) {
+	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+	                tiles[arrayIndex].solid = solid;
+	                tiles[arrayIndex].isBeam = true;
+	                arrayIndex++;
+	            }
+	        }
+	    }
+	    private void importTilesFromSpriteSheet(String filePath, int rows, int columns, boolean solid, boolean isSeasonal) {
+	        for(int j = 0; j < rows; j++) {
+	            for(int i = 0; i < columns; i++) {
+	                tiles[arrayIndex] =  new Tile(gp, filePath, i, j, isSeasonal);
+	                tiles[arrayIndex].solid = solid;
+	                arrayIndex++;
+	            }
+	        }
+	    }
+	    private BufferedImage importImage(String filePath) { //Imports and stores the image
+	        BufferedImage importedImage = null;
+	        try {
+	            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
+	        } catch(IOException e) {
+	            e.printStackTrace();
+	        }
+	        return importedImage;
+	    }
+	    public void update() {
+	    	
+	    	for(Room room: rooms) {
+	    		if(room != null) {
+	    			if(currentRoom != room) {
+	    				if(room.containsAnyNPC() || room.getRoomType().equals("Main")) {
+	    					room.update();
+	    				}
+	    			}
+	    		}
+	    	}
+	    	
+	    }
+	    public void addNPCToRoom(NPC npc, int roomCounter) {
+	        Room room = rooms[roomCounter];
+	        if (!room.getNPCs().contains(npc)) {
+	            room.addNPC(npc);
+	        }
+	        if (room == currentRoom && !gp.npcM.getNPCs().contains(npc)) {
+	            gp.npcM.addNPC(npc);
+	        }
+	    }
+	    public boolean isInRoom(int index) {
+	    	return rooms[index].equals(currentRoom);
+	    }
+	    public boolean isInRoom(String roomType) {
+	    	return currentRoom.getRoomType().equals(roomType);
+	    }
+	    public void removeNPCFromRoom(NPC npc, int roomCounter) {
+	        Room room = rooms[roomCounter];
+	        room.removeNPC(npc); // always remove from the room
+	        if (room == currentRoom) {
+	            gp.npcM.removeNPC(npc); // also mirror to global if it's the active room
+	        }
+	    }
+	    public void changeRoom(int roomNum, Door previousDoor) {
+	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
+	    	currentRoom.editNPCs(gp.npcM.getNPCs());
+	    	currentRoom.editItems(gp.itemM.getItems());
+	    	currentRoom = rooms[roomNum];
+	    	gp.buildingM.setBuildings(currentRoom.getBuildings());
+	    	gp.npcM.setNPCs(currentRoom.getNPCs());
+	    	gp.itemM.setItems(currentRoom.getItems());
+	    	gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
+	    	
+	    	Door door = (Door)gp.buildingM.findCorrectDoor(previousDoor.facing);
+	    	if(door != null) {
+    			gp.player.hitbox.x = door.hitbox.x + door.hitbox.width/2 - gp.player.hitbox.width/2;
+	    		if(door.facing == 0) {
+		    		gp.player.hitbox.y = door.hitbox.y+door.hitbox.height-48;
+	    		} else {
+	    			gp.player.hitbox.y = door.hitbox.y+16-48;
+	    		}
+	    		if(door.facing == 2) {
+	    			gp.player.hitbox.x = door.hitbox.x;
+	    			gp.player.hitbox.y = door.hitbox.y+80-48;
+	    		} else if(door.facing == 3) {
+	    			gp.player.hitbox.x = door.hitbox.x;
+	    			gp.player.hitbox.y = door.hitbox.y+80-48;
+	    		}
+	    	}
+	    	gp.buildingM.setDoorCooldowns();
+	    	currentMapWidth = currentRoom.mapWidth;
+	    	currentMapHeight = currentRoom.mapHeight;
+	    	gp.player.reCalculateMaxDiffVals();
+	    	gp.player.setDiffValues();
+	    	gp.player.currentRoomIndex = roomNum;
+	    	if(gp.multiplayer) {
+	            Packet05ChangeRoom packet = new Packet05ChangeRoom(gp.player.getUsername(), roomNum);
+	            packet.writeData(gp.socketClient);
+            }
+	    }
+	    public Room getCurrentRoom(NPC npc) {
+	    	for(Room room: rooms) {
+	    		if(room != null) {
+		    		if(room.containsNPC(npc)) {
+		    			return room;
+		    		}
+	    		}
+	    	}
+	    	if(gp.npcM.containsNPC(npc)) {
+	    		return currentRoom;
+	    	}
+	    	return null;
+	    }
+	    public Building findCorrectDoorInRoom(int roomNum, int facing) {
+	    	Room room = rooms[roomNum];
+	    	Building[] buildings = room.getBuildings();
+			for(Building b: buildings) {
+				if(b != null) {
+					if(b.getName().equals("Door 1")) {
+						Door door = (Door)b;
+						switch(facing) {
+						case 0:
+							if(door.facing == 1) {
+								return b;
+							}
+							break;
+						case 1:
+							if(door.facing == 0) {
+								return b;
+							}
+							break;
+						case 2:
+							if(door.facing == 3) {
+								return b;
+							}
+							break;
+						case 3:
+							if(door.facing == 2) {
+								return b;
+							}
+							break;
+						}
+					}
+				}
+			}
+			return null;
+		}
+		public Door findStoreDoor(int roomNum) {
+			Room room = rooms[roomNum];
+			Building[] buildings = room.getBuildings();
+			for(Building b: buildings) {
+				if(b != null) {
+					if(b.getName().equals("Door 1")) {
+						Door door = (Door)b;
+						if(door.roomNum == 1) {
+							return door;
+						}
+					}	
+				}
+			}
+			return null;
+		}
+		public Door findKitchenDoor(int roomNum) {
+			Room room = rooms[roomNum];
+			Building[] buildings = room.getBuildings();
+			for(Building b: buildings) {
+				if(b != null) {
+					if(b.getName().equals("Door 1")) {
+						Door door = (Door)b;
+						if(door.roomNum == 0) {
+							return door;
+						}
+					}	
+				}
+			}
+			return null;
+		}
+		public StorageFridge findStoreFridge(int roomNum) {
+			Room room = rooms[roomNum];
+			Building[] buildings = room.getBuildings();
+			for(Building b: buildings) {
+				if(b != null) {
+					if(b.getName().equals("Storage Fridge")) {
+						StorageFridge storageFridge = (StorageFridge)b;
+						return storageFridge;
+					}	
+				}
+			}
+			return null;
+		}
+		public Fridge findFridge(int roomNum) {
+			Room room = rooms[roomNum];
+			Building[] buildings = room.getBuildings();
+			for(Building b: buildings) {
+				if(b != null) {
+					if(b.getName().equals("Fridge")) {
+						Fridge storageFridge = (Fridge)b;
+						return storageFridge;
+					}	
+				}
+			}
+			return null;
+		}
+		public EscapeHole findEscapeHole(int roomNum) {
+			Room room = rooms[roomNum];
+			Building[] buildings = room.getBuildings();
+			for(Building b: buildings) {
+				if(b != null) {
+					if(b.getName().equals("Escape Hole")) {
+						EscapeHole escapeHole = (EscapeHole)b;
+						return escapeHole;
+					}	
+				}
+			}
+			return null;
+		}
+	    public void setSeason(Season season) {
+	        for (Tile tile : tiles) {
+	            if (tile != null && tile.seasonal) {
+	                switch (season) {
+	                    case SPRING:
+	                        tile.image = tile.springImage;
+	                        break;
+	                    case SUMMER:
+	                        tile.image = tile.summerImage;
+	                        break;
+	                    case AUTUMN:
+	                        tile.image = tile.autumnImage;
+	                        break;
+	                    case WINTER:
+	                        tile.image = tile.winterImage;
+	                        break;
+	                }
+	            }
+	        }
+	    }
+	    public void draw(Graphics2D g2, float xDiff, float yDiff) {
+	        drawBackground(g2, xDiff, yDiff);
+
+	        drawLayer(g2, xDiff, yDiff, 1); // main floor layer
+	        drawMidLayer(g2, xDiff, yDiff);
+
+	        if (drawPath) {
+	            g2.setColor(new Color(255, 220, 100, 80));
+	            gp.npcM.drawPaths(g2);
+	        }
+	    }
+	    //Draws the selected level
+	    private void drawLayer(Graphics2D g, float xDiff, float yDiff, int layer) {
+	        int tileSize = gp.tileSize;
+
+	        // Convert camera offset to tile indices
+	        int startCol = Math.max(0, (int)(xDiff / tileSize));
+	        int startRow = Math.max(0, (int)(yDiff / tileSize));
+
+	        int endCol = Math.min(currentMapWidth, (int)((xDiff + gp.screenWidth) / tileSize) + 1);
+	        int endRow = Math.min(currentMapHeight, (int)((yDiff + gp.screenHeight) / tileSize) + 1);
+
+	        for (int i = startCol; i < endCol; i++) {
+	            for (int j = startRow; j < endRow; j++) {
+	                int tileIndex = currentRoom.mapGrid[layer][i][j];
+	                if (tileIndex < 0 || tileIndex >= tiles.length) continue; // safety check
+	                
+	                if(!tiles[tileIndex].isWall && !tiles[tileIndex].isFloor && !tiles[tileIndex].isBeam) {
+		                g.drawImage(tiles[tileIndex].image,i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize,null);
+	                } else if(tiles[tileIndex].isWall){
+	                	g.drawImage(currentRoom.getWallpaper().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+	                } else if(tiles[tileIndex].isFloor){
+	                	g.drawImage(currentRoom.getFloorpaper().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+	                } else {
+	                	g.drawImage(currentRoom.getBeam().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+	                }
+	            }
+	        }
+	    }
+	    public void drawBackground(Graphics2D g, float xDiff, float yDiff) {
+	        drawLayer(g, xDiff, yDiff, 0);
+	    }
+
+	    public void drawMidLayer(Graphics2D g, float xDiff, float yDiff) {
+	        drawLayer(g, xDiff, yDiff, 2);
+	    }
+
+	    public void drawForeground(Graphics2D g, float xDiff, float yDiff) {
+	        drawLayer(g, xDiff, yDiff, 3);
+	    }
+	
+}

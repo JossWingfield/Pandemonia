@@ -1,0 +1,295 @@
+package entity.npc;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.Random;
+
+import entity.buildings.Door;
+import entity.buildings.Fridge;
+import entity.buildings.StorageFridge;
+import entity.items.Food;
+import entity.items.Item;
+import entity.items.Plate;
+import main.GamePanel;
+import utility.Recipe;
+
+public class Stocker extends Employee {
+	
+	Random r;
+	
+	private Food currentItem = null;
+	private int variant;
+	
+	private Door storeDoor;
+	private StorageFridge storeFridge;
+	private Fridge fridge;
+	
+	private boolean fetchingItem, retrievingItem, walking, stocking, depositing;
+	private boolean inKitchen = true;
+	private int stockTimer = 0;
+	private int maxStockTime = 100;
+	
+	public Stocker(GamePanel gp, int xPos, int yPos) {
+		super(gp, xPos, yPos);
+		drawWidth = 48;
+		drawHeight = 48*2;
+		speed = 2;
+		
+		npcType = "Stocker";
+		
+		r = new Random();
+				
+		importImages();
+	}
+	
+	private void importImages() {
+		 animations = new BufferedImage[5][20][15];
+		 importPlayerSpriteSheet("/player/idle", 4, 1, 0, 0, 0, 80, 80); //IDLE
+	     importPlayerSpriteSheet("/player/run", 8, 1, 1, 0, 0, 80, 80); //RUN
+	        
+	     importPlayerSpriteSheet("/player/holdingIdle", 4, 1, 2, 0, 0, 80, 80); //HOLDING IDLE
+	     importPlayerSpriteSheet("/player/holdingRun", 8, 1, 3, 0, 0, 80, 80); //HOLDING RUN
+
+	     importPlayerSpriteSheet("/player/pickup", 6, 1, 4, 0, 0, 80, 80); //Pick Up
+	     drawWidth = 80*drawScale;
+	     drawHeight = 80*drawScale;
+	     xDrawOffset = 34*drawScale;
+	     yDrawOffset = 36*drawScale;
+		 name = "Gazza";
+	}
+	
+	private void findDoor() {
+		storeDoor = gp.mapM.findStoreDoor(0);
+		if(storeDoor != null) {
+			walking = true;
+			fetchingItem = true;
+		}
+    }
+	private void findStoreFridge() {
+		storeFridge = gp.mapM.findStoreFridge(1);
+    }
+	private void findFridge() {
+		fridge = gp.mapM.findFridge(0);
+    }
+	private void findExitDoor() {
+		storeDoor = gp.mapM.findKitchenDoor(1);
+    }
+	public void update() {
+		if(!walking && inKitchen && !depositing) {
+			findDoor();
+		} else {
+			if(fetchingItem) {
+				if(inKitchen) {
+					int goalCol = (int)((storeDoor.hitbox.x + storeDoor.hitbox.width/2)/gp.tileSize)-1;
+			        int goalRow = (int)((storeDoor.hitbox.y + storeDoor.hitbox.height)/gp.tileSize)-1;  
+					walkToPoint(goalCol, goalRow);
+					if(storeDoor.npcHitbox != null) {
+						if(storeDoor.npcHitbox.intersects(hitbox)) {
+							inKitchen = false;
+							Door door = (Door)gp.mapM.findCorrectDoorInRoom(1, storeDoor.facing);
+					    	if(door != null) {
+				    			hitbox.x = door.hitbox.x + door.hitbox.width/2 - hitbox.width/2;
+				    			if(door.facing == 0) {
+						    		hitbox.y = door.hitbox.y+door.hitbox.height-48;
+					    		} else {
+					    			hitbox.y = door.hitbox.y+16-48;
+					    		}
+					    	}
+							gp.mapM.addNPCToRoom(this, 1);
+							gp.mapM.removeNPCFromRoom(this, 0);
+						}
+					}
+				} else {
+					//System.out.println("searching for fridge");
+					if(storeFridge != null) {
+						int goalCol = (int)((storeFridge.hitbox.x + storeFridge.hitbox.width/2)/gp.tileSize);
+				        int goalRow = (int)((storeFridge.hitbox.y + storeFridge.hitbox.height)/gp.tileSize);  
+						walkToPoint(goalCol, goalRow);
+						if(storeFridge.npcHitbox != null) {
+							if(storeFridge.npcHitbox.intersects(hitbox)) {
+								stocking = true;
+								walking = false;
+								fetchingItem = false;
+							}
+						}
+					} else {
+						findStoreFridge();
+					}
+				}
+			} else if(stocking) {
+				stockTimer++;
+				if(stockTimer >= maxStockTime) {
+					stockTimer = 0;
+					stocking = false;
+					walking = true;
+					retrievingItem = true;
+					storeDoor = null;
+					currentAnimation = 4;
+					pickUpItem();
+				}
+			} else if(retrievingItem) {
+				if(!inKitchen) {
+					if(storeDoor == null) {
+						findExitDoor();
+					} else {
+						int goalCol = (int)((storeDoor.hitbox.x + storeDoor.hitbox.width/2)/gp.tileSize);
+				        int goalRow = (int)((storeDoor.hitbox.y + storeDoor.hitbox.height)/gp.tileSize) - 2;  
+						walkToPoint(goalCol, goalRow);
+						if(storeDoor.npcHitbox != null) {
+							if(storeDoor.npcHitbox.intersects(hitbox)) {
+								inKitchen = true;
+								Door door = (Door)gp.mapM.findCorrectDoorInRoom(0, storeDoor.facing);
+								if(door != null) {
+					    			hitbox.x = door.hitbox.x + door.hitbox.width/2 - hitbox.width/2;
+					    			if(door.facing == 0) {
+							    		hitbox.y = door.hitbox.y+door.hitbox.height-48;
+						    		} else {
+						    			hitbox.y = door.hitbox.y+16-48;
+						    		}
+						    	}
+								gp.mapM.addNPCToRoom(this, 0);
+								gp.mapM.removeNPCFromRoom(this, 1);
+							}
+						}
+					}
+				} else {
+					if(!depositing) {
+						if(fridge == null) {
+							findFridge();
+						} else {
+							int goalCol = (int)((fridge.hitbox.x + fridge.hitbox.width/2)/gp.tileSize);
+					        int goalRow = (int)((fridge.hitbox.y + fridge.hitbox.height)/gp.tileSize);  
+							walkToPoint(goalCol, goalRow);
+							if(fridge.npcHitbox != null) {
+								if(fridge.npcHitbox.intersects(hitbox)) {
+									depositing = true;
+									walking = false;
+								}
+							}
+						}
+					} else {
+						stockTimer++;
+						if(stockTimer >= maxStockTime) {
+							stockTimer = 0;
+							depositing = false;
+							walking = false;
+							fetchingItem = true;
+							retrievingItem = false;
+							fridge.addItem((Food)gp.itemRegistry.getItemFromName(currentItem.getName(), 0));
+							currentItem = null;
+							fridge = null;
+						}
+					}
+				}
+			}
+		}
+		
+	}	
+	  public void drawCurrentItem(Graphics2D g2) {
+	    	if(currentItem == null) {
+	    		return;
+	    	}
+	    	
+	    	int xOffset = 120 - 24;
+	    	int yOffset = 132 - 24;
+	    	
+	    	xOffset = 120-24;
+	    	yOffset = 132-(48+8);
+	    	int finalOffset = yOffset;
+	    	int baseOffset = 132-(16); 
+
+	    	if(currentAnimation == 4) {
+		    	int currentStage = animationCounter; // goes 0 → 6
+		    	int totalStages = 2;  
+		    	
+		    	// Clamp to avoid going out of range
+		    	if (currentStage < 0) currentStage = 0;
+		    	if (currentStage > totalStages) currentStage = totalStages;
+		    	yOffset = baseOffset + (finalOffset - baseOffset) * currentStage / totalStages;
+	    	}
+	    	
+	    	BufferedImage img = currentItem.animations[0][0][0];
+	    	if(currentItem instanceof Food) {
+	    		Food f = (Food)currentItem;
+	    		img = f.getImage();
+	    	}
+    		g2.drawImage(img, (int)(hitbox.x - gp.player.xDiff- xDrawOffset + xOffset), (int)(hitbox.y - gp.player.yDiff - yDrawOffset + yOffset), (int)(48), (int)(48), null);
+
+	    }
+    private void pickUpItem() {
+    	if(gp.world.getTodaysMenu().size() > 0) {
+	    	int recipeIndex = r.nextInt(gp.world.getTodaysMenu().size());
+	    	Recipe recipe = gp.world.getTodaysMenu().get(recipeIndex);
+	    	currentItem = (Food)gp.itemRegistry.getItemFromName(recipe.getIngredients().get(r.nextInt(recipe.getIngredients().size())), 0);
+    	} else {
+    		currentItem = storeFridge.getRandomItem();
+    	}
+		
+    }
+    public void draw(Graphics2D g2) {
+        if(direction == "Up") {
+        	drawCurrentItem(g2);
+        }
+        animationSpeed+=animationUpdateSpeed; //Update the animation frame
+        if(animationSpeed == 5) {
+            animationSpeed = 0;
+            animationCounter++;
+        }
+        if(animations != null) {
+            if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
+                animationCounter = 0; //Loops the animation
+                if(currentAnimation == 4) {
+                	currentAnimation = 2;
+                }
+            }
+            
+            if(currentItem == null) {
+            	if(walking) {
+            		currentAnimation = 1;
+            	} else {
+            		currentAnimation = 0;
+            	}
+            } else {
+            	if(currentAnimation != 4) {
+	            	if(walking) {
+	            		currentAnimation = 3;
+	            	} else {
+	            		currentAnimation = 2;
+	            	}
+            	}
+            }
+            
+            BufferedImage img = animations[0][currentAnimation][animationCounter];
+	    	  int a = 0;
+	    	  if(direction != null) {
+	    	  switch(direction) {
+	    	  case "Left":
+	    		  a = 1;
+	    		  break;
+	    	  case "Right":
+	    		  a = 0;
+	    		  break;
+	    	  case "Up":
+	    		  a = 3;
+	    	  	  break;
+	    	  case "Down":
+	    		  a = 2;
+	    	  	  break;
+	    	  }
+	    	  img = animations[a][currentAnimation][animationCounter];
+		    	  if(direction.equals("Left")){
+		          	img = createHorizontalFlipped(img);
+		          }
+	    	  }   
+	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - gp.player.xDiff), (int) (hitbox.y - yDrawOffset - gp.player.yDiff), (int)(drawWidth), (int)(drawHeight), null);
+        }
+        if(talking) {
+        	//gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- gp.player.xDiff, (int)hitbox.y - 48*3- gp.player.yDiff, dialogues[dialogueIndex], this);
+        }
+        if(direction != "Up") {
+        	drawCurrentItem(g2);
+        }
+    }
+}

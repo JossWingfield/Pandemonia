@@ -1,0 +1,303 @@
+package utility;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+import javax.imageio.ImageIO;
+
+public class RecipeManager {
+    private static final List<Recipe> allRecipes = new ArrayList<>();   // all possible recipes
+    private static final List<Recipe> unlockedRecipes = new ArrayList<>(); // currently unlocked recipes
+    private static final List<Recipe> currentOrders = new ArrayList<>();
+
+    private static final Random random = new Random();
+
+    private BufferedImage panIcon, choppedIcon, potIcon, ovenIcon;
+
+    public RecipeManager() {
+        // Register all recipes here (master list)
+        Recipe fish = new Recipe(
+            "Fish",
+            Arrays.asList("Fish"),
+            Arrays.asList("Pot"),
+            Arrays.asList(""),
+            false, 
+            importImage("/food/food.png").getSubimage(16, 96, 16, 16),
+            importImage("/food/food.png").getSubimage(16, 112, 16, 16),
+            6
+        );
+        registerRecipe(fish);
+
+        Recipe egg = new Recipe(
+            "Egg",
+            Arrays.asList("Egg", "Greens"),
+            Arrays.asList("Pan", "Chopping Board"),
+            Arrays.asList("", ""),
+            false, 
+            importImage("/food/food.png").getSubimage(32, 96, 16, 16),
+            importImage("/food/food.png").getSubimage(32, 112, 16, 16),
+            8
+        );
+        registerRecipe(egg);
+
+        Recipe chicken = new Recipe(
+            "Chicken",
+            Arrays.asList("Chicken"),
+            Arrays.asList("Oven"),
+            Arrays.asList(""),
+            false, 
+            importImage("/food/food.png").getSubimage(0, 96, 16, 16),
+            importImage("/food/food.png").getSubimage(0, 112, 16, 16),
+            6
+        );
+        registerRecipe(chicken);
+        Recipe friedEgg = new Recipe(
+                "Fried Egg",
+                Arrays.asList("Egg"),
+                Arrays.asList("Pan"),
+                Arrays.asList(""),
+                false, 
+                importImage("/food/egg/PlatedEgg.png"),
+                null,
+                5
+            );
+        registerRecipe(friedEgg);
+        Recipe steak = new Recipe(
+                "Steak",
+                Arrays.asList("Steak"),
+                Arrays.asList("Pan"),
+                Arrays.asList(""),
+                false, 
+                importImage("/food/Steak.png").getSubimage(32, 0, 16, 16),
+                null,
+                6
+            );
+        registerRecipe(steak);
+        
+        Recipe potato = new Recipe(
+                "Potato",
+                Arrays.asList("Potato"),
+                Arrays.asList("Oven"),
+                Arrays.asList(""),
+                false, 
+                importImage("/food/food.png").getSubimage(16, 16, 16, 16),
+                null,
+                5
+            );
+        registerRecipe(potato);
+        
+        Recipe eggSandwich = new Recipe(
+                "Egg Sandwich",
+                Arrays.asList("Egg", "Greens", "Bread"),
+                Arrays.asList("Pan", "Chopping Board", "Chopping Board"),
+                Arrays.asList("", "", ""),
+                false, 
+                importImage("/food/food.png").getSubimage(48, 16, 16, 16),
+                null,
+                8
+            );
+        registerRecipe(eggSandwich);
+        
+        Recipe cheeseSandwich = new Recipe(
+                "Cheese Sandwich",
+                Arrays.asList("Cheese", "Bread"),
+                Arrays.asList("Chopping Board", "Chopping Board"),
+                Arrays.asList("", ""),
+                false, 
+                importImage("/food/CheeseSandwich.png").getSubimage(0, 0, 16, 16),
+                null,
+                5
+            );
+        registerRecipe(cheeseSandwich);
+        Recipe spaghettiNapoli = new Recipe(
+                "Napolitana",
+                Arrays.asList("Spaghetti", "Chopped Tomatoes"),
+                Arrays.asList("Pot", "Chopping Board"),
+                Arrays.asList("", "Pan"),
+                false, 
+                importImage("/food/pasta/Spaghetti.png").getSubimage(48, 0, 16, 16),
+                null,
+                7
+            );
+        registerRecipe(spaghettiNapoli);
+        Recipe penneNapoli = new Recipe(
+                "Napolitana",
+                Arrays.asList("Penne", "Chopped Tomatoes"),
+                Arrays.asList("Pot", "Chopping Board"),
+                Arrays.asList("", "Pan"),
+                false, 
+                importImage("/food/pasta/Penne.png").getSubimage(32, 0, 16, 16),
+                null,
+                7
+            );
+        registerRecipe(spaghettiNapoli);
+        Recipe penneMeatballs = new Recipe(
+                "Meatballs",
+                Arrays.asList("Penne", "Chopped Tomatoes", "Meatball"),
+                Arrays.asList("Pot", "Chopping Board", "Chopping Board"),
+                Arrays.asList("", "Pan", "Pan"),
+                false, 
+                importImage("/food/pasta/Meatball.png").getSubimage(48, 0, 16, 16),
+                null,
+                10
+            );
+        registerRecipe(penneMeatballs);
+        Recipe spaghettiMeatballs = new Recipe(
+                "Meatballs",
+                Arrays.asList("Spaghetti", "Chopped Tomatoes", "Meatball"),
+                Arrays.asList("Pot", "Chopping Board", "Chopping Board"),
+                Arrays.asList("", "Pan", "Pan"),
+                false, 
+                importImage("/food/pasta/Meatball.png").getSubimage(32, 0, 16, 16),
+                null,
+                10
+            );
+        registerRecipe(spaghettiMeatballs);
+        Recipe spaghettiCarbonara = new Recipe(
+                "Carbonara",
+                Arrays.asList("Spaghetti", "Egg", "Cheese"),
+                Arrays.asList("Pot", "Pan", "Chopping Board"),
+                Arrays.asList("", "", ""),
+                false, 
+                importImage("/food/pasta/Carbonara.png").getSubimage(0, 0, 16, 16),
+                null,
+                8
+            );
+        registerRecipe(spaghettiCarbonara);
+        Recipe penneCarbonara = new Recipe(
+                "Carbonara",
+                Arrays.asList("Penne", "Egg", "Cheese"),
+                Arrays.asList("Pot", "Pan", "Chopping Board"),
+                Arrays.asList("", "", ""),
+                false, 
+                importImage("/food/pasta/Carbonara.png").getSubimage(16, 0, 16, 16),
+                null,
+                8
+            );
+        registerRecipe(penneCarbonara);
+        Recipe penneDiavola = new Recipe(
+                "Diavola",
+                Arrays.asList("Penne", "Chopped Tomatoes", "Chicken Pieces"),
+                Arrays.asList("Pot", "Chopping Board", "Chopping Board"),
+                Arrays.asList("", "Pan", "Pan"),
+                false, 
+                importImage("/food/pasta/Chicken.png").getSubimage(32, 0, 16, 16),
+                null,
+                10
+            );
+        registerRecipe(penneDiavola);
+        Recipe spaghettiDiavola = new Recipe(
+                "Diavola",
+                Arrays.asList("Spaghetti", "Chopped Tomatoes", "Chicken Pieces"),
+                Arrays.asList("Pot", "Chopping Board", "Chopping Board"),
+                Arrays.asList("", "Pan", "Pan"),
+                false, 
+                importImage("/food/pasta/Chicken.png").getSubimage(48, 0, 16, 16),
+                null,
+                10
+            );
+        registerRecipe(spaghettiDiavola);
+
+        // Unlock some recipes at the start of the game
+        unlockRecipe(fish);
+        unlockRecipe(egg);
+        unlockRecipe(friedEgg);
+        unlockRecipe(steak);
+        unlockRecipe(eggSandwich);
+        unlockRecipe(cheeseSandwich);
+        unlockRecipe(spaghettiNapoli);
+        unlockRecipe(penneNapoli);
+        unlockRecipe(penneMeatballs);
+        unlockRecipe(spaghettiMeatballs);
+        unlockRecipe(spaghettiCarbonara);
+        unlockRecipe(penneCarbonara);
+        unlockRecipe(penneDiavola);
+        unlockRecipe(spaghettiDiavola);
+
+        // Icons
+        panIcon = importImage("/UI/recipe/Icons.png").getSubimage(0, 0, 16, 16);
+        choppedIcon = importImage("/UI/recipe/Icons.png").getSubimage(32, 0, 16, 16);
+        potIcon = importImage("/UI/recipe/Icons.png").getSubimage(16, 0, 16, 16);
+        ovenIcon = importImage("/UI/recipe/Icons.png").getSubimage(48, 0, 16, 16);
+    }
+
+    // Register to master list (but not unlocked yet)
+    public static void registerRecipe(Recipe recipe) {
+        allRecipes.add(recipe);
+    }
+
+    // Unlocking system
+    public static void unlockRecipe(Recipe recipe) {
+        if (!unlockedRecipes.contains(recipe)) {
+            unlockedRecipes.add(recipe);
+        }
+    }
+
+    public static List<Recipe> getUnlockedRecipes() {
+        return new ArrayList<>(unlockedRecipes);
+    }
+
+    public static List<Recipe> getAllRecipes() {
+        return new ArrayList<>(allRecipes);
+    }
+
+    public static Recipe getMatchingRecipe(List<String> plateIngredients) {
+        for (Recipe recipe : unlockedRecipes) { // only match unlocked ones
+            if (recipe.matches(plateIngredients)) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+    public BufferedImage getIconFromName(String name) {
+        switch(name) {
+            case "Pan": return panIcon;
+            case "Pot": return potIcon;
+            case "Chopping Board": return choppedIcon;
+            case "Oven": return ovenIcon;
+        }
+        return null;
+    }
+
+    public static Recipe getRandomRecipe() {
+        if (unlockedRecipes.isEmpty()) return null;
+        return unlockedRecipes.get(random.nextInt(unlockedRecipes.size()));
+    }
+
+    public static void addOrder(Recipe recipe) {
+        currentOrders.add(recipe);
+    }
+
+    public static void removeOrder(Recipe recipe) {
+        currentOrders.remove(recipe);
+    }
+
+    public static boolean completeOrder(List<String> plateIngredients) {
+        for (int i = 0; i < currentOrders.size(); i++) {
+            Recipe order = currentOrders.get(i);
+            if (order.matches(plateIngredients)) {
+                currentOrders.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected BufferedImage importImage(String filePath) {
+        BufferedImage importedImage = null;
+        try {
+            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return importedImage;
+    }
+
+    public static List<Recipe> getCurrentOrders() {
+        return currentOrders;
+    }
+}
