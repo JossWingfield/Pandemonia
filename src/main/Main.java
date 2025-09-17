@@ -11,7 +11,7 @@ public class Main {
 	
 	public static JFrame window;
 
-	public static void main(String[] args) { //TEST PUSH
+	public static void main(String[] args) {
         //Creates the window which the game will be run on
         window = new JFrame();
         //Sets default settings
