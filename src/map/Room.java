@@ -2013,6 +2013,9 @@ public class Room {
 			buildingArrayCounter++;
 		}
 	}
+	public void clearRoomTiles() {
+		
+	}
     public void update() {
     	for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {

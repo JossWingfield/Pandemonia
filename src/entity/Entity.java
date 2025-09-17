@@ -140,7 +140,25 @@ public abstract class Entity implements Cloneable {
     	return direction;
     }
     public void update() {}
-    
+    public boolean isInSimulationChunks(int simulationDistance) {
+    	if(gp == null) {
+    		return false;
+    	}
+        int chunkSize = gp.mapM.chunkSize;
+        int tileSize = gp.tileSize;
+
+        // Convert entity's world position to chunk position
+        int entityChunkX = (int) (hitbox.x / (chunkSize * tileSize));
+        int entityChunkY = (int) (hitbox.y / (chunkSize * tileSize));
+
+        // Get player's chunk position
+        int playerChunkX = (int) ((gp.player.hitbox.x + gp.player.hitbox.width / 2) / (chunkSize * tileSize));
+        int playerChunkY = (int) ((gp.player.hitbox.y + gp.player.hitbox.height / 2) / (chunkSize * tileSize));
+
+        // Check if entity is within the simulation chunk range
+        return Math.abs(entityChunkX - playerChunkX) <= simulationDistance &&
+               Math.abs(entityChunkY - playerChunkY) <= simulationDistance;
+    }
     public boolean isOnScreen(float xDiff, float yDiff, int width, int height) {
 
         int buffer = 500; // Expand the draw range by 100 pixels in each direction

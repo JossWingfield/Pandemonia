@@ -16,7 +16,7 @@ public class Beam {
     private int arrayIndex = 0;
     public int cost = 0;
     public String name = "Beam";
-    public String description = ""; //TESTING NEW BUTTON
+    public String description = ""; 
 
 	public Beam(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -28,19 +28,19 @@ public class Beam {
 		
 		switch(preset) {
 		case 0:
-	        importBeamFromSpriteSheet("/tiles/beams/Beam 1.png", 3, 6, true);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 1", 3, 6, true);
 			break;
 		case 1:
-	        importBeamFromSpriteSheet("/tiles/beams/Beam 2.png", 3, 6, true);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 2", 3, 6, true);
 			break;
 		case 2:
-	        importBeamFromSpriteSheet("/tiles/beams/Beam 3.png", 3, 6, true);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 3", 3, 6, true);
 			break;
 		case 3:
-	        importBeamFromSpriteSheet("/tiles/beams/Beam 4.png", 3, 6, true);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 4", 3, 6, true);
 			break;
 		case 4:
-	        importBeamFromSpriteSheet("/tiles/beams/Beam 5.png", 3, 6, true);
+	        importBeamFromSpriteSheet("/tiles/beams/Beam 5", 3, 6, true);
 			break;
 		}
 		
@@ -65,11 +65,12 @@ public class Beam {
         return importedImage;
     }
     private void importBeamFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
-        BufferedImage img = importImage(filePath);
+    	BufferedImage img = importImage(filePath+".png");
+        BufferedImage normalImg = importImage(filePath+"Normal.png");
         int tileSize = 16;
         for(int j = 0; j < rows; j++) {
             for(int i = 0; i < columns; i++) {
-                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize), normalImg.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
                 tiles[arrayIndex].solid = solid;
                 tiles[arrayIndex].isBeam = true;
                 arrayIndex++;

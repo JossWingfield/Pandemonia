@@ -15,6 +15,7 @@ public class Tile {
 	GamePanel gp;
 	
     public BufferedImage image; //the image for the tile
+    public BufferedImage normalImage;
     public boolean solid = false; //Determines if the tile is solid or not(the player can't pass through if it's solid)
     public boolean seasonal = false;
     public boolean isWall = false;
@@ -23,14 +24,16 @@ public class Tile {
     
     public BufferedImage springImage, summerImage, autumnImage, winterImage;
     
-    public Tile(GamePanel gp, String fileName, BufferedImage img) { //Reads and stores the image of the tile
+    public Tile(GamePanel gp, String fileName, BufferedImage img, BufferedImage normalImg) { //Reads and stores the image of the tile
     	this.gp = gp;
     	
         try {
             if(img == null) {
                 this.image = read(Objects.requireNonNull(getClass().getResourceAsStream(fileName)));
+                this.normalImage = normalImg;
             } else {
                 image = img;
+                normalImage = normalImg;
             }
 
         }
@@ -40,7 +43,7 @@ public class Tile {
 
     }
     
-    public Tile(GamePanel gp, String fileName, int x, int y, boolean isSeasonal) { //Reads and stores the image of the tile
+    public Tile(GamePanel gp, String fileName, int x, int y, boolean isSeasonal, BufferedImage normalImg) { //Reads and stores the image of the tile
     	this.gp = gp;
     	this.seasonal = isSeasonal;
     	String spring = "/tiles/spring/" + fileName;
@@ -54,6 +57,7 @@ public class Tile {
             this.autumnImage = read(Objects.requireNonNull(getClass().getResourceAsStream(autumn))).getSubimage(x*16, y*16, 16, 16);
             this.winterImage = read(Objects.requireNonNull(getClass().getResourceAsStream(winter))).getSubimage(x*16, y*16, 16, 16);
             this.image = springImage;
+            this.normalImage = normalImg;
         }
         catch(IOException e) {
             e.printStackTrace();

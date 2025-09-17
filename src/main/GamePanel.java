@@ -404,8 +404,43 @@ public class GamePanel extends JPanel implements Runnable {
         Main.window.setSize(frameWidth, frameHeight);
         Main.window.setLocation(xOffset, yOffset);
     }
-    
+    public void clearLitImages() {
+    	List<Item> items = itemM.getItems();
+    	for(Item i: items) {
+    		if(i != null) {
+    			updateEntityList.add(i);
+    		}
+    	}
+    	
+        Building[] builds = buildingM.getBuildings();
+        for(int i = 0; i < builds.length-1; i++) {
+        	if(builds[i] != null) {
+        		updateEntityList.add(builds[i]);
+        	}
+        }
+    	
+        List<NPC> npcs = npcM.getNPCs();
+    	for(NPC i: npcs) {
+    		if(i != null) {
+    			updateEntityList.add(i);
+    		}
+    	}
+    	
+    	int renderDistance = mapM.renderDistance;
 
+    	ArrayList<Entity> entityListCopy = new ArrayList(updateEntityList);
+        for(int i = 0; i < entityListCopy.size(); i++) {
+        	Entity a = entityListCopy.get(i);
+        	if(a != null) {
+	            if(a.isInSimulationChunks(renderDistance)) {
+	            	a.litImage = null;
+	            }
+        	}
+        }
+        player.litImage = null;
+        mapM.currentRoom.clearRoomTiles();
+        //mapM.clearTilesInRenderDistance(player.xDiff, player.yDiff);
+    }
     //UPDATES THE GAME
     public void update() {    	
     	

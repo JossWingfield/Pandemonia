@@ -29,40 +29,40 @@ public class FloorPaper {
 		
 		switch(preset) {
 		case 0:
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor1.png", 8, 7, false);
+	        importFloorFromSpriteSheet("/tiles/flooring/Floor1", 8, 7, false);
 			break;
 		case 1:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor5.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor5", 8, 7, false);
 			break;
 		case 2:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor12.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor12", 8, 7, false);
 			break;
 		case 3:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor8.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor8", 8, 7, false);
 			break;
 		case 4:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor2.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor2", 8, 7, false);
 			break;
 		case 5:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor3.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor3", 8, 7, false);
 			break;
 		case 6:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor4.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor4", 8, 7, false);
 			break;
 		case 7:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor6.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor6", 8, 7, false);
 			break;
 		case 8:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor7.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor7", 8, 7, false);
 			break;
 		case 9:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor9.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor9", 8, 7, false);
 			break;
 		case 10:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor10.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor10", 8, 7, false);
 			break;
 		case 11:
-			importFloorFromSpriteSheet("/tiles/flooring/Floor11.png", 8, 7, false);
+			importFloorFromSpriteSheet("/tiles/flooring/Floor11", 8, 7, false);
 			break;
 		}
 		
@@ -87,11 +87,12 @@ public class FloorPaper {
         return importedImage;
     }
     private void importFloorFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
-        BufferedImage img = importImage(filePath);
+        BufferedImage img = importImage(filePath+".png");
+        BufferedImage normalImg = importImage(filePath+"Normal.png");
         int tileSize = 16;
         for(int j = 0; j < rows; j++) {
             for(int i = 0; i < columns; i++) {
-                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize), normalImg.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
                 tiles[arrayIndex].solid = solid;
                 tiles[arrayIndex].isFloor = true;
                 arrayIndex++;
