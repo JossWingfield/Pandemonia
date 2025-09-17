@@ -180,8 +180,15 @@ public abstract class Building extends Entity {
 	public void drawOverlayUI(Graphics2D g2) {}
 	
 	public void draw(Graphics2D g2) {
-		 
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		
+		 if(normalImage != null) {
+			 if(litImage == null) {
+				 litImage = gp.lightingM.getLitImage(animations[0][0][0], normalImage, (int)hitbox.x, (int)hitbox.y);
+			 }
+		     g2.drawImage(litImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 } else {
+		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 }
 		 
 		 if(destructionUIOpen) {
 		     g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);

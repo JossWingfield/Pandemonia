@@ -14,6 +14,7 @@ import entity.items.ItemManager;
 import entity.npc.NPC;
 import entity.npc.NPCManager;
 import map.Customiser;
+import map.LightingManager;
 import map.MapBuilder;
 import map.MapManager;
 import net.DiscoveryManager;
@@ -88,6 +89,7 @@ public class GamePanel extends JPanel implements Runnable {
     public GUI gui = new GUI(this);
     public ArrayList<Entity> updateEntityList = new ArrayList<>();
     public ArrayList<Entity> entityList = new ArrayList<>();
+    public LightingManager lightingM = new LightingManager(this);
     public ItemRegistry itemRegistry = new ItemRegistry(this);
     public World world = new World(this);
     public Customiser customiser = new Customiser(this);

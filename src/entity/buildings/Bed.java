@@ -47,8 +47,15 @@ public class Bed extends Building{
 			cooldown--;
 		}
 		 		
-	    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-	    
+		if(normalImage != null) {
+			 if(litImage == null) {
+				 litImage = gp.lightingM.getLitImage(animations[0][0][0], normalImage, (int)hitbox.x, (int)hitbox.y);
+			 }
+		     g2.drawImage(litImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 } else {
+		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 }
+		
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
 	    	if(gp.world.getCurrentPhase() == DayPhase.AFTER_HOURS) {
 	    		if(gp.keyI.ePressed && cooldown == 0) {

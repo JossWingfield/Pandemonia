@@ -129,8 +129,14 @@ public class CornerTable extends Building {
 			}
 		}
 		 
-	    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		 
+		if(normalImage != null) {
+			 if(litImage == null) {
+				 litImage = gp.lightingM.getLitImage(animations[0][0][0], normalImage, (int)hitbox.x, (int)hitbox.y);
+			 }
+		     g2.drawImage(litImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 } else {
+		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 }		 
 	    //g2.setColor(Color.YELLOW);
 	    //g2.drawRect((int)interactHitbox1.x, (int)interactHitbox1.y, (int)interactHitbox1.width, (int)interactHitbox1.height);
 	    //g2.drawRect((int)interactHitbox2.x, (int)interactHitbox2.y, (int)interactHitbox2.width, (int)interactHitbox2.height);
