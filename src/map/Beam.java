@@ -16,7 +16,7 @@ public class Beam {
     private int arrayIndex = 0;
     public int cost = 0;
     public String name = "Beam";
-    public String description = "";
+    public String description = ""; //TESTING NEW BUTTON
 
 	public Beam(GamePanel gp, int preset) {
 		this.gp = gp;
