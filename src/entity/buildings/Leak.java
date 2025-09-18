@@ -40,6 +40,8 @@ public class Leak extends Building {
 		
 		name = "Leak";
     	animations[0][0][0] = importImage("/decor/Leak.png").getSubimage(0, 0, 64, 64);
+	  	normalImage = importImage("/decor/LeakNormal.png").getSubimage(0, 0, 64, 64);
+
      	animations[0][0][1] = importImage("/decor/Leak.png").getSubimage(64, 0, 64, 64);
 	}
 	public void draw(Graphics2D g2) {

@@ -40,6 +40,7 @@ public class Spill extends Building {
 		
 		name = "Spill";
     	animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(96, 96, 32, 32);
+    	normalImage = importImage("/decor/kitchen propsNormal.png").getSubimage(96, 96, 32, 32);
     	animations[0][0][1] = importImage("/decor/SpillHighlight.png");
 	}
 	public void draw(Graphics2D g2) {

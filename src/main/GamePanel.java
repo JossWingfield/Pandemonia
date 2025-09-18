@@ -486,6 +486,7 @@ public class GamePanel extends JPanel implements Runnable {
 		    	npcM.update();
 		    	itemM.update();
 		    	world.update();
+		    	lightingM.update();
 		    	if(currentState == customiseRestaurantState) {
 		    		customiser.update();
 		    	}

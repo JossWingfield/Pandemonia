@@ -38,6 +38,7 @@ public class Chair extends Building {
 		
 		name = "Chair 1";
     	animations[0][0][0] = importImage("/decor/chair.png").getSubimage(2, 73, 16, 16);
+    	normalImage = importImage("/decor/chairNormal.png").getSubimage(2, 73, 16, 16);
 	}
 	public void setCustomer(Customer customer) {
 		currentCustomer = customer;

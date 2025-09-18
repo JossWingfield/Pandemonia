@@ -99,6 +99,9 @@ public class WallPaper {
 	public BufferedImage getImage(int index) {
 		return tiles[index - 57].image;
 	}
+	public BufferedImage getNormalImage(int index) {
+		return tiles[index - 57].normalImage;
+	}
     protected BufferedImage importImage(String filePath) { //Imports and stores the image
         BufferedImage importedImage = null;
         try {

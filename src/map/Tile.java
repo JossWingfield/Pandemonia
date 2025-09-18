@@ -43,21 +43,22 @@ public class Tile {
 
     }
     
-    public Tile(GamePanel gp, String fileName, int x, int y, boolean isSeasonal, BufferedImage normalImg) { //Reads and stores the image of the tile
+    public Tile(GamePanel gp, String fileName, int x, int y, boolean isSeasonal) { //Reads and stores the image of the tile
     	this.gp = gp;
     	this.seasonal = isSeasonal;
-    	String spring = "/tiles/spring/" + fileName;
-    	String summer = "/tiles/summer/" + fileName;
-    	String autumn = "/tiles/autumn/" + fileName;
-    	String winter = "/tiles/winter/" + fileName;
+    	String spring = "/tiles/spring/" + fileName + ".png";
+    	String summer = "/tiles/summer/" + fileName + ".png";;
+    	String autumn = "/tiles/autumn/" + fileName + ".png";;
+    	String winter = "/tiles/winter/" + fileName + ".png";;
+    	String normal = "/tiles/spring/" + fileName+"Normal" + ".png";;
     	
         try {
         	this.springImage = read(Objects.requireNonNull(getClass().getResourceAsStream(spring))).getSubimage(x*16, y*16, 16, 16);
             this.summerImage = read(Objects.requireNonNull(getClass().getResourceAsStream(summer))).getSubimage(x*16, y*16, 16, 16);
             this.autumnImage = read(Objects.requireNonNull(getClass().getResourceAsStream(autumn))).getSubimage(x*16, y*16, 16, 16);
             this.winterImage = read(Objects.requireNonNull(getClass().getResourceAsStream(winter))).getSubimage(x*16, y*16, 16, 16);
+            this.normalImage = read(Objects.requireNonNull(getClass().getResourceAsStream(normal))).getSubimage(x*16, y*16, 16, 16);
             this.image = springImage;
-            this.normalImage = normalImg;
         }
         catch(IOException e) {
             e.printStackTrace();

@@ -40,6 +40,7 @@ public class Bed extends Building{
 		
 		name = "Bed";
     	animations[0][0][0] = importImage("/decor/bed.png").getSubimage(160, 96, 32, 48);
+    	normalImage = importImage("/decor/bedNormal.png").getSubimage(160, 96, 32, 48);
 	}
 	public void draw(Graphics2D g2) {
 		

@@ -74,7 +74,8 @@ public class StorageFridge extends Building {
 		name = "Storage Fridge";
 		animations[0][0][0] = importImage("/decor/StorageFridge.png").getSubimage(0, 8, 8*2, 8*4);
 		animations[0][0][1] = importImage("/decor/StorageFridge.png").getSubimage(16, 8, 8*2, 8*4);
-    	ui1 = importImage("/UI/fridge/2.png");
+		normalImage = importImage("/decor/kitchen propsNormal.png").getSubimage(96, 96, 32, 32);
+		ui1 = importImage("/UI/fridge/2.png");
     	ui2 = importImage("/UI/fridge/5.png");
     	ui3 = importImage("/UI/fridge/Hover.png");
 	}

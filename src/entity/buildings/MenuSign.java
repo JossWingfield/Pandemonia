@@ -70,6 +70,7 @@ public class MenuSign extends Building {
         name = "Menu Sign";
         animations[0][0][0] = importImage("/decor/chalkboard.png").getSubimage(0, 32, 16, 32);
         animations[0][0][1] = importImage("/decor/HighlightedMenu.png");
+	  	normalImage = importImage("/decor/chalkboardNormal.png").getSubimage(0, 32, 16, 32);
         ui1 = importImage("/UI/menu/MenuFrame.png");
         ui2 = importImage("/UI/fridge/5.png");
         ui3 = importImage("/UI/fridge/Hover.png");

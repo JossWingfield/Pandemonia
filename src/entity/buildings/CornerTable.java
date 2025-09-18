@@ -47,6 +47,7 @@ public class CornerTable extends Building {
 	    switch(presetNum) {
 	        case 0: // Top Left
 	            animations[0][0][0] = importImage("/decor/connected table 2.png").getSubimage(64, 0, 32, 32);
+	            normalImage = importImage("/decor/connected table 2Normal.png").getSubimage(64, 0, 32, 32);
 	            hitbox.width = 48 + 24;
 	            hitbox.height = 28;
 	            drawWidth = 48 * 2;
@@ -57,6 +58,7 @@ public class CornerTable extends Building {
 
 	        case 1: // Top Right
 	            animations[0][0][0] = importImage("/decor/connected table 2.png").getSubimage(96, 0, 32, 32);
+	            normalImage = importImage("/decor/connected table 2Normal.png").getSubimage(96, 0, 32, 32);
 	            hitbox.width = 48 + 24;
 	            hitbox.height = 28;
 	            drawWidth = 48 * 2;
@@ -67,6 +69,7 @@ public class CornerTable extends Building {
 
 	        case 2: // Bottom Left
 	            animations[0][0][0] = importImage("/decor/connected table 2.png").getSubimage(64, 32, 32, 32);
+	            normalImage = importImage("/decor/connected table 2Normal.png").getSubimage(64, 32, 32, 32);
 	            hitbox.width = 48 + 24;
 	            hitbox.height = 38;
 	            drawWidth = 48 * 2;
@@ -82,6 +85,7 @@ public class CornerTable extends Building {
 
 	        case 3: // Bottom Right
 	            animations[0][0][0] = importImage("/decor/connected table 2.png").getSubimage(96, 32, 32, 32);
+	            normalImage = importImage("/decor/connected table 2Normal.png").getSubimage(96, 32, 32, 32);
 	            hitbox.width = 48 + 24;
 	            hitbox.height = 38;
 	            drawWidth = 48 * 2;

@@ -58,6 +58,7 @@ public class Stove extends Building {
 		
 		name = "Stove";
     	animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(0, 128, 48, 48);
+    	normalImage = importImage("/decor/kitchen propsNormal.png").getSubimage(0, 128, 48, 48);
 	}
 	public void update() {
 		if(gp.world.isPowerOn()) {

@@ -41,6 +41,9 @@ public class Breaker extends Building{
     	animations[0][0][1] = importImage("/decor/Breaker.png").getSubimage(32, 0, 32, 48);
     	animations[0][0][2] = importImage("/decor/Breaker.png").getSubimage(64, 0, 32, 48);
      	animations[0][0][3] = importImage("/decor/Breaker.png").getSubimage(96, 0, 32, 48);
+     	
+     	normalImage = importImage("/decor/BreakerNormal.png").getSubimage(0, 0, 32, 48);
+     	
     }
 	public void cutPower() {
 		powerOn = false;

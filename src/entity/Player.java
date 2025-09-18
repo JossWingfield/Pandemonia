@@ -1,6 +1,7 @@
 package entity;
 
 import main.GamePanel;
+import map.LightSource;
 import net.packets.Packet;
 import net.packets.Packet02Move;
 import net.packets.Packet03PickupItem;
@@ -51,6 +52,7 @@ public class Player extends Entity{
     private BufferedImage litHandImage, litHeadgearImage, litChestplateImage, litTrouserImage;
 
     //GENERAL VARIABLES
+    private boolean firstUpdate = true;
     private float speed; //How many pixels per update the player moves at
     private final float initialSpeed;
     private float currentSpeed; //How many pixels per update the player moves at
@@ -81,11 +83,12 @@ public class Player extends Entity{
     
     public int currentRoomIndex = 0;
     
+    private LightSource playerLight;
+    
     //INVENTORY
     //public Headgear currentHeadgear = null;
     //public Chestplate currentChestplate = null;
     //public Trousers currentTrousers = null;
-    
 
     public Player(GamePanel gp, int xPos, int yPos, KeyboardInput keyI, MouseInput mouseI, String username) { //Setting default variables
         super(gp, (xPos), (yPos), 32, 32);
@@ -133,6 +136,8 @@ public class Player extends Entity{
         
         xDiff = 0;
         yDiff = 0;
+        
+        playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.RED, 80);
         
         importImages();
     }
@@ -335,6 +340,8 @@ public class Player extends Entity{
                     hitbox.y = CollisionMethods.getFloorPos(hitbox.y + hitbox.height - 1, gp) - (hitbox.height- gp.tileSize);
                 }
             }
+            
+            //gp.lightingM.moveLight(playerLight, (int)hitbox.x, (int)hitbox.y);
             
             if(gp.multiplayer) {
 	            Packet02Move packet = new Packet02Move(getUsername(), (int)hitbox.x, (int)hitbox.y, currentAnimation, direction);
@@ -584,6 +591,11 @@ public class Player extends Entity{
         }
     }
     public void update() {
+    	
+    	if(firstUpdate) {
+    		firstUpdate = false;
+            //gp.lightingM.addLight(playerLight);
+    	}
 
         handleMovement();
         checkBorders();

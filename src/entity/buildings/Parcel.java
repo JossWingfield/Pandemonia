@@ -34,6 +34,7 @@ public class Parcel extends Building {
 		
 		name = "Package";
 		animations[0][0][0] = importImage("/decor/crate-box.png").getSubimage(64, 0, 16, 16);	
+		normalImage = importImage("/decor/crate-boxNormal.png").getSubimage(64, 0, 16, 16);
 	}
 	public void draw(Graphics2D g2) {
 		 

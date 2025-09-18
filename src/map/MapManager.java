@@ -180,11 +180,9 @@ public class MapManager {
 	        }
 	    }
 	    private void importTilesFromSpriteSheet(String filePath, int rows, int columns, boolean solid, boolean isSeasonal) {
-	    	BufferedImage normalImg = importImage(filePath+"Normal.png");
-	    	int tileSize = 16;
 	    	for(int j = 0; j < rows; j++) {
 	            for(int i = 0; i < columns; i++) {
-	                tiles[arrayIndex] =  new Tile(gp, filePath+".png", i, j, isSeasonal, normalImg.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+	                tiles[arrayIndex] =  new Tile(gp, filePath, i, j, isSeasonal);
 	                tiles[arrayIndex].solid = solid;
 	                arrayIndex++;
 	            }
@@ -432,16 +430,32 @@ public class MapManager {
 	        for (int i = startCol; i < endCol; i++) {
 	            for (int j = startRow; j < endRow; j++) {
 	                int tileIndex = currentRoom.mapGrid[layer][i][j];
-	                if (tileIndex < 0 || tileIndex >= tiles.length) continue; // safety check
-	                
-	                if(!tiles[tileIndex].isWall && !tiles[tileIndex].isFloor && !tiles[tileIndex].isBeam) {
-		                g.drawImage(tiles[tileIndex].image,i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize,null);
-	                } else if(tiles[tileIndex].isWall){
-	                	g.drawImage(currentRoom.getWallpaper().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
-	                } else if(tiles[tileIndex].isFloor){
-	                	g.drawImage(currentRoom.getFloorpaper().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+	                if(tileIndex == 0) {
+	                	g.drawImage(tiles[tileIndex].image,i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize,null);
 	                } else {
-	                	g.drawImage(currentRoom.getBeam().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                if (tileIndex < 0 || tileIndex >= tiles.length) continue; // safety check
+		                
+		                if(!tiles[tileIndex].isWall && !tiles[tileIndex].isFloor && !tiles[tileIndex].isBeam) {
+			                if (currentRoom.tileImages[layer][i][j] == null) {
+			                	currentRoom.tileImages[layer][i][j] = gp.lightingM.getLitImage(tiles[tileIndex].image,tiles[tileIndex].normalImage, i*tileSize,j*tileSize);
+			                }
+		                	g.drawImage(currentRoom.tileImages[layer][i][j], i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize,null);
+		                } else if(tiles[tileIndex].isWall){
+		                	if (currentRoom.tileImages[layer][i][j] == null) {
+			                	currentRoom.tileImages[layer][i][j] = gp.lightingM.getLitImage(currentRoom.getWallpaper().getImage(tileIndex), currentRoom.getWallpaper().getNormalImage(tileIndex), i*tileSize,j*tileSize);
+			                }
+		                	g.drawImage(currentRoom.tileImages[layer][i][j], i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                } else if(tiles[tileIndex].isFloor){
+		                	if (currentRoom.tileImages[layer][i][j] == null) {
+			                	currentRoom.tileImages[layer][i][j] = gp.lightingM.getLitImage(currentRoom.getFloorpaper().getImage(tileIndex), currentRoom.getFloorpaper().getNormalImage(tileIndex), i*tileSize,j*tileSize);
+			                }
+		                	g.drawImage(currentRoom.tileImages[layer][i][j], i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                } else {
+		                	if (currentRoom.tileImages[layer][i][j] == null) {
+			                	currentRoom.tileImages[layer][i][j] = gp.lightingM.getLitImage(currentRoom.getBeam().getImage(tileIndex), currentRoom.getBeam().getNormalImage(tileIndex), i*tileSize,j*tileSize);
+			                }
+		                	g.drawImage(currentRoom.tileImages[layer][i][j], i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                }
 	                }
 	            }
 	        }

@@ -35,14 +35,7 @@ public class Table extends Building {
 		
 		name = "Table 1";
     	animations[0][0][0] = importImage("/decor/table.png").getSubimage(48, 24, 16, 40);
-	}
-	public void draw(Graphics2D g2) {
-		 
-	    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		 
-		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
-		}
-	        
+    	normalImage = importImage("/decor/tableNormal.png").getSubimage(48, 24, 16, 40);
+
 	}
 }

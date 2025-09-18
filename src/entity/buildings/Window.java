@@ -38,6 +38,7 @@ public class Window extends Building {
 		
 		name = "Window";
      	animations[0][0][0] = importImage("/decor/window.png").getSubimage(32, 32, 32, 32);
+     	normalImage = importImage("/decor/windowNormal.png").getSubimage(32, 32, 32, 32);
      	animations[0][0][1] = importImage("/decor/window.png").getSubimage(0, 32, 32, 32);
 		
 	}

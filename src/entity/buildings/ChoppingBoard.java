@@ -55,6 +55,7 @@ public class ChoppingBoard extends Building {
 		
 		name = "Chopping Board 1";
     	animations[0][0][0] = importImage("/decor/ChoppingBoard.png").getSubimage(0, 0, 16, 16);
+    	normalImage = importImage("/decor/ChoppingBoardNormal.png").getSubimage(0, 0, 16, 16);
     	animations[0][0][1] = importImage("/decor/ChoppingBoard.png").getSubimage(0, 16, 16, 16);
     	animations[0][0][2] = importImage("/decor/ChoppingBoard.png").getSubimage(0, 32, 16, 16);
 	}

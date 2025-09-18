@@ -64,7 +64,8 @@ public class Fridge extends Building {
         name = "Fridge";
         animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(112, 136, 8*2, 8*4);
         animations[0][0][1] = importImage("/decor/kitchen props.png").getSubimage(112+16, 136, 8*2, 8*4);
-
+	  	normalImage = importImage("/decor/kitchen propsNormal.png").getSubimage(112, 136, 8*2, 8*4);
+        
         ui1 = importImage("/UI/fridge/2.png");
         ui2 = importImage("/UI/fridge/5.png");
         ui3 = importImage("/UI/fridge/Hover.png");

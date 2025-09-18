@@ -1,5 +1,6 @@
 package map;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -61,6 +62,7 @@ public class Room {
 	public WallPaper wallpaper = null;
 	public FloorPaper floorpaper = null;
 	public Beam beam = null;
+	public BufferedImage[][][] tileImages;
 	
 	public Room(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -135,6 +137,7 @@ public class Room {
 			setBeam(4);
 			break;
 		}
+		tileImages = new BufferedImage[4][mapWidth][mapHeight];
 		setBuildings(preset);
 		setNPCs(preset);
 		setItems(preset);
@@ -2013,9 +2016,11 @@ public class Room {
 			buildingArrayCounter++;
 		}
 	}
-	public void clearRoomTiles() {
-		
-	}
+    public void clearRoomTiles() {
+    	tileImages = null;
+    	tileImages = new BufferedImage[4][mapWidth][mapHeight];
+    }
+    
     public void update() {
     	for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {

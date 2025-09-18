@@ -56,6 +56,7 @@ public class Oven extends Building {
     	animations[0][0][2] = importImage("/decor/kitchen props.png").getSubimage(48, 128, 32, 48);
     	animations[0][0][3] = importImage("/decor/OvenHighlight.png").getSubimage(0, 0, 32, 48);
        	animations[0][0][4] = importImage("/decor/OvenHighlight.png").getSubimage(32, 0, 32, 48);
+	
 	}
 	public void draw(Graphics2D g2) {
 		 

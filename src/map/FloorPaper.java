@@ -76,6 +76,9 @@ public class FloorPaper {
 	public BufferedImage getImage(int index) {
 		return tiles[index - 1].image;
 	}
+	public BufferedImage getNormalImage(int index) {
+		return tiles[index - 1].normalImage;
+	}
     protected BufferedImage importImage(String filePath) { //Imports and stores the image
         BufferedImage importedImage = null;
         try {

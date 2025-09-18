@@ -35,6 +35,7 @@ public class EscapeHole extends Building {
 		
 		name = "Escape Hole";
     	animations[0][0][0] = importImage("/decor/EscapeHole.png");
+    	normalImage = importImage("/decor/EscapeHoleNormal.png");
 
 	}
 	public void draw(Graphics2D g2) {
