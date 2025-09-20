@@ -16,6 +16,7 @@ public class Door extends Building {
 	public int facing;
 	private int preset = 0;
 	public int cooldown = 0;
+	private boolean open = false;
 	
 	public Door(GamePanel gp, float xPos, float yPos, int facing, int presetNum) {
 		super(gp, xPos, yPos, 48*2, 48*2);
@@ -112,11 +113,17 @@ public class Door extends Building {
 		
         //g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
-      		
+      	
 		 
 		if(!gp.player.interactHitbox.intersects(doorHitbox) && !gp.npcM.stockerCheck(npcVisualHitbox)) {
-			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			if(!open) {
+			}
+			open = true;
+		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
 		} else {
+			if(open) {
+			}
+			open = false;
 			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		}
 		

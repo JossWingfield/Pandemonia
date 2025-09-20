@@ -25,8 +25,6 @@ public abstract class Entity implements Cloneable {
     protected int animationSpeedFactor = 6;
     public int xDrawOffset, yDrawOffset, drawWidth, drawHeight;
     protected int drawScale = 3;
-    
-    public BufferedImage normalImage, litImage;
 
     public Entity(GamePanel gp, float xPos, float yPos, float width, float height) {
         this.gp = gp;
@@ -133,7 +131,6 @@ public abstract class Entity implements Cloneable {
     	currentAnimation = animationNum;
     	animationCounter = 0;
     	animationSpeed = 0;
-     	litImage = null;
     }
     
     public int getDirection() {

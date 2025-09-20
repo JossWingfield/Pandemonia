@@ -35,6 +35,5 @@ public class Table2 extends Building {
 		
 		name = "Table 2";
     	animations[0][0][0] = importImage("/decor/table.png").getSubimage(32, 0, 32, 24);
-    	normalImage = importImage("/decor/tableNormal.png").getSubimage(32, 0, 32, 24);
 	}
 }

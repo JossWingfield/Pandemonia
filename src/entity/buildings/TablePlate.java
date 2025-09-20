@@ -126,7 +126,7 @@ public class TablePlate extends Building {
 		}
 		 
 		if(currentCustomer != null) {
-			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
 		}
 		
 	    //g2.setColor(Color.RED);

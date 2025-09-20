@@ -39,9 +39,6 @@ public class Calendar extends Building {
      	animations[0][0][1] = importImage("/decor/calendar.png").getSubimage(16, 0, 16, 32);
      	animations[0][0][2] = importImage("/decor/calendar.png").getSubimage(32, 0, 16, 32);
      	animations[0][0][3] = importImage("/decor/calendar.png").getSubimage(48, 0, 16, 32);
-
-     	normalImage = importImage("/decor/calendarNormal.png").getSubimage(0, 0, 16, 32);
-		
 	}
 	public void draw(Graphics2D g2) {
 		int season = -1;

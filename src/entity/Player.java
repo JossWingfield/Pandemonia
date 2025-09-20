@@ -52,6 +52,7 @@ public class Player extends Entity{
     private BufferedImage litHandImage, litHeadgearImage, litChestplateImage, litTrouserImage;
 
     //GENERAL VARIABLES
+    private BufferedImage[][][] normalImages; 
     private boolean firstUpdate = true;
     private float speed; //How many pixels per update the player moves at
     private final float initialSpeed;
@@ -123,7 +124,7 @@ public class Player extends Entity{
         //hitbox.x = (float) spawnPoint.getX();
         //hitbox.y = (float) spawnPoint.getY();
         
-        animationSpeedFactor = 5;
+        animationSpeedFactor = 3;
         
         reachDistance = (3*gp.tileSize);
         talkDistance = (5*gp.tileSize);
@@ -137,7 +138,8 @@ public class Player extends Entity{
         xDiff = 0;
         yDiff = 0;
         
-        playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.RED, 80);
+        //playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.ORANGE, 40);
+        //gp.lightingM.addLight(playerLight);
         
         importImages();
     }
@@ -184,6 +186,7 @@ public class Player extends Entity{
     public void importImages() {
 
         animations = new BufferedImage[4][20][15];
+        normalImages = new BufferedImage[4][20][15];
         handImages = new BufferedImage[4][20][15];
         headgearImages = new BufferedImage[4][20][15];
         chestplateImages = new BufferedImage[4][20][15];
@@ -211,12 +214,12 @@ public class Player extends Entity{
 	        int arrayIndex = 0;
 	
 	        BufferedImage img = importImage(filePath + ".png");
-	        //BufferedImage handImage = importImage(filePath + "Hand.png");
+	        BufferedImage normalImage = importImage(filePath + "Normal.png");
 	
 	        for(int i = 0; i < columnNumber; i++) {
 	            for(int j = 0; j < rowNumber; j++) {
 	                animations[k][currentAnimation][arrayIndex] = img.getSubimage(i*width + startX, j*height + startY, width, height);
-	                //handImages[k][currentAnimation][arrayIndex] = handImage.getSubimage(i*width + startX, j*height + startY, width, height);
+	                normalImages[k][currentAnimation][arrayIndex] = normalImage.getSubimage(i*width + startX, j*height + startY, width, height);
 	                arrayIndex++;
 	            }
 	        }
@@ -341,7 +344,7 @@ public class Player extends Entity{
                 }
             }
             
-            //gp.lightingM.moveLight(playerLight, (int)hitbox.x, (int)hitbox.y);
+            //gp.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
             
             if(gp.multiplayer) {
 	            Packet02Move packet = new Packet02Move(getUsername(), (int)hitbox.x, (int)hitbox.y, currentAnimation, direction);
@@ -591,11 +594,6 @@ public class Player extends Entity{
         }
     }
     public void update() {
-    	
-    	if(firstUpdate) {
-    		firstUpdate = false;
-            //gp.lightingM.addLight(playerLight);
-    	}
 
         handleMovement();
         checkBorders();
@@ -676,7 +674,6 @@ public class Player extends Entity{
         if (animationSpeed == animationSpeedFactor) {
             animationSpeed = 0;
             animationCounter++;
-            litImage = null;
             litHandImage = null;
             litHeadgearImage = null;
             litChestplateImage = null;
@@ -696,9 +693,9 @@ public class Player extends Entity{
         	img = createHorizontalFlipped(img);
         	//handImg = createHorizontalFlipped(handImg);
         }
-        
     	g2.drawImage(img, (int)(hitbox.x - xDiff - xDrawOffset), (int)(hitbox.y - yDiff - yDrawOffset), (int)(drawWidth), (int)(drawHeight), null);
-	    if(direction != 3) {
+	    
+        if(direction != 3) {
     		drawCurrentItem(g2);
     	}	 
 	    //g2.drawImage(handImg, (int)(hitbox.x - xDiff - xDrawOffset), (int)(hitbox.y - yDiff - yDrawOffset), (int)(drawWidth), (int)(drawHeight), null);    

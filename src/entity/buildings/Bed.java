@@ -40,14 +40,14 @@ public class Bed extends Building{
 		
 		name = "Bed";
     	animations[0][0][0] = importImage("/decor/bed.png").getSubimage(160, 96, 32, 48);
-    	normalImage = importImage("/decor/bedNormal.png").getSubimage(160, 96, 32, 48);
 	}
 	public void draw(Graphics2D g2) {
 		
 		if(cooldown > 0) {
 			cooldown--;
 		}
-		 		
+		 	
+		/*
 		if(normalImage != null) {
 			 if(litImage == null) {
 				 litImage = gp.lightingM.getLitImage(animations[0][0][0], normalImage, (int)hitbox.x, (int)hitbox.y);
@@ -56,6 +56,9 @@ public class Bed extends Building{
 		 } else {
 		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		 }
+		 */
+	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+
 		
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
 	    	if(gp.world.getCurrentPhase() == DayPhase.AFTER_HOURS) {

@@ -58,7 +58,6 @@ public class Stove extends Building {
 		
 		name = "Stove";
     	animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(0, 128, 48, 48);
-    	normalImage = importImage("/decor/kitchen propsNormal.png").getSubimage(0, 128, 48, 48);
 	}
 	public void update() {
 		if(gp.world.isPowerOn()) {
@@ -105,8 +104,8 @@ public class Stove extends Building {
 		//g2.drawRect((int)leftHitbox.x, (int)leftHitbox.y, (int)leftHitbox.width, (int)leftHitbox.height);
 		//g2.drawRect((int)rightHitbox.x, (int)rightHitbox.y, (int)rightHitbox.width, (int)rightHitbox.height);
 		 
-	    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		 
+		g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+      		 
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}

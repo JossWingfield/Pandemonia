@@ -30,6 +30,7 @@ import utility.RecipeManager;
 import utility.Settings;
 import utility.World;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -131,6 +132,14 @@ public class GamePanel extends JPanel implements Runnable {
     private int shakeOffsetY = 0; // Current vertical shake offset
     
     private boolean firstUpdate = true;
+    
+    //LIGHTING
+    // Instead of drawing directly to g2, do this:
+    BufferedImage colorBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
+    BufferedImage normalBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
+    BufferedImage lightBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
+
+    Graphics2D gColor = colorBuffer.createGraphics();
 
 
     // INITIATES PANEL SETTINGS
@@ -406,43 +415,6 @@ public class GamePanel extends JPanel implements Runnable {
         Main.window.setSize(frameWidth, frameHeight);
         Main.window.setLocation(xOffset, yOffset);
     }
-    public void clearLitImages() {
-    	List<Item> items = itemM.getItems();
-    	for(Item i: items) {
-    		if(i != null) {
-    			updateEntityList.add(i);
-    		}
-    	}
-    	
-        Building[] builds = buildingM.getBuildings();
-        for(int i = 0; i < builds.length-1; i++) {
-        	if(builds[i] != null) {
-        		updateEntityList.add(builds[i]);
-        	}
-        }
-    	
-        List<NPC> npcs = npcM.getNPCs();
-    	for(NPC i: npcs) {
-    		if(i != null) {
-    			updateEntityList.add(i);
-    		}
-    	}
-    	
-    	int renderDistance = mapM.renderDistance;
-
-    	ArrayList<Entity> entityListCopy = new ArrayList(updateEntityList);
-        for(int i = 0; i < entityListCopy.size(); i++) {
-        	Entity a = entityListCopy.get(i);
-        	if(a != null) {
-	            if(a.isInSimulationChunks(renderDistance)) {
-	            	a.litImage = null;
-	            }
-        	}
-        }
-        player.litImage = null;
-        mapM.currentRoom.clearRoomTiles();
-        //mapM.clearTilesInRenderDistance(player.xDiff, player.yDiff);
-    }
     //UPDATES THE GAME
     public void update() {    	
     	
@@ -540,21 +512,28 @@ public class GamePanel extends JPanel implements Runnable {
         
         if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == catalogueState || currentState == customiseRestaurantState) {
         	
+        	Graphics2D gColor = colorBuffer.createGraphics();
+            
+            gColor.setComposite(AlphaComposite.Clear);
+            gColor.fillRect(0, 0, frameWidth, frameHeight);
+            gColor.setComposite(AlphaComposite.SrcOver);
+
+        	
         		int xDiff = player.xDiff;
         		int yDiff = player.yDiff;
-        		mapM.draw(g2, xDiff, yDiff);	 
+        		mapM.draw(gColor, xDiff, yDiff);	 
         		
         		Building[] bottomLayer = buildingM.getBottomLayer();
     	        for(int i = 0; i < bottomLayer.length-1; i++) {
     	        	if(bottomLayer[i] != null) {
-    	        		bottomLayer[i].draw(g2);
+    	        		bottomLayer[i].draw(gColor);
     	        	}
     	        }
     	        
     	        Building[] secondLayer = buildingM.getSecondLayer();
     	        for(int i = 0; i < secondLayer.length-1; i++) {
     	        	if(secondLayer[i] != null) {
-    	        		secondLayer[i].draw(g2);
+    	        		secondLayer[i].draw(gColor);
     	        	}
     	        }
         		
@@ -612,7 +591,7 @@ public class GamePanel extends JPanel implements Runnable {
 	            	Entity a = entityList.get(i);
 	            	if(a != null) {
 		            	if(a.isOnScreen(xDiff, yDiff, frameWidth, frameHeight)) {
-		            		a.draw(g2);
+		            		a.draw(gColor);
 		            	}
 	            	}
 	            }
@@ -622,32 +601,41 @@ public class GamePanel extends JPanel implements Runnable {
 	            Building[] thirdLayer = buildingM.getThirdLayer();
 		        for(int i = 0; i < thirdLayer.length-1; i++) {
 		        	if(thirdLayer[i] != null) {
-		        		thirdLayer[i].draw(g2);
+		        		thirdLayer[i].draw(gColor);
 		        	}
 		        }
 		        
 		        List<Item> items = new ArrayList<Item>(itemM.getItems());
 		        for(Item item: items) {
 		        	if(item != null) {
-		        		item.draw(g2);
+		        		item.draw(gColor);
 		        	}
 		        }
 		    
 		        Building[] fourthLayer = buildingM.getFourthLayer();
 		        for(int i = 0; i < fourthLayer.length-1; i++) {
 		        	if(fourthLayer[i] != null) {
-		        		fourthLayer[i].draw(g2);
+		        		fourthLayer[i].draw(gColor);
 		        	}
 		        }
 		        
 		        Building[] fifthLayer = buildingM.getFifthLayer();
 		        for(int i = 0; i < fifthLayer.length-1; i++) {
 		        	if(fifthLayer[i] != null) {
-		        		fifthLayer[i].draw(g2);
+		        		fifthLayer[i].draw(gColor);
 		        	}
 		        }
 		        
-	            mapM.drawForeground(g2, xDiff, yDiff);
+	            mapM.drawForeground(gColor, xDiff, yDiff);
+	            
+		        gColor.dispose();
+
+		        if(Settings.fancyLighting) {
+		        	// === 2. Apply lighting ===
+		        	lightingM.applyLighting(colorBuffer, g2);
+        		} else {
+        			g2.drawImage(colorBuffer, 0, 0, frameWidth, frameHeight, null);
+        		}
 	            
 	            for (int i = 0; i < thirdLayer.length; i++) {
 	                if (thirdLayer[i] != null) {

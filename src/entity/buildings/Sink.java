@@ -21,6 +21,8 @@ public class Sink extends Building {
 	private final int maxChopCount = 60*4;
 	private int cleanedPlateCount = 3;
 	private Rectangle2D.Float cleanedPlateHitbox;
+	private BufferedImage[] normalImages;
+	private BufferedImage litPlateImage;
 	
 	public Sink(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -45,22 +47,34 @@ public class Sink extends Building {
 	}
 	private void importImages() {
 		animations = new BufferedImage[1][1][11];
+		normalImages = new BufferedImage[11];
 		
         name = "Kitchen Sink 1";
     	animations[0][0][0] = importImage("/decor/bathroom props.png").getSubimage(0, 192, 32, 32);
+    	normalImages[0] = importImage("/decor/bathroom propsNormal.png").getSubimage(0, 192, 32, 32);
     	animations[0][0][1] = importImage("/decor/Sink.png").getSubimage(0, 0, 32, 32);
+    	normalImages[1] = importImage("/decor/bathroom propsNormal.png").getSubimage(0, 0, 32, 32);
     	//PLATES
     	animations[0][0][2] = importImage("/decor/kitchen props.png").getSubimage(0, 64, 16, 16);
+    	normalImages[2] = importImage("/decor/bathroom propsNormal.png").getSubimage(0, 64, 16, 16);
     	animations[0][0][3] = importImage("/decor/kitchen props.png").getSubimage(16, 64, 16, 16);
+    	normalImages[3] = importImage("/decor/bathroom propsNormal.png").getSubimage(16, 64, 16, 16);
     	animations[0][0][4] = importImage("/decor/kitchen props.png").getSubimage(32, 64, 16, 16);
+    	normalImages[4] = importImage("/decor/bathroom propsNormal.png").getSubimage(32, 64, 16, 16);
     	//Sink Overlays
     	animations[0][0][5] = importImage("/decor/Sink.png").getSubimage(32, 0, 32, 32);
+    	normalImages[5] = importImage("/decor/SinkNormal.png").getSubimage(32, 0, 32, 32);
     	animations[0][0][6] = importImage("/decor/Sink.png").getSubimage(64, 0, 32, 32);
+    	normalImages[6] = importImage("/decor/SinkNormal.png").getSubimage(64, 0, 32, 32);
     	//Plate Collection
     	animations[0][0][7] = importImage("/decor/kitchen props.png").getSubimage(48, 48, 16, 16);
+    	normalImages[7] = importImage("/decor/kitchen propsNormal.png").getSubimage(48, 48, 16, 16);
     	animations[0][0][8] = importImage("/decor/kitchen props.png").getSubimage(48+16, 48, 16, 16);
+    	normalImages[8] = importImage("/decor/kitchen propsNormal.png").getSubimage(48+16, 48, 16, 16);
     	animations[0][0][9] = importImage("/decor/kitchen props.png").getSubimage(48, 48+16, 16, 16);
+    	normalImages[9] = importImage("/decor/kitchen propsNormal.png").getSubimage(48, 48+16, 16, 16);
     	animations[0][0][10] = importImage("/decor/kitchen props.png").getSubimage(48+16, 48+16, 16, 16);
+    	normalImages[10] = importImage("/decor/kitchen propsNormal.png").getSubimage(48+16, 48+16, 16, 16);
     	
     	isSolid = false;
     	hitbox.height = 80;
@@ -74,6 +88,7 @@ public class Sink extends Building {
 		if(cleanedPlateCount > 0) {
 			cleanedPlateCount--;
 		}
+		litPlateImage = null;
 	}
 	private void drawWashingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime) {
 	    float screenX = worldX - xDrawOffset - gp.player.xDiff;
@@ -107,13 +122,13 @@ public class Sink extends Building {
 		}
 		
 		if(cleanedPlateCount == 0) {
-			g2.drawImage(animations[0][0][7], (int) hitbox.x - xDrawOffset - gp.player.xDiff+18, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, 48, 48, null);
+		     g2.drawImage(animations[0][0][7], (int) hitbox.x - xDrawOffset - gp.player.xDiff+18, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, 48, 48, null);
 		} else {
-			g2.drawImage(animations[0][0][7+cleanedPlateCount], (int) hitbox.x - xDrawOffset - gp.player.xDiff+18, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, 48, 48, null);
+		     g2.drawImage(animations[0][0][7+cleanedPlateCount], (int) hitbox.x - xDrawOffset - gp.player.xDiff+18, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, 48, 48, null);
 		}
 		
-	    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		
+	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 
 		if(sinkHitbox != null) {
 			if(gp.player.currentItem != null) {
 				if(gp.player.currentItem instanceof Plate plate) {
@@ -167,7 +182,9 @@ public class Sink extends Building {
 				img = animations[0][0][4];
 				break;
 			}
-		    g2.drawImage(img, (int) hitbox.x - xDrawOffset - gp.player.xDiff + 19, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+30, 48, 48, null);
+			 g2.drawImage(img, (int) hitbox.x - xDrawOffset - gp.player.xDiff + 19, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+30, 48, 48, null);
+
+			
 		    if(sinkHitbox.intersects(gp.player.hitbox)) {
 		    	g2.drawImage(animations[0][0][5], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    } else {
@@ -183,6 +200,7 @@ public class Sink extends Building {
 					plate.setClean();
 					plate.setCurrentStackCount(1);
 					gp.player.currentItem = plate;
+					litPlateImage = null;
 					clickCooldown = 8;
 					gp.player.resetAnimation(4);
 					 if (gp.multiplayer) {

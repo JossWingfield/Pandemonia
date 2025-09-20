@@ -19,6 +19,7 @@ public class Bin extends Building {
 	private Rectangle2D.Float binHitbox;
 	private boolean firstUpdate = true;
 	private int clickCooldown = 0;
+	private boolean open = false;
 	
 	public Bin(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -61,9 +62,16 @@ public class Bin extends Building {
 		}
 		
 		if(!binHitbox.intersects(gp.player.interactHitbox)) {
-			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			if(!open) {
+			}
+			open = true;
+		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		} else {
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			if(open) {
+			}
+			open = false;
+
+			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			if(clickCooldown == 0 && gp.keyI.ePressed) {
 				if(gp.player.currentItem != null) {
 					if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {

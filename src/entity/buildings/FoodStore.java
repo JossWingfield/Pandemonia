@@ -53,52 +53,42 @@ public class FoodStore extends Building {
 		switch(foodType) {
 		case 0:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128, 0, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128, 0, 16, 32);
     		animations[0][0][1] = highlightedImage.getSubimage(128, 0, 16, 32);
     		break;
 		case 1:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128+16, 0, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128+16, 0, 16, 32);
     		animations[0][0][1] = highlightedImage.getSubimage(128+16, 0, 16, 32);
 			break;
 		case 2:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128+32, 0, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128+32, 0, 16, 32);
     		animations[0][0][1] = highlightedImage.getSubimage(128+32, 0, 16, 32);
 			break;
 		case 3:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128+48, 0, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128+48, 0, 16, 32);
     		animations[0][0][1] = highlightedImage.getSubimage(128+48, 0, 16, 32);
 			break;
 		case 4:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128+64, 0, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128+64, 0, 16, 32);
     		animations[0][0][1] = highlightedImage.getSubimage(128+64, 0, 16, 32);
 			break;
 		case 5:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128, 32, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128, 32, 16, 32);
     		animations[0][0][1] = highlightedImage.getSubimage(128, 32, 16, 32);
     		break;
 		case 6:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128+16, 32, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128+16, 32, 16, 32);
     		animations[0][0][1] = highlightedImage.getSubimage(128+16, 32, 16, 32);
 			break;
 		case 7:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128+32, 32, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128+32, 32, 16, 32);
     		animations[0][0][1] = highlightedImage.getSubimage(128+32, 32, 16, 32);
 			break;
 		case 8:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128+48, 32, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128+48, 32, 16, 32);
     		animations[0][0][1] = highlightedImage.getSubimage(128+48, 32, 16, 32);
 			break;
 		case 9:
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128+64, 32, 16, 32);
-    	  	normalImage = importImage("/decor/general store propsNormal.png").getSubimage(128+64, 32, 16, 32);
     		animations[0][0][1] = importImage("/decor/general store props.png").getSubimage(128+64, 32, 16, 32);
 			break;
 		}
@@ -145,7 +135,7 @@ public class FoodStore extends Building {
 				}
 			}
 		} else {
-			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		}
 		
 		//g2.setColor(Color.YELLOW);

@@ -436,25 +436,13 @@ public class MapManager {
 		                if (tileIndex < 0 || tileIndex >= tiles.length) continue; // safety check
 		                
 		                if(!tiles[tileIndex].isWall && !tiles[tileIndex].isFloor && !tiles[tileIndex].isBeam) {
-			                if (currentRoom.tileImages[layer][i][j] == null) {
-			                	currentRoom.tileImages[layer][i][j] = gp.lightingM.getLitImage(tiles[tileIndex].image,tiles[tileIndex].normalImage, i*tileSize,j*tileSize);
-			                }
-		                	g.drawImage(currentRoom.tileImages[layer][i][j], i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize,null);
+		                	g.drawImage(tiles[tileIndex].image, i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize,null);
 		                } else if(tiles[tileIndex].isWall){
-		                	if (currentRoom.tileImages[layer][i][j] == null) {
-			                	currentRoom.tileImages[layer][i][j] = gp.lightingM.getLitImage(currentRoom.getWallpaper().getImage(tileIndex), currentRoom.getWallpaper().getNormalImage(tileIndex), i*tileSize,j*tileSize);
-			                }
-		                	g.drawImage(currentRoom.tileImages[layer][i][j], i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                	g.drawImage(currentRoom.getWallpaper().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
 		                } else if(tiles[tileIndex].isFloor){
-		                	if (currentRoom.tileImages[layer][i][j] == null) {
-			                	currentRoom.tileImages[layer][i][j] = gp.lightingM.getLitImage(currentRoom.getFloorpaper().getImage(tileIndex), currentRoom.getFloorpaper().getNormalImage(tileIndex), i*tileSize,j*tileSize);
-			                }
-		                	g.drawImage(currentRoom.tileImages[layer][i][j], i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                	g.drawImage(currentRoom.getFloorpaper().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
 		                } else {
-		                	if (currentRoom.tileImages[layer][i][j] == null) {
-			                	currentRoom.tileImages[layer][i][j] = gp.lightingM.getLitImage(currentRoom.getBeam().getImage(tileIndex), currentRoom.getBeam().getNormalImage(tileIndex), i*tileSize,j*tileSize);
-			                }
-		                	g.drawImage(currentRoom.tileImages[layer][i][j], i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                	g.drawImage(currentRoom.getBeam().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
 		                }
 	                }
 	            }
@@ -463,13 +451,10 @@ public class MapManager {
 	    public void drawBackground(Graphics2D g, float xDiff, float yDiff) {
 	        drawLayer(g, xDiff, yDiff, 0);
 	    }
-
 	    public void drawMidLayer(Graphics2D g, float xDiff, float yDiff) {
 	        drawLayer(g, xDiff, yDiff, 2);
 	    }
-
 	    public void drawForeground(Graphics2D g, float xDiff, float yDiff) {
-	        drawLayer(g, xDiff, yDiff, 3);
+	    	drawLayer(g, xDiff, yDiff, 3);
 	    }
-	
 }

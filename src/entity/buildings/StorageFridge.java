@@ -74,7 +74,6 @@ public class StorageFridge extends Building {
 		name = "Storage Fridge";
 		animations[0][0][0] = importImage("/decor/StorageFridge.png").getSubimage(0, 8, 8*2, 8*4);
 		animations[0][0][1] = importImage("/decor/StorageFridge.png").getSubimage(16, 8, 8*2, 8*4);
-		normalImage = importImage("/decor/kitchen propsNormal.png").getSubimage(96, 96, 32, 32);
 		ui1 = importImage("/UI/fridge/2.png");
     	ui2 = importImage("/UI/fridge/5.png");
     	ui3 = importImage("/UI/fridge/Hover.png");
@@ -86,8 +85,8 @@ public class StorageFridge extends Building {
 			fridgeHitbox = new Rectangle2D.Float(hitbox.x + 18, hitbox.y+hitbox.height, 14, 16);
 		}
 		
-	    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		 
+		g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+   		 
 		if(fridgeHitbox.intersects(gp.player.hitbox)) {
 		    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    if(gp.keyI.ePressed && clickCooldown == 0) {
