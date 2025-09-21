@@ -662,6 +662,7 @@ public class GamePanel extends JPanel implements Runnable {
 	            }
 		        
 		        world.drawFilters(g2);
+		        world.drawWeather(g2);
         }
         
         

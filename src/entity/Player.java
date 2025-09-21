@@ -138,8 +138,8 @@ public class Player extends Entity{
         xDiff = 0;
         yDiff = 0;
         
-        //playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.ORANGE, 40);
-        //gp.lightingM.addLight(playerLight);
+        playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.GREEN, 100);
+        gp.lightingM.addLight(playerLight);
         
         importImages();
     }
@@ -344,7 +344,7 @@ public class Player extends Entity{
                 }
             }
             
-            //gp.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
+            gp.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
             
             if(gp.multiplayer) {
 	            Packet02Move packet = new Packet02Move(getUsername(), (int)hitbox.x, (int)hitbox.y, currentAnimation, direction);

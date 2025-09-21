@@ -62,16 +62,9 @@ public class Bin extends Building {
 		}
 		
 		if(!binHitbox.intersects(gp.player.interactHitbox)) {
-			if(!open) {
-			}
-			open = true;
 		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		} else {
-			if(open) {
-			}
-			open = false;
-
-			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			if(clickCooldown == 0 && gp.keyI.ePressed) {
 				if(gp.player.currentItem != null) {
 					if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {

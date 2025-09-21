@@ -892,6 +892,11 @@ public class GUI {
 			}
 		}
 		
+		if(gp.world.currentWeather.equals(Weather.RAIN)) {
+			currentTimeAnimation = 3;
+		} else if(gp.world.currentWeather.equals(Weather.THUNDERSTORM)) {
+			currentTimeAnimation = 2;
+		}
 		g2.drawImage(timeAnimations[currentTimeAnimation][timeAnimationCounter], gp.frameWidth - (78*3) - 4, 4, 78*3, 77*3, null);
 		g2.drawImage(timeHeader, gp.frameWidth - (80*3), 4 + (77*3) - 2, 80*3, 16*3, null);
 		g2.drawImage(timeFrame, gp.frameWidth - (80*3), 4 + (77*3) - 2 + (16*3), 80*3, 16*3, null);
@@ -1278,6 +1283,25 @@ public class GUI {
 			drawCheckBoxHover(g2, x+boxOffset, y, 9*3, 9*3);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
             	Settings.fancyLighting = !Settings.fancyLighting;
+                clickCooldown = 20;
+            }
+        }
+		y += 20;
+		
+		y+=40;
+		g2.setColor(titleColour1);
+		text = "Bloom";
+		g2.drawString(text, x, y);
+		y-= 20;
+		if(Settings.bloomEnabled) {
+			g2.drawImage(checkedBox, x+boxOffset, y, 9*3, 9*3, null);
+		} else {
+			g2.drawImage(uncheckedBox, x+boxOffset, y, 9*3, 9*3, null);
+		}
+		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
+			drawCheckBoxHover(g2, x+boxOffset, y, 9*3, 9*3);
+            if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
+            	Settings.bloomEnabled = !Settings.bloomEnabled;
                 clickCooldown = 20;
             }
         }

@@ -10,6 +10,7 @@ import java.util.Random;
 import entity.buildings.Breaker;
 import entity.buildings.Parcel;
 import main.GamePanel;
+import map.LightSource;
 import map.Room;
 
 public class World {
@@ -45,6 +46,18 @@ public class World {
     private int maxEventInterval = 60 * 60*3;  // 3 in-game hour
     private DayPhase lastPhase = DayPhase.AFTER_HOURS;
     
+    // === Weather system ===
+    private boolean weatherOn = true;
+    public Weather currentWeather = Weather.SUNNY;
+    private int weatherTimer = 0;        // frames until weather changes
+    private int nextWeatherTime;        // random tick to trigger next weather change
+    private int minWeatherDuration = 60 * 60 * 1;
+    private int maxWeatherDuration = 60 * 60 * 3;
+    private boolean lightningSpawned = false;
+    private int lightningCounter = 0;
+    private int lightningTime = 5;
+    private LightSource lightningLight;
+    
     //Event Stuff
     private Color darkColour;
     private Breaker breaker;
@@ -71,6 +84,10 @@ public class World {
         currentSeason = Season.SUMMER;
         gp.mapM.setSeason(currentSeason);
         darkColour = new Color(51, 60, 58, 200);
+        
+        currentWeather = Weather.getRandom(random);
+        resetWeatherTimer(); // <- initialize nextWeatherTime
+        
         //gp.npcM.addStocker();
     }
 
@@ -293,6 +310,8 @@ public class World {
 	        
         }
         
+     updateWeather();
+        
      currentPhase = getCurrentPhase();
 
      // Phase change check
@@ -304,6 +323,7 @@ public class World {
          }
          lastPhase = currentPhase;
      }
+     
     }
     public boolean isPowerOn() {
     	if(breaker != null) {
@@ -437,6 +457,68 @@ public class World {
                 sleeping = false; // done fading
             }
         }
+    }
+    private void updateWeather() {
+        if (!weatherOn) return; // optional if you only want weather during events
+
+        Weather oldWeather = currentWeather;
+        weatherTimer++;
+        if (weatherTimer >= nextWeatherTime) {
+            // pick new weather avoiding repetition
+            Weather newWeather;
+            do {
+                newWeather = Weather.getRandom(random);
+            } while (newWeather == currentWeather);
+
+            currentWeather = newWeather;
+            resetWeatherTimer(); // schedule next change
+
+            if(currentWeather != oldWeather) {
+	            // Display message
+	            switch (currentWeather) {
+	                case SUNNY -> gp.gui.addMessage("The sun is shining!", Color.ORANGE);
+	                case RAIN -> gp.gui.addMessage("It's raining!", Color.CYAN);
+	                case THUNDERSTORM -> {
+	                    gp.gui.addMessage("A thunderstorm begins!", Color.BLUE);
+	                }
+	            }
+            }
+        }
+    }
+    public void drawWeather(Graphics2D g2) {
+        switch (currentWeather) {
+            case RAIN -> {
+                
+            }
+            case THUNDERSTORM -> {
+                if(!lightningSpawned) {
+                    if (random.nextFloat() < 0.01f) { // 1% chance per frame
+                    	addLightning();
+                    }
+                }
+            }
+            default -> {
+                // Sunny = no effect
+            }
+        }
+        if(lightningSpawned) {
+        	lightningCounter++;
+        	if(lightningCounter >= lightningTime) {
+        		lightningCounter = 0;
+        		lightningSpawned = false;
+        		gp.lightingM.removeLight(lightningLight);
+        	   	gp.screenShake(10, 5);
+        	}
+        }
+    }
+    private void resetWeatherTimer() {
+        weatherTimer = 0;
+        nextWeatherTime = random.nextInt(maxWeatherDuration - minWeatherDuration) + minWeatherDuration;
+    }
+    private void addLightning() {
+    	lightningSpawned = true;
+    	lightningLight = new LightSource(0, gp.frameHeight/2, Color.WHITE, 48*8*4);
+    	gp.lightingM.addLight(lightningLight);
     }
     public void drawFilters(Graphics2D g2) {
     	if(breaker != null) {
