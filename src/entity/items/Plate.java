@@ -23,6 +23,7 @@ public class Plate extends Item {
     private List<String> ingredients = new ArrayList<>();
     private List<BufferedImage> ingredientImages = new ArrayList<>();
     private Set<String> platableFoods = new HashSet<>();
+    private Set<String> bypassPlateFoods = new HashSet<>();
     private Recipe matchedRecipe;
 
     public Plate(GamePanel gp, float xPos, float yPos) {
@@ -39,6 +40,7 @@ public class Plate extends Item {
         platableFoods.add("Cheese");
         platableFoods.add("Chicken");
         platableFoods.add("Greens");
+        bypassPlateFoods.add("Chopped Tomatoes");
     }
     private void importImages() {
         animations = new BufferedImage[1][1][5];
@@ -107,6 +109,16 @@ public class Plate extends Item {
     	 }
     }
     public boolean canBePlated(String foodName, FoodState state) {
+    	
+        if (bypassPlateFoods.contains(foodName)) {
+        	 for (String ing : ingredients) {
+                 if (ing != null && ing.equals(foodName)) {
+                     return false;
+                 }
+             }
+        	 return true;
+        }
+    	
         // Only allow chopped or cooked
         if (state != FoodState.CHOPPED && state != FoodState.COOKED) {
             return false;

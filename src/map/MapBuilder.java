@@ -18,6 +18,7 @@ import entity.buildings.Bin;
 import entity.buildings.Breaker;
 import entity.buildings.Building;
 import entity.buildings.Calendar;
+import entity.buildings.Candle;
 import entity.buildings.Chair;
 import entity.buildings.ChoppingBoard;
 import entity.buildings.CornerTable;
@@ -28,6 +29,7 @@ import entity.buildings.FoodStore;
 import entity.buildings.Fridge;
 import entity.buildings.StorageFridge;
 import entity.buildings.Gate;
+import entity.buildings.Lantern;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.Sink;
@@ -147,6 +149,12 @@ public class MapBuilder {
 		buildings[totalBuildingCount] = new Window(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new EscapeHole(gp, 0, 0);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new Lantern(gp, 0, 0);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new Candle(gp, 0, 0, 0);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new Candle(gp, 0, 0, 1);
 		totalBuildingCount++;
 		for(int i = 0; i < 10; i++) {
 			buildings[totalBuildingCount] = new FoodStore(gp, 0, 0, i);

@@ -30,6 +30,8 @@ public class World {
 
     private int spawnTimer = 0;
     private int customerSpawnTimer = 60 * 12;
+    public int previousSoulsCollected = 0;
+    private boolean waitingForLevelUp = false;
 
     // === Menu system ===
     private List<Recipe> todaysMenu = new ArrayList<>();     // player-selected menu
@@ -163,7 +165,7 @@ public class World {
         eventTimer = 0;
         nextEventTime = random.nextInt(maxEventInterval - minEventInterval) + minEventInterval;
     }
-    private void powerCut() {
+    public void powerCut() {
     	Room electrics = gp.mapM.getRoom(3);
     	if(breaker == null) {
         	breaker = (Breaker)electrics.findBuildingWithName("Breaker");
@@ -320,8 +322,21 @@ public class World {
              gp.gui.addMessage("The restaurant is now OPEN!", Color.YELLOW);
          } else if (lastPhase == DayPhase.SERVICE) {
              gp.gui.addMessage("The restaurant is now CLOSED.", Color.YELLOW);
+
+             // Either trigger instantly OR wait
+             if (gp.mapM.isRoomEmpty(0)) {
+                 gp.gui.startLevelUpScreen();
+             } else {
+                 waitingForLevelUp = true;
+             }
          }
          lastPhase = currentPhase;
+     }
+
+     // Outside that, in update():
+     if (waitingForLevelUp && gp.mapM.isRoomEmpty(0)) {
+         gp.gui.startLevelUpScreen();
+         waitingForLevelUp = false; // reset
      }
      
     }
@@ -338,6 +353,8 @@ public class World {
             currentSeason = currentSeason.next();
             gp.mapM.setSeason(currentSeason);
         }
+        
+        previousSoulsCollected = gp.player.soulsServed;
         
         // If there was an order waiting, deliver a package
         if (orderList != null && !orderList.isEmpty()) {
@@ -520,11 +537,17 @@ public class World {
     	lightningLight = new LightSource(0, gp.frameHeight/2, Color.WHITE, 48*8*4);
     	gp.lightingM.addLight(lightningLight);
     }
+    public void removeLightning() {
+    	if(lightningSpawned) {
+    		lightningCounter = 0;
+    		lightningSpawned = false;
+    		gp.lightingM.removeLight(lightningLight);
+    	}
+    }
     public void drawFilters(Graphics2D g2) {
     	if(breaker != null) {
 	    	if(breaker.isPowerOff()) {
-	    		g2.setColor(darkColour);
-	    		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
+	    		gp.lightingM.setPowerOff();
 	    	}
     	}
     	  if (fadeAlpha > 0f) {

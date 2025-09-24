@@ -233,14 +233,21 @@ public class MapManager {
 	        }
 	    }
 	    public void changeRoom(int roomNum, Door previousDoor) {
+	    	gp.lightingM.removeLight(gp.player.playerLight);
+	    	gp.world.removeLightning();
 	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
 	    	currentRoom.editNPCs(gp.npcM.getNPCs());
 	    	currentRoom.editItems(gp.itemM.getItems());
+	    	currentRoom.editLights(gp.lightingM.getLights());
 	    	currentRoom = rooms[roomNum];
 	    	gp.buildingM.setBuildings(currentRoom.getBuildings());
 	    	gp.npcM.setNPCs(currentRoom.getNPCs());
 	    	gp.itemM.setItems(currentRoom.getItems());
+	    	gp.lightingM.setLights(currentRoom.getLights());
 	    	gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
+	    	if(!gp.world.isPowerOn()) {
+	    		gp.lightingM.addLight(gp.player.playerLight);
+	    	}
 	    	
 	    	Door door = (Door)gp.buildingM.findCorrectDoor(previousDoor.facing);
 	    	if(door != null) {
@@ -330,6 +337,13 @@ public class MapManager {
 				}
 			}
 			return null;
+		}
+		public boolean isRoomEmpty(int currentRoom) {
+			if(isInRoom(currentRoom)) {
+				return !gp.npcM.containsAnyNPC();
+			} else {
+				return !rooms[currentRoom].containsAnyNPC();
+			}
 		}
 		public Door findKitchenDoor(int roomNum) {
 			Room room = rooms[roomNum];

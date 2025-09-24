@@ -58,7 +58,7 @@ public class Bin extends Building {
 		
 		if(firstUpdate) {
 			firstUpdate = false;
-			binHitbox = new Rectangle2D.Float(hitbox.x + 22, hitbox.y+10, 10, 10);
+			binHitbox = new Rectangle2D.Float(hitbox.x + 22, hitbox.y+10, 10, 20);
 		}
 		
 		if(!binHitbox.intersects(gp.player.interactHitbox)) {
@@ -101,6 +101,10 @@ public class Bin extends Building {
 				}
 			}
 		}
+		
+	    //g2.setColor(Color.YELLOW);
+      	//g2.drawRect((int)binHitbox.x, (int)binHitbox.y, (int)binHitbox.width, (int)binHitbox.height);
+        
 		
 		if(clickCooldown > 0) {
 			clickCooldown--;

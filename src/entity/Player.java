@@ -64,6 +64,11 @@ public class Player extends Entity{
     public Item currentItem = null;
     private int clickCounter = 0;
     public Rectangle2D.Float interactHitbox;
+    
+    //ATTRIBUTES
+    public int level = 0;
+    public int soulsServed = 8;
+    public int nextLevelAmount = 10;
     public int wealth = 0;
     //HEALTH
     public boolean alive = true;
@@ -84,7 +89,7 @@ public class Player extends Entity{
     
     public int currentRoomIndex = 0;
     
-    private LightSource playerLight;
+    public LightSource playerLight;
     
     //INVENTORY
     //public Headgear currentHeadgear = null;
@@ -138,8 +143,7 @@ public class Player extends Entity{
         xDiff = 0;
         yDiff = 0;
         
-        playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.GREEN, 100);
-        gp.lightingM.addLight(playerLight);
+        playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.WHITE, 100);
         
         importImages();
     }
@@ -290,7 +294,7 @@ public class Player extends Entity{
                 } else if(!gp.buildingM.entityCheck(hitbox.x-currentSpeed, hitbox.y, hitbox.width, hitbox.height)) {
 
                 } else {
-                    hitbox.x = CollisionMethods.getWallPos(hitbox.x, gp);
+                	hitbox.x = CollisionMethods.getWallPos(hitbox.x, gp);
                 }
             } else if (keyI.right) { //Moving right
                 direction = 0;
@@ -338,14 +342,16 @@ public class Player extends Entity{
 	                    }
                     }
                 } else if(!gp.buildingM.entityCheck(hitbox.x, hitbox.y+currentSpeed, hitbox.width, hitbox.height)) {
-
+                	
                 } else {
                     hitbox.y = CollisionMethods.getFloorPos(hitbox.y + hitbox.height - 1, gp) - (hitbox.height- gp.tileSize);
                 }
             }
             
-            gp.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
-            
+            if(!gp.world.isPowerOn()) {
+            	gp.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
+            }
+            	
             if(gp.multiplayer) {
 	            Packet02Move packet = new Packet02Move(getUsername(), (int)hitbox.x, (int)hitbox.y, currentAnimation, direction);
 	            packet.writeData(gp.socketClient);

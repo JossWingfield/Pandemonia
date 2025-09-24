@@ -151,9 +151,13 @@ public class Customer extends NPC {
 	    searchPath(goalCol, goalRow);
 	    
 	    if(doorHitbox.intersects(hitbox)) {
+	    	removeLights();
 	    	gp.npcM.removeNPC(this);
 	    }
     }
+	protected void removeLights() {
+		
+	}
 	private void makeOrder() {
 		foodOrder = gp.world.getRandomMenuRecipe();
 		RecipeManager.addOrder(foodOrder);
@@ -195,6 +199,8 @@ public class Customer extends NPC {
 	    if(addTip) {
 	    	gp.player.wealth += tip;
 	    }
+	    
+	    gp.player.soulsServed++;
 
 	    // clean up
 	    RecipeManager.removeOrder(foodOrder);

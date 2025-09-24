@@ -12,6 +12,7 @@ public class Recipe {
     public BufferedImage finishedPlate, dirtyPlate;
     private List<String> cookingStates, secondaryCookingStates;
     private int baseCost;
+    public boolean isCursed = false;
 
     public Recipe(String name, List<String> requiredIngredients, List<String> cookingStates, List<String> secondaryCookingStates, boolean orderMatters, BufferedImage finishedImage, BufferedImage dirtyImage, int cost) {
         this.name = name;
@@ -47,6 +48,9 @@ public class Recipe {
 
             return requiredCount.equals(plateCount);
         }
+    }
+    public void setCursed() {
+    	isCursed = true;
     }
     public List<String> getIngredients() {
     	return requiredIngredients;

@@ -37,6 +37,7 @@ public class GUI {
     private BufferedImage settingsFrame, generalSettingsFrame, videoSettingsFrame, audioSettingsFrame, multiplayerSettingsFrame;
     private BufferedImage[] computerAnimations;
     private BufferedImage shoppingUI, shoppingButtonUI, leftArrow, rightArrow, basketUI, basketButtons;
+    private BufferedImage leftProgress1, leftProgress2, middleProgress1, middleProgress2, rightProgress1, rightProgress2;
     
 	//COLOURS
 	private Color darkened;
@@ -70,12 +71,20 @@ public class GUI {
 	private boolean hostSelected = false;
 	private boolean joinSelected = false;
 	
+	//XP
+	public int displayedSouls;     // what we currently draw
+	public int targetSouls;        // where to animate to
+	public boolean animatingSouls; // true while animating
+	private int soulCounter = 0;
+	
 	//USERNAME
 	public String username = "";
 	public boolean usernameActive = false; // whether user is typing
 	private int caretBlinkCounter = 0; // blinking cursor effect
+	private boolean levelUp = false;
 	
 	private Map<Recipe, RecipeRenderData> renderCache = new HashMap<>();
+	public Recipe[] recipeChoices;
 	
 	//SETTINGS STATES
 	private int settingsState = 0;
@@ -84,6 +93,7 @@ public class GUI {
 	private final int videoState = 2;
 	private final int audioState = 3;
 	private final int multiplayerState = 4;
+
 
 	public GUI(GamePanel gp) {
 		this.gp = gp;
@@ -161,6 +171,13 @@ public class GUI {
 		checkedBox = importImage("/UI/settings/CheckBox.png").getSubimage(9, 0, 9, 9);
 		underline = importImage("/UI/settings/Underline.png");
 		
+		leftProgress1 = importImage("/UI/levels/LeftProgress.png").getSubimage(0, 0, 46/2, 20);	
+		leftProgress2 = importImage("/UI/levels/LeftProgress.png").getSubimage(46/2, 0, 46/2, 20);	
+		middleProgress1 = importImage("/UI/levels/MiddleProgress.png").getSubimage(0, 0, 6, 20);	
+		middleProgress2 = importImage("/UI/levels/MiddleProgress.png").getSubimage(6, 0, 6, 20);	
+		rightProgress1 = importImage("/UI/levels/RightProgress.png").getSubimage(0, 0, 12, 20);	
+		rightProgress2 = importImage("/UI/levels/RightProgress.png").getSubimage(12, 0, 12, 20);	
+
 	}
 	protected BufferedImage[] importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height) {
 		BufferedImage animations[] = new BufferedImage[20];
@@ -802,6 +819,12 @@ public class GUI {
 			break;
 		case 11:
 			drawCatalogueState(g2);
+			break;
+		case 12:
+			drawXPScreen(g2);
+			break;
+		case 13:
+			drawRecipeSelectScreen(g2);
 			break;
 		}
 		
@@ -1469,15 +1492,144 @@ public class GUI {
 		}
 		
 	}
+	public void drawXPScreen(Graphics2D g2) {
+		g2.setColor(darkened);
+		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
+		
+		if (animatingSouls) {
+		    if (displayedSouls < targetSouls) {
+		        soulCounter++;
+		        if(soulCounter >= 6) {
+			        displayedSouls ++;
+			        soulCounter = 0;
+		        }
+		    } else {
+		        displayedSouls = targetSouls;
+		        animatingSouls = false;
+		    }
+		}
+		if (displayedSouls == 0) {
+		    g2.drawImage(leftProgress1, 200, gp.frameHeight/2 - 30, 23*3, 20*3, null);
+		} else {
+		    g2.drawImage(leftProgress2, 200, gp.frameHeight/2 - 30, 23*3, 20*3, null);
+		}
+
+		for (int i = 0; i < gp.player.nextLevelAmount - 2; i++) {
+		    if (i + 2 > displayedSouls) {
+		        g2.drawImage(middleProgress1, 200 + 23*3 + 6*3*i, gp.frameHeight/2 - 30, 6*3, 20*3, null);
+		    } else {
+		        g2.drawImage(middleProgress2, 200 + 23*3 + 6*3*i, gp.frameHeight/2 - 30, 6*3, 20*3, null);
+		    }
+		}
+
+		if (displayedSouls >= gp.player.nextLevelAmount) {
+			levelUp = true;
+		    g2.drawImage(rightProgress2, 200 + 23*3 + 6*3*(gp.player.nextLevelAmount - 2), gp.frameHeight/2 - 30, 12*3, 20*3, null);
+		} else {
+		    g2.drawImage(rightProgress1, 200 + 23*3 + 6*3*(gp.player.nextLevelAmount - 2), gp.frameHeight/2 - 30, 12*3, 20*3, null);
+		}
+		
+		if(displayedSouls == gp.player.soulsServed) {
+			if(!levelUp) {
+				if(gp.mouseI.leftClickPressed) {
+					gp.currentState = gp.playState;
+				}
+			}
+		}
+		
+		if(levelUp) {
+			levelUp = false;
+			gp.currentState = gp.chooseRecipeState;
+		}
+		
+	}
+	private void drawRecipeSelectScreen(Graphics2D g2) {
+		g2.setColor(darkened);
+		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
+
+	    if (recipeChoices == null) {
+	    	recipeChoices = RecipeManager.getTwoRandomLocked();
+	    }
+
+	    if(true) {
+	    	
+	    }
+	    int x = 400;
+	    int y = gp.frameHeight/2 - 100;
+	    if(isHovering(x, y, 32*3, 48*3)) {
+	    	if(gp.mouseI.leftClickPressed) {
+	    		RecipeManager.unlockRecipe(recipeChoices[0]);
+	    		gp.currentState = gp.playState;
+	    	}
+	    }
+	    drawRecipe(g2, recipeChoices[0], x, y);
+	    
+	    x = 600;
+	    if(isHovering(x, y, 32*3, 48*3)) {
+	    	if(gp.mouseI.leftClickPressed) {
+	       		RecipeManager.unlockRecipe(recipeChoices[1]);
+	    		gp.currentState = gp.playState;
+	    	}
+	    }
+	    drawRecipe(g2, recipeChoices[1], x, y);
+	}
+    private void drawRecipe(Graphics2D g2, Recipe recipe, int x, int y) {
+		// BASE
+		g2.drawImage(recipeBorder, x, y, 32 * 3, 48 * 3, null);
+
+		// INGREDIENT IMAGES
+		List<String> ingredients = recipe.getIngredients();
+		List<String> cookingState = recipe.getCookingStates();
+		List<String> secondaryCookingState = recipe.getSecondaryCookingStates();
+		for (int j = 0; j < ingredients.size(); j++) {
+			String ingredientName = ingredients.get(j);
+			BufferedImage ingredientImage = gp.itemRegistry.getImageFromName(ingredientName);
+			Food ingredient = (Food)gp.itemRegistry.getItemFromName(ingredientName, 0);
+			if(ingredient.notRawItem) {
+				ingredientImage = gp.itemRegistry.getRawIngredientImage(ingredientName);
+			}
+			if (ingredientImage != null) {
+				// Draw each ingredient image 32px apart above the order box
+				g2.drawImage(ingredientImage, x + j * (10*3) + 4, y + 4, 10*3, 10*3, null);
+				g2.drawImage(gp.recipeM.getIconFromName(cookingState.get(j)), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3, null);
+				g2.drawImage(gp.recipeM.getIconFromName(secondaryCookingState.get(j)), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3, null);
+			}
+		}
+		
+		// NAME
+		g2.setColor(orderTextColour);
+		g2.setFont(nameFont);
+		int counter = 0;
+		for(String line: recipe.getName().split(" ")) {
+            g2.drawString(line, x + (48 - getTextWidth(line, g2) / 2.0f), y + 84 + counter);
+            counter += 15;
+        }
+		// PLATE IMAGE
+		g2.drawImage(recipe.finishedPlate, x + 24, y + 94, 48, 48, null);
+		
+		g2.drawImage(coinImage, x, y + 94 + 48, 48, 48, null);
+		
+		g2.setColor(Color.WHITE);
+		g2.setFont(timeFont);
+		g2.drawString(Integer.toString(recipe.getCost(gp.world.isRecipeSpecial(recipe))), x + 48+8, y + 94 + 48+32);
+
+    }
+	public void startLevelUpScreen() {
+		gp.currentState = gp.xpState;
+		displayedSouls = gp.world.previousSoulsCollected;
+		targetSouls = gp.player.soulsServed;
+		animatingSouls = true;
+		soulCounter = 0;
+	}
 	public void resetComputerAnimations() {
 		computerAnimationSpeed = 0;
 		computerAnimationCounter = 0;
 	}
 	public void addMessage(String text) {
-	    addMessage(text, 480, Color.YELLOW);
+	    addMessage(text, 320, Color.YELLOW);
 	}
 	public void addMessage(String text, Color color) {
-	    addMessage(text, 480, color);
+	    addMessage(text, 320, color);
 	}
 
 	public void addMessage(String text, int lifetime, Color color) {

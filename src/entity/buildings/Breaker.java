@@ -7,11 +7,14 @@ import java.awt.image.BufferedImage;
 
 import entity.npc.Customer;
 import main.GamePanel;
+import map.LightSource;
 
 public class Breaker extends Building{
 	
+	private LightSource light;
 	private Rectangle2D.Float interactHitbox;
 	private boolean powerOn = true;
+	private boolean firstUpdate = true;
 	
 	public Breaker(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48*2, 48*2);
@@ -45,12 +48,20 @@ public class Breaker extends Building{
     }
 	public void cutPower() {
 		powerOn = false;
+		gp.lightingM.updateLightColor(3, light, Color.RED);
+		gp.lightingM.addLight(gp.player.playerLight);
 	}
 	public boolean isPowerOff() {
 		return !powerOn;
 	}
+	public void update() {
+		if(firstUpdate) {
+			firstUpdate = false;
+			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.GREEN, 200);
+			gp.mapM.getRoom(3).addLight(light);
+		}
+	}
 	public void draw(Graphics2D g2) {
-		 		
 		if(powerOn) {
 		    if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			    g2.drawImage(animations[0][0][2], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
@@ -58,11 +69,15 @@ public class Breaker extends Building{
 			    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    }
 		} else {
+			  gp.lightingM.updateLightColor(3, light, Color.RED);
 			if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			    g2.drawImage(animations[0][0][3], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			    if(gp.keyI.ePressed) {
 			    	powerOn = true;
 			    	gp.gui.addMessage("Power Back Online", Color.GREEN);
+			    	gp.lightingM.removeLight(gp.player.playerLight);
+			    	gp.lightingM.setPowerOn();
+					gp.lightingM.updateLightColor(3, light, Color.GREEN);
 			    }
 			} else {
 			    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);

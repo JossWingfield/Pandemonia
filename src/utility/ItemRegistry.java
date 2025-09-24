@@ -12,6 +12,7 @@ import entity.items.Chicken;
 import entity.items.ChickenPieces;
 import entity.items.ChoppedTomatoes;
 import entity.items.Corn;
+import entity.items.CursedGreens;
 import entity.items.Egg;
 import entity.items.Fish;
 import entity.items.Food;
@@ -61,6 +62,7 @@ public class ItemRegistry {
 			case "Chopped Tomatoes" -> i = new ChoppedTomatoes(gp, 0, 0);
 			case "Spaghetti" -> i = new Spaghetti(gp, 0, 0);
 			case "Penne" -> i = new Penne(gp, 0, 0);
+			case "Cursed Greens" -> i = new CursedGreens(gp, 0, 0);
 			case "Burnt Food" -> i = new BurntFood(gp, 0, 0);
 			case "Plate" -> i = new Plate(gp, 0, 0);
 			case "Frying Pan" -> i = new FryingPan(gp, 0, 0);

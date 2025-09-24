@@ -351,7 +351,7 @@ public class MenuSign extends Building {
 		g2.setFont(timeFont);
 		g2.drawString(Integer.toString(recipe.getCost(gp.world.isRecipeSpecial(recipe))), x + 48+8, y + 94 + 48+32);
 
-}
+    }
     private int getTextWidth(String text, Graphics2D g2) {
         return (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
     }

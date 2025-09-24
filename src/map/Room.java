@@ -12,6 +12,7 @@ import entity.buildings.Bin;
 import entity.buildings.Breaker;
 import entity.buildings.Building;
 import entity.buildings.Calendar;
+import entity.buildings.Candle;
 import entity.buildings.Chair;
 import entity.buildings.ChoppingBoard;
 import entity.buildings.CornerTable;
@@ -22,6 +23,7 @@ import entity.buildings.FoodStore;
 import entity.buildings.Fridge;
 import entity.buildings.StorageFridge;
 import entity.buildings.Gate;
+import entity.buildings.Lantern;
 import entity.buildings.Leak;
 import entity.buildings.MenuSign;
 import entity.buildings.Sink;
@@ -56,6 +58,7 @@ public class Room {
 	private Building[] buildings;
 	private List<NPC> npcs = new ArrayList<>();
     private List<Item> items = new ArrayList<>(); 
+    private List<LightSource> lights = new ArrayList<>(); 
 	public int buildingArrayCounter = 0;
 	public boolean shouldUpdate = false;
 	private int preset;
@@ -188,8 +191,6 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Chair(gp, 708, 324);
 			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 648, 132, 5);
-			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 156, 24);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 444, 144, 25);
@@ -199,8 +200,6 @@ public class Room {
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 384, 5);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 636, 312, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 552, 132, 4);
 			arrayCounter++;
 			buildings[arrayCounter] = new Fridge(gp, 588, 204);
 			arrayCounter++;
@@ -261,6 +260,16 @@ public class Room {
 			buildings[arrayCounter] = new TablePlate(gp, 756, 276, 2);
 			arrayCounter++;
 			buildings[arrayCounter] = new TablePlate(gp, 756, 312, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 636, 132);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 504, 132);
+			arrayCounter++;
+			buildings[arrayCounter] = new Candle(gp, 756, 408, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new Candle(gp, 756, 336, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new Candle(gp, 348, 372, 1);
 			arrayCounter++;
 			break;
 		case 1:
@@ -357,6 +366,8 @@ public class Room {
 			door = new Door(gp, 672+24, 216+48, 3, 0);
 			door.setDoorNum(3);
 			buildings[arrayCounter] = door;
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 660, 156);
 			arrayCounter++;
 			break;
 		case 2:
@@ -1673,6 +1684,14 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new ToiletDoor(gp, 672, 396, 0);
 			arrayCounter++;
+			buildings[arrayCounter] = new Candle(gp, 516, 468, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new Candle(gp, 636, 468, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 432, 180);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 672, 180);
+			arrayCounter++;
 			break;
 		case 5:
 			door = new Door(gp, 420, 504+48, 1, 0);
@@ -1716,6 +1735,12 @@ public class Room {
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 588, 396, 25);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 612, 432, 20);
+			arrayCounter++;
+			buildings[arrayCounter] = new Candle(gp, 576, 432, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 480, 132);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 624, 132);
 			arrayCounter++;
 			break;
 		}
@@ -1868,6 +1893,9 @@ public class Room {
     public List<Item> getItems() {
     	return items;
     } 
+    public List<LightSource> getLights() {
+    	return lights;
+    } 
     public void editBuildings(Building[] buildings, int index) {
     	this.buildings = buildings;
     	this.buildingArrayCounter = index;
@@ -1877,6 +1905,9 @@ public class Room {
     }
     public void editItems(List<Item> items) {
     	this.items = items;
+    }
+    public void editLights(List<LightSource> lights) {
+    	this.lights = lights;
     }
     public void addNPC(NPC npc) {
      	npcs.add(npc);
@@ -2015,6 +2046,9 @@ public class Room {
 			buildings[buildingArrayCounter] = new Spill(gp, 9*gp.tileSize - 24, 9*gp.tileSize);
 			buildingArrayCounter++;
 		}
+	}
+	public void addLight(LightSource light) {
+		lights.add(light);
 	}
     public void clearRoomTiles() {
     	tileImages = null;

@@ -13,7 +13,8 @@ public class RecipeManager {
     private static final List<Recipe> allRecipes = new ArrayList<>();   // all possible recipes
     private static final List<Recipe> unlockedRecipes = new ArrayList<>(); // currently unlocked recipes
     private static final List<Recipe> currentOrders = new ArrayList<>();
-
+    private static final List<Recipe> cursedRecipes = new ArrayList<>(); 
+    
     private static final Random random = new Random();
 
     private BufferedImage panIcon, choppedIcon, potIcon, ovenIcon;
@@ -134,7 +135,7 @@ public class RecipeManager {
                 null,
                 7
             );
-        registerRecipe(spaghettiNapoli);
+        registerRecipe(penneNapoli);
         Recipe penneMeatballs = new Recipe(
                 "Meatballs",
                 Arrays.asList("Penne", "Chopped Tomatoes", "Meatball"),
@@ -201,23 +202,47 @@ public class RecipeManager {
                 10
             );
         registerRecipe(spaghettiDiavola);
+        Recipe salad = new Recipe(
+                "Salad",
+                Arrays.asList("Greens", "Chopped Tomatoes"),
+                Arrays.asList("Chopping Board", "Chopping Board"),
+                Arrays.asList("", ""),
+                false, 
+                importImage("/food/Salad.png"),
+                null,
+                5
+            );
+        registerRecipe(salad);
+        Recipe bruschetta = new Recipe(
+                "Bruschetta",
+                Arrays.asList("Bread", "Chopped Tomatoes"),
+                Arrays.asList("Chopping Board", "Chopping Board"),
+                Arrays.asList("", ""),
+                false, 
+                importImage("/food/Bruschetta.png"),
+                null,
+                5
+            );
+        registerRecipe(salad);
+        Recipe cursedGreens = new Recipe(
+                "Cursed Salad",
+                Arrays.asList("Cursed Greens", "Chopped Tomatoes"),
+                Arrays.asList("Chopping Board", "Chopping Board"),
+                Arrays.asList("", ""),
+                false, 
+                importImage("/food/cursed/CursedGreens.png"),
+                null,
+                15
+            );
+        registerCursedRecipe(cursedGreens);
 
         // Unlock some recipes at the start of the game
         unlockRecipe(fish);
         unlockRecipe(egg);
         unlockRecipe(friedEgg);
-        unlockRecipe(steak);
-        unlockRecipe(eggSandwich);
-        unlockRecipe(cheeseSandwich);
-        unlockRecipe(spaghettiNapoli);
-        unlockRecipe(penneNapoli);
-        unlockRecipe(penneMeatballs);
-        unlockRecipe(spaghettiMeatballs);
-        unlockRecipe(spaghettiCarbonara);
-        unlockRecipe(penneCarbonara);
-        unlockRecipe(penneDiavola);
-        unlockRecipe(spaghettiDiavola);
-
+        unlockRecipe(bruschetta);
+        unlockRecipe(salad);
+        
         // Icons
         panIcon = importImage("/UI/recipe/Icons.png").getSubimage(0, 0, 16, 16);
         choppedIcon = importImage("/UI/recipe/Icons.png").getSubimage(32, 0, 16, 16);
@@ -229,7 +254,24 @@ public class RecipeManager {
     public static void registerRecipe(Recipe recipe) {
         allRecipes.add(recipe);
     }
-
+    public static void registerCursedRecipe(Recipe recipe) {
+        cursedRecipes.add(recipe);
+    }
+    public static Recipe[] getTwoRandomLocked() {
+        List<Recipe> locked = getLockedRecipes();
+        if (locked.size() < 2) return null; // not enough locked recipes
+        Recipe r1 = locked.get(random.nextInt(locked.size()));
+        Recipe r2;
+        do {
+            r2 = locked.get(random.nextInt(locked.size()));
+        } while (r1 == r2);
+        return new Recipe[] { r1, r2 };
+    }
+    public static List<Recipe> getLockedRecipes() {
+        List<Recipe> locked = new ArrayList<>(allRecipes);
+        locked.removeAll(unlockedRecipes);
+        return locked;
+    }
     // Unlocking system
     public static void unlockRecipe(Recipe recipe) {
         if (!unlockedRecipes.contains(recipe)) {

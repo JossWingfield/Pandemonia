@@ -129,6 +129,9 @@ public class NPCManager {
             }
         }
     }
+    public boolean containsAnyNPC() {
+        return npcs.size() > 0;
+    }
     //Draw the item hitboxes
     public void drawNPCHitboxes(Graphics2D g) {
         for(NPC i: npcs) { //Loops through the items on the current map

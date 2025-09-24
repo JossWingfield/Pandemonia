@@ -40,9 +40,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.BindException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -90,9 +87,9 @@ public class GamePanel extends JPanel implements Runnable {
     public GUI gui = new GUI(this);
     public ArrayList<Entity> updateEntityList = new ArrayList<>();
     public ArrayList<Entity> entityList = new ArrayList<>();
-    public LightingManager lightingM = new LightingManager(this);
     public ItemRegistry itemRegistry = new ItemRegistry(this);
     public World world = new World(this);
+    public LightingManager lightingM = new LightingManager(this);
     public Customiser customiser = new Customiser(this);
     public Catalogue catalogue = new Catalogue(this);
     public RecipeManager recipeM = new RecipeManager();
@@ -114,6 +111,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int lanJoinMenuState = 9;
     public final int customiseRestaurantState = 10;
     public final int catalogueState = 11;
+    public final int xpState = 12;
+    public final int chooseRecipeState = 13;
 
     // AESTHETICS
     private Color backgroundColour = new Color(51, 60, 58);
@@ -154,6 +153,11 @@ public class GamePanel extends JPanel implements Runnable {
         this.addMouseMotionListener(mouseI);
         screenWidth = (int)(frameWidth);
         screenHeight = (int)(frameHeight);
+        Graphics2D warm = colorBuffer.createGraphics();
+        warm.setComposite(AlphaComposite.SrcOver);
+        warm.setColor(Color.BLACK);
+        warm.fillRect(0, 0, frameWidth, frameHeight);
+        warm.dispose();
     }
     
     public void playSinglePlayer() {
@@ -437,7 +441,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
     	if(freezeCounter == 0) {
-	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState) {
+	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState) {
 		    	if(firstUpdate) {
 		    		firstUpdate = false;
 		    	}
@@ -510,10 +514,9 @@ public class GamePanel extends JPanel implements Runnable {
     
     public void draw(Graphics2D g2) {
         
-        if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == catalogueState || currentState == customiseRestaurantState) {
+        if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == catalogueState || currentState == customiseRestaurantState || currentState == xpState) {
         	
         	Graphics2D gColor = colorBuffer.createGraphics();
-            
             gColor.setComposite(AlphaComposite.Clear);
             gColor.fillRect(0, 0, frameWidth, frameHeight);
             gColor.setComposite(AlphaComposite.SrcOver);

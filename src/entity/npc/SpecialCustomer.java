@@ -1,9 +1,12 @@
 package entity.npc;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.GamePanel;
+import map.LightSource;
 import utility.RecipeManager;
 import utility.RoomHelperMethods;
 
@@ -14,6 +17,8 @@ public class SpecialCustomer extends Customer {
 	
 	private int specialType;
 	private float moneyMultiplier = 1.0f;
+	
+	private LightSource ghostLight;
 	
 	private boolean isCelebrity = false;
 	
@@ -50,6 +55,8 @@ public class SpecialCustomer extends Customer {
 		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
 		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png");
 			moneyMultiplier = 2.0f;
+			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.BLUE, 48);
+			gp.lightingM.addLight(ghostLight);
 			break;
 		case 1: //Impatient but pays slightly more
 			moneyMultiplier = 1.5f;
@@ -82,6 +89,9 @@ public class SpecialCustomer extends Customer {
 			break;
 		}
 		
+	}
+	protected void removeLights() {
+		gp.lightingM.removeLight(ghostLight);
 	}
 	public void completeOrder() {
 	    if(foodOrder == null) return;
@@ -129,6 +139,13 @@ public class SpecialCustomer extends Customer {
 				RoomHelperMethods.setCelebrityPresent(gp.mapM.getRoom(0).getNPCs(), false);
 			}
 		}
+	}
+	public void draw(Graphics2D g2) {
+		if(specialType == 0) {
+			gp.lightingM.moveLight(ghostLight, (int)(hitbox.x + hitbox.width/2 - 8), (int)(hitbox.y +  hitbox.height/2));
+		}
+		super.draw(g2);
+        
 	}
 	
 	

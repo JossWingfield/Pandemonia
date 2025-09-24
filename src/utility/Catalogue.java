@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import entity.buildings.Building;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
+import entity.buildings.Lantern;
 import entity.buildings.Sink;
 import entity.buildings.Toilet;
 import entity.buildings.WallDecor_Building;
@@ -111,6 +112,7 @@ public class Catalogue {
 		addToInventory(new Beam(gp, 2));
 		addToInventory(new Beam(gp, 3));
 		addToInventory(new Beam(gp, 4));
+		addToInventory(new Lantern(gp, 0, 0));
 	}
 	private BufferedImage importImage(String filePath) { //Imports and stores the image
         BufferedImage importedImage = null;
