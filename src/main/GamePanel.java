@@ -37,6 +37,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.BindException;
@@ -62,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
     private int errorCounter = 0;
 
     public ArrayList<PlayerMP> playerList;
-
+    
     // SETTINGS
     private final int FPS = 60; //The frames per second the game is updated and drawn at
     private final double optimalLoopTime = 1000000000 / FPS; //The optimal time for the game loop
@@ -133,12 +134,8 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean firstUpdate = true;
     
     //LIGHTING
-    // Instead of drawing directly to g2, do this:
-    BufferedImage colorBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
-    BufferedImage normalBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
-    BufferedImage lightBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
-
-    Graphics2D gColor = colorBuffer.createGraphics();
+    private BufferedImage colorBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
+    private Graphics2D gColor;
 
 
     // INITIATES PANEL SETTINGS
@@ -158,6 +155,12 @@ public class GamePanel extends JPanel implements Runnable {
         warm.setColor(Color.BLACK);
         warm.fillRect(0, 0, frameWidth, frameHeight);
         warm.dispose();
+        gColor = colorBuffer.createGraphics();
+    	gColor.setComposite(AlphaComposite.SrcOver);
+    	gColor.setColor(backgroundColour);
+    	gColor.fillRect(0, 0, frameWidth, frameHeight);
+        gColor.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF));
+
     }
     
     public void playSinglePlayer() {
@@ -516,10 +519,11 @@ public class GamePanel extends JPanel implements Runnable {
         
         if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == catalogueState || currentState == customiseRestaurantState || currentState == xpState) {
         	
-        	Graphics2D gColor = colorBuffer.createGraphics();
-            gColor.setComposite(AlphaComposite.Clear);
-            gColor.fillRect(0, 0, frameWidth, frameHeight);
-            gColor.setComposite(AlphaComposite.SrcOver);
+        	gColor = colorBuffer.createGraphics();
+        	gColor.setComposite(AlphaComposite.SrcOver);
+        	gColor.setColor(backgroundColour);
+        	gColor.fillRect(0, 0, frameWidth, frameHeight);
+            gColor.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF));
 
         	
         		int xDiff = player.xDiff;

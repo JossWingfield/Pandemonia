@@ -48,12 +48,13 @@ public class SpecialCustomer extends Customer {
         yDrawOffset = 36*drawScale;
 		
 		specialType = r.nextInt(4);
+		specialType = 4;
 
 		switch(specialType) {
 		case 0: //Rich, pays double
-			importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
-		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
-		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png");
+			importPlayerSpriteSheet("/npcs/special/Idle", 4, 1, 0, 0, 0, 80, 80);
+		    importPlayerSpriteSheet("/npcs/special/Run", 8, 1, 1, 0, 0, 80, 80);
+		    faceIcon = importImage("/npcs/special/BasicFaceIcon.png");
 			moneyMultiplier = 2.0f;
 			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.BLUE, 48);
 			gp.lightingM.addLight(ghostLight);
@@ -86,6 +87,14 @@ public class SpecialCustomer extends Customer {
 			 importPlayerSpriteSheet("/npcs/special/Idle", 4, 1, 0, 0, 0, 80, 80);
 		     importPlayerSpriteSheet("/npcs/special/Run", 8, 1, 1, 0, 0, 80, 80);
 		     faceIcon = importImage("/npcs/special/BasicFaceIcon.png");
+			break;
+		case 4: //Rich, pays double
+			importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
+		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
+		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png");
+			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.BLUE, 48);
+			gp.lightingM.addLight(ghostLight);
+			isGhost = true;
 			break;
 		}
 		
@@ -141,7 +150,7 @@ public class SpecialCustomer extends Customer {
 		}
 	}
 	public void draw(Graphics2D g2) {
-		if(specialType == 0) {
+		if(isGhost) {
 			gp.lightingM.moveLight(ghostLight, (int)(hitbox.x + hitbox.width/2 - 8), (int)(hitbox.y +  hitbox.height/2));
 		}
 		super.draw(g2);

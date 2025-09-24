@@ -18,6 +18,7 @@ public class RecipeManager {
     private static final Random random = new Random();
 
     private BufferedImage panIcon, choppedIcon, potIcon, ovenIcon;
+    private BufferedImage panIcon2, choppedIcon2, potIcon2, ovenIcon2;
 
     public RecipeManager() {
         // Register all recipes here (master list)
@@ -223,18 +224,19 @@ public class RecipeManager {
                 null,
                 5
             );
-        registerRecipe(salad);
+        registerRecipe(bruschetta);
         Recipe cursedGreens = new Recipe(
                 "Cursed Salad",
                 Arrays.asList("Cursed Greens", "Chopped Tomatoes"),
                 Arrays.asList("Chopping Board", "Chopping Board"),
                 Arrays.asList("", ""),
                 false, 
-                importImage("/food/cursed/CursedGreens.png"),
+                importImage("/food/cursed/CursedGreens.png").getSubimage(16, 0, 16, 16),
                 null,
                 15
             );
         registerCursedRecipe(cursedGreens);
+        cursedGreens.setCursed();
 
         // Unlock some recipes at the start of the game
         unlockRecipe(fish);
@@ -248,6 +250,10 @@ public class RecipeManager {
         choppedIcon = importImage("/UI/recipe/Icons.png").getSubimage(32, 0, 16, 16);
         potIcon = importImage("/UI/recipe/Icons.png").getSubimage(16, 0, 16, 16);
         ovenIcon = importImage("/UI/recipe/Icons.png").getSubimage(48, 0, 16, 16);
+        panIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(0, 0, 16, 16);
+        choppedIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(32, 0, 16, 16);
+        potIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(16, 0, 16, 16);
+        ovenIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(48, 0, 16, 16);
     }
 
     // Register to master list (but not unlocked yet)
@@ -293,21 +299,40 @@ public class RecipeManager {
                 return recipe;
             }
         }
-        return null;
-    }
-    public BufferedImage getIconFromName(String name) {
-        switch(name) {
-            case "Pan": return panIcon;
-            case "Pot": return potIcon;
-            case "Chopping Board": return choppedIcon;
-            case "Oven": return ovenIcon;
+        for (Recipe recipe : cursedRecipes) { // only match unlocked ones
+            if (recipe.matches(plateIngredients)) {
+                return recipe;
+            }
         }
         return null;
+    }
+    public BufferedImage getIconFromName(String name, boolean isCursed) {
+    	if(!isCursed) {
+	        switch(name) {
+	            case "Pan": return panIcon;
+	            case "Pot": return potIcon;
+	            case "Chopping Board": return choppedIcon;
+	            case "Oven": return ovenIcon;
+	        }
+	        return null;
+    	} else {
+    		switch(name) {
+            case "Pan": return panIcon2;
+            case "Pot": return potIcon2;
+            case "Chopping Board": return choppedIcon2;
+            case "Oven": return ovenIcon2;
+        }
+        return null;
+    	}
     }
 
     public static Recipe getRandomRecipe() {
         if (unlockedRecipes.isEmpty()) return null;
         return unlockedRecipes.get(random.nextInt(unlockedRecipes.size()));
+    }   
+    public static Recipe getRandomCursedRecipe() {
+        if (cursedRecipes.isEmpty()) return null;
+        return cursedRecipes.get(random.nextInt(cursedRecipes.size()));
     }
 
     public static void addOrder(Recipe recipe) {

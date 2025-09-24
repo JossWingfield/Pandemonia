@@ -50,6 +50,7 @@ public class Customer extends NPC {
 	private int flickerSpeed = 30; // frames per toggle
 	protected boolean celebrityPresent = false;
 	public boolean hideOrder = false;
+	protected boolean isGhost = false;
 
 	// Tip multipliers
 	protected float greenTipMultiplier = 1.0f;
@@ -159,7 +160,11 @@ public class Customer extends NPC {
 		
 	}
 	private void makeOrder() {
-		foodOrder = gp.world.getRandomMenuRecipe();
+		if(isGhost) {
+			foodOrder = RecipeManager.getRandomCursedRecipe();
+		} else {
+			foodOrder = gp.world.getRandomMenuRecipe();
+		}
 		RecipeManager.addOrder(foodOrder);
 		ordered = true;
 		gp.gui.addOrder(foodOrder, this, g2);

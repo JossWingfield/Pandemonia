@@ -34,6 +34,7 @@ import entity.buildings.Table2;
 import entity.buildings.TablePlate;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
+import entity.buildings.Trapdoor;
 import entity.buildings.WallDecor_Building;
 import entity.buildings.Window;
 import entity.buildings.outdoor.OutdoorDecor;
@@ -136,6 +137,16 @@ public class Room {
 		    roomID = "/bedroom";
 		    roomIDTag = "Layer";
 		    setWallpaper(4);
+			setFloorpaper(0);
+			setBeam(4);
+			break;
+		case 6:
+			roomType = "Basement";
+			filePath = "/maps/basement/Layer";
+		    importMap(filePath, mapWidth, mapHeight);
+		    roomID = "/basement";
+		    roomIDTag = "Layer";
+		    setWallpaper(5);
 			setFloorpaper(0);
 			setBeam(4);
 			break;
@@ -363,11 +374,13 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 624, 456, 40);
 			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 660, 156);
+			arrayCounter++;
+			buildings[arrayCounter] = new Trapdoor(gp, 468, 300);
+			arrayCounter++;
 			door = new Door(gp, 672+24, 216+48, 3, 0);
 			door.setDoorNum(3);
 			buildings[arrayCounter] = door;
-			arrayCounter++;
-			buildings[arrayCounter] = new Lantern(gp, 660, 156);
 			arrayCounter++;
 			break;
 		case 2:
@@ -1742,6 +1755,9 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Lantern(gp, 624, 132);
 			arrayCounter++;
+			break;
+		case 6:
+			
 			break;
 		}
 		buildingArrayCounter = arrayCounter;

@@ -29,7 +29,7 @@ public class GUI {
 	GamePanel gp;
 	
 	//IMAGES
-    private BufferedImage recipeBorder, timeBorder, timeHeader, timeFrame, coinImage, mysteryOrder;
+    private BufferedImage recipeBorder, timeBorder, timeHeader, timeFrame, coinImage, mysteryOrder, cursedRecipeBorder;
     private BufferedImage[][] timeAnimations;
     private BufferedImage[][] titleBookAnimations;
     private BufferedImage titleBackground;
@@ -178,6 +178,8 @@ public class GUI {
 		rightProgress1 = importImage("/UI/levels/RightProgress.png").getSubimage(0, 0, 12, 20);	
 		rightProgress2 = importImage("/UI/levels/RightProgress.png").getSubimage(12, 0, 12, 20);	
 
+		cursedRecipeBorder = importImage("/UI/recipe/HauntedOrderBorder.png");
+		
 	}
 	protected BufferedImage[] importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height) {
 		BufferedImage animations[] = new BufferedImage[20];
@@ -865,7 +867,12 @@ public class GUI {
 		            g2.drawImage(data.secondaryCookingStateIcons.get(j), dx, dy + 40, 30, 30, null);
 		        }
 
-		        g2.setColor(orderTextColour);
+		        if(!recipe.isCursed) {
+			        g2.setColor(orderTextColour);
+		        } else {
+		        	g2.setColor(Color.WHITE);
+		        }
+
 		        g2.setFont(nameFont);
 		        int counter = 0;
 		        for (int l = 0; l < data.nameLines.size(); l++) {
@@ -969,7 +976,11 @@ public class GUI {
 	    data.customer = customer;
 
 	    // Cache base images
-	    data.borderImage = recipeBorder;
+	    if(recipe.isCursed) {
+		    data.borderImage = cursedRecipeBorder;
+	    } else {
+		    data.borderImage = recipeBorder;
+	    }
 	    data.mysteryOrderImage = mysteryOrder;
 	    data.coinImage = coinImage;
 	    data.plateImage = recipe.finishedPlate;
@@ -990,10 +1001,10 @@ public class GUI {
 	        }
 
 	        data.ingredientImages.add(ingredientImage);
-	        data.cookingStateIcons.add(gp.recipeM.getIconFromName(cookingState.get(j)));
-	        data.secondaryCookingStateIcons.add(gp.recipeM.getIconFromName(secondaryCookingState.get(j)));
+	        data.cookingStateIcons.add(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed));
+	        data.secondaryCookingStateIcons.add(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed));
 	    }
-
+	    
 	    // Cache text layout
 	    g2.setFont(nameFont);
 	    for (String line : recipe.getName().split(" ")) {
@@ -1591,8 +1602,8 @@ public class GUI {
 			if (ingredientImage != null) {
 				// Draw each ingredient image 32px apart above the order box
 				g2.drawImage(ingredientImage, x + j * (10*3) + 4, y + 4, 10*3, 10*3, null);
-				g2.drawImage(gp.recipeM.getIconFromName(cookingState.get(j)), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3, null);
-				g2.drawImage(gp.recipeM.getIconFromName(secondaryCookingState.get(j)), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3, null);
+				g2.drawImage(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3, null);
+				g2.drawImage(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3, null);
 			}
 		}
 		

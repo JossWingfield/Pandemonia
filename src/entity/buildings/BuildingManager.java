@@ -220,6 +220,9 @@ public class BuildingManager {
 				if(b.getName().equals("Door 1")) {
 					Door door = (Door)b;
 					door.cooldown = 10;
+				} else if(b.getName().equals("Trapdoor 1")) {
+					Trapdoor door = (Trapdoor)b;
+					door.cooldown = 10;
 				}
 			}
 		}

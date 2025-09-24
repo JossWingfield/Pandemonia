@@ -288,8 +288,8 @@ public class MenuSign extends Building {
 				if (ingredientImage != null) {
 					// Draw each ingredient image 32px apart above the order box
 					g2.drawImage(ingredientImage, x + j * (10*3) + 4, y + 4, 10*3, 10*3, null);
-					g2.drawImage(gp.recipeM.getIconFromName(cookingState.get(j)), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3, null);
-					g2.drawImage(gp.recipeM.getIconFromName(secondaryCookingState.get(j)), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3, null);
+					g2.drawImage(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3, null);
+					g2.drawImage(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3, null);
 				}
 			}
 			
@@ -329,8 +329,8 @@ public class MenuSign extends Building {
 			if (ingredientImage != null) {
 				// Draw each ingredient image 32px apart above the order box
 				g2.drawImage(ingredientImage, x + j * (10*3) + 4, y + 4, 10*3, 10*3, null);
-				g2.drawImage(gp.recipeM.getIconFromName(cookingState.get(j)), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3, null);
-				g2.drawImage(gp.recipeM.getIconFromName(secondaryCookingState.get(j)), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3, null);
+				g2.drawImage(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3, null);
+				g2.drawImage(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3, null);
 			}
 		}
 		

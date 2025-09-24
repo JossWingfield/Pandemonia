@@ -39,6 +39,7 @@ import entity.buildings.Table2;
 import entity.buildings.TablePlate;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
+import entity.buildings.Trapdoor;
 import entity.buildings.WallDecor_Building;
 import entity.buildings.Window;
 import entity.buildings.outdoor.OutdoorDecor;
@@ -155,6 +156,8 @@ public class MapBuilder {
 		buildings[totalBuildingCount] = new Candle(gp, 0, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Candle(gp, 0, 0, 1);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new Trapdoor(gp, 0, 0);
 		totalBuildingCount++;
 		for(int i = 0; i < 10; i++) {
 			buildings[totalBuildingCount] = new FoodStore(gp, 0, 0, i);

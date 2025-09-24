@@ -14,6 +14,7 @@ import entity.buildings.Door;
 import entity.buildings.EscapeHole;
 import entity.buildings.Fridge;
 import entity.buildings.StorageFridge;
+import entity.buildings.Trapdoor;
 import entity.npc.NPC;
 import main.GamePanel;
 import net.packets.Packet02Move;
@@ -52,6 +53,7 @@ public class MapManager {
 	        rooms[3] = new Room(gp, 3); //Electrics
 	        rooms[4] = new Room(gp, 4); //Toilet
 	        rooms[5] = new Room(gp, 5); //Bedroom
+	        rooms[6] = new Room(gp, 6); //Basement
 	        
 	        currentMapHeight = currentRoom.mapHeight;
 	        currentMapWidth = currentRoom.mapWidth;
@@ -265,6 +267,52 @@ public class MapManager {
 	    			gp.player.hitbox.y = door.hitbox.y+80-48;
 	    		}
 	    	}
+	    	gp.buildingM.setDoorCooldowns();
+	    	currentMapWidth = currentRoom.mapWidth;
+	    	currentMapHeight = currentRoom.mapHeight;
+	    	gp.player.reCalculateMaxDiffVals();
+	    	gp.player.setDiffValues();
+	    	gp.player.currentRoomIndex = roomNum;
+	    	if(gp.multiplayer) {
+	            Packet05ChangeRoom packet = new Packet05ChangeRoom(gp.player.getUsername(), roomNum);
+	            packet.writeData(gp.socketClient);
+            }
+	    }
+	    public void changeRoom(int roomNum, Trapdoor trapdoor) {
+	    	gp.lightingM.removeLight(gp.player.playerLight);
+	    	gp.world.removeLightning();
+	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
+	    	currentRoom.editNPCs(gp.npcM.getNPCs());
+	    	currentRoom.editItems(gp.itemM.getItems());
+	    	currentRoom.editLights(gp.lightingM.getLights());
+	    	currentRoom = rooms[roomNum];
+	    	gp.buildingM.setBuildings(currentRoom.getBuildings());
+	    	gp.npcM.setNPCs(currentRoom.getNPCs());
+	    	gp.itemM.setItems(currentRoom.getItems());
+	    	gp.lightingM.setLights(currentRoom.getLights());
+	    	gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
+	    	if(!gp.world.isPowerOn()) {
+	    		gp.lightingM.addLight(gp.player.playerLight);
+	    	}
+	    	
+	    	/*
+	    	Door door = (Door)gp.buildingM.findCorrectDoor(previousDoor.facing);
+	    	if(door != null) {
+    			gp.player.hitbox.x = door.hitbox.x + door.hitbox.width/2 - gp.player.hitbox.width/2;
+	    		if(door.facing == 0) {
+		    		gp.player.hitbox.y = door.hitbox.y+door.hitbox.height-48;
+	    		} else {
+	    			gp.player.hitbox.y = door.hitbox.y+16-48;
+	    		}
+	    		if(door.facing == 2) {
+	    			gp.player.hitbox.x = door.hitbox.x;
+	    			gp.player.hitbox.y = door.hitbox.y+80-48;
+	    		} else if(door.facing == 3) {
+	    			gp.player.hitbox.x = door.hitbox.x;
+	    			gp.player.hitbox.y = door.hitbox.y+80-48;
+	    		}
+	    	}
+	    	*/
 	    	gp.buildingM.setDoorCooldowns();
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;
