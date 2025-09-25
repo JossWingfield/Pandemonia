@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -15,6 +16,7 @@ import entity.buildings.EscapeHole;
 import entity.buildings.Fridge;
 import entity.buildings.StorageFridge;
 import entity.buildings.Trapdoor;
+import entity.npc.Customer;
 import entity.npc.NPC;
 import main.GamePanel;
 import net.packets.Packet02Move;
@@ -375,6 +377,27 @@ public class MapManager {
 							return door;
 						}
 					}	
+				}
+			}
+			return null;
+		}
+		public Customer findCustomerWaiting(int roomNum) {
+			Customer c = null;
+			if(isInRoom(roomNum)) {
+				c = gp.npcM.findWaitingCustomer();
+				return c;
+			}
+			Room room = rooms[roomNum];
+			List<NPC> npcs = room.getNPCs();
+			for(NPC b: npcs) {
+				if(b != null) {
+					if(b instanceof Customer customer) {
+						if(customer.waitingToOrder) {
+							if(customer.atTable) {
+								return customer;
+							}
+						}
+					}
 				}
 			}
 			return null;

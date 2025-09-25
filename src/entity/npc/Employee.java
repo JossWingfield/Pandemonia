@@ -22,7 +22,7 @@ public class Employee extends NPC {
 	
 	private void importImages() {
 		animations = new BufferedImage[1][2][2];
-		animations[0][0][0] = importImage("/npcs/Chicken 3.png").getSubimage(0, 0, 16, 32);
+		//animations[0][0][0] = importImage("/npcs/Chicken 3.png").getSubimage(0, 0, 16, 32);
 	}
 	/*
 	protected void walkToTable() {

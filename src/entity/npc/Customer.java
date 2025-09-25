@@ -17,12 +17,12 @@ import utility.RoomHelperMethods;
 public class Customer extends NPC {
 	
 	private int type;
-	private boolean atTable = false;
+	public boolean atTable = false;
 	private boolean walking = false;
 	private boolean ordered = false;
 	protected boolean eating = false;
 	private boolean leaving = false;
-	protected boolean waitingToOrder = false;
+	public boolean waitingToOrder = false;
 	private boolean goingToToilet = false;
 	private boolean inToilet = false;
 	private boolean onToilet = false;
@@ -59,6 +59,8 @@ public class Customer extends NPC {
 	
 	public BufferedImage faceIcon;
 	private Graphics2D g2;
+	
+	public Rectangle2D.Float talkHitbox;
 
 	public Customer(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -73,6 +75,8 @@ public class Customer extends NPC {
 		
 		type = r.nextInt(7);
 		
+		talkHitbox = new Rectangle2D.Float(hitbox.x - 16, hitbox.y - 16, hitbox.width + 32, hitbox.height + 32);
+
 		doorHitbox = new Rectangle2D.Float(9*48, 11*48, 48, 48);
 		
 		if(RoomHelperMethods.isCelebrityPresent(gp.mapM.getRoom(0).getNPCs())) {
@@ -409,7 +413,8 @@ public class Customer extends NPC {
 	    } else {
 	    	currentAnimation = 0;
 	    }
-	    
+	      talkHitbox.x = hitbox.x - 16;
+	      talkHitbox.y = hitbox.y - 16;
 	}
 	public void setCelebrityPresent(boolean isPresent) {
 		celebrityPresent = isPresent;
@@ -457,6 +462,7 @@ public class Customer extends NPC {
 	    	  animationSpeed = 0;
 	          animationCounter++;
 	      }
+	      
 	      if(animations != null) {
 	    	  if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
 	    		  animationCounter = 0; //Loops the animation

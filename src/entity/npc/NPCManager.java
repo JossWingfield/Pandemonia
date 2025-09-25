@@ -35,6 +35,10 @@ public class NPCManager {
     	npcs.add(stocker);
     	//gp.mapM.addNPCToRoom(stocker, 0);
     }
+    public void addServer() {
+    	Server server = new Server(gp, 10*48, 9*48);
+    	npcs.add(server);
+    }
     public void addRat() {
     	int x = 0;
     	int y = 0;
@@ -79,6 +83,20 @@ public class NPCManager {
 	public void addSpecialCustomer() {
 		Customer customer = new SpecialCustomer(gp, 10*48, 9*48);
     	npcs.add(customer);
+	}
+	public Customer findWaitingCustomer() {
+		for(NPC b: npcs) {
+			if(b != null) {
+				if(b instanceof Customer customer) {
+					if(customer.waitingToOrder) {
+						if(customer.atTable) {
+							return customer;
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
     public boolean entityCheck(float x, float y, float w, float h) {
 		Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, w, h);

@@ -90,7 +90,7 @@ public class World {
         currentWeather = Weather.getRandom(random);
         resetWeatherTimer(); // <- initialize nextWeatherTime
         
-        //gp.npcM.addStocker();
+        gp.npcM.addServer();
     }
 
     // === Specials generation ===
