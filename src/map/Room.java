@@ -173,6 +173,14 @@ public class Room {
 			door.setDoorNum(4);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 708, 444, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 708, 276, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 708, 324, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 372, 432, 3);
+			arrayCounter++;
 			
 			buildings[arrayCounter] = new WallDecor_Building(gp, 336, 156, 9);
 			arrayCounter++;
@@ -198,12 +206,6 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 240, 20);
 			arrayCounter++;
-			buildings[arrayCounter] = new Chair(gp, 708, 444);
-			arrayCounter++;
-			buildings[arrayCounter] = new Chair(gp, 708, 276);
-			arrayCounter++;
-			buildings[arrayCounter] = new Chair(gp, 708, 324);
-			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 156, 24);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 444, 144, 25);
@@ -222,8 +224,6 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 456, 252, 6);
 			arrayCounter++;
-			buildings[arrayCounter] = new Chair(gp, 372, 432);
-			arrayCounter++;
 			buildings[arrayCounter] = new CornerTable(gp, 612, 384, 3);
 			arrayCounter++;
 			buildings[arrayCounter] = new CornerTable(gp, 348, 252, 0);
@@ -231,10 +231,6 @@ public class Room {
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 312, 8);
 			arrayCounter++;
 			buildings[arrayCounter] = new Table2(gp, 348, 468);
-			arrayCounter++;
-			buildings[arrayCounter] = new TablePlate(gp, 396, 468, 3);
-			arrayCounter++;
-			buildings[arrayCounter] = new TablePlate(gp, 756, 432, 2);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 384, 15);
 			arrayCounter++;
@@ -260,8 +256,6 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Table(gp, 756, 276);
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 264, 26);
-			arrayCounter++;
 			buildings[arrayCounter] = new Sink(gp, 348, 300);
 			arrayCounter++;
 			buildings[arrayCounter] = new MenuSign(gp, 636, 372);
@@ -269,10 +263,6 @@ public class Room {
 			buildings[arrayCounter] = new Bin(gp, 384, 240);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 372, 0);
-			arrayCounter++;
-			buildings[arrayCounter] = new TablePlate(gp, 756, 276, 2);
-			arrayCounter++;
-			buildings[arrayCounter] = new TablePlate(gp, 756, 312, 2);
 			arrayCounter++;
 			buildings[arrayCounter] = new Lantern(gp, 636, 132);
 			arrayCounter++;
@@ -2038,7 +2028,7 @@ public class Room {
 		return null;
 	}
     public void addCustomer() {
-    	Customer customer = new Customer(gp, 10*48, 9*48);
+    	Customer customer = new Customer(gp, 10*48, 11*48);
     	npcs.add(customer);
     }
 	public Chair findFreeChair() {
@@ -2046,7 +2036,7 @@ public class Room {
 			if(b != null) {
 				if(b.getName().equals("Chair 1")) {
 					Chair chair = (Chair)b;
-					if(chair.available) {
+					if(chair.available && !chair.tablePlate.showDirtyPlate) {
 						chair.available = false;
 						return chair;
 					}

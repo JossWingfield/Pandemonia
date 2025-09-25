@@ -48,7 +48,6 @@ public class SpecialCustomer extends Customer {
         yDrawOffset = 36*drawScale;
 		
 		specialType = r.nextInt(4);
-		specialType = 4;
 
 		switch(specialType) {
 		case 0: //Rich, pays double

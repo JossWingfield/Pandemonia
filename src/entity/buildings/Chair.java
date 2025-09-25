@@ -11,9 +11,13 @@ public class Chair extends Building {
 	
 	public boolean available = true;
 	public Customer currentCustomer;
+	private int facing;
+	public TablePlate tablePlate = null;
+	private boolean firstUpdate = true;
 	
-	public Chair(GamePanel gp, float xPos, float yPos) {
+	public Chair(GamePanel gp, float xPos, float yPos, int direction) {
 		super(gp, xPos, yPos, 48, 48);
+		this.facing = direction;
 		
 		isSolid = true;
 		blueprint = false;
@@ -26,7 +30,7 @@ public class Chair extends Building {
 		mustBePlacedOnFloor = true;
 	}
 	public Building clone() {
-		Chair building = new Chair(gp, hitbox.x, hitbox.y);
+		Chair building = new Chair(gp, hitbox.x, hitbox.y, facing);
 		return building;
     }
 	public void printOutput() {
@@ -43,6 +47,11 @@ public class Chair extends Building {
 		currentCustomer = customer;
 	}
 	public void draw(Graphics2D g2) {
+		if(firstUpdate) {
+			tablePlate = new TablePlate(gp, hitbox.x, hitbox.y, facing, this);
+			gp.buildingM.addBuilding(tablePlate);
+			firstUpdate = false;
+		}
 		 
 	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	 

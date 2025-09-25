@@ -17,10 +17,10 @@ public class TablePlate extends Building {
 	private Chair chair;
 	private Customer currentCustomer;
 	private boolean orderCompleted = false;
-	private boolean showDirtyPlate = false;
+	public boolean showDirtyPlate = false;
 	private Plate plate;
 	
-	public TablePlate(GamePanel gp, float xPos, float yPos, int direction) {
+	public TablePlate(GamePanel gp, float xPos, float yPos, int direction, Chair chair) {
 		super(gp, xPos, yPos, 48, 48);
 		this.direction = direction;
 		
@@ -29,19 +29,34 @@ public class TablePlate extends Building {
 		drawHeight = 16*3;
 		importImages();
 		isSolid = false;
-		isFourthLayer = true;
+		//isSecondLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
+		this.chair = chair;
+		switch(direction) {
+		case 0:
+			hitbox.y = chair.hitbox.y - 48;
+			break;
+		case 1:
+			hitbox.x = chair.hitbox.x - 48;
+			break;
+		case 2:
+			hitbox.x = chair.hitbox.x + 48;
+			break;
+		case 3:
+			hitbox.y = chair.hitbox.y + 48;
+			break;
+		}
 	}
 	public Building clone() {
-		TablePlate building = new TablePlate(gp, hitbox.x, hitbox.y, direction);
+		TablePlate building = new TablePlate(gp, hitbox.x, hitbox.y, direction, chair);
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new TablePlate(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + direction + ");");
-		System.out.println("arrayCounter++;");	
+		//System.out.println("buildings[arrayCounter] = new TablePlate(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + direction + ");");
+		//System.out.println("arrayCounter++;");	
 	}
-	 private void initInteractHitbox() {
+	private void initInteractHitbox() {
 	        float baseX = hitbox.x;
 	        float baseY = hitbox.y;
 
@@ -114,17 +129,13 @@ public class TablePlate extends Building {
 			initInteractHitbox();
 			firstUpdate = false;
 		}
-		
-		if(chair == null) {
-			chair = gp.buildingM.findChair(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
-		} else {
-			if(!chair.available) {
-				if(currentCustomer == null) {
-					currentCustomer = chair.currentCustomer;
-				}
+		if(!chair.available) {
+			if(currentCustomer == null) {
+				currentCustomer = chair.currentCustomer;
 			}
 		}
-		 
+	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+	     
 		if(currentCustomer != null) {
 		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
 		}

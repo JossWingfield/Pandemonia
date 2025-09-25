@@ -26,7 +26,7 @@ public class NPCManager {
         this.gp = gp;
     }
     public void addCustomer() {
-    	Customer customer = new Customer(gp, 10*48, 9*48);
+    	Customer customer = new Customer(gp, 10*48, 11*48);
     	npcs.add(customer);
     	//gp.mapM.addNPCToRoom(customer, 0);
     }

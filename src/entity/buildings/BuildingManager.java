@@ -291,7 +291,7 @@ public class BuildingManager {
 			if(b != null) {
 				if(b.getName().equals("Chair 1")) {
 					Chair chair = (Chair)b;
-					if(chair.available) {
+					if(chair.available && !chair.tablePlate.showDirtyPlate) {
 						chair.available = false;
 						return chair;
 					}

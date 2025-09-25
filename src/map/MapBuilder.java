@@ -95,7 +95,7 @@ public class MapBuilder {
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Cauldron(gp, 0, 0);
 		totalBuildingCount++;
-		buildings[totalBuildingCount] = new Chair(gp, 0, 0);
+		buildings[totalBuildingCount] = new Chair(gp, 0, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Table(gp, 0, 0);
 		totalBuildingCount++;
@@ -118,14 +118,6 @@ public class MapBuilder {
 		buildings[totalBuildingCount] = new Bin(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Table2(gp, 0, 0);
-		totalBuildingCount++;
-		buildings[totalBuildingCount] = new TablePlate(gp, 0, 0, 0);
-		totalBuildingCount++;
-		buildings[totalBuildingCount] = new TablePlate(gp, 0, 0, 1);
-		totalBuildingCount++;
-		buildings[totalBuildingCount] = new TablePlate(gp, 0, 0, 2);
-		totalBuildingCount++;
-		buildings[totalBuildingCount] = new TablePlate(gp, 0, 0, 3);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Door(gp, 0, 0, 0, 0);
 		totalBuildingCount++;

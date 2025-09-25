@@ -67,7 +67,7 @@ public class Player extends Entity{
     
     //ATTRIBUTES
     public int level = 0;
-    public int soulsServed = 8;
+    public int soulsServed = 0;
     public int nextLevelAmount = 10;
     public int wealth = 0;
     //HEALTH
