@@ -40,6 +40,7 @@ public class Plate extends Item {
         platableFoods.add("Cheese");
         platableFoods.add("Chicken");
         platableFoods.add("Greens");
+        platableFoods.add("Cursed Greens");
         bypassPlateFoods.add("Chopped Tomatoes");
     }
     private void importImages() {

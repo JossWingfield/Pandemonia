@@ -340,6 +340,17 @@ public class BuildingManager {
 		}
 		return null;
 	}
+	public Trapdoor findTrapdoor() {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Trapdoor 1")) {
+					Trapdoor door = (Trapdoor)b;
+					return door;
+				}	
+			}
+		}
+		return null;
+	}
 	public Chair isFreeChair() {
 		for(Building b: buildings) {
 			if(b != null) {

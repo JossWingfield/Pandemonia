@@ -295,24 +295,17 @@ public class MapManager {
 	    		gp.lightingM.addLight(gp.player.playerLight);
 	    	}
 	    	
-	    	/*
-	    	Door door = (Door)gp.buildingM.findCorrectDoor(previousDoor.facing);
-	    	if(door != null) {
-    			gp.player.hitbox.x = door.hitbox.x + door.hitbox.width/2 - gp.player.hitbox.width/2;
-	    		if(door.facing == 0) {
-		    		gp.player.hitbox.y = door.hitbox.y+door.hitbox.height-48;
+	    	Trapdoor newTrapdoor = (Trapdoor)gp.buildingM.findTrapdoor();
+	    	if(newTrapdoor != null) {
+    			gp.player.hitbox.x = newTrapdoor.hitbox.x + newTrapdoor.hitbox.width/2 - gp.player.hitbox.width/2;
+	    		if(newTrapdoor.type == 0) {
+	    			gp.player.hitbox.y = newTrapdoor.hitbox.y;
+	    			gp.player.hitbox.x -= 24;
 	    		} else {
-	    			gp.player.hitbox.y = door.hitbox.y+16-48;
-	    		}
-	    		if(door.facing == 2) {
-	    			gp.player.hitbox.x = door.hitbox.x;
-	    			gp.player.hitbox.y = door.hitbox.y+80-48;
-	    		} else if(door.facing == 3) {
-	    			gp.player.hitbox.x = door.hitbox.x;
-	    			gp.player.hitbox.y = door.hitbox.y+80-48;
+	    			gp.player.hitbox.y = newTrapdoor.hitbox.y + newTrapdoor.hitbox.height;
 	    		}
 	    	}
-	    	*/
+	    	
 	    	gp.buildingM.setDoorCooldowns();
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;

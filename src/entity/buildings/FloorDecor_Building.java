@@ -737,6 +737,48 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnFloor = true;
         	break;
+        case 64:
+            name = "Book 1";
+        	animations[0][0][0] = importImage("/decor/shelf.png").getSubimage(64, 400, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	break;
+        case 65:
+            name = "Book 2";
+        	animations[0][0][0] = importImage("/decor/shelf.png").getSubimage(80, 400, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	break;
+        case 66:
+            name = "Book 3";
+        	animations[0][0][0] = importImage("/decor/shelf.png").getSubimage(96, 400, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	break;
+        case 67:
+            name = "Book 4";
+        	animations[0][0][0] = importImage("/decor/shelf.png").getSubimage(112, 400, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	break;
+        case 68:
+            name = "Book 5";
+        	animations[0][0][0] = importImage("/decor/shelf.png").getSubimage(64, 368, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	break;
+        case 69:
+            name = "Book 6";
+        	animations[0][0][0] = importImage("/decor/shelf.png").getSubimage(64+16, 368+16, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	break;
         }
 		
 	}

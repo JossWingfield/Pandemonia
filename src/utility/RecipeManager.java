@@ -292,7 +292,22 @@ public class RecipeManager {
     public static List<Recipe> getAllRecipes() {
         return new ArrayList<>(allRecipes);
     }
-
+    public static boolean areHauntedRecipesPresent() {
+    	for (Recipe recipe : currentOrders) {
+            if(recipe.isCursed) {
+            	return true;
+            }
+        }
+    	return false;
+    }
+    public static String getCurrentHauntedIngredient() {
+    	for (Recipe recipe : currentOrders) {
+            if(recipe.isCursed) {
+            	return recipe.getIngredients().get(0);
+            }
+        }
+    	return null;
+    }
     public static Recipe getMatchingRecipe(List<String> plateIngredients) {
         for (Recipe recipe : unlockedRecipes) { // only match unlocked ones
             if (recipe.matches(plateIngredients)) {

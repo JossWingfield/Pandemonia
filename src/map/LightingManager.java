@@ -518,7 +518,7 @@ public class LightingManager {
         Color ambient;
         float intensity;
 
-        if (!powerOff) {
+        if (!powerOff && !gp.mapM.isInRoom(6)) {
             if (time >= 6 && time < 12) {
                 float t = (time - 6f) / 6f;
                 ambient = lerpColor(morning, noon, t);

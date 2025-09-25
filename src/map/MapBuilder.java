@@ -19,6 +19,7 @@ import entity.buildings.Breaker;
 import entity.buildings.Building;
 import entity.buildings.Calendar;
 import entity.buildings.Candle;
+import entity.buildings.Cauldron;
 import entity.buildings.Chair;
 import entity.buildings.ChoppingBoard;
 import entity.buildings.CornerTable;
@@ -33,6 +34,7 @@ import entity.buildings.Lantern;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.Sink;
+import entity.buildings.SoulLantern;
 import entity.buildings.Stove;
 import entity.buildings.Table;
 import entity.buildings.Table2;
@@ -79,15 +81,19 @@ public class MapBuilder {
 	}
 	
 	private void addBuildings() {
-		for(int i = 0; i < 26; i++) {
+		for(int i = 0; i < 28; i++) {
 			buildings[totalBuildingCount] = new WallDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
-		for(int i = 0; i < 64; i++) {
+		for(int i = 0; i < 70; i++) {
 			buildings[totalBuildingCount] = new FloorDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
 		buildings[totalBuildingCount] = new Gate(gp, 0, 0);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new SoulLantern(gp, 0, 0);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new Cauldron(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Chair(gp, 0, 0);
 		totalBuildingCount++;
@@ -157,7 +163,9 @@ public class MapBuilder {
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Candle(gp, 0, 0, 1);
 		totalBuildingCount++;
-		buildings[totalBuildingCount] = new Trapdoor(gp, 0, 0);
+		buildings[totalBuildingCount] = new Trapdoor(gp, 0, 0, 0);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new Trapdoor(gp, 0, 0, 1);
 		totalBuildingCount++;
 		for(int i = 0; i < 10; i++) {
 			buildings[totalBuildingCount] = new FoodStore(gp, 0, 0, i);

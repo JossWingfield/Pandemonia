@@ -217,6 +217,28 @@ public class WallDecor_Building extends Building {
 	         animations[0][0][0] = importImage("/decor/bathroom props.png").getSubimage(208, 160, 16, 16);
 	         isBathroomBuilding = true;
 	         break;
+		 case 26:
+			 name = "Wolf Head";
+	         animations[0][0][0] = importImage("/decor/animal wall decor.png").getSubimage(64, 32, 32, 32);
+	         isSolid = true;
+	         isFourthLayer = true;
+	         isDecor = true;
+	 		 drawWidth = 32*3;
+			 drawHeight = 32*3;
+			 xDrawOffset = 24;
+			 yDrawOffset = 24;
+	         break;
+		 case 27:
+			 name = "Ram Skull";
+	         animations[0][0][0] = importImage("/decor/animal wall decor.png").getSubimage(0, 0, 32, 32);
+	         isSolid = true;
+	         isFourthLayer = true;
+	         isDecor = true;
+	 		 drawWidth = 32*3;
+			 drawHeight = 32*3;
+			 xDrawOffset = 24;
+			 yDrawOffset = 24;
+	         break;
         }
 		
 	}
