@@ -39,6 +39,14 @@ public class KeyboardInput implements KeyListener {
     public void keyPressed(KeyEvent e) { //Sets each boolean to true if the corresponding key is pressed
         int num = e.getKeyCode();
         if(gp.currentState == gp.playState) {
+        	
+        	if(num == KeyEvent.VK_4) {
+        		gp.saveM.saveGame();
+        	}
+        	
+        	if(num == KeyEvent.VK_5) {
+        		gp.saveM.loadGame();
+        	}
 
             //MAIN INPUTS
             if (num == KeyEvent.VK_A || num == KeyEvent.VK_LEFT) {
@@ -71,7 +79,7 @@ public class KeyboardInput implements KeyListener {
             	ePressed = true;
             }
             if(num == KeyEvent.VK_F) {
-            	gp.gui.startLevelUpScreen();
+            	//gp.gui.startLevelUpScreen();
             }
             if(num == KeyEvent.VK_ESCAPE) {
             	gp.currentState = gp.pauseState;

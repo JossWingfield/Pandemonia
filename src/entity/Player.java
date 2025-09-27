@@ -16,6 +16,7 @@ import utility.CollisionMethods;
 import utility.KeyboardInput;
 import utility.MouseInput;
 import utility.Settings;
+import utility.save.PlayerSaveData;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -85,7 +86,6 @@ public class Player extends Entity{
     private final double rightBorder; //A border on the right of the screen, when the player moves past this the screen scrolls
     private int maxXDiffValue;
     private int maxYDiffValue;
-    public int currentLayer = 0;
     
     public int currentRoomIndex = 0;
     
@@ -146,6 +146,44 @@ public class Player extends Entity{
         playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.WHITE, 100);
         
         importImages();
+    }
+    public PlayerSaveData toSaveData() {
+        PlayerSaveData data = new PlayerSaveData();
+        data.username = username;
+        data.level = level;
+        data.soulsServed = soulsServed;
+        data.nextLevelAmount = nextLevelAmount;
+        data.wealth = wealth;
+        data.x = hitbox.x;
+        data.y = hitbox.y;
+        data.currentRoomIndex = currentRoomIndex;
+
+        if (currentItem != null) {
+            data.currentItemName = currentItem.getName();
+            if (currentItem instanceof Food f) {
+                data.currentItemState = f.getState();
+            }
+        }
+        return data;
+    }
+    public void applySaveData(PlayerSaveData data) {
+        this.username = data.username;
+        this.level = data.level;
+        this.soulsServed = data.soulsServed;
+        this.nextLevelAmount = data.nextLevelAmount;
+        this.wealth = data.wealth;
+        this.hitbox.x = data.x;
+        this.hitbox.y = data.y;
+        this.currentRoomIndex = data.currentRoomIndex;
+        gp.mapM.setRoom(currentRoomIndex);
+
+        // Recreate item if needed
+        if (data.currentItemName != null) {
+            this.currentItem = gp.itemRegistry.getItemFromName(data.currentItemName, data.currentItemState);
+            if (this.currentItem instanceof Food f) {
+                f.setState(data.currentItemState);
+            }
+        }
     }
     
     public void setSpawnPoint(int xPos, int yPos) {

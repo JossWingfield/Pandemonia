@@ -29,6 +29,7 @@ import utility.MouseInput;
 import utility.RecipeManager;
 import utility.Settings;
 import utility.World;
+import utility.save.SaveManager;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -94,6 +95,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Customiser customiser = new Customiser(this);
     public Catalogue catalogue = new Catalogue(this);
     public RecipeManager recipeM = new RecipeManager();
+    public SaveManager saveM = new SaveManager(this);
     public MapBuilder mapB = new MapBuilder(this);
     //THREAD initialising the thread which the game loop is run off
     public Thread thread;

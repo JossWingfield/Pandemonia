@@ -9,9 +9,13 @@ import java.util.Random;
 
 import entity.buildings.Breaker;
 import entity.buildings.Parcel;
+import entity.items.Food;
 import main.GamePanel;
 import map.LightSource;
 import map.Room;
+import utility.save.PlayerSaveData;
+import utility.save.SettingsSaveData;
+import utility.save.WorldSaveSettings;
 
 public class World {
 
@@ -543,6 +547,24 @@ public class World {
     		lightningSpawned = false;
     		gp.lightingM.removeLight(lightningLight);
     	}
+    }
+    public SettingsSaveData saveSettingsData() {
+    	SettingsSaveData data = new SettingsSaveData();
+        data.fullScreen = Settings.fullScreen;
+        data.bloomEnabled = Settings.bloomEnabled;
+        data.fancyLighting = Settings.fancyLighting;
+        data.showUsernames = Settings.showUsernames;
+        
+        return data;
+    }
+    public void applySettingsData(SettingsSaveData data) {
+    	Settings.showUsernames = data.showUsernames;
+    	Settings.fancyLighting = data.fancyLighting;
+    	Settings.fullScreen = data.fullScreen;
+    	Settings.bloomEnabled = data.bloomEnabled;
+    }
+    public void setSaveData(WorldSaveSettings data) {
+    	time = dayStart;
     }
     public void drawFilters(Graphics2D g2) {
     	if(breaker != null) {

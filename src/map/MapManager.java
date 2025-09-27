@@ -36,7 +36,7 @@ public class MapManager {
 	  private Room[] rooms;
 	  
 	  private int arrayIndex = 0;
-	  public int renderDistance = 3; 
+	  public int renderDistance = 3;
 	  public int chunkSize = 8;
 
 	    public MapManager(GamePanel gp) { //Sets default variables
@@ -235,6 +235,28 @@ public class MapManager {
 	        if (room == currentRoom) {
 	            gp.npcM.removeNPC(npc); // also mirror to global if it's the active room
 	        }
+	    }
+	    public void setRoom(int roomNum) {
+	    	gp.lightingM.removeLight(gp.player.playerLight);
+	    	gp.world.removeLightning();
+	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
+	    	currentRoom.editNPCs(gp.npcM.getNPCs());
+	    	currentRoom.editItems(gp.itemM.getItems());
+	    	currentRoom.editLights(gp.lightingM.getLights());
+	    	currentRoom = rooms[roomNum];
+	    	gp.buildingM.setBuildings(currentRoom.getBuildings());
+	    	gp.npcM.setNPCs(currentRoom.getNPCs());
+	    	gp.itemM.setItems(currentRoom.getItems());
+	    	gp.lightingM.setLights(currentRoom.getLights());
+	    	gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
+	    	if(!gp.world.isPowerOn()) {
+	    		gp.lightingM.addLight(gp.player.playerLight);
+	    	}
+
+	    	currentMapWidth = currentRoom.mapWidth;
+	    	currentMapHeight = currentRoom.mapHeight;
+	    	gp.player.reCalculateMaxDiffVals();
+	    	gp.player.setDiffValues();
 	    }
 	    public void changeRoom(int roomNum, Door previousDoor) {
 	    	gp.lightingM.removeLight(gp.player.playerLight);
