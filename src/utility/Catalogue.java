@@ -21,6 +21,7 @@ import main.GamePanel;
 import map.Beam;
 import map.FloorPaper;
 import map.WallPaper;
+import utility.save.CatalogueSaveData;
 
 public class Catalogue {
 	
@@ -64,6 +65,48 @@ public class Catalogue {
 		addBuildings();
 	}
 	
+	public CatalogueSaveData saveCatalogueData() {
+		CatalogueSaveData data = new CatalogueSaveData();
+		//data.decorBuildingInventory = decorBuildingInventory;
+		//data.bathroomBuildingInventory = bathroomBuildingInventory;d
+		//data.kitchenBuildingInventory = kitchenBuildingInventory;
+		//data.storeBuildingInventory = storeBuildingInventory;
+		
+		List<Integer> beams = new ArrayList<>();
+		for(Beam b: beamInventory) {
+			beams.add(b.preset);
+		}
+		data.beamInventory = beams;
+		List<Integer> floors = new ArrayList<>();
+		for(FloorPaper b: floorpaperInventory) {
+			floors.add(b.preset);
+		}
+		data.floorpaperInventory = floors;
+		List<Integer> walls = new ArrayList<>();
+		for(WallPaper b: wallpaperInventory) {
+			walls.add(b.preset);
+		}
+		data.wallpaperInventory = walls;
+		return data;
+	}
+	public void applySaveData(CatalogueSaveData data) {
+		//decorBuildingInventory = data.decorBuildingInventory;
+		//bathroomBuildingInventory = data.bathroomBuildingInventory;
+		//kitchenBuildingInventory = data.kitchenBuildingInventory;
+		//storeBuildingInventory = data.storeBuildingInventory;
+		beamInventory.clear();
+		for(Integer i: data.beamInventory) {
+			beamInventory.add(new Beam(gp, i));
+		}
+		floorpaperInventory.clear();
+		for(Integer i: data.floorpaperInventory) {
+			floorpaperInventory.add(new FloorPaper(gp, i));
+		}
+		wallpaperInventory.clear();
+		for(Integer i: data.wallpaperInventory) {
+			wallpaperInventory.add(new WallPaper(gp, i));
+		}
+	}
 	private void addBuildings() {
 		addToInventory(new FloorDecor_Building(gp, 0, 0, 0));
 		addToInventory(new FloorDecor_Building(gp, 0, 0, 1));

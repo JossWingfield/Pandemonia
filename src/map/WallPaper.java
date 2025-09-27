@@ -11,7 +11,7 @@ public class WallPaper {
 	
 	GamePanel gp;
 	
-	private int preset;
+	public int preset;
     public Tile[] tiles;
     private int arrayIndex = 0;
     public int cost = 0;

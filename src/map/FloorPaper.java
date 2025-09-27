@@ -11,7 +11,7 @@ public class FloorPaper {
 	
 	GamePanel gp;
 	
-	private int preset;
+	public int preset;
     public Tile[] tiles;
     private int arrayIndex = 0;
     

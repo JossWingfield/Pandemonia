@@ -129,6 +129,9 @@ public class MapManager {
 	        importBeamFromSpriteSheet("/tiles/beams/Beam 4", 3, 6, true);
 	        importBeamFromSpriteSheet("/tiles/beams/Beam 5", 3, 6, true);
 	    }
+	    public Room[] getRooms() {
+	    	return rooms;
+	    }
 	    public Room getRoom(int i) {
 	    	return rooms[i];
 	    }

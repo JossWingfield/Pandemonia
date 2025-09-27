@@ -49,6 +49,7 @@ import entity.npc.SpecialCustomer;
 import main.GamePanel;
 import utility.Recipe;
 import utility.RoomHelperMethods;
+import utility.save.RoomSaveData;
 
 public class Room {
 	
@@ -68,7 +69,6 @@ public class Room {
 	public WallPaper wallpaper = null;
 	public FloorPaper floorpaper = null;
 	public Beam beam = null;
-	public BufferedImage[][][] tileImages;
 	
 	public Room(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -153,7 +153,6 @@ public class Room {
 			setBeam(4);
 			break;
 		}
-		tileImages = new BufferedImage[4][mapWidth][mapHeight];
 		setBuildings(preset);
 		setNPCs(preset);
 		setItems(preset);
@@ -1827,6 +1826,31 @@ public class Room {
 		buildings[buildingArrayCounter] = building;
 		buildingArrayCounter++;
 	}
+	public RoomSaveData saveRoomData() {
+		RoomSaveData data = new RoomSaveData();
+		data.roomNum = preset;
+		data.wallpaper = wallpaper;
+		data.floorpaper = floorpaper;
+		data.beam = beam;
+		data.buildings = buildings;
+		data.buildingArrayCounter = buildingArrayCounter;
+		//data.items = items;
+		data.lights = lights;
+		//data.npcs = npcs;
+		
+		return data;
+	}
+	public void applySaveData(RoomSaveData data) {
+		preset = data.roomNum;
+		wallpaper = data.wallpaper;
+		floorpaper = data.floorpaper;
+		beam = data.beam;
+		buildings = data.buildings;
+		buildingArrayCounter = data.buildingArrayCounter;
+		//items = data.items;
+		lights = data.lights;
+		//npcs = data.npcs;
+	}
 	private void setItems(int preset) {
 		
 	}
@@ -2119,10 +2143,6 @@ public class Room {
 	public void addLight(LightSource light) {
 		lights.add(light);
 	}
-    public void clearRoomTiles() {
-    	tileImages = null;
-    	tileImages = new BufferedImage[4][mapWidth][mapHeight];
-    }
     
     public void update() {
     	for(Building i: buildings) { //Loops through the items on the current map

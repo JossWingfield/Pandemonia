@@ -9,9 +9,11 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import utility.save.RecipeSaveData;
+
 public class RecipeManager {
     private static final List<Recipe> allRecipes = new ArrayList<>();   // all possible recipes
-    private static final List<Recipe> unlockedRecipes = new ArrayList<>(); // currently unlocked recipes
+    private static List<Recipe> unlockedRecipes = new ArrayList<>(); // currently unlocked recipes
     private static final List<Recipe> currentOrders = new ArrayList<>();
     private static final List<Recipe> cursedRecipes = new ArrayList<>(); 
     
@@ -381,5 +383,31 @@ public class RecipeManager {
 
     public static List<Recipe> getCurrentOrders() {
         return currentOrders;
+    }
+    public static RecipeSaveData saveRecipeData() {
+    	RecipeSaveData data = new RecipeSaveData();
+    	List<String> names = new ArrayList<String>();
+    	for(Recipe r: unlockedRecipes) {
+    		names.add(r.getName());
+    	}
+    	data.unlockedRecipesNames = names;
+    	return data;
+    }
+    public static Recipe getRecipeByName(String name) {
+        for (Recipe recipe : allRecipes) {
+            if (recipe.getName().equals(name)) {
+                return recipe;
+            }
+        }
+        return null; // not found
+    }
+    public static void applySaveData(RecipeSaveData data) {
+    	unlockedRecipes.clear();
+    	for(String name: data.unlockedRecipesNames) {
+    		Recipe recipe = getRecipeByName(name);
+    	    if (recipe != null) {
+    	    	unlockRecipe(recipe);
+    	    }
+    	}
     }
 }

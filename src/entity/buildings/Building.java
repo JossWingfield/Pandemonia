@@ -8,13 +8,13 @@ import java.awt.image.BufferedImage;
 import entity.Entity;
 import main.GamePanel;
 
-public abstract class Building extends Entity {
+public class Building extends Entity {
 	
 	protected GamePanel gp;
 	
-	private Color blueprintColour;
+	private transient Color blueprintColour;
 	protected boolean blueprint = true;
-	private BufferedImage displayImage;
+	private transient BufferedImage displayImage;
 	protected int[] resourceCount;
 	public boolean lightSourceActive = true;
 	
@@ -31,7 +31,7 @@ public abstract class Building extends Entity {
 	public boolean isBottomLayer = false;
 	protected int presetNum = -1;
 	protected boolean destructionUIOpen = false;
-	protected BufferedImage destructionImage;
+	protected transient BufferedImage destructionImage;
 	public boolean isDecor = false;
 	public boolean isKitchenBuilding = false;
 	public boolean isStoreBuilding = false;

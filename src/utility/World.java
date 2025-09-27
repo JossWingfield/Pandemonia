@@ -15,7 +15,7 @@ import map.LightSource;
 import map.Room;
 import utility.save.PlayerSaveData;
 import utility.save.SettingsSaveData;
-import utility.save.WorldSaveSettings;
+import utility.save.WorldSaveData;
 
 public class World {
 
@@ -40,7 +40,7 @@ public class World {
     // === Menu system ===
     private List<Recipe> todaysMenu = new ArrayList<>();     // player-selected menu
     private List<Recipe> todaysSpecials = new ArrayList<>(); // generated specials
-    private boolean menuChosen = false;  
+    private boolean menuChosen = false;
     private int maxMenuSize = 5;
     private int lastTimePeriod = 0;
     
@@ -563,8 +563,18 @@ public class World {
     	Settings.fullScreen = data.fullScreen;
     	Settings.bloomEnabled = data.bloomEnabled;
     }
-    public void setSaveData(WorldSaveSettings data) {
+    public void setSaveData(WorldSaveData data) {
     	time = dayStart;
+    	day = data.day;
+    	previousSoulsCollected = data.previousSoulsCollected;
+    	currentSeason = data.currentSeason;
+    }
+    public WorldSaveData saveWorldData() {
+    	WorldSaveData data = new WorldSaveData();
+    	data.day = day;
+    	data.previousSoulsCollected = previousSoulsCollected;
+    	data.currentSeason = currentSeason;
+    	return data;
     }
     public void drawFilters(Graphics2D g2) {
     	if(breaker != null) {

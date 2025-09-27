@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import com.google.gson.Gson;
 
 import main.GamePanel;
+import utility.RecipeManager;
 
 public class SaveManager {
 	
@@ -18,12 +19,36 @@ public class SaveManager {
 	
 	public void saveGame() {
 		saveToFile("save/player1.json", gp.player.toSaveData());
-		saveToFile("save/settings.json", gp.world.saveSettingsData());
+		saveToFile("save/settings1.json", gp.world.saveSettingsData());
+		saveToFile("save/world1.json", gp.world.saveWorldData());
+		saveToFile("save/recipes1.json", RecipeManager.saveRecipeData());
+		saveToFile("save/catalogue1.json", gp.catalogue.saveCatalogueData());
+		/*
+		int counter = 0;
+		for(Room r: gp.mapM.getRooms()) {
+			if(r != null) {
+				saveToFile("save/rooms1" + counter +".json", r.saveRoomData());
+			}
+			counter++;
+		}
+		*/
 	}
 	
 	public void loadGame() {
 	    loadFromFile("save/player1.json", PlayerSaveData.class);
-	    loadFromFile("save/settings.json", SettingsSaveData.class);
+	    loadFromFile("save/settings1.json", SettingsSaveData.class);
+	    loadFromFile("save/world1.json", WorldSaveData.class);
+	    loadFromFile("save/recipes1.json", RecipeSaveData.class);
+	    loadFromFile("save/catalogue1.json", CatalogueSaveData.class);
+	    /*
+		int counter = 0;
+	    for(Room r: gp.mapM.getRooms()) {
+			if(r != null) {
+				loadFromFile("save/rooms1" + counter +".json", RoomSaveData.class);
+			}
+			counter++;
+		}
+		*/
 	}
 	
     // Convenience methods to save/load directly from disk
