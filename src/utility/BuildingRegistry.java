@@ -13,15 +13,18 @@ import entity.buildings.Cauldron;
 import entity.buildings.Chair;
 import entity.buildings.ChoppingBoard;
 import entity.buildings.CornerTable;
+import entity.buildings.Door;
 import entity.buildings.EscapeHole;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
+import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.Lantern;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
+import entity.buildings.StorageFridge;
 import entity.buildings.Stove;
 import entity.buildings.Table;
 import entity.buildings.Table2;
@@ -30,6 +33,7 @@ import entity.buildings.ToiletDoor;
 import entity.buildings.Trapdoor;
 import entity.buildings.WallDecor_Building;
 import entity.buildings.Window;
+import entity.items.Food;
 import main.GamePanel;
 import utility.save.BuildingSaveData;
 
@@ -81,6 +85,22 @@ public class BuildingRegistry {
 						data.preset = c.type;
 						data.decorType = 1;
 					}
+				} else if(b instanceof Door d) {
+					data.preset = d.preset;
+					data.attribute1 = d.facing;
+					data.attribute2 = d.roomNum;
+				} else if(b instanceof Fridge d) {
+					data.fridgeType = 0;
+					for(Food f: d.getContents()) {
+						data.fridgeContents.add(f.getName());
+						data.fridgeContentStates.add(f.getState());
+					}
+				} else if(b instanceof StorageFridge d) {
+					data.fridgeType = 1;
+					for(Food f: d.contents) {
+						data.fridgeContents.add(f.getName());
+						data.fridgeContentStates.add(f.getState());
+					}
 				}
 				savedBuildings.add(data);
 			}
@@ -103,7 +123,23 @@ public class BuildingRegistry {
 						buildings.add(build);
 					}
 				} else {
-					Building build = getBuildingFromName(b.name, b.x, b.y, b.preset);
+					if(b.name.equals("Door 1")) {
+						Door build = new Door(gp, b.x, b.y, b.attribute1, b.preset);
+						build.setDoorNum(b.attribute2);
+						buildings.add(build);
+					} else {
+						Building build = getBuildingFromName(b.name, b.x, b.y, b.preset);
+						buildings.add(build);
+					}
+				}
+			} else if(b.fridgeType != -1) {
+				if(b.fridgeType == 0) {
+					Fridge build = new Fridge(gp, b.x, b.y);
+					build.setContents(b.fridgeContents, b.fridgeContentStates);
+					buildings.add(build);
+				} else if(b.fridgeType == 1) {
+					StorageFridge build = new StorageFridge(gp, b.x, b.y);
+					build.setContents(b.fridgeContents, b.fridgeContentStates);
 					buildings.add(build);
 				}
 			} else {

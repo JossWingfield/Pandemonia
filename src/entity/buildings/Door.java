@@ -14,7 +14,7 @@ public class Door extends Building {
 	private boolean firstUpdate = true;
 	public int roomNum = 1;
 	public int facing;
-	private int preset = 0;
+	public int preset = 0;
 	public int cooldown = 0;
 	private boolean open = false;
 	

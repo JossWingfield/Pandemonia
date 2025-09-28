@@ -8,11 +8,16 @@ import java.util.List;
 import java.util.Random;
 
 import entity.buildings.Breaker;
+import entity.buildings.Building;
 import entity.buildings.Parcel;
 import entity.items.Food;
 import main.GamePanel;
+import map.Beam;
+import map.FloorPaper;
 import map.LightSource;
 import map.Room;
+import map.WallPaper;
+import utility.save.OrderSaveData;
 import utility.save.PlayerSaveData;
 import utility.save.SettingsSaveData;
 import utility.save.WorldSaveData;
@@ -569,11 +574,80 @@ public class World {
     	previousSoulsCollected = data.previousSoulsCollected;
     	currentSeason = data.currentSeason;
     }
+    public void setOrderData(OrderSaveData data) {
+    	if(!data.orderEmpty) {
+    		orderList = new ArrayList<Object>();
+    		List<Building> buildings = gp.buildingRegistry.unpackSavedBuildings(data.buildingInventory);
+    		orderList.addAll(buildings);
+
+			for(Integer i: data.beamInventory) {
+				orderList.add(new Beam(gp, i));
+			}
+			for(Integer i: data.floorpaperInventory) {
+				orderList.add(new FloorPaper(gp, i));
+			}
+			for(Integer i: data.wallpaperInventory) {
+				orderList.add(new WallPaper(gp, i));
+			}
+			if (orderList != null && !orderList.isEmpty()) {
+				Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));
+		        gp.buildingM.addBuilding(parcel);
+		        gp.gui.addMessage("A Parcel has arrived!", Color.MAGENTA);
+
+		        orderList.clear();
+		    }
+    	}
+    }
+    public OrderSaveData saveOrderData() { 
+    	OrderSaveData data = new OrderSaveData();
+    	if(orderList != null) {	
+	    	if(orderList.size() > 0) {
+	    		
+	    		data.orderEmpty = false;
+	    		List<FloorPaper> floorpaperInventory = new ArrayList<>();
+	    		List<WallPaper> wallpaperInventory = new ArrayList<>();
+	    		List<Beam> beamInventory = new ArrayList<>();
+	    		List<Building> buildings = new ArrayList<>();
+	    		
+	    		for(Object o: orderList) {
+	    			if(o instanceof FloorPaper f) {
+	    				floorpaperInventory.add(f);
+	    			} else if(o instanceof WallPaper f) {
+	    				wallpaperInventory.add(f);
+	    			} else if(o instanceof Beam f) {
+	    				beamInventory.add(f);
+	    			} else if(o instanceof Building f) {
+	    				buildings.add(f);
+	    			}
+	    		}
+	    		
+		    	data.buildingInventory = gp.buildingRegistry.saveBuildings(buildings);	
+				
+				List<Integer> beams = new ArrayList<>();
+				for(Beam b: beamInventory) {
+					beams.add(b.preset);
+				}
+				data.beamInventory = beams;
+				List<Integer> floors = new ArrayList<>();
+				for(FloorPaper b: floorpaperInventory) {
+					floors.add(b.preset);
+				}
+				data.floorpaperInventory = floors;
+				List<Integer> walls = new ArrayList<>();
+				for(WallPaper b: wallpaperInventory) {
+					walls.add(b.preset);
+				}
+				data.wallpaperInventory = walls;
+	    	}
+    	}
+    	return data;
+    }
     public WorldSaveData saveWorldData() {
     	WorldSaveData data = new WorldSaveData();
     	data.day = day;
     	data.previousSoulsCollected = previousSoulsCollected;
     	data.currentSeason = currentSeason;
+  
     	return data;
     }
     public void drawFilters(Graphics2D g2) {

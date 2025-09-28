@@ -19,6 +19,8 @@ import entity.buildings.Toilet;
 import entity.buildings.WallDecor_Building;
 import main.GamePanel;
 import utility.CollisionMethods;
+import utility.save.CatalogueSaveData;
+import utility.save.CustomiserSaveData;
 
 public class Customiser {
 	
@@ -76,6 +78,50 @@ public class Customiser {
 	}
 	private void addBuildings() {
 
+	}
+	public CustomiserSaveData saveCustomiserData() {
+		CustomiserSaveData data = new CustomiserSaveData();
+		data.decorBuildingInventory = gp.buildingRegistry.saveBuildings(decorBuildingInventory);
+		data.bathroomBuildingInventory = gp.buildingRegistry.saveBuildings(bathroomBuildingInventory);
+		data.kitchenBuildingInventory = gp.buildingRegistry.saveBuildings(kitchenBuildingInventory);
+		data.storeBuildingInventory = gp.buildingRegistry.saveBuildings(storeBuildingInventory);		
+		
+		List<Integer> beams = new ArrayList<>();
+		for(Beam b: beamInventory) {
+			beams.add(b.preset);
+		}
+		data.beamInventory = beams;
+		List<Integer> floors = new ArrayList<>();
+		for(FloorPaper b: floorpaperInventory) {
+			floors.add(b.preset);
+		}
+		data.floorpaperInventory = floors;
+		List<Integer> walls = new ArrayList<>();
+		for(WallPaper b: wallpaperInventory) {
+			walls.add(b.preset);
+		}
+		data.wallpaperInventory = walls;
+		return data;
+	}
+	public void applySaveData(CustomiserSaveData data) {
+		
+		decorBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.decorBuildingInventory);
+		bathroomBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.bathroomBuildingInventory);
+		kitchenBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.kitchenBuildingInventory);
+		storeBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.storeBuildingInventory);
+		
+		beamInventory.clear();
+		for(Integer i: data.beamInventory) {
+			beamInventory.add(new Beam(gp, i));
+		}
+		floorpaperInventory.clear();
+		for(Integer i: data.floorpaperInventory) {
+			floorpaperInventory.add(new FloorPaper(gp, i));
+		}
+		wallpaperInventory.clear();
+		for(Integer i: data.wallpaperInventory) {
+			wallpaperInventory.add(new WallPaper(gp, i));
+		}
 	}
 	private BufferedImage importImage(String filePath) { //Imports and stores the image
         BufferedImage importedImage = null;

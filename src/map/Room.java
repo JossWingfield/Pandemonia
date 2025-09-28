@@ -1840,9 +1840,6 @@ public class Room {
 		}
 		data.buildings = gp.buildingRegistry.saveBuildings(buildList);
 		data.buildingArrayCounter = buildingArrayCounter;
-		//data.items = items;
-		//data.lights = lights;
-		//data.npcs = npcs;
 		
 		return data;
 	}
@@ -1860,15 +1857,13 @@ public class Room {
 			newBuilds[counter] = b;
 			counter++;
 		}
+		buildingArrayCounter = data.buildingArrayCounter;
 		buildings = newBuilds;
 		if(preset == gp.player.currentRoomIndex) {
 			gp.lightingM.setLights(lights);
 			gp.buildingM.setBuildings(newBuilds);
+			gp.buildingM.setArrayCounter(buildingArrayCounter);
 		}
-		buildingArrayCounter = data.buildingArrayCounter;
-		//items = data.items;
-		//data.lights = data.lights;
-		//npcs = data.npcs;
 	}
 	private void setItems(int preset) {
 		

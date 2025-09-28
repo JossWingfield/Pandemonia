@@ -32,7 +32,7 @@ public class Fridge extends Building {
     private int clickCooldown = 0;
     private boolean uiOpen = false;
     private BufferedImage ui1, ui2, ui3;
-    private List<Food> contents = new ArrayList<>();
+    public List<Food> contents = new ArrayList<>();
     private List<Rectangle2D.Float> itemHitboxes = new ArrayList<>();
 
     public Fridge(GamePanel gp, float xPos, float yPos) {
@@ -57,7 +57,15 @@ public class Fridge extends Building {
         System.out.println("buildings[arrayCounter] = new Fridge(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
         System.out.println("arrayCounter++;");
     }
-
+    public void setContents(List<String> fridgeContents, List<Integer> fridgeContentsStates) {
+    	contents.clear();
+    	int counter = 0;
+    	for(String name: fridgeContents) {
+    		Item i = gp.itemRegistry.getItemFromName(name, fridgeContentsStates.get(counter));
+    		contents.add((Food)i);
+    		counter++;
+    	}
+    }
     private void importImages() {
         animations = new BufferedImage[1][1][2];
 

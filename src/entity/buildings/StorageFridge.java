@@ -14,6 +14,7 @@ import entity.items.Egg;
 import entity.items.Fish;
 import entity.items.Food;
 import entity.items.Greens;
+import entity.items.Item;
 import entity.items.Penne;
 import entity.items.Spaghetti;
 import entity.items.Steak;
@@ -30,7 +31,7 @@ public class StorageFridge extends Building {
 	private int clickCooldown = 0;
 	private boolean uiOpen = false;
 	private BufferedImage ui1, ui2, ui3;
-	private List<Food> contents = new ArrayList<>();
+	public List<Food> contents = new ArrayList<>();
 	private List<Rectangle2D.Float> itemHitboxes = new ArrayList<>();
 	
 	public StorageFridge(GamePanel gp, float xPos, float yPos) {
@@ -54,6 +55,15 @@ public class StorageFridge extends Building {
 	public void printOutput() {
 		System.out.println("buildings[arrayCounter] = new StorageFridge(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
 		System.out.println("arrayCounter++;");	
+	}
+	public void setContents(List<String> fridgeContents, List<Integer> fridgeContentsStates) {
+		contents.clear();
+		int counter = 0;
+	    for(String name: fridgeContents) {
+	    	Item i = gp.itemRegistry.getItemFromName(name, fridgeContentsStates.get(counter));
+	    	contents.add((Food)i);
+	    	counter++;
+	    }
 	}
 	private void addItems() {
 		contents.add(new Chicken(gp, 0, 0));

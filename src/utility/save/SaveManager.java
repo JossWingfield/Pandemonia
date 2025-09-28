@@ -31,6 +31,8 @@ public class SaveManager {
 			}
 			counter++;
 		}
+		saveToFile("save/order1.json", gp.world.saveOrderData());
+		saveToFile("save/customiser1.json", gp.customiser.saveCustomiserData());
 	}
 	
 	public void loadGame() {
@@ -46,6 +48,8 @@ public class SaveManager {
 			}
 			counter++;
 		}
+	    loadFromFile("save/order1.json", OrderSaveData.class);
+	    loadFromFile("save/customiser1.json", CustomiserSaveData.class);
 	}
 	
     // Convenience methods to save/load directly from disk
