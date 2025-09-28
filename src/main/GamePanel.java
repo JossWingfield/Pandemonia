@@ -21,6 +21,7 @@ import net.DiscoveryManager;
 import net.GameClient;
 import net.GameServer;
 import net.packets.Packet00Login;
+import utility.BuildingRegistry;
 import utility.Catalogue;
 import utility.GUI;
 import utility.ItemRegistry;
@@ -90,6 +91,7 @@ public class GamePanel extends JPanel implements Runnable {
     public ArrayList<Entity> updateEntityList = new ArrayList<>();
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ItemRegistry itemRegistry = new ItemRegistry(this);
+    public BuildingRegistry buildingRegistry = new BuildingRegistry(this);
     public World world = new World(this);
     public LightingManager lightingM = new LightingManager(this);
     public Customiser customiser = new Customiser(this);

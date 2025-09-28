@@ -14,7 +14,7 @@ import utility.CollisionMethods;
 
 public class FloorDecor_Building extends Building {
 
-	private int type;
+	public int type;
 	
 	public Item currentItem = null;
 	private boolean firstUpdate = true;

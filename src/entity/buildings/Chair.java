@@ -11,7 +11,7 @@ public class Chair extends Building {
 	
 	public boolean available = true;
 	public Customer currentCustomer;
-	private int facing;
+	public int facing;
 	public TablePlate tablePlate = null;
 	private boolean firstUpdate = true;
 	

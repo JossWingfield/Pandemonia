@@ -22,7 +22,7 @@ public class FoodStore extends Building {
 	
 	private Rectangle2D.Float interactHitbox;
 	private boolean firstUpdate = true;
-	private int foodType;
+	public int foodType;
 	private BufferedImage highlightedImage;
 	
 	public FoodStore(GamePanel gp, float xPos, float yPos, int foodType) {

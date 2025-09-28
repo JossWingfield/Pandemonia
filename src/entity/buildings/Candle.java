@@ -38,12 +38,13 @@ public class Candle extends Building{
 	private void importImages() {
 		animations = new BufferedImage[1][1][1];
 		
-		name = "Candle";
 		switch(type) {
 		case 0:
+			name = "Candle 1";
 	    	animations[0][0][0] = importImage("/decor/Candles.png").getSubimage(0, 0, 16, 16);
 			break;
 		case 1:
+			name = "Candle 2";
 	    	animations[0][0][0] = importImage("/decor/Candles.png").getSubimage(16, 0, 16, 16);
 			break;
 		}

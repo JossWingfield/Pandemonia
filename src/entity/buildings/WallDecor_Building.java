@@ -11,7 +11,7 @@ import utility.CollisionMethods;
 
 public class WallDecor_Building extends Building {
 
-	private int type;
+	public int type;
 	private boolean firstUpdate = true;
 	private Rectangle2D.Float invisHitbox;
 	

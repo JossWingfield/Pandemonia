@@ -10,7 +10,7 @@ import main.GamePanel;
 
 public class CornerTable extends Building {
 	
-	private int presetNum;
+	public int presetNum;
 	
 	public Rectangle2D.Float interactHitbox1, interactHitbox2;
 	private boolean firstUpdate = true;

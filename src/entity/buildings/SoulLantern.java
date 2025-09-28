@@ -40,7 +40,7 @@ public class SoulLantern extends Building{
 		
 		soulColour = new Color(100, 166, 147);
 		
-		name = "Lantern";
+		name = "Soul Lantern";
     	animations[0][0][0] = importImage("/decor/SoulLantern.png");
 	}
 	public void draw(Graphics2D g2) {

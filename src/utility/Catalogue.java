@@ -67,10 +67,10 @@ public class Catalogue {
 	
 	public CatalogueSaveData saveCatalogueData() {
 		CatalogueSaveData data = new CatalogueSaveData();
-		//data.decorBuildingInventory = decorBuildingInventory;
-		//data.bathroomBuildingInventory = bathroomBuildingInventory;d
-		//data.kitchenBuildingInventory = kitchenBuildingInventory;
-		//data.storeBuildingInventory = storeBuildingInventory;
+		data.decorBuildingInventory = gp.buildingRegistry.saveBuildings(decorBuildingInventory);
+		data.bathroomBuildingInventory = gp.buildingRegistry.saveBuildings(bathroomBuildingInventory);
+		data.kitchenBuildingInventory = gp.buildingRegistry.saveBuildings(kitchenBuildingInventory);
+		data.storeBuildingInventory = gp.buildingRegistry.saveBuildings(storeBuildingInventory);		
 		
 		List<Integer> beams = new ArrayList<>();
 		for(Beam b: beamInventory) {
@@ -90,10 +90,12 @@ public class Catalogue {
 		return data;
 	}
 	public void applySaveData(CatalogueSaveData data) {
-		//decorBuildingInventory = data.decorBuildingInventory;
-		//bathroomBuildingInventory = data.bathroomBuildingInventory;
-		//kitchenBuildingInventory = data.kitchenBuildingInventory;
-		//storeBuildingInventory = data.storeBuildingInventory;
+		
+		decorBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.decorBuildingInventory);
+		bathroomBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.bathroomBuildingInventory);
+		kitchenBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.kitchenBuildingInventory);
+		storeBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.storeBuildingInventory);
+		
 		beamInventory.clear();
 		for(Integer i: data.beamInventory) {
 			beamInventory.add(new Beam(gp, i));

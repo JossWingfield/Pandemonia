@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import com.google.gson.Gson;
 
 import main.GamePanel;
+import map.Room;
 import utility.RecipeManager;
 
 public class SaveManager {
@@ -23,7 +24,6 @@ public class SaveManager {
 		saveToFile("save/world1.json", gp.world.saveWorldData());
 		saveToFile("save/recipes1.json", RecipeManager.saveRecipeData());
 		saveToFile("save/catalogue1.json", gp.catalogue.saveCatalogueData());
-		/*
 		int counter = 0;
 		for(Room r: gp.mapM.getRooms()) {
 			if(r != null) {
@@ -31,7 +31,6 @@ public class SaveManager {
 			}
 			counter++;
 		}
-		*/
 	}
 	
 	public void loadGame() {
@@ -40,7 +39,6 @@ public class SaveManager {
 	    loadFromFile("save/world1.json", WorldSaveData.class);
 	    loadFromFile("save/recipes1.json", RecipeSaveData.class);
 	    loadFromFile("save/catalogue1.json", CatalogueSaveData.class);
-	    /*
 		int counter = 0;
 	    for(Room r: gp.mapM.getRooms()) {
 			if(r != null) {
@@ -48,7 +46,6 @@ public class SaveManager {
 			}
 			counter++;
 		}
-		*/
 	}
 	
     // Convenience methods to save/load directly from disk

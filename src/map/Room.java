@@ -1829,26 +1829,45 @@ public class Room {
 	public RoomSaveData saveRoomData() {
 		RoomSaveData data = new RoomSaveData();
 		data.roomNum = preset;
-		data.wallpaper = wallpaper;
-		data.floorpaper = floorpaper;
-		data.beam = beam;
-		data.buildings = buildings;
+		data.wallpaper = wallpaper.preset;
+		data.floorpaper = floorpaper.preset;
+		data.beam = beam.preset;
+		List<Building> buildList = new ArrayList<>();
+		for(Building b: buildings) {
+			if(b != null) {
+				buildList.add(b);
+			}
+		}
+		data.buildings = gp.buildingRegistry.saveBuildings(buildList);
 		data.buildingArrayCounter = buildingArrayCounter;
 		//data.items = items;
-		data.lights = lights;
+		//data.lights = lights;
 		//data.npcs = npcs;
 		
 		return data;
 	}
 	public void applySaveData(RoomSaveData data) {
 		preset = data.roomNum;
-		wallpaper = data.wallpaper;
-		floorpaper = data.floorpaper;
-		beam = data.beam;
-		buildings = data.buildings;
+		lights.clear();
+		wallpaper = new WallPaper(gp, data.wallpaper);
+		floorpaper = new FloorPaper(gp, data.floorpaper);
+		beam = new Beam(gp, data.beam);
+		List<Building> buildList = gp.buildingRegistry.unpackSavedBuildings(data.buildings);
+		Building[] newBuilds = new Building[250];
+		int counter = 0;
+		buildings = null;
+		for(Building b: buildList) {
+			newBuilds[counter] = b;
+			counter++;
+		}
+		buildings = newBuilds;
+		if(preset == gp.player.currentRoomIndex) {
+			gp.lightingM.setLights(lights);
+			gp.buildingM.setBuildings(newBuilds);
+		}
 		buildingArrayCounter = data.buildingArrayCounter;
 		//items = data.items;
-		lights = data.lights;
+		//data.lights = data.lights;
 		//npcs = data.npcs;
 	}
 	private void setItems(int preset) {
