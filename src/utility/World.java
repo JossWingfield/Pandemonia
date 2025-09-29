@@ -380,6 +380,7 @@ public class World {
 
         // Generate new specials at start of new day
         generateDailySpecials(gp.recipeM.getUnlockedRecipes());
+        gp.saveM.saveGame();
     }
 
     // === Time helpers ===

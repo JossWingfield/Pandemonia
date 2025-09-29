@@ -40,14 +40,12 @@ public class KeyboardInput implements KeyListener {
         int num = e.getKeyCode();
         if(gp.currentState == gp.playState) {
         	
-        	if(num == KeyEvent.VK_4) {
-        		gp.saveM.saveGame();
-        	}
-        	
-        	if(num == KeyEvent.VK_5) {
-        		gp.saveM.loadGame();
-        	}
-
+        	if (num == KeyEvent.VK_4) {
+                gp.saveM.saveGame();
+            }
+        	if (num == KeyEvent.VK_5) {
+                gp.saveM.loadGame(gp.saveM.currentSave);
+            }
             //MAIN INPUTS
             if (num == KeyEvent.VK_A || num == KeyEvent.VK_LEFT) {
                 left = true;

@@ -38,6 +38,7 @@ public class GUI {
     private BufferedImage[] computerAnimations;
     private BufferedImage shoppingUI, shoppingButtonUI, leftArrow, rightArrow, basketUI, basketButtons;
     private BufferedImage leftProgress1, leftProgress2, middleProgress1, middleProgress2, rightProgress1, rightProgress2;
+    private BufferedImage saveBorder;
     
 	//COLOURS
 	private Color darkened;
@@ -179,6 +180,7 @@ public class GUI {
 		rightProgress2 = importImage("/UI/levels/RightProgress.png").getSubimage(12, 0, 12, 20);	
 
 		cursedRecipeBorder = importImage("/UI/recipe/HauntedOrderBorder.png");
+		saveBorder = importImage("/UI/saves/SaveUI.png");
 		
 	}
 	protected BufferedImage[] importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height) {
@@ -562,15 +564,10 @@ public class GUI {
 		
 		g2.fillRect(x, y+ 20, getTextWidth(text, g2), 10);
 		
-		
-		boolean drawLoadingScreen = false;
 		//SinglePlayer
 			g2.setFont(titleFont);
 			g2.setColor(titleColour1);
 			text = "Singleplayer";
-				
-			int mouseX = gp.mouseI.mouseX;
-			int mouseY = gp.mouseI.mouseY;
 				
 			x = 120;
 			y = 360;
@@ -579,9 +576,12 @@ public class GUI {
 				g2.setColor(titleColour2);
 				if(gp.mouseI.leftClickPressed) {
 					if(clickCooldown == 0) {
-						//ENTER GAME
-						drawLoadingScreen = true;
+						clickCooldown = 20;
+						currentTitleAnimation = 1;
+						titleAnimationCounter = 0;
+						titleAnimationSpeed = 0;
 						singleplayerSelected = true;
+						gp.currentState = gp.chooseSaveState;
 					}
 				}
 				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
@@ -637,31 +637,147 @@ public class GUI {
 				}
 				
 				g2.drawString(text, x, y);
-				
-				if(drawLoadingScreen) {
-					
-					//g2.drawImage(titleImage3, 0, 0, gp.frameWidth, gp.frameHeight, null);
-					
-					g2.setFont(titleFont);
-					g2.setColor(Color.WHITE);
-					text = "LOADING";
-						
-					x = 20;
-					y = 800;
-					
-					g2.drawString(text, x, y);
-					if(startLoading) {
-						if(singleplayerSelected) {
-							gp.playSinglePlayer();
-							singleplayerSelected = false;
-						}
-						startLoading = false;
-					}
-					startLoading = true;
-				}
 		}
 	}
-	
+	private void drawChooseSaveState(Graphics2D g2) {
+		
+		
+		g2.drawImage(titleBackground, (gp.frameWidth/2) - (int)((768*1.5) / 2), (gp.frameHeight/2) - (int)((560*1.5)/2), (int)(768*1.5), (int)(560*1.5), null);
+		
+		titleAnimationSpeed++;
+		if(titleAnimationSpeed >= titleAnimationSpeedFactor) {
+			titleAnimationSpeed = 0;
+			titleAnimationCounter++;
+		}
+		
+		if(titleBookAnimations[currentTitleAnimation][titleAnimationCounter] == null) {
+			titleAnimationCounter--;
+			if(currentTitleAnimation == 1) {
+				titlePageNum = 1;
+			}
+		}
+		
+		g2.drawImage(titleBookAnimations[currentTitleAnimation][titleAnimationCounter], (gp.frameWidth/2) - (int)((848*1.5) / 2), (gp.frameHeight/2) - (int)((640*1.5)/2), (int)(848*1.5), (int)(640*1.5), null);
+		
+		if(titleAnimationCounter > 6) {
+			
+			int x = 110;
+			int y = 240;
+			String text = "Choose Save";
+			
+			int saveChosen = -1;
+			
+			g2.setFont(fancyTitleFont);
+			g2.setColor(titleColour1);
+			g2.drawString(text, x, y);
+		
+			boolean drawLoadingScreen = false;
+			
+			text = "Save 1";
+			x = 120;
+			y = 360;
+				
+			if(isHovering(text,x, y-40, g2)) {
+				g2.setColor(titleColour2);
+				if(gp.mouseI.leftClickPressed) {
+					if(clickCooldown == 0) {
+						clickCooldown = 20;
+						saveChosen = 1;
+						drawLoadingScreen = true;
+					}
+				}
+				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
+
+			}
+				
+			g2.drawString(text, x, y);
+			g2.setColor(titleColour1);
+			text = "Save 2";
+			x = 120;
+			y = 450;
+				
+			if(isHovering(text,x, y-40, g2)) {
+				g2.setColor(titleColour2);
+				if(gp.mouseI.leftClickPressed) {
+					if(clickCooldown == 0) {
+						clickCooldown = 20;
+						saveChosen = 2;
+						drawLoadingScreen = true;
+					}
+				}
+				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
+			}
+				
+			g2.drawString(text, x, y);
+			g2.setColor(titleColour1);
+			text = "Save 3";
+			x = 120;
+			y = 360+90+90;
+				
+			if(isHovering(text,x, y-40, g2)) {
+				g2.setColor(titleColour2);
+				if(gp.mouseI.leftClickPressed) {
+					if(clickCooldown == 0) {
+						clickCooldown = 20;
+						saveChosen = 3;
+						drawLoadingScreen = true;
+					}
+				}
+				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
+
+			}
+				
+			g2.drawString(text, x, y);
+			
+			//QUIT
+			g2.setFont(titleFont);
+			g2.setColor(titleColour1);
+			g2.setColor(titleColour1);
+			text = "Back";
+
+			x = 100;
+			y = 660;
+			
+			if(isHovering(text,x, y-40, g2)) {
+				g2.setColor(titleColour2);
+				if(gp.mouseI.leftClickPressed) {
+					//QUIT GAME
+					if(clickCooldown == 0) {
+						gp.currentState = gp.startGameSettingsState;
+						clickCooldown = 20;
+						currentTitleAnimation = 2;
+						titleAnimationCounter = 0;
+						titleAnimationSpeed = 0;
+						singleplayerSelected = false;
+					}
+				}
+				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
+
+			}
+			
+			g2.drawString(text, x, y);
+			
+			
+			if(drawLoadingScreen) {					
+				g2.setFont(titleFont);
+				g2.setColor(Color.WHITE);
+				text = "LOADING";
+					
+				x = 20;
+				y = 800;
+				
+				g2.drawString(text, x, y);
+				if(startLoading) {
+					if(singleplayerSelected) {
+						gp.playSinglePlayer(saveChosen);
+						singleplayerSelected = false;
+					}
+					startLoading = false;
+				}
+				startLoading = true;
+			}
+		}
+	}
 	public void drawUsernameInput(Graphics2D g2) {
 	    
 	    // Background (reuse your title background style if you want)
@@ -827,6 +943,9 @@ public class GUI {
 			break;
 		case 13:
 			drawRecipeSelectScreen(g2);
+			break;
+		case 14:
+			drawChooseSaveState(g2);
 			break;
 		}
 		

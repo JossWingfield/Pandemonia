@@ -118,6 +118,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int catalogueState = 11;
     public final int xpState = 12;
     public final int chooseRecipeState = 13;
+    public final int chooseSaveState = 14;
 
     // AESTHETICS
     private Color backgroundColour = new Color(51, 60, 58);
@@ -166,10 +167,25 @@ public class GamePanel extends JPanel implements Runnable {
         gColor.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF));
 
     }
-    
-    public void playSinglePlayer() {
+    public void startGame() {
+    	player = new Player(this, 48*10, 48*10, keyI, mouseI, "");
+    	buildingM = new BuildingManager(this);
+        itemM = new ItemManager(this);
+        npcM = new NPCManager(this);
+        mapM = new MapManager(this);
+        updateEntityList.clear();
+        entityList.clear();
+        world = new World(this);
+        lightingM = new LightingManager(this);
+        customiser = new Customiser(this);
+        catalogue = new Catalogue(this);
+        recipeM = new RecipeManager();
+    }
+    public void playSinglePlayer(int saveSlot) {
+    	saveM.currentSave = saveSlot;
     	player = new Player(this, 48*10, 48*10, keyI, mouseI, "");
     	currentState = playState;
+    	saveM.loadGame(saveSlot);
     }
     public void hostServer(String username) {
         if (serverHost) return;
