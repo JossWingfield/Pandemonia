@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class GUI {
     private BufferedImage[] computerAnimations;
     private BufferedImage shoppingUI, shoppingButtonUI, leftArrow, rightArrow, basketUI, basketButtons;
     private BufferedImage leftProgress1, leftProgress2, middleProgress1, middleProgress2, rightProgress1, rightProgress2;
-    private BufferedImage saveBorder;
+    private BufferedImage saveBorder, deleteSave;
     
 	//COLOURS
 	private Color darkened;
@@ -51,6 +52,8 @@ public class GUI {
 	private Font pauseFont = new Font("Orange Kid", Font.BOLD, 50);
 	private Font numberFont = new Font("Orange Kid", Font.PLAIN, 20);
 	private Font titleFont = new Font("monogram", Font.BOLD, 70);
+	private Font saveFont = new Font("monogram", Font.BOLD, 40);
+	private Font saveFont2 = new Font("monogram", Font.BOLD, 32);
 	private Font fancyTitleFont = new Font("monogram", Font.ITALIC, 100);
     private Font nameFont = new Font("monogram", Font.ITALIC, 20);
     private Font timeFont = new Font("monogram", Font.PLAIN, 40);
@@ -94,6 +97,10 @@ public class GUI {
 	private final int videoState = 2;
 	private final int audioState = 3;
 	private final int multiplayerState = 4;
+	
+	//SAVE
+	private boolean doDestroySave;
+	private int destroySaveNum;
 
 
 	public GUI(GamePanel gp) {
@@ -181,7 +188,7 @@ public class GUI {
 
 		cursedRecipeBorder = importImage("/UI/recipe/HauntedOrderBorder.png");
 		saveBorder = importImage("/UI/saves/SaveUI.png");
-		
+		deleteSave = importImage("/UI/saves/DeleteSave.png");
 	}
 	protected BufferedImage[] importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height) {
 		BufferedImage animations[] = new BufferedImage[20];
@@ -641,7 +648,6 @@ public class GUI {
 	}
 	private void drawChooseSaveState(Graphics2D g2) {
 		
-		
 		g2.drawImage(titleBackground, (gp.frameWidth/2) - (int)((768*1.5) / 2), (gp.frameHeight/2) - (int)((560*1.5)/2), (int)(768*1.5), (int)(560*1.5), null);
 		
 		titleAnimationSpeed++;
@@ -661,8 +667,8 @@ public class GUI {
 		
 		if(titleAnimationCounter > 6) {
 			
-			int x = 110;
-			int y = 240;
+			int x = 100;
+			int y = 200;
 			String text = "Choose Save";
 			
 			int saveChosen = -1;
@@ -670,73 +676,38 @@ public class GUI {
 			g2.setFont(fancyTitleFont);
 			g2.setColor(titleColour1);
 			g2.drawString(text, x, y);
-		
-			boolean drawLoadingScreen = false;
 			
 			text = "Save 1";
-			x = 120;
-			y = 360;
-				
-			if(isHovering(text,x, y-40, g2)) {
-				g2.setColor(titleColour2);
-				if(gp.mouseI.leftClickPressed) {
-					if(clickCooldown == 0) {
-						clickCooldown = 20;
-						saveChosen = 1;
-						drawLoadingScreen = true;
-					}
-				}
-				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
-
-			}
-				
-			g2.drawString(text, x, y);
+			
+			x = 100;
+			y = 260 - 40;
+			
+			int result = drawSave(g2, 1, x, y, text);
+			if (result != -1) saveChosen = result;
+			
 			g2.setColor(titleColour1);
 			text = "Save 2";
-			x = 120;
-			y = 450;
-				
-			if(isHovering(text,x, y-40, g2)) {
-				g2.setColor(titleColour2);
-				if(gp.mouseI.leftClickPressed) {
-					if(clickCooldown == 0) {
-						clickCooldown = 20;
-						saveChosen = 2;
-						drawLoadingScreen = true;
-					}
-				}
-				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
-			}
-				
-			g2.drawString(text, x, y);
+			x = 100;
+			y = 260 + 48*3 + 10 - 40;
+			
+			result = drawSave(g2, 2, x, y, text);
+			if (result != -1) saveChosen = result;
+			
 			g2.setColor(titleColour1);
 			text = "Save 3";
-			x = 120;
-			y = 360+90+90;
-				
-			if(isHovering(text,x, y-40, g2)) {
-				g2.setColor(titleColour2);
-				if(gp.mouseI.leftClickPressed) {
-					if(clickCooldown == 0) {
-						clickCooldown = 20;
-						saveChosen = 3;
-						drawLoadingScreen = true;
-					}
-				}
-				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
-
-			}
-				
-			g2.drawString(text, x, y);
+			x = 100;
+			y = 260 + 48*6 + 20 - 40;
+			
+			result = drawSave(g2, 3, x, y, text);
+			if (result != -1) saveChosen = result;
 			
 			//QUIT
-			g2.setFont(titleFont);
-			g2.setColor(titleColour1);
+			g2.setFont(saveFont);
 			g2.setColor(titleColour1);
 			text = "Back";
 
 			x = 100;
-			y = 660;
+			y = 696;
 			
 			if(isHovering(text,x, y-40, g2)) {
 				g2.setColor(titleColour2);
@@ -751,14 +722,57 @@ public class GUI {
 						singleplayerSelected = false;
 					}
 				}
-				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
-
+				g2.fillRect(x, y+ 6, getTextWidth(text, g2), 4);
 			}
-			
 			g2.drawString(text, x, y);
 			
+			if(doDestroySave) {
+				g2.setFont(saveFont);
+				g2.setColor(titleColour1);
+				g2.drawString("Are you sure you want", 620, 220);
+				g2.drawString("  to delete this save", 620, 240);
+				
+				y+= 40;
+				text = "Yes";
+
+				x = 660;
+				y = 400;
+				
+				if(isHovering(text,x, y-40, g2)) {
+					g2.setColor(titleColour2);
+					if(gp.mouseI.leftClickPressed) {
+						if(clickCooldown == 0) {
+							clickCooldown = 20;
+							gp.saveM.clearSaveSlot(destroySaveNum);
+							destroySaveNum = 0;
+							doDestroySave = false;
+						}
+					}
+					g2.fillRect(x, y+ 6, getTextWidth(text, g2), 4);
+				}
+				g2.drawString(text, x, y);
+				
+				g2.setColor(titleColour1);
+				text = "No";
+
+				x += 200;
+				y = 400;
+				
+				if(isHovering(text,x, y-40, g2)) {
+					g2.setColor(titleColour2);
+					if(gp.mouseI.leftClickPressed) {
+						if(clickCooldown == 0) {
+							clickCooldown = 20;
+							destroySaveNum = 0;
+							doDestroySave = false;
+						}
+					}
+					g2.fillRect(x, y+ 6, getTextWidth(text, g2), 4);
+				}
+				g2.drawString(text, x, y);
+			}
 			
-			if(drawLoadingScreen) {					
+			if(saveChosen != -1 && !doDestroySave) {					
 				g2.setFont(titleFont);
 				g2.setColor(Color.WHITE);
 				text = "LOADING";
@@ -767,16 +781,72 @@ public class GUI {
 				y = 800;
 				
 				g2.drawString(text, x, y);
-				if(startLoading) {
-					if(singleplayerSelected) {
-						gp.playSinglePlayer(saveChosen);
-						singleplayerSelected = false;
-					}
-					startLoading = false;
+				if(singleplayerSelected) {
+					gp.playSinglePlayer(saveChosen);
+					singleplayerSelected = false;
 				}
-				startLoading = true;
 			}
 		}
+	}
+	private int drawSave(Graphics2D g2, int saveSlot, int x, int y, String text) {
+		int saveChosen = -1;
+		if(!gp.saveM.isSlotEmpty(saveSlot)) {
+			g2.setFont(saveFont);
+			g2.drawImage(saveBorder, x, y, 130*3, 48*3, null);
+			
+			if(isHovering(x, y, 130*3, 48*3)) {
+				g2.setColor(titleColour2);
+				if(gp.mouseI.leftClickPressed) {
+					saveChosen = saveSlot;
+				}
+			}
+			g2.drawString(text, 120, y+50);
+			
+			//g2.setColor(titleColour1);
+			g2.setFont(saveFont2);
+			g2.drawString(gp.saveM.getSavedSeason(saveSlot) + " Day " + Integer.toString(gp.saveM.getSavedDay(saveSlot)), 120, y+80);
+			
+			g2.drawImage(coinImage, 120, y+84, 16*3, 16*3, null);
+			g2.drawString(Integer.toString(gp.saveM.getSavedMoney(saveSlot)), 176, y+114);
+			
+			g2.fillRect(x + 176-4, y + 5+12-4, 180+8, 110+8);
+			
+			g2.drawImage(deleteSave, x + 130*3, y+84, 16*3, 18*3, null);
+			if(isHovering(x + 130*3, y+84, 16*3, 18*3)) {
+				if(gp.mouseI.leftClickPressed) {
+					if(clickCooldown == 0) {
+						clickCooldown = 20;
+						doDestroySave = true;
+						destroySaveNum = saveSlot;
+					}
+				}
+			}
+			
+			//Draw image
+			try {
+			    File previewFile = new File("save/preview" + saveSlot + ".png");
+			    if (previewFile.exists()) {
+			        BufferedImage preview = ImageIO.read(previewFile);
+			        g2.drawImage(preview, x + 176, y + 5+12, 180, 110, null); 
+			    }
+			} catch (Exception e) {
+			    e.printStackTrace();
+			}
+		} else {
+			text = "New Save";
+			g2.setFont(saveFont);
+			g2.drawImage(saveBorder, x, y, 130*3, 48*3, null);
+			
+			if(isHovering(x, y, 130*3, 48*3)) {
+				g2.setColor(titleColour2);
+				if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+					saveChosen = saveSlot;
+				}
+			}
+			g2.drawString(text, 120, y+50);
+		}
+		
+		return saveChosen;
 	}
 	public void drawUsernameInput(Graphics2D g2) {
 	    

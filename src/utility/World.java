@@ -99,7 +99,7 @@ public class World {
         currentWeather = Weather.getRandom(random);
         resetWeatherTimer(); // <- initialize nextWeatherTime
         
-        //gp.npcM.addServer();
+        //gp.npcM.addDishWasher();
     }
 
     // === Specials generation ===

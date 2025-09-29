@@ -1,16 +1,23 @@
 package utility.save;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import com.google.gson.Gson;
 
 import main.GamePanel;
 import map.Room;
 import utility.RecipeManager;
+import utility.Season;
 
 public class SaveManager {
 	
@@ -52,6 +59,45 @@ public class SaveManager {
 			saveSlots.put(2, false);
 			saveSlots.put(3, false);
 		}
+	}
+	private void savePreview(int slot) {
+		// World position of the player
+		int px = (int)(gp.player.hitbox.x + gp.player.hitbox.width/2);
+		int py = (int)(gp.player.hitbox.y + gp.player.hitbox.height/2);
+
+		// Choose how much of the world around the player you want
+		int viewW = 180;
+		int viewH = 110;
+
+		// Calculate top-left corner of the crop
+		int cropX = px - viewW / 2;
+		int cropY = py - viewH / 2;
+
+		// Clamp to screen bounds
+		cropX = Math.max(0, Math.min(gp.colorBuffer.getWidth() - viewW, cropX));
+		cropY = Math.max(0, Math.min(gp.colorBuffer.getHeight() - viewH, cropY));
+
+		// Crop region
+		BufferedImage cropped = gp.colorBuffer.getSubimage(cropX, cropY, viewW, viewH);
+
+		// Scale to preview size (zoom effect)
+		Image preview = cropped.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
+
+		// Save preview
+		BufferedImage out = new BufferedImage(200, 150, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = out.createGraphics();
+		g2.drawImage(preview, 0, 0, null);
+		g2.dispose();
+
+		try {
+			ImageIO.write(out, "png", new File("save/preview" + slot + ".png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public boolean isSlotEmpty(int slot) {
+	    return !saveSlots.getOrDefault(slot, false);
 	}
 	public void clearSaveSlot(int slot) {
 	    // Delete all files associated with this save slot
@@ -106,8 +152,8 @@ public class SaveManager {
 		}
 		saveToFile("save/order"+Integer.toString(currentSave)+".json", gp.world.saveOrderData());
 		saveToFile("save/customiser"+Integer.toString(currentSave)+".json", gp.customiser.saveCustomiserData());
+	    savePreview(currentSave);
 	}
-	
 	public void loadGame(int save) {
 		currentSave = save;
 
@@ -136,6 +182,37 @@ public class SaveManager {
 	}
 	public void startGame() {
 		gp.startGame();
+	}
+	public int getSavedDay(int slot) {
+	    try (FileReader reader = new FileReader("save/world" + slot + ".json")) {
+	        Gson gson = new Gson();
+	        WorldSaveData data = gson.fromJson(reader, WorldSaveData.class);
+	        return data != null ? data.day : -1; // return -1 if no save
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return -1;
+	    }
+	}
+	public int getSavedMoney(int slot) {
+	    try (FileReader reader = new FileReader("save/player" + slot + ".json")) {
+	        Gson gson = new Gson();
+	        PlayerSaveData data = gson.fromJson(reader, PlayerSaveData.class);
+	        return data != null ? data.wealth : -1; // return -1 if no save
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return -1;
+	    }
+	}
+
+	public Season getSavedSeason(int slot) {
+	    try (FileReader reader = new FileReader("save/world" + slot + ".json")) {
+	        Gson gson = new Gson();
+	        WorldSaveData data = gson.fromJson(reader, WorldSaveData.class);
+	        return data != null ? data.currentSeason : null; // return null if no save
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
     // Convenience methods to save/load directly from disk
 	public void saveToFile(String path, SaveData data) {

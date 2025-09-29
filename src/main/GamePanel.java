@@ -139,7 +139,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean firstUpdate = true;
     
     //LIGHTING
-    private BufferedImage colorBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
+    public BufferedImage colorBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
     private Graphics2D gColor;
 
 
@@ -746,6 +746,5 @@ public class GamePanel extends JPanel implements Runnable {
         
         g2.dispose();
     }
-
 
 }
