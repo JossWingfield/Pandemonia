@@ -28,6 +28,7 @@ public class CornerTable extends Building {
 		importImages();
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
+		canBePlaced = false;
 	}
 	public Building clone() {
 		CornerTable building = new CornerTable(gp, hitbox.x, hitbox.y, presetNum);

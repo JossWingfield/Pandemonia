@@ -25,6 +25,7 @@ public class Spill extends Building {
 		xDrawOffset = 24;
 		yDrawOffset = 24;
 		importImages();
+		canBePlaced = false;
 		effectArea = new Rectangle2D.Float(hitbox.x - 32, hitbox.y - 32, hitbox.width + 64, hitbox.height + 64);
 	}
 	public Building clone() {

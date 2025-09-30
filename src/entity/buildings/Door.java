@@ -27,6 +27,7 @@ public class Door extends Building {
 		blueprint = false;
 		drawWidth = 32*3;
 		drawHeight = 48*3;
+		canBePlaced = false;
 		yDrawOffset = 48;
 		importImages();
 		if(facing == 0) {

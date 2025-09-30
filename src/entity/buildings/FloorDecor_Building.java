@@ -91,6 +91,7 @@ public class FloorDecor_Building extends Building {
     		isBottomLayer = true;
     		isKitchenBuilding = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 5:
             name = "Table Piece"; //MIDDLE
@@ -102,6 +103,7 @@ public class FloorDecor_Building extends Building {
     		interactHitbox = new Rectangle2D.Float(hitbox.x + interactSize / 2, hitbox.y, interactSize, hitbox.height);
     		isKitchenBuilding = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
     		break;
         case 6:
             name = "Table Piece"; //EDGE
@@ -113,6 +115,7 @@ public class FloorDecor_Building extends Building {
     		isBottomLayer = true;
     		isKitchenBuilding = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 7:
             name = "Table Piece"; //EDGE
@@ -125,6 +128,7 @@ public class FloorDecor_Building extends Building {
     		isBottomLayer = true;
     		isKitchenBuilding = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 8:
             name = "Table Piece"; //MIDDLE
@@ -136,6 +140,7 @@ public class FloorDecor_Building extends Building {
     		interactHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+interactSize / 2, hitbox.width, interactSize);
     		isKitchenBuilding = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
     		break;
         case 9:
             name = "Table Piece"; //EDGE
@@ -148,6 +153,7 @@ public class FloorDecor_Building extends Building {
     		isBottomLayer = true;
     		isKitchenBuilding = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 10: //EDGE
             name = "Table Piece";
@@ -160,6 +166,7 @@ public class FloorDecor_Building extends Building {
     		isBottomLayer = true;
     		isKitchenBuilding = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 11: //MIDDLE
             name = "Table Piece";
@@ -171,6 +178,7 @@ public class FloorDecor_Building extends Building {
     		interactHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+interactSize / 2, hitbox.width, interactSize);
     		isKitchenBuilding = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
     		break;
         case 12: //EDGE
             name = "Table Piece";
@@ -183,6 +191,7 @@ public class FloorDecor_Building extends Building {
     		isBottomLayer = true;
     		isKitchenBuilding = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 13: //CORNERS
             name = "Table Corner";
@@ -195,6 +204,7 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 12+18;
           	isBottomLayer = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 14:
             name = "Table Corner";
@@ -207,6 +217,7 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 12+18;
           	isBottomLayer = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 15:
             name = "Table Corner";
@@ -219,6 +230,7 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 12+18;
           	isBottomLayer = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 16:
             name = "Table Corner";
@@ -231,6 +243,7 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 12+18;
         	isBottomLayer = true;
     		mustBePlacedOnFloor = true;
+    		canBePlaced = false;
         	break;
         case 17:
             name = "Barrel";
@@ -600,6 +613,7 @@ public class FloorDecor_Building extends Building {
           	isThirdLayer = true;
           	isBathroomBuilding = true;
         	mustBePlacedOnFloor = true;
+        	canBePlaced = false;
         	break;
         case 52:
             name = "Bathroom Wall 2";
@@ -613,6 +627,7 @@ public class FloorDecor_Building extends Building {
         	isThirdLayer = true;
         	isBathroomBuilding = true;
         	mustBePlacedOnFloor = true;
+        	canBePlaced = false;
         	break;
         case 53:
             name = "Bathroom Wall 3";
@@ -625,6 +640,7 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 24;
         	isBathroomBuilding = true;
         	mustBePlacedOnFloor = true;
+        	canBePlaced = false;
         	break;
         case 54:
             name = "Bathroom Wall 4";
@@ -635,6 +651,7 @@ public class FloorDecor_Building extends Building {
         	drawWidth = 48;
         	drawHeight = 48;
           	isBottomLayer = true;
+        	canBePlaced = false;
         	break;
         case 55:
             name = "Bathroom Wall 5";
@@ -647,6 +664,7 @@ public class FloorDecor_Building extends Building {
         	drawWidth = 48;
         	drawHeight = 48;
           	isBottomLayer = true;
+        	canBePlaced = false;
         	break;
         case 56:
             name = "Bathroom Wall 6";
@@ -659,6 +677,7 @@ public class FloorDecor_Building extends Building {
         	drawWidth = 48;
         	drawHeight = 48;
         	isBottomLayer = true;
+        	canBePlaced = false;
         	break;
         case 57:
             name = "Cabinet 1";

@@ -26,6 +26,7 @@ public class Breaker extends Building{
 		yDrawOffset = 24;
 		importImages();
 		isSolid = true;
+		canBePlaced = false;
 		interactHitbox = new Rectangle2D.Float(hitbox.x+56, hitbox.y+48, 32, hitbox.height);
 	}
 	public Building clone() {

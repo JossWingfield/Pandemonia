@@ -14,7 +14,9 @@ import entity.buildings.Building;
 import entity.buildings.Door;
 import entity.buildings.EscapeHole;
 import entity.buildings.Fridge;
+import entity.buildings.Sink;
 import entity.buildings.StorageFridge;
+import entity.buildings.TablePlate;
 import entity.buildings.Trapdoor;
 import entity.npc.Customer;
 import entity.npc.NPC;
@@ -457,6 +459,34 @@ public class MapManager {
 					if(b.getName().equals("Storage Fridge")) {
 						StorageFridge storageFridge = (StorageFridge)b;
 						return storageFridge;
+					}	
+				}
+			}
+			return null;
+		}
+		public Sink findSink(int roomNum) {
+			Room room = rooms[roomNum];
+			Building[] buildings = room.getBuildings();
+			for(Building b: buildings) {
+				if(b != null) {
+					if(b.getName().equals("Kitchen Sink 1")) {
+						Sink sink = (Sink)b;
+						return sink;
+					}	
+				}
+			}
+			return null;
+		}
+		public TablePlate findTablePlate(int roomNum) {
+			Room room = rooms[roomNum];
+			Building[] buildings = room.getBuildings();
+			for(Building b: buildings) {
+				if(b != null) {
+					if(b.getName().equals("Table Plate")) {
+						TablePlate sink = (TablePlate)b;
+						if(sink.showDirtyPlate) {
+							return sink;
+						}
 					}	
 				}
 			}

@@ -23,6 +23,7 @@ public class ToiletDoor extends Building {
 		drawHeight = 48*3;
 		yDrawOffset = 24+8;
 		isThirdLayer = true;
+		canBePlaced = false;
 		importImages();
 	}
 	public Building clone() {

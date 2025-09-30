@@ -22,7 +22,7 @@ public class Candle extends Building{
 		drawWidth = 48;
         drawHeight = 48;
 		isDecor = true;
-		isSolid = false;
+		isSolid = true;
 		blueprint = false;
 		importImages();
 		canBePlacedOnTable = true;

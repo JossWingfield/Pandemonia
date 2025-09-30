@@ -39,6 +39,10 @@ public class NPCManager {
     	Server server = new Server(gp, 10*48, 9*48);
     	npcs.add(server);
     }
+    public void addDishWasher() {
+    	DishWasher server = new DishWasher(gp, 10*48, 9*48);
+    	npcs.add(server);
+    }
     public void addRat() {
     	int x = 0;
     	int y = 0;

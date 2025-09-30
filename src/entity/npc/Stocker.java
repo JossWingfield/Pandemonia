@@ -237,28 +237,29 @@ public class Stocker extends Employee {
             animationSpeed = 0;
             animationCounter++;
         }
+        
+        if(currentItem == null) {
+        	if(walking) {
+        		currentAnimation = 1;
+        	} else {
+        		currentAnimation = 0;
+        	}
+        } else {
+        	if(currentAnimation != 4) {
+            	if(walking) {
+            		currentAnimation = 3;
+            	} else {
+            		currentAnimation = 2;
+            	}
+        	}
+        }
+        
         if(animations != null) {
             if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
                 animationCounter = 0; //Loops the animation
                 if(currentAnimation == 4) {
                 	currentAnimation = 2;
                 }
-            }
-            
-            if(currentItem == null) {
-            	if(walking) {
-            		currentAnimation = 1;
-            	} else {
-            		currentAnimation = 0;
-            	}
-            } else {
-            	if(currentAnimation != 4) {
-	            	if(walking) {
-	            		currentAnimation = 3;
-	            	} else {
-	            		currentAnimation = 2;
-	            	}
-            	}
             }
             
             BufferedImage img = animations[0][currentAnimation][animationCounter];

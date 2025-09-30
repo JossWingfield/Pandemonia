@@ -28,6 +28,7 @@ public class Gate extends Building {
 		hitbox.width = 30;
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
+		canBePlaced = false;
 	}
 	public Building clone() {
 		Gate building = new Gate(gp, hitbox.x, hitbox.y);

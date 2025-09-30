@@ -23,6 +23,7 @@ public class Building extends Entity {
 	public boolean isSolid = true;
 	public boolean isWall = false;
 	public boolean isWireable = false;
+	public boolean canBePlaced = true;
 	
 	public boolean isSecondLayer = false;
 	public boolean isThirdLayer = false;
@@ -144,6 +145,7 @@ public class Building extends Entity {
 	public void update() {
 
 		//if(gp.currentState == gp.mapBuildState) {
+		if(canBePlaced) {
 			if(hitbox.contains(gp.mouseI.mouseX + gp.player.xDiff, gp.mouseI.mouseY + gp.player.yDiff)) {
 				if(gp.keyI.shiftPressed) {
 					openDestructionUI();
@@ -155,9 +157,11 @@ public class Building extends Entity {
 			}
 			if(destructionUIOpen) {
 				if(gp.mouseI.rightClickPressed) {
+					gp.customiser.addToInventory(this);
 					gp.buildingM.destroyBuilding(this);
 				}
 			}
+		}
 		//}
 	}
 	public void printOutput() {

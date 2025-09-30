@@ -29,6 +29,7 @@ public class Cauldron extends Building {
 		xDrawOffset = 24;
 		yDrawOffset = 24;
 		mustBePlacedOnFloor = true;
+		canBePlaced = false;
 	}
 	public Building clone() {
 		Cauldron building = new Cauldron(gp, hitbox.x, hitbox.y);

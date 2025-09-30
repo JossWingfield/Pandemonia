@@ -19,6 +19,7 @@ public class Parcel extends Building {
 		blueprint = false;
 		drawWidth = 16*3;
 		drawHeight = 16*3;
+		canBePlaced = false;
 		importImages();
 	}
 	public Building clone() {

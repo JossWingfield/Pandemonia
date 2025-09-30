@@ -84,6 +84,28 @@ public class Sink extends Building {
     	yDrawOffset = 0;
     	isThirdLayer = true;
 	}
+	public void addPlate(Plate p) {
+		if(currentPlate == null) {
+	    	currentPlate = p;
+    	} else {
+	    	currentPlate.increasePlateStack();
+    	}
+	}
+	public boolean hasDirtyPlates() {
+		return currentPlate != null;
+	}
+	public void washPlates() {
+		chopCount++;
+    	if(chopCount == maxChopCount) {
+    		chopCount = 0;
+    		cleanedPlateCount++;
+    		if(currentPlate.getCurrentStackCount() > 1) {
+    			currentPlate.decreasePlateStack();
+    		} else {
+    			currentPlate = null;
+    		}
+    	}
+	}
 	public void decreasePlateCount() {
 		if(cleanedPlateCount > 0) {
 			cleanedPlateCount--;

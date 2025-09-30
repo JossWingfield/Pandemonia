@@ -97,7 +97,7 @@ public class World {
         darkColour = new Color(51, 60, 58, 200);
         
         currentWeather = Weather.getRandom(random);
-        resetWeatherTimer(); // <- initialize nextWeatherTime
+        resetWeatherTimer();
         
         //gp.npcM.addDishWasher();
     }

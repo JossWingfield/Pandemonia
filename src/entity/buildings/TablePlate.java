@@ -18,7 +18,7 @@ public class TablePlate extends Building {
 	private Customer currentCustomer;
 	private boolean orderCompleted = false;
 	public boolean showDirtyPlate = false;
-	private Plate plate;
+	public Plate plate;
 	
 	public TablePlate(GamePanel gp, float xPos, float yPos, int direction, Chair chair) {
 		super(gp, xPos, yPos, 48, 48);
@@ -29,6 +29,7 @@ public class TablePlate extends Building {
 		drawHeight = 16*3;
 		importImages();
 		isSolid = false;
+		canBePlaced = false;
 		//isSecondLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;

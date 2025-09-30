@@ -27,6 +27,7 @@ public class Trapdoor extends Building {
 		drawHeight = 32*3;
 		yDrawOffset = 24;
 		xDrawOffset = 24;
+		canBePlaced = false;
 		importImages();
 		npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48 - 48, 48, 80);
 

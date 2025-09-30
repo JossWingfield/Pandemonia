@@ -41,11 +41,15 @@ public class KeyboardInput implements KeyListener {
         if(gp.currentState == gp.playState) {
         	
         	if (num == KeyEvent.VK_4) {
-                gp.saveM.saveGame();
+                //gp.saveM.saveGame();
             }
         	if (num == KeyEvent.VK_5) {
-                gp.saveM.loadGame(gp.saveM.currentSave);
+                //gp.saveM.loadGame(gp.saveM.currentSave);
             }
+            if(num == KeyEvent.VK_F) {
+            	gp.gui.startLevelUpScreen();
+            }
+        	
             //MAIN INPUTS
             if (num == KeyEvent.VK_A || num == KeyEvent.VK_LEFT) {
                 left = true;
@@ -75,9 +79,6 @@ public class KeyboardInput implements KeyListener {
             }
             if(num == KeyEvent.VK_E) {
             	ePressed = true;
-            }
-            if(num == KeyEvent.VK_F) {
-            	//gp.gui.startLevelUpScreen();
             }
             if(num == KeyEvent.VK_ESCAPE) {
             	gp.currentState = gp.pauseState;

@@ -74,6 +74,23 @@ public class Stove extends Building {
 			    pan.updateCooking();
 			}
 		}
+		if(canBePlaced) {
+			if(hitbox.contains(gp.mouseI.mouseX + gp.player.xDiff, gp.mouseI.mouseY + gp.player.yDiff)) {
+				if(gp.keyI.shiftPressed) {
+					openDestructionUI();
+				}
+			}
+			
+			if(!hitbox.contains(gp.mouseI.mouseX + gp.player.xDiff, gp.mouseI.mouseY + gp.player.yDiff)) {
+				closeDestructionUI();
+			}
+			if(destructionUIOpen) {
+				if(gp.mouseI.rightClickPressed) {
+					gp.customiser.addToInventory(this);
+					gp.buildingM.destroyBuilding(this);
+				}
+			}
+		}
 	}
 	public void removeItem(int slot) {
 		if(slot == 0) {

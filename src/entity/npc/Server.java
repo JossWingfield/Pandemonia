@@ -102,6 +102,11 @@ public class Server extends Employee {
             animationSpeed = 0;
             animationCounter++;
         }
+        if(walking) {
+    		currentAnimation = 1;
+    	} else {
+    		currentAnimation = 0;
+    	}
         if(animations != null) {
             if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
                 animationCounter = 0; //Loops the animation
@@ -110,11 +115,6 @@ public class Server extends Employee {
                 }
             }
             
-            if(walking) {
-        		currentAnimation = 1;
-        	} else {
-        		currentAnimation = 0;
-        	}
             
             BufferedImage img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;

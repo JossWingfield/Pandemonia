@@ -169,6 +169,7 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	 		 drawWidth = 32*3;
 			 drawHeight = 32*3;
+				canBePlaced = false;
 	         break;
 		 case 20:
 	         name = "Piping 2";
@@ -178,6 +179,7 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	 		 drawWidth = 32*3;
 			 drawHeight = 32*3;
+			canBePlaced = false;
 	         break;
 		 case 21:
 	         name = "Piping 3";
@@ -187,6 +189,7 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	 		 drawWidth = 32*3;
 			 drawHeight = 32*3;
+			canBePlaced = false;
 	         break;
 		 case 22:
 	         name = "Painting 5";
