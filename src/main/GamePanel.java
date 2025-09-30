@@ -27,8 +27,10 @@ import utility.GUI;
 import utility.ItemRegistry;
 import utility.KeyboardInput;
 import utility.MouseInput;
+import utility.ProgressManager;
 import utility.RecipeManager;
 import utility.Settings;
+import utility.UpgradeManager;
 import utility.World;
 import utility.save.SaveManager;
 
@@ -97,6 +99,8 @@ public class GamePanel extends JPanel implements Runnable {
     public Customiser customiser = new Customiser(this);
     public Catalogue catalogue = new Catalogue(this);
     public RecipeManager recipeM = new RecipeManager();
+    public UpgradeManager upgradeM = new UpgradeManager();
+    public ProgressManager progressM = new ProgressManager(this);
     public SaveManager saveM = new SaveManager(this);
     public MapBuilder mapB = new MapBuilder(this);
     //THREAD initialising the thread which the game loop is run off
@@ -119,6 +123,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int xpState = 12;
     public final int chooseRecipeState = 13;
     public final int chooseSaveState = 14;
+    public final int chooseUpgradeState = 15;
 
     // AESTHETICS
     private Color backgroundColour = new Color(51, 60, 58);

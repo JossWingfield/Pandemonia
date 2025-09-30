@@ -89,6 +89,7 @@ public class GUI {
 	
 	private Map<Recipe, RecipeRenderData> renderCache = new HashMap<>();
 	public Recipe[] recipeChoices;
+	public Upgrade[] upgradeChoices;
 	
 	//SETTINGS STATES
 	private int settingsState = 0;
@@ -540,7 +541,6 @@ public class GUI {
 	        g2.drawString(text, x, y);
 	    }
 	}
-	
 	public void drawGameSettingsScreen(Graphics2D g2) {
 
 		g2.drawImage(titleBackground, (gp.frameWidth/2) - (int)((768*1.5) / 2), (gp.frameHeight/2) - (int)((560*1.5)/2), (int)(768*1.5), (int)(560*1.5), null);
@@ -1016,6 +1016,9 @@ public class GUI {
 			break;
 		case 14:
 			drawChooseSaveState(g2);
+			break;
+		case 15:
+			drawChooseUpgradeScreen(g2);
 			break;
 		}
 		
@@ -1739,7 +1742,8 @@ public class GUI {
 		
 		if(levelUp) {
 			levelUp = false;
-			gp.currentState = gp.chooseRecipeState;
+			gp.player.level++;
+			gp.progressM.handleLevelUp(gp.player.level);
 		}
 		
 	}
@@ -1747,13 +1751,13 @@ public class GUI {
 		g2.setColor(darkened);
 		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
 
-	    if (recipeChoices == null) {
-	    	recipeChoices = RecipeManager.getTwoRandomLocked();
-	    }
+		if (gp.progressM.getRecipeChoices() == null) {
+		    // fallback in case something went wrong
+		    recipeChoices = RecipeManager.getTwoRandomLocked();
+		} else {
+		    recipeChoices = gp.progressM.getRecipeChoices();
+		}
 
-	    if(true) {
-	    	
-	    }
 	    int x = 400;
 	    int y = gp.frameHeight/2 - 100;
 	    if(isHovering(x, y, 32*3, 48*3)) {
@@ -1773,6 +1777,38 @@ public class GUI {
 	    }
 	    drawRecipe(g2, recipeChoices[1], x, y);
 	}
+	private void drawChooseUpgradeScreen(Graphics2D g2) {
+		g2.setColor(darkened);
+		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
+
+		upgradeChoices = gp.progressM.getUpgradeChoices();
+
+	    int x = 200;
+	    int y = gp.frameHeight/2 - 100;
+	    if(isHovering(x, y, 32*3, 48*3)) {
+	    	if(gp.mouseI.leftClickPressed) {
+	    		UpgradeManager.unlockUpgrade(upgradeChoices[0]);
+	    		gp.currentState = gp.playState;
+	    	}
+	    }
+	    drawUpgrade(g2, upgradeChoices[0], x, y);
+	    
+	    x = 600;
+	    if(isHovering(x, y, 32*3, 48*3)) {
+	    	if(gp.mouseI.leftClickPressed) {
+	    		UpgradeManager.unlockUpgrade(upgradeChoices[1]);
+	    		gp.currentState = gp.playState;
+	    	}
+	    }
+	    drawUpgrade(g2, upgradeChoices[1], x, y);
+	}
+    private void drawUpgrade(Graphics2D g2, Upgrade upgrade, int x, int y) {
+		// BASE
+		g2.drawImage(saveBorder, x, y, 130 * 3, 48 * 3, null);
+
+		g2.drawString(upgrade.getName(), x + 20, y + 20);
+		
+    }
     private void drawRecipe(Graphics2D g2, Recipe recipe, int x, int y) {
 		// BASE
 		g2.drawImage(recipeBorder, x, y, 32 * 3, 48 * 3, null);

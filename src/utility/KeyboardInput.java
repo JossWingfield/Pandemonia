@@ -49,6 +49,9 @@ public class KeyboardInput implements KeyListener {
             if(num == KeyEvent.VK_F) {
             	gp.gui.startLevelUpScreen();
             }
+            if(num == KeyEvent.VK_Q) {
+            	gp.player.soulsServed = gp.player.nextLevelAmount;
+            }
         	
             //MAIN INPUTS
             if (num == KeyEvent.VK_A || num == KeyEvent.VK_LEFT) {

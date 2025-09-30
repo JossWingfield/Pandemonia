@@ -67,7 +67,7 @@ public class Player extends Entity{
     public Rectangle2D.Float interactHitbox;
     
     //ATTRIBUTES
-    public int level = 0;
+    public int level = 2;
     public int soulsServed = 0;
     public int nextLevelAmount = 10;
     public int wealth = 0;
