@@ -287,7 +287,7 @@ public class RecipeManager {
         }
     }
 
-    public static List<Recipe> getUnlockedRecipes() {
+    public static ArrayList<Recipe> getUnlockedRecipes() {
         return new ArrayList<>(unlockedRecipes);
     }
 
@@ -401,13 +401,15 @@ public class RecipeManager {
         }
         return null; // not found
     }
-    public static void applySaveData(RecipeSaveData data) {
-    	unlockedRecipes.clear();
-    	for(String name: data.unlockedRecipesNames) {
-    		Recipe recipe = getRecipeByName(name);
-    	    if (recipe != null) {
-    	    	unlockRecipe(recipe);
-    	    }
-    	}
+    public static void applySaveData(List<String> unlockedNames) {
+        unlockedRecipes.clear();
+        for (String name : unlockedNames) {
+            for (Recipe r : allRecipes) {
+                if (r.getName().equals(name)) {
+                    unlockRecipe(r); // instead of unlockedRecipes.add(r)
+                }
+            }
+        }
     }
+    
 }

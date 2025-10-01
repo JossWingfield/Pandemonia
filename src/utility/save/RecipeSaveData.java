@@ -11,7 +11,7 @@ public class RecipeSaveData extends SaveData {
     public List<String> unlockedRecipesNames;
 	
 	public void applySaveData(GamePanel gp) {
-		RecipeManager.applySaveData(this);
+		RecipeManager.applySaveData(unlockedRecipesNames);
 	}
     
 }

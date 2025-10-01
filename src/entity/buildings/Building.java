@@ -158,6 +158,7 @@ public class Building extends Entity {
 			if(destructionUIOpen) {
 				if(gp.mouseI.rightClickPressed) {
 					gp.customiser.addToInventory(this);
+					destroy();
 					gp.buildingM.destroyBuilding(this);
 				}
 			}

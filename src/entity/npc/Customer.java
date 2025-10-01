@@ -205,8 +205,12 @@ public class Customer extends NPC {
     		}
     	}
 	    
-	    if(addTip) {
-	    	gp.player.wealth += tip;
+	    if(addTip && (gp.world.tipJarPresent || gp.world.bigTipsPresent)) {
+	    	if(gp.world.bigTipsPresent) {
+		    	gp.player.wealth += tip;
+	    	} else {
+	    		gp.player.wealth += (tip*0.5);
+	    	}
 	    }
 	    
 	    gp.player.soulsServed++;
@@ -378,7 +382,11 @@ public class Customer extends NPC {
 
 	        // If they have ordered but haven’t been served yet
 	        if((waitingToOrder && !ordered) || (ordered && !eating)) {
-	            patienceCounter += patienceFactor;
+	            float patienceIncrement = patienceFactor;
+	            if(gp.world.turntablePresent) {
+	                patienceIncrement *= 0.8f; // 20% slower patience decrease
+	            }
+	            patienceCounter += patienceIncrement;
 	        }
 
 	        if(eating) {

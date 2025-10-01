@@ -15,7 +15,9 @@ import entity.buildings.Building;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
 import entity.buildings.Sink;
+import entity.buildings.TipJar;
 import entity.buildings.Toilet;
+import entity.buildings.Turntable;
 import entity.buildings.WallDecor_Building;
 import main.GamePanel;
 import utility.CollisionMethods;
@@ -55,7 +57,6 @@ public class Customiser {
 	public Customiser(GamePanel gp) {
 		this.gp = gp;
 		yStart = gp.frameHeight-ySize+4;
-		addBuildings();
 		frame = importImage("/UI/customise/CustomiseFrame.png");
 		buildFrame = importImage("/UI/customise/BuildFrame.png").getSubimage(0, 0, 37, 37);
 		buildFrameHighlight = importImage("/UI/customise/BuildFrame.png").getSubimage(37, 0, 37, 37);
@@ -76,9 +77,7 @@ public class Customiser {
 		bathroomTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*7, 25, 34, 25);
 		border = importImage("/UI/customise/WallBorder.png");
 	}
-	private void addBuildings() {
 
-	}
 	public CustomiserSaveData saveCustomiserData() {
 		CustomiserSaveData data = new CustomiserSaveData();
 		data.decorBuildingInventory = gp.buildingRegistry.saveBuildings(decorBuildingInventory);

@@ -9,7 +9,9 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import entity.items.Bread;
 import entity.items.Cheese;
@@ -17,11 +19,14 @@ import entity.items.Chicken;
 import entity.items.Egg;
 import entity.items.Fish;
 import entity.items.Food;
+import entity.npc.Customer;
+import entity.npc.SpecialCustomer;
 import main.GamePanel;
 import net.packets.Packet03PickupItem;
 import utility.DayPhase;
 import utility.Recipe;
 import utility.RecipeManager;
+import utility.RecipeRenderData;
 
 public class MenuSign extends Building {
 
@@ -32,6 +37,7 @@ public class MenuSign extends Building {
     private BufferedImage ui1, ui2, ui3;
     private BufferedImage recipeBorder, coinImage;
 
+    private Map<Recipe, RecipeRenderData> renderCache = new HashMap<>();
     private List<Recipe> selectedRecipes = new ArrayList<>();
     
     private Font nameFont = new Font("monogram", Font.ITALIC, 20);
@@ -111,206 +117,227 @@ public class MenuSign extends Building {
 
         if(clickCooldown>0) clickCooldown--;
     }
-    
-    // Draw the menu UI
-    public void drawOverlayUI(Graphics2D g2) {
-        if(!uiOpen) return;
+	public void addOrder(Recipe recipe, Graphics2D g2) {
+	    RecipeRenderData data = buildRenderData(recipe, nameFont, g2);
+	    renderCache.put(recipe, data);
+	}
+	public RecipeRenderData buildRenderData(Recipe recipe, Font nameFont, Graphics2D g2) {
+	    RecipeRenderData data = new RecipeRenderData();
+	    data.recipe = recipe;
 
-        // Background
-        g2.drawImage(ui1, 50, 50, 275*3, 187*3, null);
+	    // Cache base images
+	    data.borderImage = recipeBorder;
 
-        // Get unlocked recipes
-        List<Recipe> unlocked = new ArrayList<>(RecipeManager.getUnlockedRecipes());
+	    data.coinImage = coinImage;
+	    data.plateImage = recipe.finishedPlate;
 
-        // Remove today’s specials from unlocked list
-        List<Recipe> specials = gp.world.getTodaysSpecials();
-        unlocked.removeAll(specials);
+	    // Cache ingredient + states
+	    List<String> ingredients = recipe.getIngredients();
+	    List<String> cookingState = recipe.getCookingStates();
+	    List<String> secondaryCookingState = recipe.getSecondaryCookingStates();
 
-        // Setup font
-        g2.setFont(menuFont);
-        FontMetrics fm = g2.getFontMetrics();
+	    for (int j = 0; j < ingredients.size(); j++) {
+	        String ingredientName = ingredients.get(j);
+	        Food ingredient = (Food) gp.itemRegistry.getItemFromName(ingredientName, 0);
 
-        int startX = 120;
-        int startY = 256;
-        int lineHeight = fm.getHeight() + 4; // spacing between lines
-
-        // Get mouse position
-
-        for (int i = 0; i < unlocked.size(); i++) {
-            g2.setFont(menuFont);
-            Recipe recipe = unlocked.get(i);
-            String name = recipe.getName();
-
-            
-            int textX = startX;
-            int textY = startY + i * lineHeight;
-            int maxNumInColumn = 8;
-            if(i > maxNumInColumn) {
-            	textX = startX + 160;
-            	textY = startY + (i-maxNumInColumn-1)* lineHeight;
-            }
-
-            // Compute text bounds
-            int textWidth = fm.stringWidth(name);
-            int textHeight = fm.getAscent();
-            Rectangle2D.Float nameHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
-
-            // Check if hovering
-            boolean hovering = nameHitbox.contains(gp.mouseI.mouseX, gp.mouseI.mouseY);
-
-            // Change color when hovering
-            if (hovering) {
-    			g2.setFont(timeFont);
-                drawRecipe(g2, recipe);
-                g2.setColor(Color.WHITE);
-                if (gp.mouseI.leftClickPressed) {
-                    gp.world.addRecipeToMenu(recipe);
-                }
-            } else {
-                g2.setColor(hoverColor);
-            }
-
-            // Draw the text
-            g2.drawString(name, textX, textY);
-            
-        }
-        
-        // --- Draw specials list, below unlocked recipes ---
-        int specialsStartY = 486; // 30px gap
-        for (int i = 0; i < specials.size(); i++) {
-            g2.setFont(menuFont);
-            Recipe recipe = specials.get(i);
-            String name = recipe.getName();
-
-            int textX = startX;
-            int textY = specialsStartY + (i+1) * lineHeight;
-
-         // Compute text bounds
-            int textWidth = fm.stringWidth(name);
-            int textHeight = fm.getAscent();
-            Rectangle2D.Float nameHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
-
-            // Check if hovering
-            boolean hovering = nameHitbox.contains(gp.mouseI.mouseX, gp.mouseI.mouseY);
-
-            // Change color when hovering
-            if (hovering) {
-    			g2.setFont(timeFont);
-                drawRecipe(g2, recipe);
-                g2.setColor(specialHover);
-                if (gp.mouseI.leftClickPressed) {
-                    gp.world.addRecipeToMenu(recipe);
-                }
-            } else {
-                g2.setColor(specialColour);
-            }
-
-            // Just show specials (no click-to-add since they’re auto-included)
-            g2.drawString(name, textX, textY);
-        }
-        
-        List<Recipe> chosen = gp.world.getTodaysMenu();
-        for (int i = 0; i < chosen.size(); i++) {
-            g2.setFont(nameFont);
-            Recipe recipe = chosen.get(i);
-            switch(i) {
-            case 0, 1, 2:
-                drawRecipe(g2, recipe, 426 + i*(36*3) +i*5 + 11, 209);
-            	Rectangle2D.Float border = new Rectangle2D.Float((float)(426 + i*(36*3) +i*5 + 11), (float)209, (float)32*3, (float)48*3);
-            	if(border.contains(gp.mouseI.mouseX, gp.mouseI.mouseY)) {
-            		if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
-            			gp.world.removeRecipeFromMenu(recipe);
-            			clickCooldown = 16;
-            		}
-            	}
-            	break;
-            case 3:
-            	drawRecipe(g2, recipe, 491, 398);
-            	border = new Rectangle2D.Float((float)(491), (float)398, (float)32*3, (float)48*3);
-            	if(border.contains(gp.mouseI.mouseX, gp.mouseI.mouseY)) {
-            		if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
-            			gp.world.removeRecipeFromMenu(recipe);
-            			clickCooldown = 16;
-            		}
-            	}
-            	break;
-            case 4:
-            	drawRecipe(g2, recipe, 605, 398);
-            	border = new Rectangle2D.Float((float)(605), (float)398, (float)32*3, (float)48*3);
-            	if(border.contains(gp.mouseI.mouseX, gp.mouseI.mouseY)) {
-            		if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
-            			gp.world.removeRecipeFromMenu(recipe);
-            			clickCooldown = 16;
-            		}
-            	}
-            	break;
-            }
-        }
-        
-        g2.setColor(Color.WHITE);
-		g2.setFont(timeFont);
-		String text = "Done";
-		int textX = 730;
-		int textY = 544;
-		int textWidth = fm.stringWidth(text);
-        int textHeight = fm.getAscent();
-        Rectangle2D.Float nameHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
-    	if(nameHitbox.contains(gp.mouseI.mouseX, gp.mouseI.mouseY)) {
-			g2.setColor(specialColour);
-    		if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
-    			uiOpen = false;
-    			clickCooldown = 16;
-    		}
-    	}
-		g2.drawString(text, textX, textY);
-		
-        
-    }
-    private void drawRecipe(Graphics2D g2, Recipe recipe) {
-    		int i = 2;
-			int x = 8 + i * (36*3);
-			int y = 581;
-
-			// BASE
-			g2.drawImage(recipeBorder, x, y, 32 * 3, 48 * 3, null);
-
-			// INGREDIENT IMAGES
-			List<String> ingredients = recipe.getIngredients();
-			List<String> cookingState = recipe.getCookingStates();
-			List<String> secondaryCookingState = recipe.getSecondaryCookingStates();
-			for (int j = 0; j < ingredients.size(); j++) {
-				String ingredientName = ingredients.get(j);
-				BufferedImage ingredientImage = gp.itemRegistry.getImageFromName(ingredientName);
-				Food ingredient = (Food)gp.itemRegistry.getItemFromName(ingredientName, 0);
-				if(ingredient.notRawItem) {
-					ingredientImage = gp.itemRegistry.getRawIngredientImage(ingredientName);
-				}
-				if (ingredientImage != null) {
-					// Draw each ingredient image 32px apart above the order box
-					g2.drawImage(ingredientImage, x + j * (10*3) + 4, y + 4, 10*3, 10*3, null);
-					g2.drawImage(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3, null);
-					g2.drawImage(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3, null);
-				}
-			}
-			
-			// NAME
-			g2.setColor(orderTextColour);
-			g2.setFont(nameFont);
-			int counter = 0;
-			for(String line: recipe.getName().split(" ")) {
-	            g2.drawString(line, x + (48 - getTextWidth(line, g2) / 2.0f), y + 84 + counter);
-	            counter += 15;
+	        BufferedImage ingredientImage = gp.itemRegistry.getImageFromName(ingredientName);
+	        if (ingredient.notRawItem) {
+	            ingredientImage = gp.itemRegistry.getRawIngredientImage(ingredientName);
 	        }
-			// PLATE IMAGE
-			g2.drawImage(recipe.finishedPlate, x + 24, y + 94, 48, 48, null);
-			
-			g2.drawImage(coinImage, x, y + 94 + 48, 48, 48, null);
-			
-			g2.setColor(Color.WHITE);
-			g2.setFont(timeFont);
-			g2.drawString(Integer.toString(recipe.getCost(gp.world.isRecipeSpecial(recipe))), x + 48+8, y + 94 + 48+32);
 
-    }
+	        data.ingredientImages.add(ingredientImage);
+	        data.cookingStateIcons.add(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed));
+	        data.secondaryCookingStateIcons.add(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed));
+	    }
+	    
+	    // Cache text layout
+	    g2.setFont(nameFont);
+	    for (String line : recipe.getName().split(" ")) {
+	        data.nameLines.add(line);
+	        int offset = (48 - getTextWidth(line, g2) / 2);
+	        data.nameLineOffsets.add(offset);
+	    }
+
+	    // Cache cost
+        data.cost = Integer.toString(recipe.getCost(gp.world.isRecipeSpecial(recipe)));
+
+	    return data;
+	}
+    // Draw the menu UI
+	public void drawOverlayUI(Graphics2D g2) {
+	    if (!uiOpen) return;
+
+	    // Background
+	    g2.drawImage(ui1, 50, 50, 275*3, 187*3, null);
+
+	    // Ensure unlocked recipes are cached
+	    List<Recipe> unlocked = RecipeManager.getUnlockedRecipes();
+	    for (Recipe r : unlocked) {
+	        if (!renderCache.containsKey(r)) {
+	            addOrder(r, g2);
+	        }
+	    }
+
+	    // Remove today’s specials from unlocked list
+	    List<Recipe> specials = gp.world.getTodaysSpecials();
+	    unlocked.removeAll(specials);
+
+	    g2.setFont(menuFont);
+	    FontMetrics fm = g2.getFontMetrics();
+
+	    int startX = 120;
+	    int startY = 256;
+	    int lineHeight = fm.getHeight() + 4;
+
+	    for (int i = 0; i < unlocked.size(); i++) {
+	        Recipe recipe = unlocked.get(i);
+	        RecipeRenderData data = renderCache.get(recipe); // cached render data
+
+	        int textX = startX;
+	        int textY = startY + i * lineHeight;
+	        int maxNumInColumn = 8;
+	        if (i > maxNumInColumn) {
+	            textX = startX + 160;
+	            textY = startY + (i - maxNumInColumn - 1) * lineHeight;
+	        }
+
+	        int textWidth = fm.stringWidth(recipe.getName());
+	        int textHeight = fm.getAscent();
+	        Rectangle2D.Float nameHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
+
+	        boolean hovering = nameHitbox.contains(gp.mouseI.mouseX, gp.mouseI.mouseY);
+	        g2.setFont(menuFont);  
+	        
+	        if (hovering) {
+	            g2.setFont(timeFont);
+	            drawRecipe(g2, data, 8 + 2 * (36*3), 581);
+	            g2.setColor(Color.WHITE);
+	            if (gp.mouseI.leftClickPressed) {
+	                gp.world.addRecipeToMenu(recipe);
+	            }
+	        } else {
+	            g2.setColor(hoverColor);
+	        }
+
+	        g2.drawString(recipe.getName(), textX, textY);
+	    }
+
+	    // Specials list – use cached data too
+	    int specialsStartY = 486;
+	    for (int i = 0; i < specials.size(); i++) {
+	        Recipe recipe = specials.get(i);
+	        RecipeRenderData data = renderCache.get(recipe);
+
+	        int textX = startX;
+	        int textY = specialsStartY + (i + 1) * lineHeight;
+
+	        int textWidth = fm.stringWidth(recipe.getName());
+	        int textHeight = fm.getAscent();
+	        Rectangle2D.Float nameHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
+
+	        boolean hovering = nameHitbox.contains(gp.mouseI.mouseX, gp.mouseI.mouseY);
+	        g2.setFont(menuFont);  
+	        
+	        if (hovering) {
+	            g2.setFont(timeFont);
+	            drawRecipe(g2, data, 8 + 2 * (36*3), 581); // preview
+	            g2.setColor(specialHover);
+
+	            if (gp.mouseI.leftClickPressed) {
+	                gp.world.addRecipeToMenu(recipe);
+	            }
+	        } else {
+	            g2.setColor(specialColour);
+	        }
+
+	        g2.drawString(recipe.getName(), textX, textY);
+	    }
+
+	    // Draw chosen menu slots with cached data
+	    List<Recipe> chosen = gp.world.getTodaysMenu();
+	    for (int i = 0; i < chosen.size(); i++) {
+	        Recipe recipe = chosen.get(i);
+	        RecipeRenderData data = renderCache.get(recipe);
+
+	        switch (i) {
+	            case 0, 1, 2 -> {
+	                int x = 426 + i*(36*3) + i*5 + 11;
+	                int y = 209;
+	                drawRecipe(g2, data, x, y);
+	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
+	                if (border.contains(gp.mouseI.mouseX, gp.mouseI.mouseY) &&
+	                    gp.mouseI.leftClickPressed && clickCooldown == 0) {
+	                    gp.world.removeRecipeFromMenu(recipe);
+	                    clickCooldown = 16;
+	                }
+	            }
+	            case 3 -> {
+	                int x = 491, y = 398;
+	                drawRecipe(g2, data, x, y);
+	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
+	                if (border.contains(gp.mouseI.mouseX, gp.mouseI.mouseY) &&
+	                    gp.mouseI.leftClickPressed && clickCooldown == 0) {
+	                    gp.world.removeRecipeFromMenu(recipe);
+	                    clickCooldown = 16;
+	                }
+	            }
+	            case 4 -> {
+	                int x = 605, y = 398;
+	                drawRecipe(g2, data, x, y);
+	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
+	                if (border.contains(gp.mouseI.mouseX, gp.mouseI.mouseY) &&
+	                    gp.mouseI.leftClickPressed && clickCooldown == 0) {
+	                    gp.world.removeRecipeFromMenu(recipe);
+	                    clickCooldown = 16;
+	                }
+	            }
+	        }
+	    }
+
+	    // Done button
+	    g2.setColor(Color.WHITE);
+	    g2.setFont(timeFont);
+	    String text = "Done";
+	    int textX = 730, textY = 544;
+	    int textWidth = fm.stringWidth(text);
+	    int textHeight = fm.getAscent();
+	    Rectangle2D.Float doneHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
+	    if (doneHitbox.contains(gp.mouseI.mouseX, gp.mouseI.mouseY)) {
+	        g2.setColor(specialColour);
+	        if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
+	            uiOpen = false;
+	            clickCooldown = 16;
+	        }
+	    }
+	    g2.drawString(text, textX, textY);
+	}
+	private void drawRecipe(Graphics2D g2, RecipeRenderData data, int x, int y) {
+	    // Base
+	    g2.drawImage(data.borderImage, x, y, 32*3, 48*3, null);
+
+	    // Ingredients
+	    for (int j = 0; j < data.ingredientImages.size(); j++) {
+	        g2.drawImage(data.ingredientImages.get(j), x + j*(10*3) + 4, y + 4, 10*3, 10*3, null);
+	        g2.drawImage(data.cookingStateIcons.get(j), x + j*(10*3) + 4, y + 20, 10*3, 10*3, null);
+	        g2.drawImage(data.secondaryCookingStateIcons.get(j), x + j*(10*3) + 4, y + 44, 10*3, 10*3, null);
+	    }
+
+	    // Name
+	    g2.setColor(orderTextColour);
+	    g2.setFont(nameFont);
+	    for (int i = 0; i < data.nameLines.size(); i++) {
+	        g2.drawString(data.nameLines.get(i), x + data.nameLineOffsets.get(i), y + 84 + i*15);
+	    }
+
+	    // Plate
+	    g2.drawImage(data.plateImage, x + 24, y + 94, 48, 48, null);
+
+	    // Coin + cost
+	    g2.drawImage(data.coinImage, x, y + 142, 48, 48, null);
+	    g2.setColor(Color.WHITE);
+	    g2.setFont(timeFont);
+	    g2.drawString(data.cost, x + 56, y + 174);
+	}
     private void drawRecipe(Graphics2D g2, Recipe recipe, int x, int y) {
 		// BASE
 		g2.drawImage(recipeBorder, x, y, 32 * 3, 48 * 3, null);

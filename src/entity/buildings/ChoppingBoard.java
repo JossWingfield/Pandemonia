@@ -37,10 +37,11 @@ public class ChoppingBoard extends Building {
 		drawHeight = 16*3;
 		importImages();
 		isSolid = false;
-		isThirdLayer = true;
 		setupRecipes();
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;
+		//isSecondLayer = true;
+		//isThirdLayer = true;
 	}
 	public Building clone() {
 		ChoppingBoard building = new ChoppingBoard(gp, hitbox.x, hitbox.y);

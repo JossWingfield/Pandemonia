@@ -28,9 +28,11 @@ import entity.buildings.StorageFridge;
 import entity.buildings.Stove;
 import entity.buildings.Table;
 import entity.buildings.Table2;
+import entity.buildings.TipJar;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
 import entity.buildings.Trapdoor;
+import entity.buildings.Turntable;
 import entity.buildings.WallDecor_Building;
 import entity.buildings.Window;
 import entity.items.Food;
@@ -182,6 +184,8 @@ public class BuildingRegistry {
 			case "Table 2" -> i = new Table2(gp, x, y);
 			case "Window" -> i = new Window(gp, x, y);
 			case "Chopping Board 1" -> i = new ChoppingBoard(gp, x, y);
+			case "Turntable" -> i = new Turntable(gp, x, y);
+			case "Tip Jar" -> i = new TipJar(gp, x, y);
 		}
 
 		return i;

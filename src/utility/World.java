@@ -79,6 +79,11 @@ public class World {
     private int maxRatSpawnTime = 0;
     private int ratsSpawned = 0;
     
+    //Upgrade stuff
+    public boolean turntablePresent = false;
+    public boolean tipJarPresent = false;
+    public boolean bigTipsPresent = false;
+    
     //ORDERS
     private List<Object> orderList;
     

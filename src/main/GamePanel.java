@@ -99,7 +99,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Customiser customiser = new Customiser(this);
     public Catalogue catalogue = new Catalogue(this);
     public RecipeManager recipeM = new RecipeManager();
-    public UpgradeManager upgradeM = new UpgradeManager();
+    public UpgradeManager upgradeM = new UpgradeManager(this);
     public ProgressManager progressM = new ProgressManager(this);
     public SaveManager saveM = new SaveManager(this);
     public MapBuilder mapB = new MapBuilder(this);

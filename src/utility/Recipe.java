@@ -76,4 +76,16 @@ public class Recipe {
         }
         return (int)(baseCost * multiplier);
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Recipe)) return false;
+        Recipe r = (Recipe) o;
+        return this.name.equals(r.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }
