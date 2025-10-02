@@ -49,6 +49,9 @@ public class Candle extends Building{
 			break;
 		}
 	}
+	public void destroy() {
+		gp.lightingM.removeLight(light);
+	}
 	public void draw(Graphics2D g2) {
 		
 		if(firstUpdate) {

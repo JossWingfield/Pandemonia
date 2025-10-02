@@ -26,6 +26,7 @@ public class SoulLantern extends Building{
 		blueprint = false;
 		importImages();
 		mustBePlacedOnWall = true;
+		canBePlaced = false;
 	}
 	public Building clone() {
 		SoulLantern building = new SoulLantern(gp, hitbox.x, hitbox.y);

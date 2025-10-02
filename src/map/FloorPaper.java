@@ -76,9 +76,6 @@ public class FloorPaper {
 	public BufferedImage getImage(int index) {
 		return tiles[index - 1].image;
 	}
-	public BufferedImage getNormalImage(int index) {
-		return tiles[index - 1].normalImage;
-	}
     protected BufferedImage importImage(String filePath) { //Imports and stores the image
         BufferedImage importedImage = null;
         try {
@@ -95,7 +92,7 @@ public class FloorPaper {
         int tileSize = 16;
         for(int j = 0; j < rows; j++) {
             for(int i = 0; i < columns; i++) {
-                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize), normalImg.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
                 tiles[arrayIndex].solid = solid;
                 tiles[arrayIndex].isFloor = true;
                 arrayIndex++;

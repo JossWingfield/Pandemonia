@@ -35,13 +35,14 @@ public class UpgradeManager {
         		Tier.EARLY,
         		RewardType.BASIC,
         		48+8, 48+48+8));
-        
-        registerUpgrade(new Upgrade(gp, "Cosmetic 1",
-        		"Customers become 20% /nmore patient! /n(Also allows you to /nplay music)",
-        		importImage("/decor/turntable.png").getSubimage(0, 0, 48, 48),
+        registerUpgrade(new Upgrade(gp, "Coloured Walls",
+        		"Coloured Walls are added /nto the catalogue.",
+        		importImage("/UI/levels/decor/ColoredWallUI.png"),
         		Tier.EARLY,
-        		RewardType.COSMETIC,
-        		48+8, 48+48+8));
+        		RewardType.COSMETIC));
+        
+        
+        
         registerUpgrade(new Upgrade(gp, "Cosmetic 2",
         		"Customers become 20% /nmore patient! /n(Also allows you to /nplay music)",
         		importImage("/decor/turntable.png").getSubimage(0, 0, 48, 48),

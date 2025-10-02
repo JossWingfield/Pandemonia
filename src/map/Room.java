@@ -263,9 +263,7 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 372, 0);
 			arrayCounter++;
-			buildings[arrayCounter] = new Lantern(gp, 636, 132);
-			arrayCounter++;
-			buildings[arrayCounter] = new Lantern(gp, 504, 132);
+			buildings[arrayCounter] = new Lantern(gp, 636, 144);
 			arrayCounter++;
 			buildings[arrayCounter] = new Candle(gp, 756, 408, 1);
 			arrayCounter++;
@@ -1872,15 +1870,19 @@ public class Room {
     	this.wallpaper = new WallPaper(gp, preset);
     }
     public void setWallpaper(WallPaper wallpaper) {
+    	gp.customiser.addToInventory(this.wallpaper);
     	this.wallpaper = wallpaper;
+    	
     }
     public void setFloorpaper(int preset) {
     	this.floorpaper = new FloorPaper(gp, preset);
     }
     public void setFloorpaper(FloorPaper floorpaper) {
+    	gp.customiser.addToInventory(this.floorpaper);
     	this.floorpaper = floorpaper;
     }
     public void setBeam(Beam beam) {
+    	gp.customiser.addToInventory(this.beam);
     	this.beam = beam;
     }
     public void setBeam(int preset) {

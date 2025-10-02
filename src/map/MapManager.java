@@ -70,7 +70,7 @@ public class MapManager {
 	    //Imports each individual tile
 	    public void importTiles() {
 	        //Sets the booleans for each tile    
-	    	tiles[arrayIndex] = new Tile(gp, "/tiles/Air.png", importImage("/tiles/Air.png"), null);
+	    	tiles[arrayIndex] = new Tile(gp, "/tiles/Air.png", importImage("/tiles/Air.png"));
 	    	tiles[arrayIndex].solid = true;
 	        arrayIndex++;
 	        
@@ -98,38 +98,7 @@ public class MapManager {
 	        importTilesFromSpriteSheet("/tiles/dirt/SimpleDirt1", 4, 5, false);
 	        importTilesFromSpriteSheet("/tiles/dirt/SimpleDirt3", 5, 11, false);
 	        importFloorFromSpriteSheet("/tiles/flooring/Floor12", 8, 7, false);
-	        importWallFromSpriteSheet("/tiles/walls/Wall20", 6, 4, true);
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor8", 8, 7, false);
-	        importWallFromSpriteSheet("/tiles/walls/Wall2", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall10", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/StoneWall", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/StoneWall", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall1", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall3", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall4", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall5", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall6", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall7", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall8", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall9", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall11", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall12", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall13", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall14", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall15", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall16", 6, 4, true);
-	        importWallFromSpriteSheet("/tiles/walls/Wall17", 6, 4, true);
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor2", 8, 7, false);
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor3", 8, 7, false);
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor4", 8, 7, false);
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor6", 8, 7, false);
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor7", 8, 7, false);
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor9", 8, 7, false);
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor10", 8, 7, false);
-	        importFloorFromSpriteSheet("/tiles/flooring/Floor11", 8, 7, false);
-	        importBeamFromSpriteSheet("/tiles/beams/Beam 3", 3, 6, true);
-	        importBeamFromSpriteSheet("/tiles/beams/Beam 4", 3, 6, true);
-	        importBeamFromSpriteSheet("/tiles/beams/Beam 5", 3, 6, true);
+
 	    }
 	    public Room[] getRooms() {
 	    	return rooms;
@@ -139,11 +108,10 @@ public class MapManager {
 	    }
 	    private void importTilesFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
 	        BufferedImage img = importImage(filePath+".png");
-	        BufferedImage normalImg = importImage(filePath+"Normal.png");
 	        int tileSize = 16;
 	        for(int j = 0; j < rows; j++) {
 	            for(int i = 0; i < columns; i++) {
-	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize), normalImg.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
 	                tiles[arrayIndex].solid = solid;
 	                arrayIndex++;
 	            }
@@ -151,11 +119,10 @@ public class MapManager {
 	    }
 	    private void importWallFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
 	        BufferedImage img = importImage(filePath+".png");
-	        BufferedImage normalImg = importImage(filePath+"Normal.png");
 	        int tileSize = 16;
 	        for(int j = 0; j < rows; j++) {
 	            for(int i = 0; i < columns; i++) {
-	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize), normalImg.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
 	                tiles[arrayIndex].solid = solid;
 	                tiles[arrayIndex].isWall = true;
 	                arrayIndex++;
@@ -164,11 +131,10 @@ public class MapManager {
 	    }
 	    private void importFloorFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
 	        BufferedImage img = importImage(filePath+".png");
-	        BufferedImage normalImg = importImage(filePath+"Normal.png");
 	        int tileSize = 16;
 	        for(int j = 0; j < rows; j++) {
 	            for(int i = 0; i < columns; i++) {
-	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize), normalImg.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
 	                tiles[arrayIndex].solid = solid;
 	                tiles[arrayIndex].isFloor = true;
 	                arrayIndex++;
@@ -177,11 +143,10 @@ public class MapManager {
 	    }
 	    private void importBeamFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
 	        BufferedImage img = importImage(filePath+".png");
-	        BufferedImage normalImg = importImage(filePath+"Normal.png");
 	        int tileSize = 16;
 	        for(int j = 0; j < rows; j++) {
 	            for(int i = 0; i < columns; i++) {
-	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize), normalImg.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+	                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
 	                tiles[arrayIndex].solid = solid;
 	                tiles[arrayIndex].isBeam = true;
 	                arrayIndex++;

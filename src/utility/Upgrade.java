@@ -6,6 +6,7 @@ import entity.buildings.TipJar;
 import entity.buildings.Turntable;
 import main.GamePanel;
 import utility.ProgressManager.RewardType;
+import map.WallPaper;
 
 public class Upgrade {
 	
@@ -50,6 +51,11 @@ public class Upgrade {
 			break;
 		case "Tip Jar":
 			gp.customiser.addToInventory(new TipJar(gp, 0, 0));
+			break;
+		case "Coloured Walls":
+			for(int i = 21; i < 30; i++) {
+				gp.catalogue.addToInventory(new WallPaper(gp, i));
+			}
 			break;
 		}
 	}

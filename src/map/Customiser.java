@@ -76,6 +76,7 @@ public class Customiser {
 		storeTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*6, 25, 34, 25);
 		bathroomTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*7, 25, 34, 25);
 		border = importImage("/UI/customise/WallBorder.png");
+		//addToInventory(new WallPaper(gp, 20));
 	}
 
 	public CustomiserSaveData saveCustomiserData() {
@@ -174,6 +175,8 @@ public class Customiser {
 	public void addToInventory(Beam b) {
 		beamInventory.add(b);
 	}
+	
+	
 	public void update() {
 		
 	}
@@ -372,14 +375,15 @@ public class Customiser {
 				}
 				
 				int index = 0;
-				for(FloorPaper b: floorpaperInventory) {
+				for(FloorPaper b: new ArrayList<FloorPaper>(floorpaperInventory)) {
 					if(index >= startDraw) {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed) {
+			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setFloorpaper(b);
+			    					floorpaperInventory.remove(b);
 			    					clickCounter = 10;
 			    				}
 			    			} else {
@@ -416,14 +420,15 @@ public class Customiser {
 				}
 				
 				int index = 0;
-				for(WallPaper b: wallpaperInventory) {
+				for(WallPaper b: new ArrayList<WallPaper>(wallpaperInventory)) {
 					if(index >= startDraw) {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed) {
+			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setWallpaper(b);
+			    					wallpaperInventory.remove(b);
 			    					clickCounter = 10;
 			    				}
 			    			} else {
@@ -460,14 +465,15 @@ public class Customiser {
 				}
 				
 				int index = 0;
-				for(Beam b: beamInventory) {
+				for(Beam b: new ArrayList<Beam>(beamInventory)) {
 					if(index >= startDraw) {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								g2.drawImage(buildFrameHighlight2, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed) {
+			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setBeam(b);
+			    					beamInventory.remove(b);
 			    					clickCounter = 10;
 			    				}
 			    			} else {

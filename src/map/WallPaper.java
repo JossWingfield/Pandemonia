@@ -90,6 +90,33 @@ public class WallPaper {
 		case 20:
 		    importWallFromSpriteSheet("/tiles/walls/Wall17", 6, 4, true);
 			break;
+		case 21: //START OF COLOURED WALLS
+		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 0, 0, true);
+			break;
+		case 22:
+		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*1, 0, true);
+			break;
+		case 23:
+		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*2, 0, true);
+			break;
+		case 24:
+		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*3, 0, true);
+			break;
+		case 25:
+		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*4, 0, true);
+			break;
+		case 26:
+		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*5, 0, true);
+			break;
+		case 27:
+		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*6, 0, true);
+			break;
+		case 28:
+		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*7, 0, true);
+			break;
+		case 29:
+		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*8, 0, true);
+			break;
 		}
 		
 	}
@@ -98,9 +125,6 @@ public class WallPaper {
 	}
 	public BufferedImage getImage(int index) {
 		return tiles[index - 57].image;
-	}
-	public BufferedImage getNormalImage(int index) {
-		return tiles[index - 57].normalImage;
 	}
     protected BufferedImage importImage(String filePath) { //Imports and stores the image
         BufferedImage importedImage = null;
@@ -114,11 +138,22 @@ public class WallPaper {
     }
     private void importWallFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
         BufferedImage img = importImage(filePath+".png");
-        BufferedImage normalImg = importImage(filePath+"Normal.png");
         int tileSize = 16;
         for(int j = 0; j < rows; j++) {
             for(int i = 0; i < columns; i++) {
-                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize), normalImg.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(i*tileSize, j*tileSize, tileSize, tileSize));
+                tiles[arrayIndex].solid = solid;
+                tiles[arrayIndex].isWall = true;
+                arrayIndex++;
+            }
+        }
+    }
+    private void importWallFromSpriteSheet(String filePath, int rows, int columns, int startX, int startY, boolean solid) {
+        BufferedImage img = importImage(filePath+".png");
+        int tileSize = 16;
+        for(int j = 0; j < rows; j++) {
+            for(int i = 0; i < columns; i++) {
+                tiles[arrayIndex] =  new Tile(gp, "", img.getSubimage(startX + i*tileSize, startY + j*tileSize, tileSize, tileSize));
                 tiles[arrayIndex].solid = solid;
                 tiles[arrayIndex].isWall = true;
                 arrayIndex++;

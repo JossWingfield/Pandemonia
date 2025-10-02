@@ -38,7 +38,7 @@ public class ProgressManager {
 
     static {
         rewardMap.put(1, RewardType.RECIPE);
-        rewardMap.put(2, RewardType.RECIPE);
+        rewardMap.put(2, RewardType.COSMETIC);
         rewardMap.put(3, RewardType.KITCHEN);
         rewardMap.put(4, RewardType.RECIPE);
         rewardMap.put(5, RewardType.BASIC);
@@ -46,7 +46,6 @@ public class ProgressManager {
         rewardMap.put(7, RewardType.COSMETIC);
         rewardMap.put(8, RewardType.KITCHEN);
         rewardMap.put(9, RewardType.COSMETIC);
-        
     }
 
     // Current reward choices to display in the GUI
@@ -57,33 +56,52 @@ public class ProgressManager {
     public float roadmapOffsetX = 0; // current offset for smooth scrolling
     public final int roadmapNodeSpacing = 60; // space between level nodes
     public final int roadmapY = 100; // vertical position of roadmap
-    public BufferedImage[] levelRewards; // assign rewards for each level
+    public BufferedImage[][] levelRewards; // assign rewards for each level
     private BufferedImage basicReward, kitchenReward, cosmeticReward, emptyReward;
+    private BufferedImage basicReward2, kitchenReward2, cosmeticReward2, emptyReward2;
     public int totalLevels = 100; // total number of levels
 
     public ProgressManager(GamePanel gp) {
         this.gp = gp;
         
-        basicReward = importImage("/UI/levels/BasicReward.png");
-        kitchenReward = importImage("/UI/levels/KitchenReward.png");
-        cosmeticReward = importImage("/UI/levels/CosmeticReward.png");
-        emptyReward = importImage("/UI/levels/EmptyReward.png");
+        basicReward = importImage("/UI/levels/BasicReward.png").getSubimage(0, 0, 24, 20);
+        kitchenReward = importImage("/UI/levels/KitchenReward.png").getSubimage(0, 0, 24, 20);
+        cosmeticReward = importImage("/UI/levels/CosmeticReward.png").getSubimage(0, 0, 24, 20);
+        emptyReward = importImage("/UI/levels/EmptyReward.png").getSubimage(0, 0, 24, 20);
+        
+        basicReward2 = importImage("/UI/levels/BasicReward.png").getSubimage(24, 0, 24, 20);
+        kitchenReward2 = importImage("/UI/levels/KitchenReward.png").getSubimage(24, 0, 24, 20);
+        cosmeticReward2 = importImage("/UI/levels/CosmeticReward.png").getSubimage(24, 0, 24, 20);
+        emptyReward2 = importImage("/UI/levels/EmptyReward.png").getSubimage(24, 0, 24, 20);
         
         int maxLevel = rewardMap.keySet().stream().max(Integer::compare).orElse(0);
         totalLevels = maxLevel;
 
         // build levelRewards for every level 1..maxLevel
-        levelRewards = new BufferedImage[totalLevels];
+        levelRewards = new BufferedImage[totalLevels][2];
         for (int i = 1; i <= totalLevels; i++) {
             RewardType reward = rewardMap.get(i); // direct lookup
             if (reward == null) {
-                levelRewards[i - 1] = emptyReward; // default for no reward
+                levelRewards[i - 1][0] = emptyReward; // default for no reward
+                levelRewards[i - 1][1] = emptyReward2; // default for no reward
             } else {
                 switch (reward) {
-                    case BASIC: levelRewards[i - 1] = basicReward; break;
-                    case KITCHEN: levelRewards[i - 1] = kitchenReward; break;
-                    case COSMETIC: levelRewards[i - 1] = cosmeticReward; break;
-                    case RECIPE: levelRewards[i - 1] = emptyReward; break;
+                    case BASIC: 
+                    	levelRewards[i - 1][0] = basicReward;
+                    	levelRewards[i - 1][1] = basicReward2;
+                    break;
+                    case KITCHEN: 
+                    	levelRewards[i - 1][0] = kitchenReward;
+                    	levelRewards[i - 1][1] = kitchenReward2;
+                    break;
+                    case COSMETIC:
+                    	levelRewards[i - 1][0] = cosmeticReward;
+                    	levelRewards[i - 1][1] = cosmeticReward2;
+                    break;
+                    case RECIPE: 
+                    	levelRewards[i - 1][0] = emptyReward; 
+                    	levelRewards[i - 1][1] = emptyReward2; 
+                    break;
                 }
             }
         }

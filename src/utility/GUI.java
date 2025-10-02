@@ -1789,8 +1789,13 @@ public class GUI {
 	        int y = lineY - nodeSize / 2;
 
 	        if (!(x + nodeSize < 0 || x > gp.frameWidth)) {
-	            BufferedImage icon = gp.progressM.levelRewards[level - 1];
-	            g2.drawImage(icon, x, y, nodeSize, nodeSize, null);
+	        	BufferedImage icon;
+	        	if (level+1 <= gp.player.level) {
+	        	    icon = gp.progressM.levelRewards[level - 1][1]; // passed/completed
+	        	} else {
+	        	    icon = gp.progressM.levelRewards[level - 1][0]; // normal/unreached
+	        	}
+	        	g2.drawImage(icon, x, y, nodeSize, nodeSize, null);
 	        }
 	                
 	        String lvlText = "" + level;
@@ -1800,6 +1805,7 @@ public class GUI {
 	        } else {
 	        	g2.setColor(Color.WHITE);
 	        }
+	        g2.setFont(timeFont);
 	        g2.drawString(lvlText, x + nodeSize / 2 - textWidth / 2, y + nodeSize + 16);
 
 	        accumulatedSouls += soulsPerLevel[level - 1];
@@ -1846,14 +1852,24 @@ public class GUI {
 		g2.setColor(darkened);
 		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
 		
+		upgradeChoices = gp.progressM.getUpgradeChoices();
+		
 		String text = "Choose Upgrade!";
+		switch(upgradeChoices[0].getCategory()) {
+			case RECIPE, BASIC:
+				break;
+			case COSMETIC:
+				text = "Choose New Decorations";
+				break;
+			case KITCHEN:
+				text = "Choose Kitchen Upgrade";
+				break;
+		}
 		g2.setFont(fancyTitleFont);
 		int x = getXforCenteredText(text, g2);
 		int y = 100;
 		g2.setColor(Color.WHITE);
 		g2.drawString(text, x, y);
-				
-		upgradeChoices = gp.progressM.getUpgradeChoices();
 
 	    x = 200;
 	    y = gp.frameHeight/2 - 100;

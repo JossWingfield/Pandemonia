@@ -41,6 +41,9 @@ public class Lantern extends Building{
 		name = "Lantern";
     	animations[0][0][0] = importImage("/decor/Lantern.png");
 	}
+	public void destroy() {
+		gp.lightingM.removeLight(light);
+	}
 	public void draw(Graphics2D g2) {
 		
 		if(firstUpdate) {
