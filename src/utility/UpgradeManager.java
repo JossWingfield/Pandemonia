@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 import main.GamePanel;
 import utility.ProgressManager.RewardType;
 import utility.Upgrade.Tier;
+import utility.save.RecipeSaveData;
+import utility.save.UpgradeSaveData;
 
 public class UpgradeManager {
 	
@@ -123,6 +125,25 @@ public class UpgradeManager {
         if (!unlockedUpgrades.contains(upgrade)) {
         	unlockedUpgrades.add(upgrade);
         	upgrade.activateUpgrade();
+        }
+    }
+    public static UpgradeSaveData saveUpgradeData() {
+    	UpgradeSaveData data = new UpgradeSaveData();
+    	List<String> names = new ArrayList<String>();
+    	for(Upgrade r: unlockedUpgrades) {
+    		names.add(r.getName());
+    	}
+    	data.unlockedUpgradeNames = names;
+    	return data;
+    }
+    public static void applySaveData(List<String> unlockedNames) {
+        unlockedUpgrades.clear();
+        for (String name : unlockedNames) {
+            for (Upgrade r : allUpgrades) {
+                if (r.getName().equals(name)) {
+                    unlockUpgrade(r);
+                }
+            }
         }
     }
 	

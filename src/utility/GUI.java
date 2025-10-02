@@ -1711,25 +1711,8 @@ public class GUI {
 		        animatingSouls = false;
 		    }
 		}
-		if (displayedSouls == 0) {
-		    g2.drawImage(leftProgress1, 200, gp.frameHeight/2 - 30, 23*3, 20*3, null);
-		} else {
-		    g2.drawImage(leftProgress2, 200, gp.frameHeight/2 - 30, 23*3, 20*3, null);
-		}
-
-		for (int i = 0; i < gp.player.nextLevelAmount - 2; i++) {
-		    if (i + 2 > displayedSouls) {
-		        g2.drawImage(middleProgress1, 200 + 23*3 + 6*3*i, gp.frameHeight/2 - 30, 6*3, 20*3, null);
-		    } else {
-		        g2.drawImage(middleProgress2, 200 + 23*3 + 6*3*i, gp.frameHeight/2 - 30, 6*3, 20*3, null);
-		    }
-		}
-
 		if (displayedSouls >= gp.player.nextLevelAmount) {
 			levelUp = true;
-		    g2.drawImage(rightProgress2, 200 + 23*3 + 6*3*(gp.player.nextLevelAmount - 2), gp.frameHeight/2 - 30, 12*3, 20*3, null);
-		} else {
-		    g2.drawImage(rightProgress1, 200 + 23*3 + 6*3*(gp.player.nextLevelAmount - 2), gp.frameHeight/2 - 30, 12*3, 20*3, null);
 		}
 		
 		if(displayedSouls == gp.player.soulsServed) {
@@ -1741,11 +1724,86 @@ public class GUI {
 		}
 		
 		if(levelUp) {
-			levelUp = false;
-			gp.player.level++;
-			gp.progressM.handleLevelUp(gp.player.level);
+			if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+				levelUp = false;
+				clickCooldown = 20;
+				gp.player.level++;
+				gp.progressM.handleLevelUp(gp.player.level);
+			}
 		}
 		
+		drawLevelRoadmap(g2);
+		
+	}
+	private void drawLevelRoadmap(Graphics2D g2) {
+	    int centerX = gp.frameWidth / 2;
+	    int lineY = gp.frameHeight / 2; 
+	    int soulWidth = 6 * 3;
+	    int soulHeight = 20 * 3;
+	    int nodeSize = 32 * 3;
+	    int nodeYOffset = 0; // adjust to lift nodes above the bar if needed
+
+	    int totalLevels = gp.progressM.totalLevels;
+	    int[] soulsPerLevel = new int[totalLevels];
+	    for (int i = 0; i < totalLevels; i++) {
+	        soulsPerLevel[i] = gp.player.nextLevelAmount; // replace with per-level array if available
+	    }
+
+	    // Player's current soul index
+	    int accumulatedSouls = 0;
+	    for (int i = 1; i < gp.player.level; i++) { // start at 1, stop before current level
+	        accumulatedSouls += soulsPerLevel[i - 1];
+	    }
+	    int playerSoulIndex = accumulatedSouls + displayedSouls;
+	    // Smooth scroll
+	    float targetOffsetX = centerX - playerSoulIndex * soulWidth;
+	    gp.progressM.roadmapOffsetX += (targetOffsetX - gp.progressM.roadmapOffsetX) * 0.1f;
+
+	    // Draw souls as roadmap line
+	    int soulCounter = 0;
+	    for (int level = 0; level < totalLevels; level++) {
+	        int soulsInThisLevel = soulsPerLevel[level];
+	        for (int s = 0; s < soulsInThisLevel; s++, soulCounter++) {
+	            int x = (int)(soulCounter * soulWidth + gp.progressM.roadmapOffsetX);
+	            if (x + soulWidth < 0 || x > gp.frameWidth) continue;
+
+	            BufferedImage img;
+
+	            boolean isFirstSoulOverall = (soulCounter == 0);
+	            boolean isLastSoulInLevel = (s == soulsInThisLevel - 1);
+
+	            if (isFirstSoulOverall) img = (soulCounter < playerSoulIndex) ? leftProgress2 : leftProgress1;
+	            else if (isLastSoulInLevel) img = (soulCounter < playerSoulIndex) ? rightProgress2 : rightProgress1;
+	            else img = (soulCounter < playerSoulIndex) ? middleProgress2 : middleProgress1;
+
+	            g2.drawImage(img, x, lineY - soulHeight / 2, img.getWidth() * 3, img.getHeight() * 3, null);
+	        }
+	    }
+
+	    // Draw nodes aligned with last soul of each level
+	    accumulatedSouls = 0;
+	    
+	    for (int level = 1; level <= totalLevels; level++) {
+	        int nodeSoulIndex = accumulatedSouls + soulsPerLevel[level - 1] - 1;
+	        int x = (int)(nodeSoulIndex * soulWidth + gp.progressM.roadmapOffsetX - nodeSize / 2);
+	        int y = lineY - nodeSize / 2;
+
+	        if (!(x + nodeSize < 0 || x > gp.frameWidth)) {
+	            BufferedImage icon = gp.progressM.levelRewards[level - 1];
+	            g2.drawImage(icon, x, y, nodeSize, nodeSize, null);
+	        }
+	                
+	        String lvlText = "" + level;
+	        int textWidth = g2.getFontMetrics().stringWidth(lvlText);
+	        if (level+1 == gp.player.level) {
+	            g2.setColor(Color.YELLOW);
+	        } else {
+	        	g2.setColor(Color.WHITE);
+	        }
+	        g2.drawString(lvlText, x + nodeSize / 2 - textWidth / 2, y + nodeSize + 16);
+
+	        accumulatedSouls += soulsPerLevel[level - 1];
+	    }
 	}
 	private void drawRecipeSelectScreen(Graphics2D g2) {
 		g2.setColor(darkened);
@@ -1800,7 +1858,7 @@ public class GUI {
 	    x = 200;
 	    y = gp.frameHeight/2 - 100;
 	    if(isHovering(x, y, 130*3, 48*3)) {
-	    	if(gp.mouseI.leftClickPressed) {
+	    	if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	    		UpgradeManager.unlockUpgrade(upgradeChoices[0]);
 	    		clickCooldown = 20;
 	    		gp.currentState = gp.chooseRecipeState;
@@ -1810,7 +1868,7 @@ public class GUI {
 	    
 	    x = 600;
 	    if(isHovering(x, y, 130*3, 48*3)) {
-	    	if(gp.mouseI.leftClickPressed) {
+	    	if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	    		UpgradeManager.unlockUpgrade(upgradeChoices[1]);
 	    		clickCooldown = 20;
 	    		gp.currentState = gp.chooseRecipeState;

@@ -1,7 +1,11 @@
 package utility;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import main.GamePanel;
 import utility.Upgrade.Tier;
@@ -40,16 +44,49 @@ public class ProgressManager {
         rewardMap.put(5, RewardType.BASIC);
         rewardMap.put(6, RewardType.RECIPE);
         rewardMap.put(7, RewardType.COSMETIC);
-        rewardMap.put(9, RewardType.KITCHEN);
-        rewardMap.put(10, RewardType.COSMETIC);
+        rewardMap.put(8, RewardType.KITCHEN);
+        rewardMap.put(9, RewardType.COSMETIC);
+        
     }
 
     // Current reward choices to display in the GUI
     private Recipe[] recipeChoices;
     private Upgrade[] upgradeChoices;
+    
+    //ROADMAP
+    public float roadmapOffsetX = 0; // current offset for smooth scrolling
+    public final int roadmapNodeSpacing = 60; // space between level nodes
+    public final int roadmapY = 100; // vertical position of roadmap
+    public BufferedImage[] levelRewards; // assign rewards for each level
+    private BufferedImage basicReward, kitchenReward, cosmeticReward, emptyReward;
+    public int totalLevels = 100; // total number of levels
 
     public ProgressManager(GamePanel gp) {
         this.gp = gp;
+        
+        basicReward = importImage("/UI/levels/BasicReward.png");
+        kitchenReward = importImage("/UI/levels/KitchenReward.png");
+        cosmeticReward = importImage("/UI/levels/CosmeticReward.png");
+        emptyReward = importImage("/UI/levels/EmptyReward.png");
+        
+        int maxLevel = rewardMap.keySet().stream().max(Integer::compare).orElse(0);
+        totalLevels = maxLevel;
+
+        // build levelRewards for every level 1..maxLevel
+        levelRewards = new BufferedImage[totalLevels];
+        for (int i = 1; i <= totalLevels; i++) {
+            RewardType reward = rewardMap.get(i); // direct lookup
+            if (reward == null) {
+                levelRewards[i - 1] = emptyReward; // default for no reward
+            } else {
+                switch (reward) {
+                    case BASIC: levelRewards[i - 1] = basicReward; break;
+                    case KITCHEN: levelRewards[i - 1] = kitchenReward; break;
+                    case COSMETIC: levelRewards[i - 1] = cosmeticReward; break;
+                    case RECIPE: levelRewards[i - 1] = emptyReward; break;
+                }
+            }
+        }
     }
 
     public void handleLevelUp(int newLevel) {
@@ -57,7 +94,7 @@ public class ProgressManager {
         recipeChoices = RecipeManager.getTwoRandomLocked();
 
         // See if this level has an extra reward
-        RewardType reward = rewardMap.get(newLevel);
+        RewardType reward = rewardMap.get(newLevel-1);
 
         if (reward == null) {
             // No special reward -> just recipes
@@ -107,6 +144,15 @@ public class ProgressManager {
         if (level < 15) return Tier.EARLY;
         else if (level < 30) return Tier.MID;
         else return Tier.LATE;
+    }
+    protected BufferedImage importImage(String filePath) { //Imports and stores the image
+        BufferedImage importedImage = null;
+        try {
+            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return importedImage;
     }
 	
 }
