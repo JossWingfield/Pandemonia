@@ -13,6 +13,7 @@ import entity.buildings.Parcel;
 import entity.items.Food;
 import main.GamePanel;
 import map.Beam;
+import map.ChairSkin;
 import map.FloorPaper;
 import map.LightSource;
 import map.Room;
@@ -595,6 +596,9 @@ public class World {
 			for(Integer i: data.wallpaperInventory) {
 				orderList.add(new WallPaper(gp, i));
 			}
+			for(Integer i: data.chairSkinInventory) {
+				orderList.add(new ChairSkin(gp, i));
+			}
 			if (orderList != null && !orderList.isEmpty()) {
 				Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));
 		        gp.buildingM.addBuilding(parcel);
@@ -613,6 +617,7 @@ public class World {
 	    		List<FloorPaper> floorpaperInventory = new ArrayList<>();
 	    		List<WallPaper> wallpaperInventory = new ArrayList<>();
 	    		List<Beam> beamInventory = new ArrayList<>();
+	    		List<ChairSkin> chairSkinInventory = new ArrayList<>();
 	    		List<Building> buildings = new ArrayList<>();
 	    		
 	    		for(Object o: orderList) {
@@ -622,6 +627,8 @@ public class World {
 	    				wallpaperInventory.add(f);
 	    			} else if(o instanceof Beam f) {
 	    				beamInventory.add(f);
+	    			} else if(o instanceof ChairSkin f) {
+	    				chairSkinInventory.add(f);
 	    			} else if(o instanceof Building f) {
 	    				buildings.add(f);
 	    			}
@@ -644,6 +651,12 @@ public class World {
 					walls.add(b.preset);
 				}
 				data.wallpaperInventory = walls;
+				
+				List<Integer> chairs = new ArrayList<>();
+				for(ChairSkin b: chairSkinInventory) {
+					chairs.add(b.preset);
+				}
+				data.chairSkinInventory = chairs;
 	    	}
     	}
     	return data;

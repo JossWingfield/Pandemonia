@@ -450,7 +450,7 @@ public class CollisionMethods {
 	        for (Building b : gp.buildingM.getBuildings()) {
 	            if (b == null) continue;
 
-	            boolean isTable = "Table Piece".equals(b.getName()) || "Table Corner 1".equals(b.getName());
+	            boolean isTable = "Table Piece".equals(b.getName()) || "Table Corner 1".equals(b.getName()) || "Table 1".equals(b.getName()) || "Table 2".equals(b.getName());
 
 	            if (b.hitbox.intersects(buildHitbox)) {
 	                if (isTable) {
@@ -469,7 +469,7 @@ public class CollisionMethods {
 	        for (Building b : gp.buildingM.getBuildings()) {
 	            if (b == null) continue;
 
-	            boolean isTable = "Table Piece".equals(b.getName()) || "Table Corner 1".equals(b.getName());
+	            boolean isTable = "Table Piece".equals(b.getName()) || "Table Corner 1".equals(b.getName()) || "Table 1".equals(b.getName()) || "Table 2".equals(b.getName());
 
 	            if (b.hitbox.intersects(buildHitbox)) {
 	                if (isTable) {

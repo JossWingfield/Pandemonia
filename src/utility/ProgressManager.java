@@ -40,7 +40,7 @@ public class ProgressManager {
         rewardMap.put(1, RewardType.RECIPE);
         rewardMap.put(2, RewardType.COSMETIC);
         rewardMap.put(3, RewardType.KITCHEN);
-        rewardMap.put(4, RewardType.RECIPE);
+        rewardMap.put(4, RewardType.COSMETIC);
         rewardMap.put(5, RewardType.BASIC);
         rewardMap.put(6, RewardType.RECIPE);
         rewardMap.put(7, RewardType.COSMETIC);

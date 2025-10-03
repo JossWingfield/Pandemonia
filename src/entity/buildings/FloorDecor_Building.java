@@ -30,6 +30,8 @@ public class FloorDecor_Building extends Building {
 		blueprint = false;
 		drawWidth = 16*3;
 		drawHeight = 16*3;
+		
+		cost = 8;
 		importImages();
 	}
 	public Building clone() {
@@ -321,7 +323,7 @@ public class FloorDecor_Building extends Building {
         	break;
         case 25:
             name = "Small Plant 1";
-        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(80, 0, 16, 16);
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16, 0, 16, 16);
 
         	isSolid = false;
         	isFifthLayer = true;
@@ -339,6 +341,7 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
           	yDrawOffset = 48;
+          	cost = 12;
         	break;
         case 27:
             name = "Kitchen Sink 1";
@@ -359,6 +362,7 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
         	yDrawOffset = 48;
+        	cost = 12;
         	break;
         case 29:
             name = "Packages 1";
@@ -578,6 +582,7 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
         	yDrawOffset = 48;
+        	cost = 12;
         	break;
         case 49:
             name = "Flowers 4";
@@ -590,6 +595,7 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
         	yDrawOffset = 48;
+        	cost = 12;
         	break;
         case 50:
             name = "Towels";
@@ -797,6 +803,352 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnFloor = true;
         	isSolid = false;
+        	break;
+        case 70:
+            name = "Small Plant 2";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32, 0, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 71:
+            name = "Small Plant 3";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48, 0, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 72:
+            name = "Small Plant 4";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64, 0, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 73:
+            name = "Small Plant 5";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16, 16, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 74:
+            name = "Small Plant 6";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32, 16, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 75:
+            name = "Small Plant 7";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48, 16, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 76:
+            name = "Small Plant 8";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64, 16, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 77:
+            name = "Small Plant 9";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16, 32, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 78:
+            name = "Small Plant 10";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32, 32, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 79:
+            name = "Small Plant 11";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48, 32, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 80:
+            name = "Small Plant 12";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64, 32, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 81:
+            name = "Small Plant 13";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16, 48, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 82:
+            name = "Small Plant 14";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32, 48, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 83:
+            name = "Small Plant 15";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48, 48, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 84:
+            name = "Small Plant 16";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64, 48, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 85:
+            name = "Small Plant 17";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(80, 0, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 86:
+            name = "Small Plant 18";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32+64, 0, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 87:
+            name = "Small Plant 19";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48+64, 0, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 88:
+            name = "Small Plant 20";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64+64, 0, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 89:
+            name = "Small Plant 21";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16+64, 16, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 90:
+            name = "Small Plant 22";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32+64, 16, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 91:
+            name = "Small Plant 23";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48+64, 16, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 92:
+            name = "Small Plant 24";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64+64, 16, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 93:
+            name = "Small Plant 25";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16+64, 32, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 94:
+            name = "Small Plant 26";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32+64, 32, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 95:
+            name = "Small Plant 27";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48+64, 32, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 96:
+            name = "Small Plant 28";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64+64, 32, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 97:
+            name = "Small Plant 29";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16+64, 48, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 98:
+            name = "Small Plant 30";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32+64, 48, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 99:
+            name = "Small Plant 31";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48+64, 48, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 100:
+            name = "Small Plant 32";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64+64, 48, 16, 16);
+
+        	isSolid = false;
+        	isFifthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+        	break;
+        case 101:
+            name = "Plant 5";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(80, 64, 16, 32);
+            yDrawOffset = 32;
+            drawHeight = 96;
+            canBePlacedOnTable = true;
+            isDecor = true;
+            cost = 10;
+        	break;
+        case 102:
+            name = "Plant 6";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(96, 64, 16, 32);
+            yDrawOffset = 32;
+            drawHeight = 96;
+            canBePlacedOnTable = true;
+            isDecor = true;
+            cost = 10;
+        	break;
+        case 103:
+            name = "Plant 7";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(112, 64, 16, 32);
+            yDrawOffset = 32;
+            drawHeight = 96;
+            canBePlacedOnTable = true;
+            isDecor = true;
+            cost = 10;
+        	break;
+        case 104:
+            name = "Plant 8";
+        	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(112+16, 64, 16, 32);
+            yDrawOffset = 32;
+            drawHeight = 96;
+            canBePlacedOnTable = true;
+            isDecor = true;
+            cost = 10;
         	break;
         }
 		

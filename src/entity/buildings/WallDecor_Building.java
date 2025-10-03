@@ -25,6 +25,7 @@ public class WallDecor_Building extends Building {
 		drawHeight = 16*3;
 		importImages();
 		mustBePlacedOnWall = true;
+		cost = 10;
 	}
 	public Building clone() {
 		WallDecor_Building building = new WallDecor_Building(gp, hitbox.x, hitbox.y, type);
@@ -43,21 +44,25 @@ public class WallDecor_Building extends Building {
 			 name = "Painting 1";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(64, 0, 16, 16);
 	         isDecor = true;
+	         cost = 12;
 	         break;
 		 case 1:
 			 name = "Painting 2";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(80, 0, 16, 16);
 	         isDecor = true;
+	         cost = 12;
 	         break;
 		 case 2:
 			 name = "Painting 3";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(0, 0, 16, 16);
 	         isDecor = true;
+	         cost = 12;
 	         break;
 		 case 3:
 			 name = "Painting 4";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(16, 0, 16, 16);
 	         isDecor = true;
+	         cost = 12;
 	         break;
 		 case 4:
 			 name = "Hanging Plant 1";
@@ -65,6 +70,7 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	         drawHeight = 96;
 	         hitbox.height = 80;
+	         cost = 12;
 	         break;
 		 case 5:
 			 name = "Hanging Plant 2";
@@ -72,6 +78,7 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	         drawHeight = 96;
 	         hitbox.height = 80;
+	         cost = 12;
 	         break;
 		 case 6:
 			 name = "Shelf Piece";
@@ -199,6 +206,7 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	 		 drawWidth = 32*3;
 	 		 xDrawOffset = 12;
+	 	     cost = 14;
 	         break;
 		 case 23:
 			 name = "Hanging Plant 3";
@@ -206,6 +214,7 @@ public class WallDecor_Building extends Building {
 	         drawHeight = 96;
 	         isDecor = true;
 	         hitbox.height = 80;
+	         cost = 12;
 	         break;
 		 case 24:
 			 name = "Hanging Plant 4";
@@ -213,6 +222,7 @@ public class WallDecor_Building extends Building {
 	         drawHeight = 96;
 	         isDecor = true;
 	         hitbox.height = 80;
+	         cost = 12;
 	         break;
 		 case 25:
 			 name = "Toilet Paper";
@@ -241,6 +251,30 @@ public class WallDecor_Building extends Building {
 			 drawHeight = 32*3;
 			 xDrawOffset = 24;
 			 yDrawOffset = 24;
+	         break;
+		 case 28:
+	         name = "Painting 6";
+	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(32, 0, 16, 16);
+	         isDecor = true;
+	         cost = 12;
+	         break;
+		 case 29:
+	         name = "Painting 7";
+	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(48, 0, 16, 16);
+	         isDecor = true;
+	         cost = 12;
+	         break;
+		 case 30:
+	         name = "Painting 8";
+	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(32, 16, 16, 16);
+	         isDecor = true;
+	         cost = 12;
+	         break;
+		 case 31:
+	         name = "Painting 9";
+	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(48, 16, 16, 16);
+	         isDecor = true;
+	         cost = 12;
 	         break;
         }
 		

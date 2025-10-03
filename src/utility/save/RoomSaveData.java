@@ -11,6 +11,7 @@ public class RoomSaveData  extends SaveData {
 	public int wallpaper;
 	public int floorpaper;
 	public int beam;
+	public int chairSkin;
 	public List<BuildingSaveData> buildings = new ArrayList<BuildingSaveData>();
 	//public List<NPC> npcs = new ArrayList<>();
 	//public List<Item> items = new ArrayList<>(); 

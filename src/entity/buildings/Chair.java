@@ -14,6 +14,7 @@ public class Chair extends Building {
 	public int facing;
 	public TablePlate tablePlate = null;
 	private boolean firstUpdate = true;
+	private int roomNum = 0;
 	
 	public Chair(GamePanel gp, float xPos, float yPos, int direction) {
 		super(gp, xPos, yPos, 48, 48);
@@ -52,8 +53,8 @@ public class Chair extends Building {
 			gp.buildingM.addBuilding(tablePlate);
 			firstUpdate = false;
 		}
-		 
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		
+	     g2.drawImage(gp.mapM.getRooms()[roomNum].getChairSkin().getImage(), (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	 
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);

@@ -69,6 +69,7 @@ public class Room {
 	public WallPaper wallpaper = null;
 	public FloorPaper floorpaper = null;
 	public Beam beam = null;
+	public ChairSkin chairSkin = null;
 	
 	public Room(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -90,6 +91,7 @@ public class Room {
 			setWallpaper(0);
 			setFloorpaper(0);
 			setBeam(0);
+			setChairSkin(0);
 			break;
 		case 1:
 			roomType = "Stores";
@@ -101,6 +103,7 @@ public class Room {
 			setWallpaper(1);
 			setFloorpaper(1);
 			setBeam(1);
+			setChairSkin(0);
 			break;
 		case 2:
 			roomType = "Outdoors";
@@ -121,6 +124,7 @@ public class Room {
 		    setWallpaper(2);
 			setFloorpaper(2);
 			setBeam(2);
+			setChairSkin(0);
 			break;
 		case 4:
 			roomType = "Toilets";
@@ -131,6 +135,7 @@ public class Room {
 		    setWallpaper(3);
 			setFloorpaper(3);
 			setBeam(0);
+			setChairSkin(0);
 			break;
 		case 5:
 			roomType = "Bedroom";
@@ -141,6 +146,7 @@ public class Room {
 		    setWallpaper(4);
 			setFloorpaper(0);
 			setBeam(4);
+			setChairSkin(0);
 			break;
 		case 6:
 			roomType = "Basement";
@@ -151,6 +157,7 @@ public class Room {
 		    setWallpaper(5);
 			setFloorpaper(0);
 			setBeam(4);
+			setChairSkin(0);
 			break;
 		}
 		setBuildings(preset);
@@ -1830,6 +1837,7 @@ public class Room {
 		data.wallpaper = wallpaper.preset;
 		data.floorpaper = floorpaper.preset;
 		data.beam = beam.preset;
+		data.chairSkin = chairSkin.preset;
 		List<Building> buildList = new ArrayList<>();
 		for(Building b: buildings) {
 			if(b != null) {
@@ -1847,6 +1855,7 @@ public class Room {
 		wallpaper = new WallPaper(gp, data.wallpaper);
 		floorpaper = new FloorPaper(gp, data.floorpaper);
 		beam = new Beam(gp, data.beam);
+		chairSkin = new ChairSkin(gp, data.chairSkin);
 		List<Building> buildList = gp.buildingRegistry.unpackSavedBuildings(data.buildings);
 		Building[] newBuilds = new Building[250];
 		int counter = 0;
@@ -1872,6 +1881,13 @@ public class Room {
     public void setWallpaper(WallPaper wallpaper) {
     	gp.customiser.addToInventory(this.wallpaper);
     	this.wallpaper = wallpaper;
+    }
+    public void setChairSkin(int preset) {
+    	this.chairSkin = new ChairSkin(gp, preset);
+    }
+    public void setChairSkin(ChairSkin chairSkin) {
+    	gp.customiser.addToInventory(this.chairSkin);
+    	this.chairSkin = chairSkin;
     	
     }
     public void setFloorpaper(int preset) {
@@ -1896,6 +1912,9 @@ public class Room {
     }
     public Beam getBeam() {
     	return beam;
+    }
+    public ChairSkin getChairSkin() {
+    	return chairSkin;
     }
 	private void importMap(String fileName, int mapWidth, int mapHeight) {
     	
