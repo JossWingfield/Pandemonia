@@ -19,6 +19,7 @@ public class CatalogueSaveData extends SaveData {
 	public List<Integer> wallpaperInventory = new ArrayList<>();
 	public List<Integer> beamInventory = new ArrayList<>();
 	public List<Integer> chairSkinInventory = new ArrayList<>();
+	public List<Integer> tableSkinInventory = new ArrayList<>();
 	public List<BuildingSaveData> storeBuildingInventory = new ArrayList<BuildingSaveData>();
 	public List<BuildingSaveData> bathroomBuildingInventory = new ArrayList<BuildingSaveData>();
 	

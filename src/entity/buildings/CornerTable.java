@@ -130,7 +130,22 @@ public class CornerTable extends Building {
 			}
 		}
 		 
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		BufferedImage img = animations[0][0][0];
+		switch(presetNum) {
+		case 0:
+           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(64, 0, 32, 32);
+			break;
+		case 1:
+           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(96, 0, 32, 32);
+			break;
+		case 2:
+           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(64, 32, 32, 32);
+			break;
+		case 3:
+           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(96, 32, 32, 32);
+			break;
+		}
+	     g2.drawImage(img, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
  
 	    //g2.setColor(Color.YELLOW);
 	    //g2.drawRect((int)interactHitbox1.x, (int)interactHitbox1.y, (int)interactHitbox1.width, (int)interactHitbox1.height);

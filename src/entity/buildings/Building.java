@@ -46,6 +46,7 @@ public class Building extends Entity {
 	
 	public int cost = 0;
 	private int arrayCounter = 0;
+	public int roomNum;
 	
 	protected String name = "";
 	protected String description = "No Description"; 

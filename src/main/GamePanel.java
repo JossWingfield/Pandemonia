@@ -469,7 +469,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
     	if(freezeCounter == 0) {
-	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState) {
+	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState || currentState == mapBuildState) {
 		    	if(firstUpdate) {
 		    		firstUpdate = false;
 		    	}

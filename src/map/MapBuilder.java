@@ -1018,6 +1018,17 @@ public class MapBuilder {
 			clickCounter--;
 		}
 		
+		for(Building b: gp.buildingM.getBuildings()) {
+			if(b != null) {
+				if(b.hitbox.contains(mouseX, mouseY)) {
+					if(gp.mouseI.rightClickPressed) {
+						b.destroy();
+						gp.buildingM.removeBuilding(b);
+					}
+				}
+			}
+		}
+		
 	
 	}
 }

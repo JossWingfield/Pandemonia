@@ -1169,7 +1169,42 @@ public class FloorDecor_Building extends Building {
 		}
 		
 		if(invisHitbox == null) {
-		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			if(name.equals("Table Piece")) {
+				BufferedImage img = animations[0][0][0];
+				switch(type) {
+				case 4:
+		           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(0, 0, 16, 32);
+					break;
+				case 5:
+		           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(16, 0, 16, 32);
+					break;
+				case 6:
+		           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(32, 0, 16, 32);
+					break;
+				case 7:
+		           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(0, 32, 32, 16);
+					break;
+				case 8:
+		           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(0, 48, 32, 16);
+					break;
+				case 9:
+		           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(0, 64, 32, 16);
+					break;
+				case 10:
+		           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(32, 32, 32, 16);
+					break;
+				case 11:
+		           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(32, 48, 32, 16);
+					break;
+				case 12:
+		           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(32, 64, 32, 16);
+					break;
+				}
+			     g2.drawImage(img, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 
+			} else {
+				g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			}
 		} else {
 			if(gp.player.hitbox.intersects(invisHitbox)) {
 				BufferedImage img = animations[0][0][0];

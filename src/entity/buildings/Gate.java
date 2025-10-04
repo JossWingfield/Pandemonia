@@ -11,8 +11,6 @@ public class Gate extends Building {
 	
 	private Rectangle2D.Float hitbox2;
 	private boolean firstUpdate = true;
-	private boolean imageChange = false;
-	private int previousI = 0;
 	
 	public Gate(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -51,31 +49,29 @@ public class Gate extends Building {
 			hitbox2 = new Rectangle2D.Float(hitbox.x + hitbox.width, hitbox.y, 48, 38);
 			firstUpdate = false;
 		}
-		
-		if(previousI == 1) {
-			imageChange = true;
-		}
+
 		int i = 0;
-		previousI = 0;
 		if(gp.multiplayer) {
 			for(PlayerMP player: gp.playerList) {
 				if(player.currentRoomIndex == 0) {
 					if(hitbox2.intersects(player.hitbox) || !gp.npcM.entityCheck(hitbox2)) {
 						i = 1;
-						imageChange = true;
-						previousI = 1;
 					}
 				}
 			}
 		} else {
 			if(hitbox2.intersects(gp.player.hitbox) || !gp.npcM.entityCheck(hitbox2)) {
 				i = 1;
-				imageChange = true;
-				previousI = 1;
 			}
 		}
+		BufferedImage img = animations[0][0][i];
+		if(i == 0) {
+           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(64, 64, 32, 32);
+		} else {
+			img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(96, 64, 32, 32);
+		}
 
-		g2.drawImage(animations[0][0][i], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		g2.drawImage(img, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
        		 
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);

@@ -13,6 +13,7 @@ public class OrderSaveData extends SaveData {
 	  public List<Integer> wallpaperInventory = new ArrayList<>();
 	  public List<Integer> beamInventory = new ArrayList<>();
 	  public List<Integer> chairSkinInventory = new ArrayList<>();
+	  public List<Integer> tableSkinInventory = new ArrayList<>();
 	  
 	  public void applySaveData(GamePanel gp) {
 		  gp.world.setOrderData(this);

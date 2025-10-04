@@ -60,6 +60,12 @@ public class UpgradeManager {
         		importImage("/decor/painting.png").getSubimage(0, 0, 16, 16),
         		Tier.EARLY,
         		RewardType.COSMETIC));
+        /*registerUpgrade(new Upgrade(gp, "Paintings",
+        		"Paintings are added to /nthe catalogue!",
+        		importImage("/decor/painting.png").getSubimage(0, 0, 16, 16),
+        		Tier.EARLY,
+        		RewardType.COSMETIC));
+        		*/
         
         
         registerUpgrade(new Upgrade(gp, "Kitchen 1",

@@ -70,6 +70,7 @@ public class Room {
 	public FloorPaper floorpaper = null;
 	public Beam beam = null;
 	public ChairSkin chairSkin = null;
+	public TableSkin tableSkin = null;
 	
 	public Room(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -92,6 +93,7 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(0);
 			setChairSkin(0);
+			setTableSkin(0);
 			break;
 		case 1:
 			roomType = "Stores";
@@ -104,6 +106,7 @@ public class Room {
 			setFloorpaper(1);
 			setBeam(1);
 			setChairSkin(0);
+			setTableSkin(0);
 			break;
 		case 2:
 			roomType = "Outdoors";
@@ -125,6 +128,7 @@ public class Room {
 			setFloorpaper(2);
 			setBeam(2);
 			setChairSkin(0);
+			setTableSkin(0);
 			break;
 		case 4:
 			roomType = "Toilets";
@@ -136,6 +140,7 @@ public class Room {
 			setFloorpaper(3);
 			setBeam(0);
 			setChairSkin(0);
+			setTableSkin(0);
 			break;
 		case 5:
 			roomType = "Bedroom";
@@ -147,6 +152,7 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(4);
 			setChairSkin(0);
+			setTableSkin(0);
 			break;
 		case 6:
 			roomType = "Basement";
@@ -158,9 +164,15 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(4);
 			setChairSkin(0);
+			setTableSkin(0);
 			break;
 		}
 		setBuildings(preset);
+		for(Building b: buildings) {
+			if(b != null) {
+				b.roomNum = preset;
+			}
+		}
 		setNPCs(preset);
 		setItems(preset);
 	}
@@ -187,7 +199,6 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Chair(gp, 372, 432, 3);
 			arrayCounter++;
-			
 			buildings[arrayCounter] = new WallDecor_Building(gp, 336, 156, 9);
 			arrayCounter++;
 			buildings[arrayCounter] = new WallDecor_Building(gp, 384, 156, 7);
@@ -238,8 +249,6 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Table2(gp, 348, 468);
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 384, 15);
-			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 636, 264, 8);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 636, 252, 7);
@@ -275,6 +284,8 @@ public class Room {
 			buildings[arrayCounter] = new Candle(gp, 756, 408, 1);
 			arrayCounter++;
 			buildings[arrayCounter] = new Candle(gp, 756, 336, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new CornerTable(gp, 348, 384, 2);
 			arrayCounter++;
 			buildings[arrayCounter] = new Candle(gp, 348, 372, 1);
 			arrayCounter++;
@@ -1838,6 +1849,7 @@ public class Room {
 		data.floorpaper = floorpaper.preset;
 		data.beam = beam.preset;
 		data.chairSkin = chairSkin.preset;
+		data.tableSkin = tableSkin.preset;
 		List<Building> buildList = new ArrayList<>();
 		for(Building b: buildings) {
 			if(b != null) {
@@ -1856,6 +1868,7 @@ public class Room {
 		floorpaper = new FloorPaper(gp, data.floorpaper);
 		beam = new Beam(gp, data.beam);
 		chairSkin = new ChairSkin(gp, data.chairSkin);
+		tableSkin = new TableSkin(gp, data.tableSkin);
 		List<Building> buildList = gp.buildingRegistry.unpackSavedBuildings(data.buildings);
 		Building[] newBuilds = new Building[250];
 		int counter = 0;
@@ -1890,6 +1903,14 @@ public class Room {
     	this.chairSkin = chairSkin;
     	
     }
+    public void setTableSkin(int preset) {
+    	this.tableSkin = new TableSkin(gp, preset);
+    }
+    public void setTableSkin(TableSkin tableSkin) {
+    	gp.customiser.addToInventory(this.tableSkin);
+    	this.tableSkin = tableSkin;
+    	
+    }
     public void setFloorpaper(int preset) {
     	this.floorpaper = new FloorPaper(gp, preset);
     }
@@ -1915,6 +1936,9 @@ public class Room {
     }
     public ChairSkin getChairSkin() {
     	return chairSkin;
+    }
+    public TableSkin getTableSkin() {
+    	return tableSkin;
     }
 	private void importMap(String fileName, int mapWidth, int mapHeight) {
     	

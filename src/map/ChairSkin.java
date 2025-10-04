@@ -21,7 +21,7 @@ public class ChairSkin {
 		this.gp = gp;
 		this.preset = preset;
 		importImages();
-		cost = 0;
+		cost = 30;
 	}
 	public void importImages() {
 		

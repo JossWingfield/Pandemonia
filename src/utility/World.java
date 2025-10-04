@@ -17,6 +17,7 @@ import map.ChairSkin;
 import map.FloorPaper;
 import map.LightSource;
 import map.Room;
+import map.TableSkin;
 import map.WallPaper;
 import utility.save.OrderSaveData;
 import utility.save.PlayerSaveData;
@@ -599,6 +600,9 @@ public class World {
 			for(Integer i: data.chairSkinInventory) {
 				orderList.add(new ChairSkin(gp, i));
 			}
+			for(Integer i: data.tableSkinInventory) {
+				orderList.add(new TableSkin(gp, i));
+			}
 			if (orderList != null && !orderList.isEmpty()) {
 				Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));
 		        gp.buildingM.addBuilding(parcel);
@@ -618,6 +622,7 @@ public class World {
 	    		List<WallPaper> wallpaperInventory = new ArrayList<>();
 	    		List<Beam> beamInventory = new ArrayList<>();
 	    		List<ChairSkin> chairSkinInventory = new ArrayList<>();
+	      		List<TableSkin> tableSkinInventory = new ArrayList<>();
 	    		List<Building> buildings = new ArrayList<>();
 	    		
 	    		for(Object o: orderList) {
@@ -629,6 +634,8 @@ public class World {
 	    				beamInventory.add(f);
 	    			} else if(o instanceof ChairSkin f) {
 	    				chairSkinInventory.add(f);
+	    			} else if(o instanceof TableSkin f) {
+	    				tableSkinInventory.add(f);
 	    			} else if(o instanceof Building f) {
 	    				buildings.add(f);
 	    			}
@@ -657,6 +664,12 @@ public class World {
 					chairs.add(b.preset);
 				}
 				data.chairSkinInventory = chairs;
+				
+				List<Integer> tables = new ArrayList<>();
+				for(TableSkin b: tableSkinInventory) {
+					tables.add(b.preset);
+				}
+				data.tableSkinInventory = tables;
 	    	}
     	}
     	return data;

@@ -33,8 +33,8 @@ public class Customiser {
 	Font font = new Font("monogram", Font.BOLD, 100);
 	
 	private BufferedImage frame, buildFrame, buildFrameHighlight, buildFrameHighlight2, border;
-	private BufferedImage decorTab, kitchenTab, floorTab, wallTab, storeTab, bathroomTab, beamTab, chairTab;
-	private BufferedImage decorTab2, kitchenTab2, floorTab2, wallTab2, storeTab2, bathroomTab2, beamTab2, chairTab2;
+	private BufferedImage decorTab, kitchenTab, floorTab, wallTab, storeTab, bathroomTab, beamTab, chairTab, tableTab;
+	private BufferedImage decorTab2, kitchenTab2, floorTab2, wallTab2, storeTab2, bathroomTab2, beamTab2, chairTab2, tableTab2;
 	
 	private int ySize = 126*3;
 	int yStart;
@@ -53,6 +53,7 @@ public class Customiser {
 	private List<Building> storeBuildingInventory = new ArrayList<Building>();
 	private List<Building> bathroomBuildingInventory = new ArrayList<Building>();
 	private List<ChairSkin> chairSkinInventory = new ArrayList<ChairSkin>();
+	private List<TableSkin> tableSkinInventory = new ArrayList<TableSkin>();
 	public Building selectedBuilding;
 	
 	public Customiser(GamePanel gp) {
@@ -70,6 +71,7 @@ public class Customiser {
 		storeTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*6, 0, 34, 25);
 		bathroomTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*7, 0, 34, 25);
 		chairTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*8, 0, 34, 25);
+		tableTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 0, 34, 25);
 		
 		decorTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34, 25, 34, 25);
 		kitchenTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*2, 25, 34, 25);
@@ -79,9 +81,9 @@ public class Customiser {
 		storeTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*6, 25, 34, 25);
 		bathroomTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*7, 25, 34, 25);
 		chairTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*8, 25, 34, 25);
+		tableTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 25, 34, 25);
 		
 		border = importImage("/UI/customise/WallBorder.png");
-		//addToInventory(new ChairSkin(gp, i));
 	}
 
 	public CustomiserSaveData saveCustomiserData() {
@@ -111,6 +113,12 @@ public class Customiser {
 			chairs.add(b.preset);
 		}
 		data.chairSkinInventory = chairs;
+		
+		List<Integer> tables = new ArrayList<>();
+		for(TableSkin b: tableSkinInventory) {
+			tables.add(b.preset);
+		}
+		data.tableSkinInventory = tables;
 		return data;
 	}
 	public void applySaveData(CustomiserSaveData data) {
@@ -135,6 +143,11 @@ public class Customiser {
 		chairSkinInventory.clear();
 		for(Integer i: data.chairSkinInventory) {
 			chairSkinInventory.add(new ChairSkin(gp, i));
+		}
+		
+		tableSkinInventory.clear();
+		for(Integer i: data.tableSkinInventory) {
+			tableSkinInventory.add(new TableSkin(gp, i));
 		}
 	}
 	private BufferedImage importImage(String filePath) { //Imports and stores the image
@@ -168,6 +181,8 @@ public class Customiser {
 				addToInventory(w);
 			} else if(o instanceof ChairSkin w) {
 				addToInventory(w);
+			} else if(o instanceof TableSkin w) {
+				addToInventory(w);
 			}
 		}
 	}
@@ -193,6 +208,9 @@ public class Customiser {
 	}
 	public void addToInventory(ChairSkin b) {
 		chairSkinInventory.add(b);
+	}
+	public void addToInventory(TableSkin b) {
+		tableSkinInventory.add(b);
 	}
 	public void update() {
 		
@@ -296,6 +314,16 @@ public class Customiser {
 					}
 				}
 				g2.drawImage(chairTab, xTabStart + 7*(34*3), yStart-25*3, 34*3, 25*3, null);
+			}
+			if(pageNum == 9) {
+				g2.drawImage(tableTab2, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3, null);
+			} else {
+				if(containsMouse(xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3)) {
+					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+						pageNum = 9;
+					}
+				}
+				g2.drawImage(tableTab, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3, null);
 			}
 				
 			if(pageNum == 1) {
@@ -635,6 +663,49 @@ public class Customiser {
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setChairSkin(b);
 			    					chairSkinInventory.remove(b);
+			    					clickCounter = 10;
+			    				}
+			    			} else {
+								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+			    			}
+			    			g2.drawImage(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
+
+			    			xStart+= 37*3;
+			    			if(counter >= 9) {
+			    				xStart = originalXStart;
+			    				yPos += 37*3;
+			    				counter = 0;
+			    			}
+						}
+					} else {
+						counter = 0;
+					}
+	    			counter++;
+	    			index++;
+				}
+			} else if(pageNum == 9) {
+				int counter = 0;
+				xStart = 8*3;
+				int originalXStart = xStart;
+				int yPos = yStart+(30);
+				
+				int startDraw = 0;
+				
+				if(tableSkinInventory.size() == 0) {
+					g2.setFont(font);
+					g2.setColor(c);
+					g2.drawString("No Tables!", xStart + 50, yPos+50);
+				}
+				
+				int index = 0;
+				for(TableSkin b: new ArrayList<TableSkin>(tableSkinInventory)) {
+					if(index >= startDraw) {
+						if(b != null) {
+			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
+								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    					gp.mapM.currentRoom.setTableSkin(b);
+			    					tableSkinInventory.remove(b);
 			    					clickCounter = 10;
 			    				}
 			    			} else {
