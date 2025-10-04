@@ -24,7 +24,7 @@ public class Fridge extends Building {
 	
 	Random random;
 
-    private static final int MAX_CAPACITY = 25;
+    private static int MAX_CAPACITY = 5;
 
     private Rectangle2D.Float fridgeHitbox;
 	public Rectangle2D.Float npcHitbox;
@@ -95,6 +95,10 @@ public class Fridge extends Building {
         if(firstUpdate) {
             firstUpdate = false;
             fridgeHitbox = new Rectangle2D.Float(hitbox.x + 18, hitbox.y + hitbox.height, 14, 16);
+        }
+        
+        if(gp.progressM.fridgeUpgradeI) {
+        	MAX_CAPACITY = 10;
         }
 
 		g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null); 

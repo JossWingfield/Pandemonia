@@ -84,6 +84,7 @@ public class Customiser {
 		tableTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 25, 34, 25);
 		
 		border = importImage("/UI/customise/WallBorder.png");
+		//addToInventory(new TableSkin(gp, 1));
 	}
 
 	public CustomiserSaveData saveCustomiserData() {
@@ -664,6 +665,7 @@ public class Customiser {
 			    					gp.mapM.currentRoom.setChairSkin(b);
 			    					chairSkinInventory.remove(b);
 			    					clickCounter = 10;
+			    					gp.buildingM.refreshBuildings();
 			    				}
 			    			} else {
 								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
@@ -707,6 +709,7 @@ public class Customiser {
 			    					gp.mapM.currentRoom.setTableSkin(b);
 			    					tableSkinInventory.remove(b);
 			    					clickCounter = 10;
+			    					gp.buildingM.refreshBuildings();
 			    				}
 			    			} else {
 								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);

@@ -5,7 +5,7 @@ import java.util.List;
 
 import main.GamePanel;
 
-public class RoomSaveData  extends SaveData {
+public class RoomSaveData extends SaveData {
 	
 	public int roomNum;
 	public int wallpaper;

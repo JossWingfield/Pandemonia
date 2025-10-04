@@ -8,7 +8,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
-import utility.Upgrade.Tier;
+import utility.save.ProgressSaveData;
 
 public class ProgressManager {
 	
@@ -60,6 +60,18 @@ public class ProgressManager {
     private BufferedImage basicReward, kitchenReward, cosmeticReward, emptyReward;
     private BufferedImage basicReward2, kitchenReward2, cosmeticReward2, emptyReward2;
     public int totalLevels = 100; // total number of levels
+    public ProgressPhase currentPhase = ProgressPhase.PHASE1;
+    
+    //UPGRADE STUFF
+    public boolean turntablePresent = false;
+    public boolean tipJarPresent = false;
+    public boolean bigTipsPresent = false;
+    public boolean fridgeUpgradeI = false;
+    public boolean sinkUpgradeI = false;
+    public boolean stoveUpgradeI = false;
+    public boolean choppingBoardUpgradeI = false;
+    public boolean fasterCustomers = false;
+    public boolean moreCustomers = false;
 
     public ProgressManager(GamePanel gp) {
         this.gp = gp;
@@ -158,10 +170,10 @@ public class ProgressManager {
         return upgradeChoices;
     }
 
-    private Tier getTierForLevel(int level) {
-        if (level < 15) return Tier.EARLY;
-        else if (level < 30) return Tier.MID;
-        else return Tier.LATE;
+    private ProgressPhase getTierForLevel(int level) {
+        if (level < 15) return ProgressPhase.PHASE1;
+        else if (level < 30) return ProgressPhase.PHASE2;
+        else return ProgressPhase.PHASE3;
     }
     protected BufferedImage importImage(String filePath) { //Imports and stores the image
         BufferedImage importedImage = null;
@@ -171,6 +183,24 @@ public class ProgressManager {
             e.printStackTrace();
         }
         return importedImage;
+    }
+    public ProgressSaveData saveData() {
+    	ProgressSaveData data = new ProgressSaveData();
+    	data.fridgeUpgradeI = fridgeUpgradeI;
+    	data.sinkUpgradeI = sinkUpgradeI;
+    	data.stoveUpgradeI = stoveUpgradeI;
+    	data.choppingBoardUpgradeI = choppingBoardUpgradeI;
+    	data.fasterCustomers = fasterCustomers;
+    	data.moreCustomers = moreCustomers;
+    	return data;
+    }
+    public void applySaveData(ProgressSaveData data) {
+    	fridgeUpgradeI = data.fridgeUpgradeI;
+    	sinkUpgradeI = data.sinkUpgradeI;
+    	stoveUpgradeI = data.stoveUpgradeI;
+    	choppingBoardUpgradeI = data.choppingBoardUpgradeI;
+    	fasterCustomers = data.fasterCustomers;
+    	moreCustomers = data.moreCustomers;
     }
 	
 }

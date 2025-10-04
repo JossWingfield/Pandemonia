@@ -43,6 +43,10 @@ public class Gate extends Building {
     	animations[0][0][0] = importImage("/decor/connected table 2.png").getSubimage(64, 64, 32, 32);
     	animations[0][0][1] = importImage("/decor/connected table 2.png").getSubimage(96, 64, 32, 32);
 	}
+	public void refreshImages() {
+       	animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(64, 64, 32, 32);
+       	animations[0][0][1] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(96, 64, 32, 32);
+	}
 	public void draw(Graphics2D g2) {
 		
 		if(firstUpdate) {
@@ -64,14 +68,8 @@ public class Gate extends Building {
 				i = 1;
 			}
 		}
-		BufferedImage img = animations[0][0][i];
-		if(i == 0) {
-           	img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(64, 64, 32, 32);
-		} else {
-			img = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(96, 64, 32, 32);
-		}
 
-		g2.drawImage(img, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		g2.drawImage(animations[0][0][i], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
        		 
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);

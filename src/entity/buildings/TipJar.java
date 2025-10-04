@@ -20,7 +20,7 @@ public class TipJar extends Building {
 		xDrawOffset = 8;
 		yDrawOffset = 8;
 		mustBePlacedOnTable = true;
-		gp.world.tipJarPresent = true;
+		gp.progressM.tipJarPresent = true;
 		isDecor = true;
 		importImages();
 	}
@@ -41,7 +41,7 @@ public class TipJar extends Building {
 		animations[0][0][2] = importImage("/decor/kitchen props.png").getSubimage(32, 0, 16, 16);
 	}
 	public void destroy() {
-		gp.world.tipJarPresent = false;
+		gp.progressM.tipJarPresent = false;
 	}
 	public void draw(Graphics2D g2) {
 		

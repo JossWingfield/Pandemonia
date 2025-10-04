@@ -20,7 +20,7 @@ public class Turntable extends Building {
 		xDrawOffset = 48 + 8;
 		animationSpeedFactor = 6;
 		mustBePlacedOnTable = true;
-		gp.world.turntablePresent = true;
+		gp.progressM.turntablePresent = true;
 		isDecor = true;
 		importImages();
 	}
@@ -40,7 +40,7 @@ public class Turntable extends Building {
 
 	}
 	public void destroy() {
-		gp.world.turntablePresent = false;
+		gp.progressM.turntablePresent = false;
 	}
 	public void draw(Graphics2D g2) {
 		

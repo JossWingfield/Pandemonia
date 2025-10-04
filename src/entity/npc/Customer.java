@@ -70,7 +70,7 @@ public class Customer extends NPC {
 	    drawHeight = 80*drawScale;
         xDrawOffset = 34*drawScale;
         yDrawOffset = 36*drawScale;
-		speed = 2;
+		speed = 1;
 		npcType = "Customer";
 		
 		type = r.nextInt(7);
@@ -205,8 +205,8 @@ public class Customer extends NPC {
     		}
     	}
 	    
-	    if(addTip && (gp.world.tipJarPresent || gp.world.bigTipsPresent)) {
-	    	if(gp.world.bigTipsPresent) {
+	    if(addTip && (gp.progressM.tipJarPresent || gp.progressM.bigTipsPresent)) {
+	    	if(gp.progressM.bigTipsPresent) {
 		    	gp.player.wealth += tip;
 	    	} else {
 	    		gp.player.wealth += (tip*0.5);
@@ -288,6 +288,9 @@ public class Customer extends NPC {
 		}
 	}
 	public void update() {
+		if(gp.progressM.fasterCustomers) {
+			speed = 2;
+		}
 	    if(!atTable) {
 	        if(leaving) {
 	        	if(inToilet) {
@@ -383,7 +386,7 @@ public class Customer extends NPC {
 	        // If they have ordered but haven’t been served yet
 	        if((waitingToOrder && !ordered) || (ordered && !eating)) {
 	            float patienceIncrement = patienceFactor;
-	            if(gp.world.turntablePresent) {
+	            if(gp.progressM.turntablePresent) {
 	                patienceIncrement *= 0.8f; // 20% slower patience decrease
 	            }
 	            patienceCounter += patienceIncrement;

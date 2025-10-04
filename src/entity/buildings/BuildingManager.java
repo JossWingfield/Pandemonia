@@ -272,6 +272,13 @@ public class BuildingManager {
 		}
 		return null;
 	}
+	public void refreshBuildings() {
+		for(Building b: buildings) {
+			if(b != null) {
+				b.refreshImages();
+			}
+		}
+	}
 	public CornerTable findCornerTable(float x, float y, float w, float h) {
 		Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, w, h);
 		for(Building b: buildings) {

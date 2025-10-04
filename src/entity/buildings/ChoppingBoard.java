@@ -26,7 +26,7 @@ public class ChoppingBoard extends Building {
 	private int clickCooldown = 0;
 	private boolean chopping = false;
     private int chopCount = 0;
-    private final int maxChopCount = 6;
+    private int maxChopCount = 12;
 	
 	public ChoppingBoard(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -64,6 +64,10 @@ public class ChoppingBoard extends Building {
 	    this.chopCount = 0;
 	}
 	public void draw(Graphics2D g2) {
+		
+		if(gp.progressM.choppingBoardUpgradeI) {
+			maxChopCount = 8;
+		}
 		 
 		g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
       		 

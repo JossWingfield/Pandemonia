@@ -12,22 +12,16 @@ import map.WallPaper;
 
 public class Upgrade {
 	
-	public enum Tier {
-	    EARLY,
-	    MID,
-	    LATE
-	}
-	
 	GamePanel gp;
 	
 	private String name;
 	private String description;
-	private Tier tier;
+	private ProgressPhase tier;
     private RewardType category;  
 	private BufferedImage img;
 	public int xOffset = 0, yOffset = 0;
 	
-	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, Tier tier, RewardType category) {
+	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, ProgressPhase tier, RewardType category) {
 		this.gp = gp;
 		this.name = name;
 	    this.tier = tier;
@@ -35,7 +29,7 @@ public class Upgrade {
 	    this.description = description;
 	    img = image;
 	}
-	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, Tier tier, RewardType category, int xOffset, int yOffset) {
+	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, ProgressPhase tier, RewardType category, int xOffset, int yOffset) {
 		this.gp = gp;
 		this.name = name;
 	    this.tier = tier;
@@ -53,6 +47,12 @@ public class Upgrade {
 			break;
 		case "Tip Jar":
 			gp.customiser.addToInventory(new TipJar(gp, 0, 0));
+			break;
+		case "Faster Customers":
+			gp.progressM.fasterCustomers = true;
+			break;
+		case "More Customers":
+			gp.progressM.moreCustomers = true;
 			break;
 		case "Coloured Walls":
 			for(int i = 21; i < 30; i++) {
@@ -98,6 +98,18 @@ public class Upgrade {
 			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 30));
 			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 31));
 			break;
+		case "Fridge Upgrade I":
+			gp.progressM.fridgeUpgradeI = true;
+			break;
+		case "Sink Upgrade I":
+			gp.progressM.sinkUpgradeI = true;
+			break;
+		case "Stove Upgrade I":
+			gp.progressM.stoveUpgradeI = true;
+			break;
+		case "Chopping Upgrade I":
+			gp.progressM.choppingBoardUpgradeI = true;
+			break;
 		}
 	}
 	
@@ -110,7 +122,7 @@ public class Upgrade {
 	public BufferedImage getImage() {
 		return img;
 	}
-	public Tier getTier() {
+	public ProgressPhase getTier() {
 		return tier;
 	}
 	public RewardType getCategory() {

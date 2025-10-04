@@ -10,11 +10,11 @@ public enum Weather {
     public static Weather getRandom(Random random) {
         int roll = random.nextInt(100); // 0–99
 
-        if (roll < 50) {       // 50% chance
+        if (roll < 70) {       // 70% chance
             return SUNNY;
-        } else if (roll < 85) { // 35% chance
+        } else if (roll < 95) { // 25% chance
             return RAIN;
-        } else {               // 15% chance
+        } else {               // 5% chance
             return THUNDERSTORM;
         }
     }

@@ -18,7 +18,7 @@ public class Sink extends Building {
 	private Plate currentPlate = null;
 	private int clickCooldown = 0;
 	private int chopCount = 0;
-	private final int maxChopCount = 60*4;
+	private  int maxWashCount = 60*8;
 	private int cleanedPlateCount = 3;
 	private Rectangle2D.Float cleanedPlateHitbox;
 	private BufferedImage[] normalImages;
@@ -96,7 +96,7 @@ public class Sink extends Building {
 	}
 	public void washPlates() {
 		chopCount++;
-    	if(chopCount == maxChopCount) {
+    	if(chopCount == maxWashCount) {
     		chopCount = 0;
     		cleanedPlateCount++;
     		if(currentPlate.getCurrentStackCount() > 1) {
@@ -137,6 +137,10 @@ public class Sink extends Building {
 	}
 	public void draw(Graphics2D g2) {
 		
+		if(gp.progressM.sinkUpgradeI) {
+			maxWashCount = 60*6;
+		}
+		
 		if(firstUpdate) {
 			firstUpdate = false;
 			sinkHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+48+24, 48+16, 24);
@@ -176,7 +180,7 @@ public class Sink extends Building {
 				    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 				    if(gp.keyI.ePressed) {
 				    	chopCount++;
-				    	if(chopCount == maxChopCount) {
+				    	if(chopCount == maxWashCount) {
 				    		chopCount = 0;
 				    		cleanedPlateCount++;
 				    		if(currentPlate.getCurrentStackCount() > 1) {
@@ -246,7 +250,7 @@ public class Sink extends Building {
 	}
 	public void drawOverlayUI(Graphics2D g2) {
 		if(currentPlate != null) {
-			drawWashingBar(g2, hitbox.x+30, hitbox.y+32, chopCount, maxChopCount);
+			drawWashingBar(g2, hitbox.x+30, hitbox.y+32, chopCount, maxWashCount);
 		}
 	}
 }

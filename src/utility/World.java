@@ -40,7 +40,7 @@ public class World {
     private int dayStart = 6, openingTime = 6, closingTime = 19;
 
     private int spawnTimer = 0;
-    private int customerSpawnTimer = 60 * 12;
+    private int customerSpawnTimer = 60 * 24;
     public int previousSoulsCollected = 0;
     private boolean waitingForLevelUp = false;
 
@@ -81,11 +81,6 @@ public class World {
     private int maxRatSpawnTime = 0;
     private int ratsSpawned = 0;
     
-    //Upgrade stuff
-    public boolean turntablePresent = false;
-    public boolean tipJarPresent = false;
-    public boolean bigTipsPresent = false;
-    
     //ORDERS
     private List<Object> orderList;
     
@@ -103,7 +98,7 @@ public class World {
         gp.mapM.setSeason(currentSeason);
         darkColour = new Color(51, 60, 58, 200);
         
-        currentWeather = Weather.getRandom(random);
+        currentWeather = Weather.SUNNY;
         resetWeatherTimer();
         
         //gp.npcM.addDishWasher();
@@ -265,6 +260,10 @@ public class World {
         if (currentPeriod != lastTimePeriod) {
             lastTimePeriod = currentPeriod;
             gp.gui.changeTimeState(currentPeriod);
+        }
+        
+        if(gp.progressM.moreCustomers) {
+        	customerSpawnTimer = 60*12;
         }
 
         // Customer spawning only during service, and only if menu chosen

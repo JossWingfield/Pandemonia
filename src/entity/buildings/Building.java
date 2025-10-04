@@ -168,7 +168,8 @@ public class Building extends Entity {
 	}
 	public void printOutput() {
 	}
-	
+	public void refreshImages() {
+	}
 	
 	public void openDestructionUI() {
 		destructionUIOpen = true;

@@ -13,9 +13,9 @@ public class CookingItem extends Item {
     protected List<String> cookedResults;
     public Food cookingItem = null;
     protected int cookTime = 0;
-    protected final int maxCookTime = 60*14;
-    protected final int flickerThreshold = 60*21;
-    protected final int maxBurnTime = 60*28;
+    protected  int maxCookTime = 60*24; //60*14
+    protected int flickerThreshold = 60*30;
+    protected int maxBurnTime = 60*38; //60*28
     
     //BURN WARNING
 	private BufferedImage orderSign, warningOrderSign, completeSign;
@@ -52,6 +52,11 @@ public class CookingItem extends Item {
 		return cooking;
 	}
 	public void updateCooking() {
+		if(gp.progressM.stoveUpgradeI) {
+			maxCookTime = 60*18;
+			flickerThreshold = 60*24;
+			maxBurnTime = 60*28;
+		}
 	    if (cooking) {
 	        cookTime++;
 	        if (cookTime >= maxCookTime) {
