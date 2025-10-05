@@ -11,6 +11,7 @@ public class ProgressSaveData extends SaveData {
 	public boolean choppingBoardUpgradeI;
 	public boolean moreCustomers;
 	public boolean fasterCustomers;
+	public int phase;
 	
 	public void applySaveData(GamePanel gp) {
 		gp.progressM.applySaveData(this);

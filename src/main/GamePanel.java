@@ -185,6 +185,8 @@ public class GamePanel extends JPanel implements Runnable {
         customiser = new Customiser(this);
         catalogue = new Catalogue(this);
         recipeM = new RecipeManager();
+        upgradeM = new UpgradeManager(this);
+        progressM = new ProgressManager(this);
     }
     public void playSinglePlayer(int saveSlot) {
     	saveM.currentSave = saveSlot;
@@ -469,7 +471,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
     	if(freezeCounter == 0) {
-	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState || currentState == mapBuildState) {
+	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState) {
 		    	if(firstUpdate) {
 		    		firstUpdate = false;
 		    	}

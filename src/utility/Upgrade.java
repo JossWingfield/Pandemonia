@@ -16,12 +16,12 @@ public class Upgrade {
 	
 	private String name;
 	private String description;
-	private ProgressPhase tier;
+	private int tier;
     private RewardType category;  
 	private BufferedImage img;
 	public int xOffset = 0, yOffset = 0;
 	
-	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, ProgressPhase tier, RewardType category) {
+	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, int tier, RewardType category) {
 		this.gp = gp;
 		this.name = name;
 	    this.tier = tier;
@@ -29,7 +29,7 @@ public class Upgrade {
 	    this.description = description;
 	    img = image;
 	}
-	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, ProgressPhase tier, RewardType category, int xOffset, int yOffset) {
+	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, int tier, RewardType category, int xOffset, int yOffset) {
 		this.gp = gp;
 		this.name = name;
 	    this.tier = tier;
@@ -122,7 +122,7 @@ public class Upgrade {
 	public BufferedImage getImage() {
 		return img;
 	}
-	public ProgressPhase getTier() {
+	public int getTier() {
 		return tier;
 	}
 	public RewardType getCategory() {

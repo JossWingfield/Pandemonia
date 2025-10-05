@@ -86,7 +86,19 @@ public class Customiser {
 		border = importImage("/UI/customise/WallBorder.png");
 		//addToInventory(new TableSkin(gp, 1));
 	}
-
+	public void clear() {
+		decorBuildingInventory.clear();
+		kitchenBuildingInventory.clear();
+		floorpaperInventory.clear();
+		wallpaperInventory.clear();
+		beamInventory.clear();
+		storeBuildingInventory.clear();
+		bathroomBuildingInventory.clear();
+		chairSkinInventory.clear();
+		tableSkinInventory.clear();
+		
+		selectedBuilding = null;
+	}
 	public CustomiserSaveData saveCustomiserData() {
 		CustomiserSaveData data = new CustomiserSaveData();
 		data.decorBuildingInventory = gp.buildingRegistry.saveBuildings(decorBuildingInventory);

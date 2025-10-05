@@ -1,6 +1,5 @@
 package map;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,13 +26,13 @@ import entity.buildings.Gate;
 import entity.buildings.Lantern;
 import entity.buildings.Leak;
 import entity.buildings.MenuSign;
+import entity.buildings.Oven;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
 import entity.buildings.Spill;
 import entity.buildings.Stove;
 import entity.buildings.Table;
 import entity.buildings.Table2;
-import entity.buildings.TablePlate;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
 import entity.buildings.Trapdoor;
@@ -48,7 +47,6 @@ import entity.npc.NPC;
 import entity.npc.SpecialCustomer;
 import main.GamePanel;
 import utility.Recipe;
-import utility.RoomHelperMethods;
 import utility.save.RoomSaveData;
 
 public class Room {
@@ -64,7 +62,7 @@ public class Room {
     private List<Item> items = new ArrayList<>(); 
     private List<LightSource> lights = new ArrayList<>(); 
 	public int buildingArrayCounter = 0;
-	public boolean shouldUpdate = false;
+	//public boolean shouldUpdate = false;
 	private int preset;
 	public WallPaper wallpaper = null;
 	public FloorPaper floorpaper = null;
@@ -81,14 +79,17 @@ public class Room {
 	    setUpRoom(preset);
 	}
 	private void setUpRoom(int preset) {
+		int phase = 1;
+		if(gp.progressM != null) {
+			phase = gp.progressM.currentPhase;
+		}
 		switch(preset) {
 		case 0:
 			roomType = "Main";
-	        filePath = "/maps/main/Room";
+	        filePath = "/maps/main/phase" + Integer.toString(phase) + "/Room";
 	        importMap(filePath, mapWidth, mapHeight);
-	        roomID = "/main";
+	        roomID = "/main/phase" + Integer.toString(phase);
 			roomIDTag = "Room";
-			shouldUpdate = true;
 			setWallpaper(0);
 			setFloorpaper(0);
 			setBeam(0);
@@ -97,11 +98,10 @@ public class Room {
 			break;
 		case 1:
 			roomType = "Stores";
-	        filePath = "/maps/stores/Room";
+	        filePath = "/maps/stores/phase" + Integer.toString(phase) + "/Room";
 	        importMap(filePath, mapWidth, mapHeight);
-	        roomID = "/stores";
+	        roomID = "/stores/phase" + Integer.toString(phase);
 			roomIDTag = "Room";
-			shouldUpdate = true;
 			setWallpaper(1);
 			setFloorpaper(1);
 			setBeam(1);
@@ -120,9 +120,9 @@ public class Room {
 			break;
 		case 3:
 			roomType = "Electrics";
-			filePath = "/maps/electrics/Layer";
+			filePath = "/maps/electrics/phase" + Integer.toString(phase) + "/Layer";
 		    importMap(filePath, mapWidth, mapHeight);
-		    roomID = "/electrics";
+		    roomID = "/electrics/phase" + Integer.toString(phase);
 		    roomIDTag = "Layer";
 		    setWallpaper(2);
 			setFloorpaper(2);
@@ -132,9 +132,9 @@ public class Room {
 			break;
 		case 4:
 			roomType = "Toilets";
-			filePath = "/maps/toilets/Layer";
+			filePath = "/maps/toilets/phase" + Integer.toString(phase) + "/Layer";
 		    importMap(filePath, mapWidth, mapHeight);
-		    roomID = "/toilets";
+		    roomID = "/toilets/phase" + Integer.toString(phase);
 		    roomIDTag = "Layer";
 		    setWallpaper(3);
 			setFloorpaper(3);
@@ -144,9 +144,9 @@ public class Room {
 			break;
 		case 5:
 			roomType = "Bedroom";
-			filePath = "/maps/bedroom/Layer";
+			filePath = "/maps/bedroom/phase" + Integer.toString(phase) + "/Layer";
 		    importMap(filePath, mapWidth, mapHeight);
-		    roomID = "/bedroom";
+		    roomID = "/bedroom/phase" + Integer.toString(phase);
 		    roomIDTag = "Layer";
 		    setWallpaper(4);
 			setFloorpaper(0);
@@ -158,7 +158,7 @@ public class Room {
 			roomType = "Basement";
 			filePath = "/maps/basement/Layer";
 		    importMap(filePath, mapWidth, mapHeight);
-		    roomID = "/basement";
+		    roomID = "/basement/phase" + Integer.toString(phase);
 		    roomIDTag = "Layer";
 		    setWallpaper(5);
 			setFloorpaper(0);
@@ -173,11 +173,23 @@ public class Room {
 				b.roomNum = preset;
 			}
 		}
-		setNPCs(preset);
-		setItems(preset);
 	}
 	private void setBuildings(int preset) {
+		int phase = 1;
+		if(gp.progressM != null) {
+			phase = gp.progressM.currentPhase;
+		}
 		buildings = new Building[250];
+		switch(phase) {
+		case 1:
+			setPhase1Buildings();
+			break;
+		case 2:
+			setPhase2Buildings();
+			break;
+		}
+	}
+	private void setPhase1Buildings() {
 		int arrayCounter = 0;
 		switch(preset) {
 		case 0:
@@ -1830,13 +1842,245 @@ public class Room {
 		}
 		buildingArrayCounter = arrayCounter;
 	}
-	private void setNPCs(int preset) {
+	private void setPhase2Buildings() {
 		int arrayCounter = 0;
 		switch(preset) {
-		case 0: 
+		case 0:
+			buildings[arrayCounter] = new Chair(gp, 732, 504, 3);
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 780, 504, 3);
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 372, 276, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 372, 360, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 372, 408, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 552, 504, 3);
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 600, 504, 3);
+			arrayCounter++;
+			Door d =  new Door(gp, 288, 516, 2, 0);
+			d.setDoorNum(4);
+			buildings[arrayCounter] = d;
+			arrayCounter++;
+			d = new Door(gp, 360, 696, 1, 0);
+			d.setDoorNum(2);
+			buildings[arrayCounter] = d;
+			arrayCounter++;
+			d = new Door(gp, 324, 192, 0, 0);
+			d.setDoorNum(1);
+			buildings[arrayCounter] = d;
 			
+			arrayCounter++;
+			
+			buildings[arrayCounter] = new WallDecor_Building(gp, 348, 144, 22);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 780, 432, 16);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 732, 432, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 684, 432, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 660, 432, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new Gate(gp, 588, 432);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 804, 360, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 804, 312, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 780, 252, 14);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 540, 432, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new CornerTable(gp, 468, 432, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 468, 360, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 468, 312, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new Fridge(gp, 516, 204);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 468, 264, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 468, 252, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new Stove(gp, 576, 252);
+			arrayCounter++;
+			buildings[arrayCounter] = new Oven(gp, 684, 252);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 252, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 420, 144);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 756, 144);
+			arrayCounter++;
+			buildings[arrayCounter] = new Sink(gp, 468, 360);
+			arrayCounter++;
+			buildings[arrayCounter] = new Bin(gp, 768, 240);
+			arrayCounter++;
+			buildings[arrayCounter] = new Candle(gp, 804, 240, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new MenuSign(gp, 804, 420);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChoppingBoard(gp, 660, 420);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 732, 552, 60);
+			arrayCounter++;
+			buildings[arrayCounter] = new Table(gp, 420, 252);
+			arrayCounter++;
+			buildings[arrayCounter] = new Table(gp, 420, 360);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 384, 636, 19);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 288, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 432, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 360, 3);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 468, 240, 18);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 552, 552, 60);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 672, 540, 53);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 504, 540, 53);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 456, 600, 42);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 456, 552, 42);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 456, 168, 6);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 504, 168, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 552, 168, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 600, 168, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 648, 168, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 696, 168, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 480, 156, 23);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 516, 156, 22);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 564, 156, 25);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 600, 156, 21);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 672, 156, 33);
+			arrayCounter++;
+			buildings[arrayCounter] = new Candle(gp, 564, 588, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new Candle(gp, 768, 588, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 312, 600, 0);
+			arrayCounter++;
+			break;
+		case 1:
+			Door door = new Door(gp, 672+24, 216+48, 3, 0);
+			door.setDoorNum(3);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			door = new Door(gp, 600, 456+48, 1, 0);
+			door.setDoorNum(0);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 432, 156, 6);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 480, 156, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 528, 156, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 576, 156, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 564, 132, 25);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 492, 144, 20);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 648, 348, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 612, 348, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 576, 348, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 540, 348, 6);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 504, 348, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 444, 456, 34);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 504, 456, 35);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 432, 156, 6);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 480, 156, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 528, 156, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 576, 156, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 564, 132, 25);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 492, 144, 20);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 648, 348, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 612, 348, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 576, 348, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 540, 348, 6);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 504, 348, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 444, 456, 34);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 504, 456, 35);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 324, 17);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 348, 17);
+			arrayCounter++;
+			buildings[arrayCounter] = new StorageFridge(gp, 564, 192);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 444, 240, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 480, 240, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 516, 240, 3);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 612, 240, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 624, 240, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 648, 240, 6);
+			arrayCounter++;
+			buildings[arrayCounter] = new FoodStore(gp, 648, 384, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 684, 420, 39);
+			arrayCounter++;
+			buildings[arrayCounter] = new EscapeHole(gp, 420, 400);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 456, 144, 33);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 528, 144, 26);
+			arrayCounter++;
+			buildings[arrayCounter] = new Bin(gp, 612, 228);
+			arrayCounter++;
+			buildings[arrayCounter] = new WallDecor_Building(gp, 624, 144, 17);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 624, 456, 40);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 660, 156);
+			arrayCounter++;
 			break;
 		}
+		buildingArrayCounter = arrayCounter;
 	}
 	public void addBuilding(Building building) {
 		buildings[buildingArrayCounter] = building;
@@ -1884,9 +2128,6 @@ public class Room {
 			gp.buildingM.setBuildings(newBuilds);
 			gp.buildingM.setArrayCounter(buildingArrayCounter);
 		}
-	}
-	private void setItems(int preset) {
-		
 	}
     public void setWallpaper(int preset) {
     	this.wallpaper = new WallPaper(gp, preset);

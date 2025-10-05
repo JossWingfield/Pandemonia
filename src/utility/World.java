@@ -83,6 +83,7 @@ public class World {
     
     //ORDERS
     private List<Object> orderList;
+    public List<Object> boughtItems;
     
     // Sleep
     private boolean sleeping = false;
@@ -97,6 +98,8 @@ public class World {
         currentSeason = Season.SUMMER;
         gp.mapM.setSeason(currentSeason);
         darkColour = new Color(51, 60, 58, 200);
+        
+        boughtItems = new ArrayList<Object>();
         
         currentWeather = Weather.SUNNY;
         resetWeatherTimer();
@@ -373,11 +376,7 @@ public class World {
         
         // If there was an order waiting, deliver a package
         if (orderList != null && !orderList.isEmpty()) {
-        	Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));
-        	gp.mapM.getRoom(0).addBuilding(parcel);
-            gp.gui.addMessage("A Parcel has arrived!", Color.MAGENTA);
-
-            orderList.clear(); // optional: clear once delivered
+        	addParcel();
         }
 
         // Reset menu for new day
@@ -581,6 +580,15 @@ public class World {
     	previousSoulsCollected = data.previousSoulsCollected;
     	currentSeason = data.currentSeason;
     }
+    private void addParcel() {
+		Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));
+        gp.buildingM.addBuilding(parcel);
+        gp.gui.addMessage("A Parcel has arrived!", Color.MAGENTA);
+        
+        boughtItems.addAll(orderList);
+    	
+        orderList.clear();
+    }
     public void setOrderData(OrderSaveData data) {
     	if(!data.orderEmpty) {
     		orderList = new ArrayList<Object>();
@@ -603,11 +611,7 @@ public class World {
 				orderList.add(new TableSkin(gp, i));
 			}
 			if (orderList != null && !orderList.isEmpty()) {
-				Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));
-		        gp.buildingM.addBuilding(parcel);
-		        gp.gui.addMessage("A Parcel has arrived!", Color.MAGENTA);
-
-		        orderList.clear();
+		        addParcel();
 		    }
     	}
     }

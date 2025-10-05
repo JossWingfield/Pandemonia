@@ -9,6 +9,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import main.GamePanel;
 import utility.save.RecipeSaveData;
 
 public class RecipeManager {
@@ -32,7 +33,8 @@ public class RecipeManager {
             false, 
             importImage("/food/food.png").getSubimage(16, 96, 16, 16),
             importImage("/food/food.png").getSubimage(16, 112, 16, 16),
-            6
+            6,
+            1
         );
         registerRecipe(fish);
 
@@ -44,7 +46,8 @@ public class RecipeManager {
             false, 
             importImage("/food/food.png").getSubimage(32, 96, 16, 16),
             importImage("/food/food.png").getSubimage(32, 112, 16, 16),
-            8
+            8,
+            1
         );
         registerRecipe(egg);
 
@@ -56,7 +59,8 @@ public class RecipeManager {
             false, 
             importImage("/food/food.png").getSubimage(0, 96, 16, 16),
             importImage("/food/food.png").getSubimage(0, 112, 16, 16),
-            6
+            6,
+            2
         );
         registerRecipe(chicken);
         Recipe friedEgg = new Recipe(
@@ -67,7 +71,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/egg/PlatedEgg.png"),
                 null,
-                5
+                5,
+                1
             );
         registerRecipe(friedEgg);
         Recipe steak = new Recipe(
@@ -78,7 +83,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/Steak.png").getSubimage(32, 0, 16, 16),
                 null,
-                6
+                6,
+                1
             );
         registerRecipe(steak);
         
@@ -90,7 +96,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/food.png").getSubimage(16, 16, 16, 16),
                 null,
-                5
+                5,
+                2
             );
         registerRecipe(potato);
         
@@ -102,7 +109,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/food.png").getSubimage(48, 16, 16, 16),
                 null,
-                8
+                8,
+                1
             );
         registerRecipe(eggSandwich);
         
@@ -114,7 +122,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/CheeseSandwich.png").getSubimage(0, 0, 16, 16),
                 null,
-                5
+                5,
+                1
             );
         registerRecipe(cheeseSandwich);
         Recipe spaghettiNapoli = new Recipe(
@@ -125,7 +134,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/pasta/Spaghetti.png").getSubimage(48, 0, 16, 16),
                 null,
-                7
+                7,
+                1
             );
         registerRecipe(spaghettiNapoli);
         Recipe penneNapoli = new Recipe(
@@ -136,7 +146,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/pasta/Penne.png").getSubimage(32, 0, 16, 16),
                 null,
-                7
+                7,
+                1
             );
         registerRecipe(penneNapoli);
         Recipe penneMeatballs = new Recipe(
@@ -147,7 +158,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/pasta/Meatball.png").getSubimage(48, 0, 16, 16),
                 null,
-                10
+                10,
+                1
             );
         registerRecipe(penneMeatballs);
         Recipe spaghettiMeatballs = new Recipe(
@@ -158,7 +170,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/pasta/Meatball.png").getSubimage(32, 0, 16, 16),
                 null,
-                10
+                10,
+                1
             );
         registerRecipe(spaghettiMeatballs);
         Recipe spaghettiCarbonara = new Recipe(
@@ -169,7 +182,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/pasta/Carbonara.png").getSubimage(0, 0, 16, 16),
                 null,
-                8
+                8,
+                1
             );
         registerRecipe(spaghettiCarbonara);
         Recipe penneCarbonara = new Recipe(
@@ -180,7 +194,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/pasta/Carbonara.png").getSubimage(16, 0, 16, 16),
                 null,
-                8
+                8,
+                1
             );
         registerRecipe(penneCarbonara);
         Recipe penneDiavola = new Recipe(
@@ -191,7 +206,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/pasta/Chicken.png").getSubimage(32, 0, 16, 16),
                 null,
-                10
+                10,
+                1
             );
         registerRecipe(penneDiavola);
         Recipe spaghettiDiavola = new Recipe(
@@ -202,7 +218,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/pasta/Chicken.png").getSubimage(48, 0, 16, 16),
                 null,
-                10
+                10,
+                1
             );
         registerRecipe(spaghettiDiavola);
         Recipe salad = new Recipe(
@@ -213,7 +230,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/Salad.png"),
                 null,
-                5
+                5,
+                1
             );
         registerRecipe(salad);
         Recipe bruschetta = new Recipe(
@@ -224,7 +242,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/Bruschetta.png"),
                 null,
-                5
+                5,
+                1
             );
         registerRecipe(bruschetta);
         Recipe cursedGreens = new Recipe(
@@ -235,7 +254,8 @@ public class RecipeManager {
                 false, 
                 importImage("/food/cursed/CursedGreens.png").getSubimage(16, 0, 16, 16),
                 null,
-                15
+                15,
+                1
             );
         registerCursedRecipe(cursedGreens);
         cursedGreens.setCursed();
@@ -265,14 +285,22 @@ public class RecipeManager {
     public static void registerCursedRecipe(Recipe recipe) {
         cursedRecipes.add(recipe);
     }
-    public static Recipe[] getTwoRandomLocked() {
-        List<Recipe> locked = getLockedRecipes();
+    public static Recipe[] getTwoRandomLocked(GamePanel gp) {
+        int currentPhase = gp.progressM.currentPhase;
+
+        // Filter locked recipes by phase
+        List<Recipe> locked = getLockedRecipes().stream()
+                .filter(r -> r.phase <= currentPhase)
+                .toList();
+
         if (locked.size() < 2) return null; // not enough locked recipes
+
         Recipe r1 = locked.get(random.nextInt(locked.size()));
         Recipe r2;
         do {
             r2 = locked.get(random.nextInt(locked.size()));
         } while (r1 == r2);
+
         return new Recipe[] { r1, r2 };
     }
     public static List<Recipe> getLockedRecipes() {

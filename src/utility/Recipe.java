@@ -13,9 +13,11 @@ public class Recipe {
     private List<String> cookingStates, secondaryCookingStates;
     private int baseCost;
     public boolean isCursed = false;
+    public int phase;
 
-    public Recipe(String name, List<String> requiredIngredients, List<String> cookingStates, List<String> secondaryCookingStates, boolean orderMatters, BufferedImage finishedImage, BufferedImage dirtyImage, int cost) {
+    public Recipe(String name, List<String> requiredIngredients, List<String> cookingStates, List<String> secondaryCookingStates, boolean orderMatters, BufferedImage finishedImage, BufferedImage dirtyImage, int cost, int phase) {
         this.name = name;
+        this.phase = phase;
         this.requiredIngredients = requiredIngredients;
         this.cookingStates = cookingStates;
         this.secondaryCookingStates = secondaryCookingStates;

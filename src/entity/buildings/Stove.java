@@ -132,13 +132,13 @@ public class Stove extends Building {
 		}
 		
 		if(leftSlot != null) {
-			g2.drawImage(leftSlot.animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff + 24, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+48+16, 48, 48, null);
+			g2.drawImage(leftSlot.animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff + 18, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+48+10, 48, 48, null);
 			if(leftHitbox.intersects(gp.player.hitbox)) {
-				g2.drawImage(leftSlot.animations[0][0][2], (int) hitbox.x - xDrawOffset - gp.player.xDiff + 24, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+48+16, 48, 48, null);
+				g2.drawImage(leftSlot.animations[0][0][2], (int) hitbox.x - xDrawOffset - gp.player.xDiff + 18, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+48+10, 48, 48, null);
 				if(leftSlot.getName().equals("Small Pan")) {
 					SmallPan pan = (SmallPan)leftSlot;
 					if(pan.cookingItem != null) {
-						g2.drawImage(leftSlot.animations[0][0][4], (int) hitbox.x - xDrawOffset - gp.player.xDiff + 24, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+48+16, 48, 48, null);
+						g2.drawImage(leftSlot.animations[0][0][4], (int) hitbox.x - xDrawOffset - gp.player.xDiff + 18, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+48+10, 48, 48, null);
 					}
 				}
 				if(leftSlot.getName().equals("Frying Pan")) {
@@ -487,7 +487,7 @@ public class Stove extends Building {
 		if (leftSlot instanceof SmallPan pan && pan.isCooking()) {
 			if(pan.cookingItem != null) {
 				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(g2, hitbox.x + 24, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
+					drawCookingBar(g2, hitbox.x + 16, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
 				} else {
 					pan.drawCookingWarning(g2, (int)(hitbox.x));
 				}
@@ -496,7 +496,7 @@ public class Stove extends Building {
 		if (leftSlot instanceof FryingPan pan && pan.isCooking()) {
 			if(pan.cookingItem != null) {
 				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(g2, hitbox.x + 24, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
+					drawCookingBar(g2, hitbox.x + 16, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
 				} else {
 					pan.drawCookingWarning(g2, (int)(hitbox.x));
 				}

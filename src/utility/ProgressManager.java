@@ -60,7 +60,7 @@ public class ProgressManager {
     private BufferedImage basicReward, kitchenReward, cosmeticReward, emptyReward;
     private BufferedImage basicReward2, kitchenReward2, cosmeticReward2, emptyReward2;
     public int totalLevels = 100; // total number of levels
-    public ProgressPhase currentPhase = ProgressPhase.PHASE1;
+    public int currentPhase = 1;
     
     //UPGRADE STUFF
     public boolean turntablePresent = false;
@@ -121,7 +121,7 @@ public class ProgressManager {
 
     public void handleLevelUp(int newLevel) {
         // Always give recipe choices
-        recipeChoices = RecipeManager.getTwoRandomLocked();
+        recipeChoices = RecipeManager.getTwoRandomLocked(gp);
 
         // See if this level has an extra reward
         RewardType reward = rewardMap.get(newLevel-1);
@@ -136,7 +136,7 @@ public class ProgressManager {
             case KITCHEN:
             case BASIC:
                 upgradeChoices = UpgradeManager.getTwoRandomLockedForCategory(
-                                    reward, getTierForLevel(newLevel));
+                                    reward, currentPhase);
                 if (upgradeChoices != null) {
                     // Show both upgrades and recipes (you can design GUI to display both)
                     gp.currentState = gp.chooseUpgradeState;
@@ -147,7 +147,7 @@ public class ProgressManager {
 
             case COSMETIC:
                 upgradeChoices = UpgradeManager.getTwoRandomLockedForCategory(
-                                    RewardType.COSMETIC, getTierForLevel(newLevel));
+                                    RewardType.COSMETIC, currentPhase);
                 if (upgradeChoices != null) {
                     gp.currentState = gp.chooseUpgradeState; 
                 } else {
@@ -170,11 +170,7 @@ public class ProgressManager {
         return upgradeChoices;
     }
 
-    private ProgressPhase getTierForLevel(int level) {
-        if (level < 15) return ProgressPhase.PHASE1;
-        else if (level < 30) return ProgressPhase.PHASE2;
-        else return ProgressPhase.PHASE3;
-    }
+
     protected BufferedImage importImage(String filePath) { //Imports and stores the image
         BufferedImage importedImage = null;
         try {
@@ -192,15 +188,22 @@ public class ProgressManager {
     	data.choppingBoardUpgradeI = choppingBoardUpgradeI;
     	data.fasterCustomers = fasterCustomers;
     	data.moreCustomers = moreCustomers;
+    	data.phase = currentPhase;
     	return data;
     }
     public void applySaveData(ProgressSaveData data) {
+    	currentPhase = data.phase;
     	fridgeUpgradeI = data.fridgeUpgradeI;
     	sinkUpgradeI = data.sinkUpgradeI;
     	stoveUpgradeI = data.stoveUpgradeI;
     	choppingBoardUpgradeI = data.choppingBoardUpgradeI;
     	fasterCustomers = data.fasterCustomers;
     	moreCustomers = data.moreCustomers;
+    }
+    public void moveToNextPhase() {
+    	currentPhase++;
+    	gp.mapM.enterNewPhase();
+    	
     }
 	
 }

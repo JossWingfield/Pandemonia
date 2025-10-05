@@ -12,6 +12,7 @@ public class SmallPan extends CookingItem {
 		name = "Small Pan";
 		importImages();
 		setupRecipes();
+		xDrawOffset = 10;
 	}
 	
 	private void importImages() {

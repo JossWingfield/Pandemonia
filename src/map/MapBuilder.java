@@ -222,11 +222,10 @@ public class MapBuilder {
 	}
 	
 	private void writeToMap(int xTile, int yTile) {
-		
 		if(selectedTile != -1) {
 			
 			int originalTile = selectedTile;
-			
+		
 			
 			switch(currentLayer) {
 			case 0:
@@ -258,19 +257,10 @@ public class MapBuilder {
 		    	  if (!file.isDirectory()) {
 		    		  String tag = gp.mapM.currentRoom.getRoomIDTag();
 		    		  if(file.getName().contains(tag)) {
-	
-			    	    //char c = file.getName().charAt(0);
-			    	  	//int i = Character.getNumericValue(c);
-		    			  
 		    			  String num = Integer.toString(currentLayer);
 		    			  if(file.getName().contains(num)) {
 		    				  f = file;
 		    			  }
-			    	  	
-			    	  	//if(i == currentLayer) {
-			    	  		//f = file;
-			    	  		//System.out.println();
-			    	  	//}
 		    		  }
 			    	 }
 		    }

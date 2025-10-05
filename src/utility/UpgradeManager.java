@@ -25,78 +25,76 @@ public class UpgradeManager {
         registerUpgrade(new Upgrade(gp, "Tip Jar",
         		"Customers tip money /nbased on service speed!",
         		importImage("/decor/kitchen props.png").getSubimage(0, 0, 16, 16),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.BASIC));
         registerUpgrade(new Upgrade(gp, "Turntable",
         		"Customers become 20% /nmore patient! /n(Also allows you to /nplay music)",
         		importImage("/decor/turntable.png").getSubimage(0, 0, 48, 48),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.BASIC,
         		48+8, 48+48+8));
         registerUpgrade(new Upgrade(gp, "More Customers",
         		"100% more customers /nappear!",
         		importImage("/npcs/FaceIcons.png").getSubimage(32*4, 0, 32, 32),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.BASIC,
         		24, 24));
         registerUpgrade(new Upgrade(gp, "Faster Customers",
         		"Customers move 100% /nfaster!",
         		importImage("/npcs/FaceIcons.png").getSubimage(32*5, 0, 32, 32),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.BASIC,
         		24, 24));
         
         registerUpgrade(new Upgrade(gp, "Coloured Walls",
         		"Coloured Walls are added /nto the catalogue.",
         		importImage("/UI/levels/decor/ColoredWallUI.png"),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.COSMETIC));
         registerUpgrade(new Upgrade(gp, "Small Plants",
         		"Small Plants are added /nto the catalogue!",
         		importImage("/decor/plants.png").getSubimage(64, 0, 32, 16),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.COSMETIC, 32, 0));
         registerUpgrade(new Upgrade(gp, "Big Plants",
         		"Big Plants are added /nto the catalogue!",
         		importImage("/decor/plants.png").getSubimage(64, 64, 32, 32),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.COSMETIC, 32, 32));
         registerUpgrade(new Upgrade(gp, "Flowers, Hanging Plants",
         		"Flowers and hanging /nplants are added to /nthe catalogue!",
         		importImage("/decor/plants.png").getSubimage(64, 96, 32, 32),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.COSMETIC, 32, 28));
         registerUpgrade(new Upgrade(gp, "Paintings",
         		"Paintings are added to /nthe catalogue!",
         		importImage("/decor/painting.png").getSubimage(0, 0, 16, 16),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.COSMETIC));
         
         registerUpgrade(new Upgrade(gp, "Fridge Upgrade I",
         		"Increases Fridge Space /nto 10!)",
         		importImage("/decor/kitchen props.png").getSubimage(112, 128, 16, 48),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.KITCHEN,
         		0, 48));
         registerUpgrade(new Upgrade(gp, "Sink Upgrade I",
         		"Wash Dishes Faster!",
         		importImage("/decor/bathroom props.png").getSubimage(0, 192, 32, 32),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.KITCHEN,
         		24, 24));
         registerUpgrade(new Upgrade(gp, "Stove Upgrade I",
         		"Cook food Faster!",
         		importImage("/decor/kitchen props.png").getSubimage(112, 16, 32, 16),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.KITCHEN,
         		24, 0));
         registerUpgrade(new Upgrade(gp, "Chopping Upgrade I",
         		"Chop food Faster!",
         		importImage("/decor/kitchen props.png").getSubimage(112, 0, 16, 16),
-        		ProgressPhase.PHASE1,
+        		1,
         		RewardType.KITCHEN));
-        
-        
         
     	
     }
@@ -112,7 +110,7 @@ public class UpgradeManager {
     public static void registerUpgrade(Upgrade u) {
     	allUpgrades.add(u);
     }
-    public static Upgrade[] getTwoRandomLocked(ProgressPhase tier) {
+    public static Upgrade[] getTwoRandomLocked(int tier) {
         List<Upgrade> locked = getLockedUpgradesByTier(tier);
         if (locked.isEmpty()) return null;
 
@@ -125,7 +123,7 @@ public class UpgradeManager {
         } while (r1 == r2);
         return new Upgrade[]{ r1, r2 };
     }
-    public static Upgrade[] getTwoRandomLockedForCategory(RewardType category, ProgressPhase tier) {
+    public static Upgrade[] getTwoRandomLockedForCategory(RewardType category, int tier) {
         List<Upgrade> locked = new ArrayList<>();
         for (Upgrade u : allUpgrades) {
             if (u.getTier() == tier && u.getCategory() == category && !unlockedUpgrades.contains(u)) {
@@ -144,7 +142,7 @@ public class UpgradeManager {
 
         return new Upgrade[]{ r1, r2 };
     }
-    public static List<Upgrade> getLockedUpgradesByTier(ProgressPhase tier) {
+    public static List<Upgrade> getLockedUpgradesByTier(int tier) {
         List<Upgrade> locked = new ArrayList<>();
         for (Upgrade u : allUpgrades) {
             if (u.getTier() == tier && !unlockedUpgrades.contains(u)) {

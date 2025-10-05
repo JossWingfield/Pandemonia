@@ -1817,7 +1817,7 @@ public class GUI {
 
 		if (gp.progressM.getRecipeChoices() == null) {
 		    // fallback in case something went wrong
-		    recipeChoices = RecipeManager.getTwoRandomLocked();
+		    recipeChoices = RecipeManager.getTwoRandomLocked(gp);
 		} else {
 		    recipeChoices = gp.progressM.getRecipeChoices();
 		}

@@ -37,6 +37,8 @@ public class MapManager {
 	  public Room currentRoom;
 	  private Room[] rooms;
 	  
+	  private boolean changingPhase = false;
+	  
 	  private int arrayIndex = 0;
 	  public int renderDistance = 3;
 	  public int chunkSize = 8;
@@ -46,6 +48,14 @@ public class MapManager {
 
 	        tiles = new Tile[2500];
 
+	        loadRooms();
+
+	        screenWidth = gp.tilesInWidth;
+	        screenHeight = gp.tilesInHeight;
+
+	        importTiles();
+	    }
+	    private void loadRooms() {
 	        currentRoom = new Room(gp, 0);
 	        gp.buildingM.setBuildings(currentRoom.getBuildings());
 	        gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
@@ -61,11 +71,6 @@ public class MapManager {
 	        
 	        currentMapHeight = currentRoom.mapHeight;
 	        currentMapWidth = currentRoom.mapWidth;
-
-	        screenWidth = gp.tilesInWidth;
-	        screenHeight = gp.tilesInHeight;
-
-	        importTiles();
 	    }
 	    //Imports each individual tile
 	    public void importTiles() {
@@ -194,6 +199,9 @@ public class MapManager {
 	        }
 	    }
 	    public boolean isInRoom(int index) {
+	    	if(changingPhase) {
+	    		return false;
+	    	}
 	    	return rooms[index].equals(currentRoom);
 	    }
 	    public boolean isInRoom(String roomType) {
@@ -205,6 +213,30 @@ public class MapManager {
 	        if (room == currentRoom) {
 	            gp.npcM.removeNPC(npc); // also mirror to global if it's the active room
 	        }
+	    }
+	    public void enterNewPhase() {
+	    	changingPhase = true;
+    		gp.customiser.clear();
+	    	for(Object o: gp.world.boughtItems) {
+	    		if(o instanceof FloorPaper f) {
+	    			gp.customiser.addToInventory(f);
+    			} else if(o instanceof WallPaper f) {
+    				gp.customiser.addToInventory(f);
+    			} else if(o instanceof Beam f) {
+    				gp.customiser.addToInventory(f);
+    			} else if(o instanceof ChairSkin f) {
+    				gp.customiser.addToInventory(f);
+    			} else if(o instanceof TableSkin f) {
+    				gp.customiser.addToInventory(f);
+    			} else if(o instanceof Building f) {
+    				gp.customiser.addToInventory(f);
+    			}
+	    	}
+	    	gp.lightingM.clearLights();
+	    	loadRooms();
+	    	gp.player.hitbox.x = 8*48;
+	    	gp.player.hitbox.y = 13*48;
+	    	changingPhase = false;
 	    }
 	    public void setRoom(int roomNum) {
 	    	gp.lightingM.removeLight(gp.player.playerLight);

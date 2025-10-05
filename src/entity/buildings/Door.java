@@ -49,8 +49,8 @@ public class Door extends Building {
 		return building;
     }
 	public void printOutput() {
-		//System.out.println("buildings[arrayCounter] = new Door(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + facing + ", " + preset + ");");
-		//System.out.println("arrayCounter++;");	
+		System.out.println("buildings[arrayCounter] = new Door(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + facing + ", " + preset + ");");
+		System.out.println("arrayCounter++;");	
 	}
 	public void setDoorNum(int num) {
 		roomNum = num;
