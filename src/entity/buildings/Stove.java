@@ -32,6 +32,8 @@ public class Stove extends Building {
 	private boolean firstUpdate = true;
 	private int clickCooldown = 0;
 	
+	private BufferedImage leftCooking, rightCooking;
+	
 	public Stove(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 96, 48);
 		
@@ -58,6 +60,8 @@ public class Stove extends Building {
 		
 		name = "Stove";
     	animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(0, 128, 48, 48);
+    	leftCooking = importImage("/decor/StoveOn.png").getSubimage(0, 0, 48, 48);
+    	rightCooking = importImage("/decor/StoveOn.png").getSubimage(48, 0, 48, 48);
 	}
 	public void update() {
 		if(gp.world.isPowerOn()) {
@@ -492,6 +496,8 @@ public class Stove extends Building {
 					pan.drawCookingWarning(g2, (int)(hitbox.x));
 				}
 			}
+			g2.drawImage(leftCooking, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+
 		}
 		if (leftSlot instanceof FryingPan pan && pan.isCooking()) {
 			if(pan.cookingItem != null) {
@@ -502,6 +508,8 @@ public class Stove extends Building {
 				}
 			}
 			g2.drawImage(leftSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset - gp.player.xDiff + 24, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+48+16, 48, 48, null);
+			g2.drawImage(leftCooking, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+
 		}
 
 		// Right slot cooking bar
@@ -513,6 +521,8 @@ public class Stove extends Building {
 					pan.drawCookingWarning(g2, (int)(hitbox.x + 56));
 				}
 			}
+			g2.drawImage(rightCooking, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+
 		}
 		if (rightSlot instanceof FryingPan pan && pan.isCooking()) {
 			if(pan.cookingItem != null) {
@@ -523,6 +533,8 @@ public class Stove extends Building {
 				}
 			}
 			g2.drawImage(rightSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset - gp.player.xDiff + 48 + 30, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+48+16, 48, 48, null);
+			g2.drawImage(rightCooking, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+
 		}
 	}
 	

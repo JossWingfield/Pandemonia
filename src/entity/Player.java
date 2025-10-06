@@ -63,7 +63,7 @@ public class Player extends Entity{
     public float buildRange;
     public boolean facingLeft = false;
     public Item currentItem = null;
-    private int clickCounter = 0;
+    public int clickCounter = 0;
     public Rectangle2D.Float interactHitbox;
     
     //ATTRIBUTES
@@ -472,7 +472,11 @@ public class Player extends Entity{
     }
   
     private void handleItems() {
+    	if(gp.minigameM.miniGameActive) {
+    		return;
+    	}
     	if(currentItem != null) {
+    		currentItem.update();
 	    	if(gp.keyI.ePressed && clickCounter == 0) {
 	    		FloorDecor_Building b = gp.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {

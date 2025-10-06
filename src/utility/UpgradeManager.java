@@ -96,6 +96,21 @@ public class UpgradeManager {
         		1,
         		RewardType.KITCHEN));
         
+        
+        //PHASE 2
+        registerUpgrade(new Upgrade(gp, "Fridge Upgrade II",
+        		"Increases Fridge Space /nto 15!)",
+        		importImage("/decor/kitchen props.png").getSubimage(112, 128, 16, 48),
+        		2,
+        		RewardType.KITCHEN,
+        		0, 48));
+        registerUpgrade(new Upgrade(gp, "Oven Upgrade I",
+        		"Oven cooks food Faster!",
+        		importImage("/decor/kitchen props.png").getSubimage(48, 128, 32, 48),
+        		2,
+        		RewardType.KITCHEN,
+        		24, 48+12));
+        //ADD EITHER SEASONING/SOUPS
     	
     }
     protected BufferedImage importImage(String filePath) {
@@ -120,7 +135,7 @@ public class UpgradeManager {
         Upgrade r2;
         do {
             r2 = locked.get(random.nextInt(locked.size()));
-        } while (r1 == r2);
+        } while (r1.getName().equals(r2.getName()));
         return new Upgrade[]{ r1, r2 };
     }
     public static Upgrade[] getTwoRandomLockedForCategory(RewardType category, int tier) {

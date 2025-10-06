@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import entity.buildings.Building;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
+import entity.buildings.HerbBasket;
 import entity.buildings.Sink;
 import entity.buildings.TipJar;
 import entity.buildings.Toilet;
@@ -84,7 +85,6 @@ public class Customiser {
 		tableTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 25, 34, 25);
 		
 		border = importImage("/UI/customise/WallBorder.png");
-		//addToInventory(new TableSkin(gp, 1));
 	}
 	public void clear() {
 		decorBuildingInventory.clear();

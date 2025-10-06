@@ -19,6 +19,7 @@ import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
 import entity.buildings.Fridge;
 import entity.buildings.Gate;
+import entity.buildings.HerbBasket;
 import entity.buildings.Lantern;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
@@ -186,6 +187,7 @@ public class BuildingRegistry {
 			case "Chopping Board 1" -> i = new ChoppingBoard(gp, x, y);
 			case "Turntable" -> i = new Turntable(gp, x, y);
 			case "Tip Jar" -> i = new TipJar(gp, x, y);
+			case "Herb Basket" -> i = new HerbBasket(gp, x, y);
 		}
 
 		return i;

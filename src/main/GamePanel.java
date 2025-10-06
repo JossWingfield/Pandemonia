@@ -32,6 +32,7 @@ import utility.RecipeManager;
 import utility.Settings;
 import utility.UpgradeManager;
 import utility.World;
+import utility.minigame.MiniGameManager;
 import utility.save.SaveManager;
 
 import java.awt.AlphaComposite;
@@ -101,6 +102,7 @@ public class GamePanel extends JPanel implements Runnable {
     public RecipeManager recipeM = new RecipeManager();
     public UpgradeManager upgradeM = new UpgradeManager(this);
     public ProgressManager progressM = new ProgressManager(this);
+    public MiniGameManager minigameM = new MiniGameManager(this);
     public SaveManager saveM = new SaveManager(this);
     public MapBuilder mapB = new MapBuilder(this);
     //THREAD initialising the thread which the game loop is run off
@@ -493,6 +495,7 @@ public class GamePanel extends JPanel implements Runnable {
 		    	itemM.update();
 		    	world.update();
 		    	lightingM.update();
+		    	minigameM.update();
 		    	if(currentState == customiseRestaurantState) {
 		    		customiser.update();
 		    	}
@@ -749,6 +752,7 @@ public class GamePanel extends JPanel implements Runnable {
         	customiser.draw(g2);
         }
         
+    	minigameM.draw(g2);
         gui.draw(g2);
         
         g2.dispose();

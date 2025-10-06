@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import entity.items.Asparagus;
 import entity.items.Aubergine;
+import entity.items.Basil;
 import entity.items.Bread;
 import entity.items.BurntFood;
 import entity.items.Carrot;
@@ -25,9 +26,12 @@ import entity.items.Penne;
 import entity.items.Plate;
 import entity.items.Potato;
 import entity.items.RedOnion;
+import entity.items.Rosemary;
+import entity.items.Sage;
 import entity.items.SmallPan;
 import entity.items.Spaghetti;
 import entity.items.Steak;
+import entity.items.Thyme;
 import entity.items.Tomato;
 import main.GamePanel;
 
@@ -62,6 +66,10 @@ public class ItemRegistry {
 			case "Chopped Tomatoes" -> i = new ChoppedTomatoes(gp, 0, 0);
 			case "Spaghetti" -> i = new Spaghetti(gp, 0, 0);
 			case "Penne" -> i = new Penne(gp, 0, 0);
+			case "Thyme" -> i = new Thyme(gp, 0, 0);
+			case "Basil" -> i = new Basil(gp, 0, 0);
+			case "Rosemary" -> i = new Rosemary(gp, 0, 0);
+			case "Sage" -> i = new Sage(gp, 0, 0);
 			case "Cursed Greens" -> i = new CursedGreens(gp, 0, 0);
 			case "Burnt Food" -> i = new BurntFood(gp, 0, 0);
 			case "Plate" -> i = new Plate(gp, 0, 0);

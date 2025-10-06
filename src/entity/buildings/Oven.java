@@ -19,11 +19,12 @@ public class Oven extends Building {
     private List<String> cookedResults;
 	
 	public Rectangle2D.Float ovenHitbox;
-
+	
+	private BufferedImage ovenOn;
 	private int clickCooldown = 0;
 	private boolean cooking = false;
     private int cookCount = 0;
-    private final int maxCookCount = 1000;
+    private int maxCookCount = 1000;
 	
 	public Oven(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -57,9 +58,10 @@ public class Oven extends Building {
     	animations[0][0][3] = importImage("/decor/OvenHighlight.png").getSubimage(0, 0, 32, 48);
        	animations[0][0][4] = importImage("/decor/OvenHighlight.png").getSubimage(32, 0, 32, 48);
 	
+       	ovenOn = importImage("/decor/OvenOn.png");
 	}
 	public void draw(Graphics2D g2) {
-		 
+		
 	    
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
 	    	if(currentItem == null) {
@@ -106,9 +108,7 @@ public class Oven extends Building {
 	    }
 	    
 	    if(cooking) {
-	    	if(gp.world.isPowerOn()) {
-	    		updateCooking();
-	    	}
+		    g2.drawImage(ovenOn, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    }
 	    
 		if(destructionUIOpen) {
@@ -119,6 +119,16 @@ public class Oven extends Building {
 				drawCookingBar(g2, (int) hitbox.x - gp.player.xDiff + 24, (int) (hitbox.y - gp.player.yDiff) + 24+48, cookCount, maxCookCount);
 			}
 		}
+	}
+	public void update() {
+		if(gp.progressM.ovenUpgradeI) {
+			maxCookCount = 800;
+		}
+	    if(cooking) {
+	    	if(gp.world.isPowerOn()) {
+	    		updateCooking();
+	    	}
+	    }
 	}
 	private void updateCooking() {
 		if(currentItem.foodState == FoodState.RAW) {

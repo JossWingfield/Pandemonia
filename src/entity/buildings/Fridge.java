@@ -99,6 +99,9 @@ public class Fridge extends Building {
         
         if(gp.progressM.fridgeUpgradeI) {
         	MAX_CAPACITY = 10;
+        	if(gp.progressM.fridgeUpgradeII) {
+        		MAX_CAPACITY = 15;
+        	}
         }
 
 		g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null); 

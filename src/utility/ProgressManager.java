@@ -66,10 +66,14 @@ public class ProgressManager {
     public boolean turntablePresent = false;
     public boolean tipJarPresent = false;
     public boolean bigTipsPresent = false;
+    
     public boolean fridgeUpgradeI = false;
+    public boolean fridgeUpgradeII = false;
     public boolean sinkUpgradeI = false;
     public boolean stoveUpgradeI = false;
     public boolean choppingBoardUpgradeI = false;
+    public boolean ovenUpgradeI = false;
+    
     public boolean fasterCustomers = false;
     public boolean moreCustomers = false;
 
@@ -183,8 +187,10 @@ public class ProgressManager {
     public ProgressSaveData saveData() {
     	ProgressSaveData data = new ProgressSaveData();
     	data.fridgeUpgradeI = fridgeUpgradeI;
+    	data.fridgeUpgradeII = fridgeUpgradeII;
     	data.sinkUpgradeI = sinkUpgradeI;
     	data.stoveUpgradeI = stoveUpgradeI;
+    	data.ovenUpgradeI = ovenUpgradeI;
     	data.choppingBoardUpgradeI = choppingBoardUpgradeI;
     	data.fasterCustomers = fasterCustomers;
     	data.moreCustomers = moreCustomers;
@@ -194,8 +200,10 @@ public class ProgressManager {
     public void applySaveData(ProgressSaveData data) {
     	currentPhase = data.phase;
     	fridgeUpgradeI = data.fridgeUpgradeI;
+    	fridgeUpgradeII = data.fridgeUpgradeII;
     	sinkUpgradeI = data.sinkUpgradeI;
     	stoveUpgradeI = data.stoveUpgradeI;
+    	ovenUpgradeI = data.ovenUpgradeI;
     	choppingBoardUpgradeI = data.choppingBoardUpgradeI;
     	fasterCustomers = data.fasterCustomers;
     	moreCustomers = data.moreCustomers;

@@ -5,10 +5,11 @@ import main.GamePanel;
 
 public class ProgressSaveData extends SaveData {
 	
-	public boolean fridgeUpgradeI;
+	public boolean fridgeUpgradeI, fridgeUpgradeII;
 	public boolean sinkUpgradeI;
 	public boolean stoveUpgradeI;
 	public boolean choppingBoardUpgradeI;
+	public boolean ovenUpgradeI;
 	public boolean moreCustomers;
 	public boolean fasterCustomers;
 	public int phase;

@@ -101,6 +101,9 @@ public class Upgrade {
 		case "Fridge Upgrade I":
 			gp.progressM.fridgeUpgradeI = true;
 			break;
+		case "Fridge Upgrade II":
+			gp.progressM.fridgeUpgradeII = true;
+			break;
 		case "Sink Upgrade I":
 			gp.progressM.sinkUpgradeI = true;
 			break;
@@ -109,6 +112,9 @@ public class Upgrade {
 			break;
 		case "Chopping Upgrade I":
 			gp.progressM.choppingBoardUpgradeI = true;
+			break;
+		case "Oven Upgrade I":
+			gp.progressM.ovenUpgradeI = true;
 			break;
 		}
 	}
@@ -128,5 +134,15 @@ public class Upgrade {
 	public RewardType getCategory() {
 		return category;
 	}
-	
+	public boolean equals(Object obj) {
+	    if (this == obj) return true;
+	    if (obj == null || getClass() != obj.getClass()) return false;
+	    Upgrade other = (Upgrade) obj;
+	    return name.equals(other.name);
+	}
+
+	@Override
+	public int hashCode() {
+	    return name.hashCode();
+	}
 }

@@ -5,6 +5,8 @@ import main.GamePanel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import entity.buildings.HerbBasket;
+
 public class KeyboardInput implements KeyListener {
     //HANDLES ALL THE KEYBOARD INPUTS
 
@@ -52,6 +54,9 @@ public class KeyboardInput implements KeyListener {
             if(num == KeyEvent.VK_G) {
             	gp.progressM.moveToNextPhase();
             }
+    		if(num == KeyEvent.VK_H) {
+    			gp.customiser.addToInventory(new HerbBasket(gp, 0, 0));
+    	    }
             if(num == KeyEvent.VK_Q) {
             	gp.player.soulsServed = gp.player.nextLevelAmount;
             }
