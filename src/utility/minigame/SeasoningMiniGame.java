@@ -1,10 +1,19 @@
 package utility.minigame;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
+
+import entity.items.Plate;
+import entity.items.Seasoning;
+
 import java.util.Iterator;
 
 import main.GamePanel;
@@ -17,6 +26,7 @@ public class SeasoningMiniGame {
     private static class Beat {
         float x;
         boolean hit = false;
+        float scoreWeight = 0f; // weight for this beat
     }
 
     private final List<Beat> beats = new ArrayList<>();
@@ -24,9 +34,9 @@ public class SeasoningMiniGame {
 
     // Beat timing
     private int beatSpawnTimer = 0;
-    private int burstTimer = 0;      // Time between bursts
-    private int beatsInBurst = 0;    // How many beats remain in this burst
-    private float beatSpeed = 0.015f; // Speed (slightly faster for tighter timing)
+    private int burstTimer = 0;       // Time between bursts
+    private int beatsInBurst = 0;     // Remaining beats in this burst
+    private float beatSpeed = 0.013f; // Movement speed
 
     // Hit zone
     private final float hitZoneCenter = 0.5f;
@@ -38,15 +48,44 @@ public class SeasoningMiniGame {
     private int clickCooldown = 0;
 
     // Progress
+    private float totalScore = 0f; 
     private int beatsHit = 0;
     private int totalBeats = 0;
-    private int maxBursts = 4; // total waves before end
+    private int maxBursts = 2;
+    
+    private BufferedImage borderImg;
+    private BufferedImage hitZoneImg;
+    private BufferedImage beatImg;
+    
+    private int SCALE = 3; 
+
+    // Pattern modifiers
+    private boolean fastPattern = false; // Whether current burst is tight
+    private int currentBurstLength = 0;
+    
+    private Plate plate;
+    private Seasoning seasoning;
+    
+    private Font nameFont = new Font("monogram", Font.PLAIN, 20);
 
     public SeasoningMiniGame(GamePanel gp) {
         this.gp = gp;
+        loadImages();
+    }
+    
+    private void loadImages() {
+        try {
+            borderImg = ImageIO.read(getClass().getResourceAsStream("/UI/minigame/SeasoningBorder.png"));
+            hitZoneImg = ImageIO.read(getClass().getResourceAsStream("/UI/minigame/SeasoningIcon.png"));
+            beatImg = ImageIO.read(getClass().getResourceAsStream("/UI/minigame/Beat.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void start() {
+    public void start(Plate p, Seasoning s) {
+    	this.plate = p;
+    	this.seasoning = s;
         active = true;
         beats.clear();
         resultText = "";
@@ -73,15 +112,16 @@ public class SeasoningMiniGame {
             if (beatSpawnTimer <= 0) {
                 spawnBeat();
                 beatsInBurst--;
-                beatSpawnTimer = 25 + random.nextInt(10); // spacing between beats in the same burst
+                beatSpawnTimer = fastPattern ? 10 + random.nextInt(8) : 30 + random.nextInt(15);
             }
         } else {
             burstTimer--;
-            if (burstTimer <= 0 && totalBeats / 4 < maxBursts) { 
-                // Start new burst
-                beatsInBurst = 3 + random.nextInt(3); // 3–5 beats per burst
+            if (burstTimer <= 0 && totalBeats / 4 < maxBursts) {
+                currentBurstLength = 3 + random.nextInt(3);
+                beatsInBurst = currentBurstLength;
+                fastPattern = random.nextFloat() < 0.5f;
                 beatSpawnTimer = 0;
-                burstTimer = 120 + random.nextInt(30); // time between bursts
+                burstTimer = 100 + random.nextInt(60);
             }
         }
 
@@ -94,6 +134,8 @@ public class SeasoningMiniGame {
             if (beat.x < -0.1f && !beat.hit) {
                 resultText = "MISS!";
                 resultTimer = 25;
+                beat.scoreWeight = 0f; // miss
+                totalScore += beat.scoreWeight;
                 it.remove();
             } else if (beat.x < -0.2f) {
                 it.remove();
@@ -102,7 +144,7 @@ public class SeasoningMiniGame {
 
         if (clickCooldown > 0) clickCooldown--;
 
-        // Input check
+        // Handle input
         if (gp.keyI.ePressed && clickCooldown == 0) {
             clickCooldown = 8;
             Beat closest = null;
@@ -117,25 +159,37 @@ public class SeasoningMiniGame {
             }
 
             if (closest != null && closestDist < 0.12f) {
-                if (closestDist < hitZoneWidth * 0.4f) resultText = "PERFECT!";
-                else resultText = "GOOD!";
+                if (closestDist < hitZoneWidth * 0.4f) {
+                    resultText = "PERFECT!";
+                    closest.scoreWeight = 1.0f;
+                } else {
+                    resultText = "GOOD!";
+                    closest.scoreWeight = 0.6f;
+                }
                 closest.hit = true;
-                beatsHit++;
+                totalScore += closest.scoreWeight;
                 beats.remove(closest);
                 resultTimer = 25;
             } else {
                 resultText = "MISS!";
                 resultTimer = 25;
+                totalScore += 0f; // miss
             }
         }
 
         if (resultTimer > 0) resultTimer--;
 
-        // End game when enough bursts are complete and no beats remain
+        // End game
         if ((totalBeats / 4 >= maxBursts) && beats.isEmpty() && beatsInBurst == 0) {
             active = false;
             gp.minigameM.miniGameActive = false;
-            // TODO: Apply seasoning accuracy bonus here
+
+            // Calculate final quality
+            float quality = totalBeats > 0 ? totalScore / totalBeats : 0f;
+
+            if (plate != null && seasoning != null) {
+                plate.addSeasoning(seasoning, quality);
+            }
         }
     }
 
@@ -152,35 +206,40 @@ public class SeasoningMiniGame {
         int centerX = gp.frameWidth / 2;
         int centerY = gp.frameHeight / 2;
 
-        // Smaller bar
-        int barWidth = 250;
-        int barHeight = 8;
+        // === Draw border background ===
+        int borderW = borderImg.getWidth() * SCALE;
+        int borderH = borderImg.getHeight() * SCALE;
+        g2.drawImage(borderImg, centerX - borderW / 2, centerY - borderH / 2, borderW, borderH, null);
 
-        // Base bar
-        g2.setColor(new Color(60, 60, 60));
-        g2.fillRect(centerX - barWidth / 2, centerY - barHeight / 2, barWidth, barHeight);
+        // === Define bar area inside the border ===
+        int innerBarWidth = (int)(borderW * 0.75);
+        int barY = centerY;
 
-        // Hit zone
-        int hitW = (int) (barWidth * hitZoneWidth);
-        int hitX = (int) (centerX - hitW / 2);
-        g2.setColor(new Color(100, 255, 100, 120));
-        g2.fillRect(hitX, centerY - barHeight / 2 - 8, hitW, barHeight + 16);
+        // === Draw hit zone ===
+        int hitZoneW = hitZoneImg.getWidth() * SCALE;
+        int hitZoneH = hitZoneImg.getHeight() * SCALE;
+        int hitX = centerX - hitZoneW / 2;
+        int hitY = barY - hitZoneH / 2;
+        g2.drawImage(hitZoneImg, hitX, hitY, hitZoneW, hitZoneH, null);
 
-        // Beats
+        // === Draw beats ===
         for (Beat beat : beats) {
-            int x = (int) (centerX - barWidth / 2 + barWidth * beat.x);
-            g2.setColor(Color.WHITE);
-            g2.fillRect(x - 4, centerY - 12, 8, 24);
+            int beatX = (int)(centerX - innerBarWidth / 2 + innerBarWidth * beat.x);
+            int beatY = centerY - (beatImg.getHeight() * SCALE) / 2;
+            g2.drawImage(beatImg,
+                    beatX - (beatImg.getWidth() * SCALE) / 2,
+                    beatY,
+                    beatImg.getWidth() * SCALE,
+                    beatImg.getHeight() * SCALE,
+                    null);
         }
 
-        // Feedback
+        // === Feedback ===
         if (resultTimer > 0 && !resultText.isEmpty()) {
             g2.setColor(Color.WHITE);
-            g2.drawString(resultText, centerX - 25, centerY - 35);
+            g2.setFont(nameFont);
+            g2.drawString(resultText, centerX - 25 * SCALE, centerY - borderH / 2 - 10 * SCALE);
         }
 
-        // Score
-        g2.setColor(Color.LIGHT_GRAY);
-        g2.drawString("Hits: " + beatsHit + " / " + totalBeats, centerX - 40, centerY + 40);
     }
 }

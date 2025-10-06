@@ -16,7 +16,7 @@ public class MiniGameManager {
     }
 
     public void startSeasoningMiniGame(Plate plate, Seasoning seasoning) {
-        seasoningMiniGame.start();
+        seasoningMiniGame.start(plate, seasoning);
         miniGameActive = true;
     }
 

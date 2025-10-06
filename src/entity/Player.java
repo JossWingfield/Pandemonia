@@ -472,9 +472,6 @@ public class Player extends Entity{
     }
   
     private void handleItems() {
-    	if(gp.minigameM.miniGameActive) {
-    		return;
-    	}
     	if(currentItem != null) {
     		currentItem.update();
 	    	if(gp.keyI.ePressed && clickCounter == 0) {
@@ -643,11 +640,13 @@ public class Player extends Entity{
     }
     public void update() {
 
-        handleMovement();
-        checkBorders();
-        updateCounters();
-        updateInteractHitbox();
-        handleItems();
+    	if(!gp.minigameM.miniGameActive) {
+    		handleMovement();
+    		checkBorders();
+    		updateCounters();
+    		updateInteractHitbox();
+    		handleItems();
+    	}
         
         if (keyI.debugMode) {
         	handleDebugMode();

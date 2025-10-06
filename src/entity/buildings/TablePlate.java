@@ -153,7 +153,7 @@ public class TablePlate extends Building {
 				    		if(gp.player.currentItem instanceof Plate plate) {
 				    			if(currentCustomer.foodOrder != null) {
 					    			if(currentCustomer.foodOrder.matches(plate.getIngredients())) {
-					    				currentCustomer.completeOrder();
+					    				currentCustomer.completeOrder(plate);
 					    				orderCompleted = true;
 					    			}
 				    			}

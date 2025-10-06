@@ -13,6 +13,7 @@ public class Recipe {
     private List<String> cookingStates, secondaryCookingStates;
     private int baseCost;
     public boolean isCursed = false;
+    public boolean seasoned = false;
     public int phase;
 
     public Recipe(String name, List<String> requiredIngredients, List<String> cookingStates, List<String> secondaryCookingStates, boolean orderMatters, BufferedImage finishedImage, BufferedImage dirtyImage, int cost, int phase) {

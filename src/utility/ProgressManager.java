@@ -76,6 +76,9 @@ public class ProgressManager {
     
     public boolean fasterCustomers = false;
     public boolean moreCustomers = false;
+    
+    //KITCHEN UNLOCKS
+    public boolean seasoningUnlocked = false;
 
     public ProgressManager(GamePanel gp) {
         this.gp = gp;
@@ -195,6 +198,7 @@ public class ProgressManager {
     	data.fasterCustomers = fasterCustomers;
     	data.moreCustomers = moreCustomers;
     	data.phase = currentPhase;
+    	data.seasoningUnlocked = seasoningUnlocked;
     	return data;
     }
     public void applySaveData(ProgressSaveData data) {
@@ -207,6 +211,7 @@ public class ProgressManager {
     	choppingBoardUpgradeI = data.choppingBoardUpgradeI;
     	fasterCustomers = data.fasterCustomers;
     	moreCustomers = data.moreCustomers;
+    	seasoningUnlocked = data.seasoningUnlocked;
     }
     public void moveToNextPhase() {
     	currentPhase++;

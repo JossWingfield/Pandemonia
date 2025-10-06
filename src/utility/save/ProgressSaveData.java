@@ -12,6 +12,10 @@ public class ProgressSaveData extends SaveData {
 	public boolean ovenUpgradeI;
 	public boolean moreCustomers;
 	public boolean fasterCustomers;
+	
+	//UNLOCKS
+	public boolean seasoningUnlocked;
+	
 	public int phase;
 	
 	public void applySaveData(GamePanel gp) {

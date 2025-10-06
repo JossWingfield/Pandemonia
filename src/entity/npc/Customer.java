@@ -9,6 +9,7 @@ import entity.buildings.Chair;
 import entity.buildings.Door;
 import entity.buildings.Toilet;
 import entity.items.FoodState;
+import entity.items.Plate;
 import main.GamePanel;
 import utility.Recipe;
 import utility.RecipeManager;
@@ -169,6 +170,13 @@ public class Customer extends NPC {
 		} else {
 			foodOrder = gp.world.getRandomMenuRecipe();
 		}
+		
+		if (gp.progressM.seasoningUnlocked) {
+			if (r.nextFloat() < 0.2f) {
+				foodOrder.seasoned = true;
+		    }
+		}
+		
 		RecipeManager.addOrder(foodOrder);
 		ordered = true;
 		gp.gui.addOrder(foodOrder, this, g2);
@@ -176,11 +184,12 @@ public class Customer extends NPC {
 	private void waitForOrder() {
 		waitingToOrder = true;
 	}
-	public void completeOrder() {
+	public void completeOrder(Plate p) {
 	    if(foodOrder == null) return;
 
+	    int baseCost = foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder));
 	    // base payment
-	    gp.player.wealth += foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder));
+	    gp.player.wealth += baseCost;
 
 	    // tip logic based on patience
 	    float progress = patienceCounter / (float) maxPatienceTime;
@@ -211,6 +220,10 @@ public class Customer extends NPC {
 	    	} else {
 	    		gp.player.wealth += (tip*0.5);
 	    	}
+	    }
+	    
+	    if (p.seasoningQuality != -1) {
+	        gp.player.wealth += baseCost * 0.25f * p.seasoningQuality;
 	    }
 	    
 	    gp.player.soulsServed++;

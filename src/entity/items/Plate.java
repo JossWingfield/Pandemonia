@@ -16,7 +16,7 @@ public class Plate extends Item {
     private int currentStackCount = 1;
     private int maxPlateStack = 3;
     
-    private static final int MAX_LAYERS = 5;
+    private static final int MAX_LAYERS = 6;
     private boolean isDirty = false;
     public BufferedImage dirtyImage;
 
@@ -25,6 +25,8 @@ public class Plate extends Item {
     private Set<String> platableFoods = new HashSet<>();
     private Set<String> bypassPlateFoods = new HashSet<>();
     private Recipe matchedRecipe;
+    
+    public float seasoningQuality = -1;
 
     public Plate(GamePanel gp, float xPos, float yPos) {
         super(gp, xPos, yPos);
@@ -94,11 +96,13 @@ public class Plate extends Item {
     }
     public void setDirty() {
     	isDirty = true;
+    	seasoningQuality = -1;
     }
     public void setDirty(BufferedImage dirtyImage) {
     	isDirty = true;
     	if(dirtyImage != null) {
     		this.dirtyImage = dirtyImage;
+    		seasoningQuality = -1;
     	}
     }
     public void setDirty(boolean isDirty) {
@@ -108,6 +112,7 @@ public class Plate extends Item {
         	 Recipe matched = RecipeManager.getMatchingRecipe(getIngredients());
      		 this.dirtyImage = matched.dirtyPlate;
     	 }
+    	 seasoningQuality = -1;
     }
     public boolean canBePlated(String foodName, FoodState state) {
     	
@@ -164,6 +169,11 @@ public class Plate extends Item {
 
         matchedRecipe = RecipeManager.getMatchingRecipe(currentIngredients);
     }
+    public void addSeasoning(Seasoning seasoning, float quality) {
+    	this.seasoningQuality = quality;
+    	seasoning.foodState = FoodState.PLATED;
+    	addIngredient(seasoning);
+    }
     public List<String> getIngredients() {
         List<String> result = new ArrayList<>();
         for (String ing : ingredients) {
@@ -176,6 +186,7 @@ public class Plate extends Item {
         ingredients.clear();
         ingredientImages.clear();
         matchedRecipe = null;
+        seasoningQuality = -1;
     }
 
     public boolean isFinishedRecipe() {

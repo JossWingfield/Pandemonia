@@ -59,8 +59,10 @@ public class HerbBasket extends Building {
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			if(gp.keyI.ePressed && clickCooldown == 0) {
-				openUI = !openUI;
-				clickCooldown = 6;
+				if(gp.player.currentItem == null) {
+					openUI = !openUI;
+					clickCooldown = 6;
+				}
 			}
 		} else {
 			openUI = false;

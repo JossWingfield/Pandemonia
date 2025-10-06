@@ -116,6 +116,9 @@ public class Upgrade {
 		case "Oven Upgrade I":
 			gp.progressM.ovenUpgradeI = true;
 			break;
+		case "Seasoning!":
+			gp.progressM.seasoningUnlocked = true;
+			break;
 		}
 	}
 	
