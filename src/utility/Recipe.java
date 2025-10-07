@@ -3,6 +3,7 @@ package utility;
 import java.util.List;
 import java.util.Map;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Recipe {
@@ -15,13 +16,17 @@ public class Recipe {
     public boolean isCursed = false;
     public boolean seasoned = false;
     public int phase;
+    private String seasoningName = null;
 
     public Recipe(String name, List<String> requiredIngredients, List<String> cookingStates, List<String> secondaryCookingStates, boolean orderMatters, BufferedImage finishedImage, BufferedImage dirtyImage, int cost, int phase) {
         this.name = name;
         this.phase = phase;
-        this.requiredIngredients = requiredIngredients;
-        this.cookingStates = cookingStates;
-        this.secondaryCookingStates = secondaryCookingStates;
+        
+        this.requiredIngredients = new ArrayList<>(requiredIngredients);
+        this.cookingStates = new ArrayList<>(cookingStates);
+        this.secondaryCookingStates = new ArrayList<>(secondaryCookingStates);
+        
+        
         this.orderMatters = orderMatters;
         this.finishedPlate = finishedImage;
         this.dirtyPlate = dirtyImage;
@@ -78,6 +83,18 @@ public class Recipe {
             return (int)Math.ceil(baseCost * 1.2 * multiplier); 
         }
         return (int)(baseCost * multiplier);
+    }
+    public void setSeasoned(String seasoningName) {
+        if (seasoningName == null || seasoningName.isEmpty()) return;
+        this.seasoned = true;
+        this.seasoningName = seasoningName;
+
+        // Optionally add seasoning ingredient so it visually matches
+        if (!requiredIngredients.contains(seasoningName)) {
+            requiredIngredients.add(seasoningName);
+            cookingStates.add(""); // no specific cooking method for seasoning
+            secondaryCookingStates.add(""); // same here
+        }
     }
     @Override
     public boolean equals(Object o) {

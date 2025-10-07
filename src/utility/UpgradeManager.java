@@ -111,7 +111,7 @@ public class UpgradeManager {
         		RewardType.KITCHEN,
         		24, 48+12));
         registerUpgrade(new Upgrade(gp, "Seasoning!",
-        		"Some recipes must be /nseasoned. If done correctly /nearn a 25% bonus!",
+        		"Some recipes must be /nseasoned. If done correctly /nearn a 50% bonus!",
         		importImage("/food/seasoning/basil.png").getSubimage(0, 16, 16, 16),
         		2,
         		RewardType.KITCHEN));

@@ -85,7 +85,7 @@ public class Customiser {
 		tableTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 25, 34, 25);
 		
 		border = importImage("/UI/customise/WallBorder.png");
-		addToInventory(new HerbBasket(gp, 0, 0));
+		//addToInventory(new HerbBasket(gp, 0, 0));
 	}
 	public void clear() {
 		decorBuildingInventory.clear();

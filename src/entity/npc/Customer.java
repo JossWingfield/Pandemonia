@@ -173,7 +173,23 @@ public class Customer extends NPC {
 		
 		if (gp.progressM.seasoningUnlocked) {
 			if (r.nextFloat() < 0.2f) {
-				foodOrder.seasoned = true;
+				String seasoning = "Basil";
+				int num = r.nextInt(4);
+				switch(num) {
+				case 0:
+					seasoning = "Basil";
+					break;
+				case 1:
+					seasoning = "Sage";
+					break;
+				case 2:
+					seasoning = "Rosemary";
+					break;
+				case 3:
+					seasoning = "Thyme";
+					break;
+				}
+				foodOrder.setSeasoned(seasoning);
 		    }
 		}
 		
@@ -223,7 +239,8 @@ public class Customer extends NPC {
 	    }
 	    
 	    if (p.seasoningQuality != -1) {
-	        gp.player.wealth += baseCost * 0.25f * p.seasoningQuality;
+	    	System.out.println(p.seasoningQuality);
+	        gp.player.wealth += baseCost * 0.50f * p.seasoningQuality;
 	    }
 	    
 	    gp.player.soulsServed++;

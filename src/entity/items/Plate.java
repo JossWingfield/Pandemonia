@@ -25,6 +25,7 @@ public class Plate extends Item {
     private Set<String> platableFoods = new HashSet<>();
     private Set<String> bypassPlateFoods = new HashSet<>();
     private Recipe matchedRecipe;
+    private BufferedImage matchedRecipeImage;
     
     public float seasoningQuality = -1;
 
@@ -168,6 +169,37 @@ public class Plate extends Item {
         }
 
         matchedRecipe = RecipeManager.getMatchingRecipe(currentIngredients);
+        matchedRecipeImage = getMatchingRecipeIgnoringSeasoning();
+    }
+    public BufferedImage getMatchingRecipeIgnoringSeasoning() {
+        for (Recipe recipe : RecipeManager.getAllRecipes()) {
+            // Skip recipes that don't match in ingredient count (excluding seasoning)
+            List<String> requiredIngredients = new ArrayList<>(recipe.getIngredients());
+            requiredIngredients.removeIf(this::isSeasoningIngredient); // remove all seasonings from the recipe
+
+            // Collect plate’s non-seasoning ingredients
+            List<String> plateIngredients = new ArrayList<>();
+            for (String ing : this.ingredients) {
+            	if(ing != null) {
+            		if (!isSeasoningIngredient(ing)) {
+                		plateIngredients.add(ing);
+                	}
+            	}
+            }
+
+            // Compare
+            if (plateIngredients.size() == requiredIngredients.size() && plateIngredients.containsAll(requiredIngredients)) {
+                return recipe.finishedPlate;
+            }
+        }
+        return null;
+    }
+    private boolean isSeasoningIngredient(String ingredientName) {
+        // Adjust these names to match your actual seasoning item names
+        return ingredientName.equalsIgnoreCase("Basil")
+            || ingredientName.equalsIgnoreCase("Rosemary")
+            || ingredientName.equalsIgnoreCase("Sage")
+            || ingredientName.equalsIgnoreCase("Thyme");
     }
     public void addSeasoning(Seasoning seasoning, float quality) {
     	this.seasoningQuality = quality;
@@ -209,15 +241,20 @@ public class Plate extends Item {
         
         // Draw food layers from bottom to top
         
-        if (matchedRecipe != null) {
-        	g.drawImage(matchedRecipe.finishedPlate, baseX, baseY, drawWidth, drawHeight, null);
-        } else {
+        if (matchedRecipeImage != null) {
+        	g.drawImage(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight, null);
+        }  else {
             for (int i = 0; i < ingredientImages.size(); i++) {
                 BufferedImage img = ingredientImages.get(i);
                 if (img != null) {
                     g.drawImage(img, baseX, baseY, drawWidth, drawHeight, null);
                 }
             }
+        }
+        
+        if (seasoningQuality != -1) {
+        	BufferedImage seasoning = ingredientImages.get(ingredientImages.size()-1);
+            g.drawImage(seasoning, baseX, baseY, drawWidth, drawHeight, null);
         }
         
     }
@@ -233,15 +270,20 @@ public class Plate extends Item {
         
         // Draw food layers from bottom to top
         
-        if (matchedRecipe != null) {
-        	g.drawImage(matchedRecipe.finishedPlate, baseX, baseY, drawWidth, drawHeight, null);
-        } else {
+        if (matchedRecipeImage != null) {
+        	g.drawImage(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight, null);
+        }  else {
             for (int i = 0; i < ingredientImages.size(); i++) {
                 BufferedImage img = ingredientImages.get(i);
                 if (img != null) {
                     g.drawImage(img, baseX, baseY, drawWidth, drawHeight, null);
                 }
             }
+        }
+        
+        if (seasoningQuality != -1) {
+        	BufferedImage seasoning = ingredientImages.get(ingredientImages.size()-1);
+            g.drawImage(seasoning, baseX, baseY, drawWidth, drawHeight, null);
         }
         
     }
@@ -261,8 +303,8 @@ public class Plate extends Item {
             g.drawImage(base, baseX, baseY, drawWidth, drawHeight, null);
         }
         
-        if (matchedRecipe != null) {
-        	g.drawImage(matchedRecipe.finishedPlate, baseX, baseY, drawWidth, drawHeight, null);
+        if (matchedRecipeImage != null) {
+        	g.drawImage(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight, null);
         } else {
             for (int i = 0; i < ingredientImages.size(); i++) {
                 BufferedImage img = ingredientImages.get(i);
@@ -270,6 +312,11 @@ public class Plate extends Item {
                     g.drawImage(img, baseX, baseY, drawWidth, drawHeight, null);
                 }
             }
+        }
+        
+        if (seasoningQuality != -1) {
+        	BufferedImage seasoning = ingredientImages.get(ingredientImages.size()-1);
+            g.drawImage(seasoning, baseX, baseY, drawWidth, drawHeight, null);
         }
         
     }
