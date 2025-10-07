@@ -391,21 +391,7 @@ public class MapManager {
 			}
 			return null;
 		}
-		public Door findStoreDoor(int roomNum) {
-			Room room = rooms[roomNum];
-			Building[] buildings = room.getBuildings();
-			for(Building b: buildings) {
-				if(b != null) {
-					if(b.getName().equals("Door 1")) {
-						Door door = (Door)b;
-						if(door.roomNum == 1) {
-							return door;
-						}
-					}	
-				}
-			}
-			return null;
-		}
+
 		public Customer findCustomerWaiting(int roomNum) {
 			Customer c = null;
 			if(isInRoom(roomNum)) {
@@ -433,75 +419,6 @@ public class MapManager {
 			} else {
 				return !rooms[currentRoom].containsAnyNPC();
 			}
-		}
-		public Door findKitchenDoor(int roomNum) {
-			Room room = rooms[roomNum];
-			Building[] buildings = room.getBuildings();
-			for(Building b: buildings) {
-				if(b != null) {
-					if(b.getName().equals("Door 1")) {
-						Door door = (Door)b;
-						if(door.roomNum == 0) {
-							return door;
-						}
-					}	
-				}
-			}
-			return null;
-		}
-		public StorageFridge findStoreFridge(int roomNum) {
-			Room room = rooms[roomNum];
-			Building[] buildings = room.getBuildings();
-			for(Building b: buildings) {
-				if(b != null) {
-					if(b.getName().equals("Storage Fridge")) {
-						StorageFridge storageFridge = (StorageFridge)b;
-						return storageFridge;
-					}	
-				}
-			}
-			return null;
-		}
-		public Sink findSink(int roomNum) {
-			Room room = rooms[roomNum];
-			Building[] buildings = room.getBuildings();
-			for(Building b: buildings) {
-				if(b != null) {
-					if(b.getName().equals("Kitchen Sink 1")) {
-						Sink sink = (Sink)b;
-						return sink;
-					}	
-				}
-			}
-			return null;
-		}
-		public TablePlate findTablePlate(int roomNum) {
-			Room room = rooms[roomNum];
-			Building[] buildings = room.getBuildings();
-			for(Building b: buildings) {
-				if(b != null) {
-					if(b.getName().equals("Table Plate")) {
-						TablePlate sink = (TablePlate)b;
-						if(sink.showDirtyPlate) {
-							return sink;
-						}
-					}	
-				}
-			}
-			return null;
-		}
-		public Fridge findFridge(int roomNum) {
-			Room room = rooms[roomNum];
-			Building[] buildings = room.getBuildings();
-			for(Building b: buildings) {
-				if(b != null) {
-					if(b.getName().equals("Fridge")) {
-						Fridge storageFridge = (Fridge)b;
-						return storageFridge;
-					}	
-				}
-			}
-			return null;
 		}
 		public EscapeHole findEscapeHole(int roomNum) {
 			Room room = rooms[roomNum];

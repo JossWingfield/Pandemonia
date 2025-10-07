@@ -125,6 +125,13 @@ public class SpecialCustomer extends Customer {
 	    gp.player.currentItem = null;
 	    eating = true;
 	    waitingToOrder = false;
+		if(isCelebrity) {
+			if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(0))) {
+				RoomHelperMethods.setCelebrityPresent(gp.npcM.npcs, false);
+			} else {
+				RoomHelperMethods.setCelebrityPresent(gp.mapM.getRoom(0).getNPCs(), false);
+			}
+		}
 	}
 	public float getMoneyMultiplier() {
 		return moneyMultiplier;
@@ -137,16 +144,6 @@ public class SpecialCustomer extends Customer {
 			return;
 		}
 		super.setCelebrityPresent(isPresent);
-	}
-	protected void goToToilet() {
-		super.goToToilet();
-		if(isCelebrity) {
-			if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(0))) {
-				RoomHelperMethods.setCelebrityPresent(gp.npcM.npcs, false);
-			} else {
-				RoomHelperMethods.setCelebrityPresent(gp.mapM.getRoom(0).getNPCs(), false);
-			}
-		}
 	}
 	public void draw(Graphics2D g2) {
 		if(isGhost) {

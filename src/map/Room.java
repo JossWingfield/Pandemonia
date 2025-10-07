@@ -2477,19 +2477,6 @@ public class Room {
 		}
 		return null;
 	}
-	public Door findToiletDoor() {
-		for(Building b: buildings) {
-			if(b != null) {
-				if(b.getName().equals("Door 1")) {
-					Door door = (Door)b;
-					if(door.roomNum == 4) {
-						return door;
-					}
-				}	
-			}
-		}
-		return null;
-	}
 	public Toilet findFreeToilet() {
 		for(Building b: buildings) {
 			if(b != null) {
@@ -2498,19 +2485,6 @@ public class Room {
 					if(toilet.available) {
 						toilet.available = false;
 						return toilet;
-					}
-				}	
-			}
-		}
-		return null;
-	}
-	public Door findExitDoor() {
-		for(Building b: buildings) {
-			if(b != null) {
-				if(b.getName().equals("Door 1")) {
-					Door door = (Door)b;
-					if(door.roomNum == 0) {
-						return door;
 					}
 				}	
 			}
@@ -2529,6 +2503,19 @@ public class Room {
 			}
 		}
 		return false;
+	}
+	public Door findDoor(int roomNum) {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Door 1")) {
+					Door door = (Door)b;
+					if(door.roomNum == roomNum) {
+						return door;
+					}
+				}	
+			}
+		}
+		return null;
 	}
 	public void addLeak(int a) {
 		if(a == 0) {

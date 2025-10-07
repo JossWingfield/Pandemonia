@@ -177,6 +177,7 @@ public class BuildingManager {
 		}
 		return true;
 	}
+	
 	public Building findBuilding(float x, float y, float w, float h) {
 		Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, w, h);
 		for(Building b: buildings) {
@@ -184,6 +185,71 @@ public class BuildingManager {
 					if(b.hitbox.intersects(hitbox)) {
 						return b;
 					}	
+			}
+		}
+		return null;
+	}
+	public Toilet findFreeToilet() {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Toilet 1")) {
+					Toilet toilet = (Toilet)b;
+					if(toilet.available) {
+						toilet.available = false;
+						return toilet;
+					}
+				}	
+			}
+		}
+		return null;
+	}
+	public Chair isFreeChair() {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Chair 1")) {
+					Chair chair = (Chair)b;
+					if(chair.available) {
+						return chair;
+					}
+				}	
+			}
+		}
+		return null;
+	}
+	public Trapdoor findTrapdoor() {
+	for(Building b: buildings) {
+		if(b != null) {
+			if(b.getName().equals("Trapdoor 1")) {
+				Trapdoor door = (Trapdoor)b;
+				return door;
+			}	
+		}
+	}
+	return null;
+}
+	public Chair findFreeChair() {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Chair 1")) {
+					Chair chair = (Chair)b;
+					if(chair.available && !chair.tablePlate.showDirtyPlate) {
+						chair.available = false;
+						return chair;
+					}
+				}	
+			}
+		}
+		return null;
+	}
+	public Door findDoor(int roomNum) {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Door 1")) {
+					Door door = (Door)b;
+					if(door.roomNum == roomNum) {
+						return door;
+					}
+				}	
 			}
 		}
 		return null;
@@ -204,6 +270,7 @@ public class BuildingManager {
 		}
 		return null;
 	}
+	
 	public Building findBuildingWithName(String name) {
 		for(Building b: buildings) {
 			if(b != null) {
@@ -259,117 +326,12 @@ public class BuildingManager {
 		}
 		return null;
 	}
-	public Chair findChair(float x, float y, float w, float h) {
-		Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, w, h);
-		for(Building b: buildings) {
-			if(b != null) {
-				if(b.hitbox.intersects(hitbox)) {
-					if(b.getName().equals("Chair 1")) {
-						return (Chair)b;
-					}
-				}	
-			}
-		}
-		return null;
-	}
 	public void refreshBuildings() {
 		for(Building b: buildings) {
 			if(b != null) {
 				b.refreshImages();
 			}
 		}
-	}
-	public CornerTable findCornerTable(float x, float y, float w, float h) {
-		Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, w, h);
-		for(Building b: buildings) {
-			if(b != null) {
-					if(b.getName().equals("Table Corner 1")) {
-						CornerTable table = (CornerTable)b;
-						if(table.interactHitbox1.intersects(hitbox) || table.interactHitbox2.intersects(hitbox)) {
-							return table;
-						}
-					}	
-			}
-		}
-		return null;
-	}
-	public Chair findFreeChair() {
-		for(Building b: buildings) {
-			if(b != null) {
-				if(b.getName().equals("Chair 1")) {
-					Chair chair = (Chair)b;
-					if(chair.available && !chair.tablePlate.showDirtyPlate) {
-						chair.available = false;
-						return chair;
-					}
-				}	
-			}
-		}
-		return null;
-	}
-	public Toilet findFreeToilet() {
-		for(Building b: buildings) {
-			if(b != null) {
-				if(b.getName().equals("Toilet 1")) {
-					Toilet toilet = (Toilet)b;
-					if(toilet.available) {
-						toilet.available = false;
-						return toilet;
-					}
-				}	
-			}
-		}
-		return null;
-	}
-	public Door findToiletDoor() {
-		for(Building b: buildings) {
-			if(b != null) {
-				if(b.getName().equals("Door 1")) {
-					Door door = (Door)b;
-					if(door.roomNum == 4) {
-						return door;
-					}
-				}	
-			}
-		}
-		return null;
-	}
-	public Door findExitDoor() {
-		for(Building b: buildings) {
-			if(b != null) {
-				if(b.getName().equals("Door 1")) {
-					Door door = (Door)b;
-					if(door.roomNum == 0) {
-						return door;
-					}
-				}	
-			}
-		}
-		return null;
-	}
-	public Trapdoor findTrapdoor() {
-		for(Building b: buildings) {
-			if(b != null) {
-				if(b.getName().equals("Trapdoor 1")) {
-					Trapdoor door = (Trapdoor)b;
-					return door;
-				}	
-			}
-		}
-		return null;
-	}
-	public Chair isFreeChair() {
-		for(Building b: buildings) {
-			if(b != null) {
-				if(b.getName().equals("Chair 1")) {
-					Chair chair = (Chair)b;
-					if(chair.available) {
-						return chair;
-					}
-				}	
-			}
-		}
-		return null;
 	}
 	public boolean intersectsKitchenBuilding(GamePanel gp, Building build, Rectangle2D.Float interactHitbox) {
 	    for (Building b : buildings) {
@@ -380,7 +342,8 @@ public class BuildingManager {
 
 	        // If it intersects and it's a restricted interaction
 	        if (b.hitbox.intersects(interactHitbox)) {
-	            String name = b.getName();
+	            /*
+	        	String name = b.getName();
 	            if (name.equals("Chopping Board 1") ||
 	                name.equals("Kitchen Sink 1") ||
 	                name.equals("Barrel") ||
@@ -388,6 +351,8 @@ public class BuildingManager {
 	                name.equals("Small Cup")) {
 	                return false;
 	            }
+	            */
+	        	return false;
 	        }
 	    }
 	    return true;
@@ -409,27 +374,6 @@ public class BuildingManager {
 		if(buildings[arrayCounter].getName().equals("Table Piece")) {
 			FloorDecor_Building building = (FloorDecor_Building)buildings[arrayCounter];
 			return building.currentItem; 
-		}
-		return null;
-	}
-	public void setCornerSlotItem(int arrayCounter, int slot, Item i) {
-		if(buildings[arrayCounter].getName().equals("Table Corner 1")) {
-			CornerTable building = (CornerTable)buildings[arrayCounter];
-			if(slot == 1) {
-				building.slot1 = i;
-			} else {
-				building.slot2 = i;
-			}
-		}
-	}
-	public Item getCornerTableItem(int arrayCounter, int slot) {
-		if(buildings[arrayCounter].getName().equals("Table Corner 1")) {
-			CornerTable building = (CornerTable)buildings[arrayCounter];
-			if(slot == 1) {
-				return building.slot1;
-			} else {
-				return building.slot2;
-			}
 		}
 		return null;
 	}

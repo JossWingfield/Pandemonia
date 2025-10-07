@@ -36,6 +36,8 @@ public class Sink extends Building {
 		isBottomLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;
+		
+		npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y, 24, hitbox.height);
 	}
 	public Building clone() {
 		Sink building = new Sink(gp, hitbox.x, hitbox.y);

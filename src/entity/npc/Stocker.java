@@ -22,11 +22,10 @@ public class Stocker extends Employee {
 	private Food currentItem = null;
 	private int variant;
 	
-	private Door storeDoor;
 	private StorageFridge storeFridge;
 	private Fridge fridge;
 	
-	private boolean fetchingItem, retrievingItem, walking, stocking, depositing;
+	private boolean fetchingItem, retrievingItem, stocking, depositing;
 	private boolean inKitchen = true;
 	private int stockTimer = 0;
 	private int maxStockTime = 100;
@@ -59,63 +58,24 @@ public class Stocker extends Employee {
 	     yDrawOffset = 36*drawScale;
 		 name = "Gazza";
 	}
-	
-	private void findDoor() {
-		storeDoor = gp.mapM.findStoreDoor(0);
-		if(storeDoor != null) {
-			walking = true;
-			fetchingItem = true;
-		}
-    }
-	private void findStoreFridge() {
-		storeFridge = gp.mapM.findStoreFridge(1);
-    }
 	private void findFridge() {
-		fridge = gp.mapM.findFridge(0);
-    }
-	private void findExitDoor() {
-		storeDoor = gp.mapM.findKitchenDoor(1);
+		fridge = (Fridge)findBuildingInRoom("Fridge", currentRoomNum);
     }
 	public void update() {
 		if(!walking && inKitchen && !depositing) {
-			findDoor();
+			walking = true;
+			fetchingItem = true;
 		} else {
 			if(fetchingItem) {
 				if(inKitchen) {
-					int goalCol = (int)((storeDoor.hitbox.x + storeDoor.hitbox.width/2)/gp.tileSize)-1;
-			        int goalRow = (int)((storeDoor.hitbox.y + storeDoor.hitbox.height)/gp.tileSize)-1;  
-					walkToPoint(goalCol, goalRow);
-					if(storeDoor.npcHitbox != null) {
-						if(storeDoor.npcHitbox.intersects(hitbox)) {
-							inKitchen = false;
-							Door door = (Door)gp.mapM.findCorrectDoorInRoom(1, storeDoor.facing);
-					    	if(door != null) {
-				    			hitbox.x = door.hitbox.x + door.hitbox.width/2 - hitbox.width/2;
-				    			if(door.facing == 0) {
-						    		hitbox.y = door.hitbox.y+door.hitbox.height-48;
-					    		} else {
-					    			hitbox.y = door.hitbox.y+16-48;
-					    		}
-					    	}
-							gp.mapM.addNPCToRoom(this, 1);
-							gp.mapM.removeNPCFromRoom(this, 0);
-						}
+					if(walkToDoorWithDoorNum(1)) {
+						inKitchen = false;
 					}
 				} else {
-					//System.out.println("searching for fridge");
-					if(storeFridge != null) {
-						int goalCol = (int)((storeFridge.hitbox.x + storeFridge.hitbox.width/2)/gp.tileSize);
-				        int goalRow = (int)((storeFridge.hitbox.y + storeFridge.hitbox.height)/gp.tileSize);  
-						walkToPoint(goalCol, goalRow);
-						if(storeFridge.npcHitbox != null) {
-							if(storeFridge.npcHitbox.intersects(hitbox)) {
-								stocking = true;
-								walking = false;
-								fetchingItem = false;
-							}
-						}
-					} else {
-						findStoreFridge();
+					if(walkToBuildingWithName("Storage Fridge", true)) {
+						stocking = true;
+						walking = false;
+						fetchingItem = false;
 					}
 				}
 			} else if(stocking) {
@@ -125,48 +85,23 @@ public class Stocker extends Employee {
 					stocking = false;
 					walking = true;
 					retrievingItem = true;
-					storeDoor = null;
+					storeFridge = null;
 					currentAnimation = 4;
 					pickUpItem();
 				}
 			} else if(retrievingItem) {
 				if(!inKitchen) {
-					if(storeDoor == null) {
-						findExitDoor();
-					} else {
-						int goalCol = (int)((storeDoor.hitbox.x + storeDoor.hitbox.width/2)/gp.tileSize);
-				        int goalRow = (int)((storeDoor.hitbox.y + storeDoor.hitbox.height)/gp.tileSize) - 2;  
-						walkToPoint(goalCol, goalRow);
-						if(storeDoor.npcHitbox != null) {
-							if(storeDoor.npcHitbox.intersects(hitbox)) {
-								inKitchen = true;
-								Door door = (Door)gp.mapM.findCorrectDoorInRoom(0, storeDoor.facing);
-								if(door != null) {
-					    			hitbox.x = door.hitbox.x + door.hitbox.width/2 - hitbox.width/2;
-					    			if(door.facing == 0) {
-							    		hitbox.y = door.hitbox.y+door.hitbox.height-48;
-						    		} else {
-						    			hitbox.y = door.hitbox.y+16-48;
-						    		}
-						    	}
-								gp.mapM.addNPCToRoom(this, 0);
-								gp.mapM.removeNPCFromRoom(this, 1);
-							}
-						}
+					if(walkToDoorWithDoorNum(0)) {
+						inKitchen = true;
 					}
 				} else {
 					if(!depositing) {
 						if(fridge == null) {
 							findFridge();
 						} else {
-							int goalCol = (int)((fridge.hitbox.x + fridge.hitbox.width/2)/gp.tileSize);
-					        int goalRow = (int)((fridge.hitbox.y + fridge.hitbox.height)/gp.tileSize);  
-							walkToPoint(goalCol, goalRow);
-							if(fridge.npcHitbox != null) {
-								if(fridge.npcHitbox.intersects(hitbox)) {
-									depositing = true;
-									walking = false;
-								}
+							if(walkToBuilding(fridge, fridge.npcHitbox)) {
+								depositing = true;
+								walking = false;
 							}
 						}
 					} else {
@@ -187,7 +122,7 @@ public class Stocker extends Employee {
 		}
 		
 	}	
-	  public void drawCurrentItem(Graphics2D g2) {
+	public void drawCurrentItem(Graphics2D g2) {
 	    	if(currentItem == null) {
 	    		return;
 	    	}
@@ -219,6 +154,9 @@ public class Stocker extends Employee {
 
 	    }
     private void pickUpItem() {
+    	if(storeFridge == null) {
+    		storeFridge = (StorageFridge)findBuildingInRoom("Storage Fridge", currentRoomNum);
+    	}
     	if(gp.world.getTodaysMenu().size() > 0) {
 	    	int recipeIndex = r.nextInt(gp.world.getTodaysMenu().size());
 	    	Recipe recipe = gp.world.getTodaysMenu().get(recipeIndex);

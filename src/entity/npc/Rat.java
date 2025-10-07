@@ -16,11 +16,9 @@ public class Rat extends NPC {
 	
 	private Food currentItem = null;
 	
-	private EscapeHole escapeHole;
-	private Door storeDoor;
 	private Fridge fridge;
 	
-	private boolean fetchingItem, retrievingItem, walking, stocking, depositing;
+	private boolean fetchingItem, retrievingItem, stocking, depositing;
 	private boolean inKitchen = false;
 	private int stockTimer = 0;
 	private int maxStockTime = 100;
@@ -42,21 +40,6 @@ public class Rat extends NPC {
 		
 		importImages();
 	}
-	private void findDoor() {
-		storeDoor = gp.mapM.findStoreDoor(0);
-		if(storeDoor != null) {
-			walking = true;
-		}
-    }
-	private void findFridge() {
-		fridge = gp.mapM.findFridge(0);
-    }
-	private void findExitDoor() {
-		storeDoor = gp.mapM.findKitchenDoor(1);
-    }
-	private void findEscapeHole() {
-		escapeHole = gp.mapM.findEscapeHole(1);
-    }
 	private void importImages() {
 		animations = new BufferedImage[5][10][10];
 		animations[0][0][0] = importImage("/npcs/mannequin.png").getSubimage(16, 0, 16, 32);
@@ -65,48 +48,21 @@ public class Rat extends NPC {
 		
 		importPlayerSpriteSheet("/npcs/rat/Run", 4, 1, 0, 0, 0, 32, 32);
 	}
+	private void findFridge() {
+		fridge = (Fridge)findBuildingInRoom("Fridge", currentRoomNum);
+    }
 	public void update() {
 		if(!walking && inKitchen && !depositing) {
-			findDoor();
+			walking = true;
 		} else {
 			if(fetchingItem) {
 				if(inKitchen) {
-					int goalCol = (int)((storeDoor.hitbox.x + storeDoor.hitbox.width/2)/gp.tileSize)-1;
-			        int goalRow = (int)((storeDoor.hitbox.y + storeDoor.hitbox.height)/gp.tileSize)-1; 
-					walkToPoint(goalCol, goalRow);
-					if(storeDoor.npcHitbox != null) {
-						if(storeDoor.npcHitbox.intersects(hitbox)) {
-							inKitchen = false;
-							Door door = (Door)gp.mapM.findCorrectDoorInRoom(1, storeDoor.facing);
-							if(door != null) {
-				    			hitbox.x = door.hitbox.x + door.hitbox.width/2 - hitbox.width/2;
-				    			if(door.facing == 0) {
-						    		hitbox.y = door.hitbox.y+door.hitbox.height-48;
-					    		} else {
-					    			hitbox.y = door.hitbox.y+16-48;
-					    		}
-					    	}
-							gp.mapM.addNPCToRoom(this, 1);
-							gp.mapM.removeNPCFromRoom(this, 0);
-						}
+					if(walkToDoorWithDoorNum(1)) {
+						inKitchen = false;
 					}
 				} else {
-					//System.out.println("searching for fridge");
-					if(escapeHole != null) {
-						int goalCol = (int)((escapeHole.hitbox.x + escapeHole.hitbox.width/2)/gp.tileSize);
-				        int goalRow = (int)((escapeHole.hitbox.y + escapeHole.hitbox.height)/gp.tileSize);  
-						walkToPoint(goalCol, goalRow);
-						if(escapeHole.npcHitbox != null) {
-							if(escapeHole.npcHitbox.intersects(hitbox)) {
-								if(gp.mapM.isInRoom(1)) {
-									gp.npcM.removeNPC(this);
-								} else {
-									gp.mapM.getRoom(1).removeNPC(this);
-								}
-							}
-						}
-					} else {
-						findEscapeHole();
+					if(walkToBuildingWithName("Escape Hole", true)) {
+						removeNPCFromRoom();
 					}
 				}
 			} else if(stocking) {
@@ -116,47 +72,21 @@ public class Rat extends NPC {
 					stocking = false;
 					walking = true;
 					retrievingItem = true;
-					storeDoor = null;
 					currentAnimation = 4;
 				}
 			} else if(retrievingItem) {
 				if(!inKitchen) {
-					if(storeDoor == null) {
-						findExitDoor();
-					} else {
-						int goalCol = (int)((storeDoor.hitbox.x + storeDoor.hitbox.width/2)/gp.tileSize);
-				        int goalRow = (int)((storeDoor.hitbox.y + storeDoor.hitbox.height)/gp.tileSize) - 2;   
-						walkToPoint(goalCol, goalRow);
-						if(storeDoor.npcHitbox != null) {
-							if(storeDoor.npcHitbox.intersects(hitbox)) {
-								inKitchen = true;
-								Door door = (Door)gp.mapM.findCorrectDoorInRoom(0, storeDoor.facing);
-								if(door != null) {
-					    			hitbox.x = door.hitbox.x + door.hitbox.width/2 - hitbox.width/2;
-					    			if(door.facing == 0) {
-							    		hitbox.y = door.hitbox.y+door.hitbox.height-48;
-						    		} else {
-						    			hitbox.y = door.hitbox.y+16-48;
-						    		}
-						    	}
-								gp.mapM.addNPCToRoom(this, 0);
-								gp.mapM.removeNPCFromRoom(this, 1);
-							}
-						}
+					if(walkToDoorWithDoorNum(0)) {
+						inKitchen = true;
 					}
 				} else {
 					if(!depositing) {
 						if(fridge == null) {
 							findFridge();
 						} else {
-							int goalCol = (int)((fridge.hitbox.x + fridge.hitbox.width/2)/gp.tileSize);
-					        int goalRow = (int)((fridge.hitbox.y + fridge.hitbox.height)/gp.tileSize);  
-							walkToPoint(goalCol, goalRow);
-							if(fridge.npcHitbox != null) {
-								if(fridge.npcHitbox.intersects(hitbox)) {
-									depositing = true;
-									walking = false;
-								}
+							if(walkToBuilding(fridge, fridge.npcHitbox)) {
+								depositing = true;
+								walking = false;
 							}
 						}
 					} else {

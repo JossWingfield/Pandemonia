@@ -27,7 +27,6 @@ public class Fridge extends Building {
     private static int MAX_CAPACITY = 5;
 
     private Rectangle2D.Float fridgeHitbox;
-	public Rectangle2D.Float npcHitbox;
     private boolean firstUpdate = true;
     private int clickCooldown = 0;
     private boolean uiOpen = false;

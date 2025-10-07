@@ -10,7 +10,6 @@ import main.GamePanel;
 public class Door extends Building {
 	
 	private Rectangle2D.Float doorHitbox, entryHitbox, npcVisualHitbox;
-	public Rectangle2D.Float npcHitbox;
 	private boolean firstUpdate = true;
 	public int roomNum = 1;
 	public int facing;
@@ -31,7 +30,7 @@ public class Door extends Building {
 		yDrawOffset = 48;
 		importImages();
 		if(facing == 0) {
-			npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48 - 48, 48, 80);
+			npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height-48, 48, 48);
 		} else if(facing == 1) {
 			npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y - 48 , 48, 48);
 		} else if(facing == 2){ //LEFT
@@ -130,6 +129,9 @@ public class Door extends Building {
 		
 	   //g2.setColor(Color.YELLOW);
 	   //g2.drawRect((int)npcHitbox.x, (int)npcHitbox.y, (int)npcHitbox.width, (int)npcHitbox.height);
+		
+		//g2.setColor(Color.YELLOW);
+      	//g2.drawRect((int)npcHitbox.x, (int)npcHitbox.y, (int)npcHitbox.width, (int)npcHitbox.height);
 		
 		if(gp.player.interactHitbox.intersects(entryHitbox)) {
 			if(cooldown == 0) {

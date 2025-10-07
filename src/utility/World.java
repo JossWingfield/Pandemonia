@@ -80,6 +80,7 @@ public class World {
     private int ratSpawnTimer = 0;
     private int maxRatSpawnTime = 0;
     private int ratsSpawned = 0;
+    public boolean animalPresent = false;
     
     //ORDERS
     private List<Object> orderList;
@@ -104,7 +105,7 @@ public class World {
         currentWeather = Weather.SUNNY;
         resetWeatherTimer();
         
-        //gp.npcM.addDishWasher();
+        gp.npcM.addDishWasher();
     }
 
     // === Specials generation ===
@@ -210,14 +211,18 @@ public class World {
             System.err.println("World.setSeason(): Unknown season: " + season);
         }
     }
+    private void spawnDuck() {
+    	gp.npcM.addDuck();
+    }
     private void spawnRats() {
     	spawnRats = true;
     	ratCount = random.nextInt(4) + 3;
     }
     private void triggerRandomEvent() {
         // Placeholder: plug in your event system here
-        int eventId = random.nextInt(7);
+        int eventId = random.nextInt(8);
         
+        eventId = 7;
         switch (eventId) {
             case 0: //Powercut
             	powerCut();
@@ -237,6 +242,10 @@ public class World {
             case 6:
             	spawnRats();
                 gp.gui.addMessage("Rats!!!!", Color.red);
+            	break;
+            case 7:
+            	spawnDuck();
+                gp.gui.addMessage("A wild duck just walked in!", Color.red);
             	break;
         }
     }

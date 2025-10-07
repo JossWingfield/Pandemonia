@@ -91,7 +91,9 @@ public class TablePlate extends Building {
 	                    verticalWidth,
 	                    verticalHeight
 	                );
+	        		//npcHitbox = new Rectangle2D.Float(hitbox.x - 32, hitbox.y - 32, hitbox.width+ 64, hitbox.height+64);
 	                break;
+	                
 	            case 3: // UP
 	                interactHitbox = new Rectangle2D.Float(
 	                    baseX + (hitbox.width / 2f - verticalWidth / 2f),
@@ -101,6 +103,7 @@ public class TablePlate extends Building {
 	                );
 	                break;
 	        }
+	        npcHitbox = interactHitbox;
 	    }
 	private void importImages() {
 		animations = new BufferedImage[1][1][2];
@@ -192,6 +195,10 @@ public class TablePlate extends Building {
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
+		
+		//g2.setColor(Color.YELLOW);
+      	//g2.drawRect((int)npcHitbox.x, (int)npcHitbox.y, (int)npcHitbox.width, (int)npcHitbox.height);
+        
 	        
 	}
 }

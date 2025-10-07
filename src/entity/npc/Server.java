@@ -11,7 +11,6 @@ import main.GamePanel;
 public class Server extends Employee {
 
 	private int variant;
-	private boolean walking = false;
 	private boolean serving = true;
 	private boolean takingOrder = false;
 	
@@ -50,7 +49,7 @@ public class Server extends Employee {
 	}
 	
 	private void findCustomer() {
-		customer = gp.mapM.findCustomerWaiting(0);
+		customer = gp.mapM.findCustomerWaiting(currentRoomNum);
 		if(customer != null) {
 			walking = true;
 		}
@@ -72,14 +71,9 @@ public class Server extends Employee {
 			findCustomer();
 		} else {
 			if(serving && !takingOrder) {
-				int goalCol = (int)((customer.hitbox.x + customer.hitbox.width/2)/gp.tileSize)-1;
-		        int goalRow = (int)((customer.hitbox.y + customer.hitbox.height)/gp.tileSize)-1;  
-				walkToPoint(goalCol, goalRow);
-				if(customer.talkHitbox != null) {
-					if(customer.talkHitbox.intersects(hitbox)) {
-						takingOrder = true;
-						walking = false;
-					}
+				if(walkToNPC(customer)) {
+					takingOrder = true;
+					walking = false;
 				}
 			} else if(takingOrder) {
 				if(!customer.waitingToOrder) {

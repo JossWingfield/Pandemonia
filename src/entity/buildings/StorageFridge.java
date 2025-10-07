@@ -26,7 +26,6 @@ public class StorageFridge extends Building {
 	Random random;
 	
 	private Rectangle2D.Float fridgeHitbox;
-	public Rectangle2D.Float npcHitbox;
 	private boolean firstUpdate = true;
 	private int clickCooldown = 0;
 	private boolean uiOpen = false;

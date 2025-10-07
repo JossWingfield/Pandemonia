@@ -19,7 +19,6 @@ public class Customer extends NPC {
 	
 	private int type;
 	public boolean atTable = false;
-	private boolean walking = false;
 	private boolean ordered = false;
 	protected boolean eating = false;
 	private boolean leaving = false;
@@ -28,8 +27,6 @@ public class Customer extends NPC {
 	private boolean inToilet = false;
 	private boolean onToilet = false;
 	private Chair currentChair = null;
-	private Door toiletDoor = null;
-	private Door exitDoor = null;
 	private Toilet toilet = null;
 	public Recipe foodOrder = null;
 	private int eatTime = 60*5;
@@ -60,8 +57,6 @@ public class Customer extends NPC {
 	
 	public BufferedImage faceIcon;
 	private Graphics2D g2;
-	
-	public Rectangle2D.Float talkHitbox;
 
 	public Customer(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -134,21 +129,21 @@ public class Customer extends NPC {
 	}
 	
 	protected void findTable() {
-		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(0))) {
+		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
 			currentChair = gp.buildingM.findFreeChair();
 		} else {
-			currentChair = gp.mapM.getRoom(0).findFreeChair();
+			currentChair = gp.mapM.getRoom(currentRoomNum).findFreeChair();
 		}
 		if(currentChair != null) {
 			currentChair.setCustomer(this);
 			walking = true;
 		}
     }
-	protected void walkToTable() {
-		if(currentChair != null) {
-			int goalCol = (int)((currentChair.hitbox.x + currentChair.hitbox.width/2)/gp.tileSize);
-	        int goalRow = (int)((currentChair.hitbox.y + currentChair.hitbox.height/2 - 1)/gp.tileSize);  
-	        searchPath(goalCol, goalRow);
+	protected void findToilet() {
+		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
+			toilet = gp.buildingM.findFreeToilet();
+		} else {
+			toilet = gp.mapM.getRoom(currentRoomNum).findFreeToilet();
 		}
     }
 	protected void leave() {
@@ -220,6 +215,9 @@ public class Customer extends NPC {
 	    }
 	    
 	    boolean addTip = true;
+	    if(gp.world.animalPresent) {
+	    	addTip = false;
+	    }
 	    if(gp.mapM.isInRoom(4)) {
     		if(gp.buildingM.hasBuildingWithName("Leak")) {
     			addTip = false;
@@ -239,8 +237,9 @@ public class Customer extends NPC {
 	    }
 	    
 	    if (p.seasoningQuality != -1) {
-	    	System.out.println(p.seasoningQuality);
-	        gp.player.wealth += baseCost * 0.50f * p.seasoningQuality;
+	    	if(addTip) {
+	    		gp.player.wealth += baseCost * 0.50f * p.seasoningQuality;
+	    	}
 	    }
 	    
 	    gp.player.soulsServed++;
@@ -262,61 +261,6 @@ public class Customer extends NPC {
 	        waitingToOrder = false;
 	    }
 	}
-	protected void goToToilet() {
-		goingToToilet = true;
-		findToiletDoor();
-	}
-	private void walkToToiletDoor() {
-		int goalCol = (int)((toiletDoor.hitbox.x + toiletDoor.hitbox.width/2)/gp.tileSize);
-        int goalRow = (int)((toiletDoor.hitbox.y + toiletDoor.hitbox.height)/gp.tileSize) - 1;  
-		walkToPoint(goalCol, goalRow);
-	}
-	private void findToiletDoor() {
-		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(0))) {
-			toiletDoor = gp.buildingM.findToiletDoor();
-		} else {
-			toiletDoor = gp.mapM.getRoom(0).findToiletDoor();
-		}
-		walking = true;
-	}
-	private void findToiletExit() {
-		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(4))) {
-			exitDoor = gp.buildingM.findExitDoor();
-		} else {
-			exitDoor = gp.mapM.getRoom(4).findExitDoor();
-		}
-		walking = true;
-	}
-	private void walkToToilet() {
-		if(toilet != null) {
-			int goalCol;
-			if(toilet.facing == 0) {
-				goalCol = (int)((toilet.hitbox.x + toilet.hitbox.width/2)/gp.tileSize)+1;
-			} else {
-				goalCol = (int)((toilet.hitbox.x + toilet.hitbox.width/2)/gp.tileSize)-1;
-			}
-	        int goalRow = (int)((toilet.hitbox.y + toilet.hitbox.height)/gp.tileSize)-1;
-			walkToPoint(goalCol, goalRow);
-		} else {
-			findToilet();
-		}
-	}
-	private void findToilet() {
-		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(4))) {
-			toilet = gp.buildingM.findFreeToilet();
-		} else {
-			toilet = gp.mapM.getRoom(4).findFreeToilet();
-		}
-	}
-	private void leaveToilet() {
-		if(exitDoor != null) {
-			int goalCol = (int)((exitDoor.hitbox.x + exitDoor.hitbox.width/2)/gp.tileSize) -1;
-	        int goalRow = (int)((exitDoor.hitbox.y + exitDoor.hitbox.height)/gp.tileSize);  
-			walkToPoint(goalCol, goalRow);
-		} else {
-			findToiletExit();
-		}
-	}
 	public void update() {
 		if(gp.progressM.fasterCustomers) {
 			speed = 2;
@@ -324,56 +268,24 @@ public class Customer extends NPC {
 	    if(!atTable) {
 	        if(leaving) {
 	        	if(inToilet) {
-	        		leaveToilet();
-	        		if(exitDoor != null) {
-		        		if(exitDoor.npcHitbox != null) {
-							if(exitDoor.npcHitbox.intersects(hitbox)) {
-								Door door = (Door)gp.mapM.findCorrectDoorInRoom(0, exitDoor.facing);
-						    	if(door != null) {
-						    		if(door.facing == 2) {
-						    			hitbox.x = door.hitbox.x + door.hitbox.width + 32;
-						    		} else if(door.facing == 3) {
-						    			hitbox.x = door.hitbox.x - 32;
-						    		}
-					    			hitbox.y = door.hitbox.y+48;
-						    	}
-						    	inToilet = false;
-								gp.mapM.addNPCToRoom(this, 0);
-								gp.mapM.removeNPCFromRoom(this, 4);
-							}
-						}
+	        		if(walkToDoorWithDoorNum(0)) {
+				    	inToilet = false;
 	        		}
 	        	} else {
 	        		leave();
 	        	}
 	        } else if(goingToToilet && !inToilet) {
-	        	walkToToiletDoor();
-	        	if(toiletDoor.npcHitbox != null) {
-					if(toiletDoor.npcHitbox.intersects(hitbox)) {
-						Door door = (Door)gp.mapM.findCorrectDoorInRoom(4, toiletDoor.facing);
-				    	if(door != null) {
-				    		if(door.facing == 2) {
-				    			hitbox.x = door.hitbox.x + door.hitbox.width + 32;
-				    		} else if(door.facing == 3) {
-				    			hitbox.x = door.hitbox.x - 32;
-				    		}
-			    			hitbox.y = door.hitbox.y+48;
-				    	}
-				    	inToilet = true;
-						gp.mapM.addNPCToRoom(this, 4);
-						gp.mapM.removeNPCFromRoom(this, 0);
-					}
-				}
+	        	if(walkToDoorWithDoorNum(4)) {
+	            	inToilet = true;
+	        	}
 	        } else if(inToilet && !onToilet) {
-	        	walkToToilet();
-	        	if(toilet != null) {
-		          	if(toilet.npcHitbox != null) {
-						if(toilet.npcHitbox.intersects(hitbox)) {
-					    	onToilet = true;
-					    	hitbox.x = toilet.hitbox.x;
-					    	hitbox.y = toilet.hitbox.y;
-						}
-					}
+	        	if(toilet == null) {
+	        		findToilet();
+	        	}
+	        	if(walkToBuilding(toilet, toilet.npcHitbox)) {
+	        		onToilet = true;
+			    	hitbox.x = toilet.hitbox.x;
+			    	hitbox.y = toilet.hitbox.y;
 	        	}
 	        } else if(onToilet) {
 	        	  toiletTime++;
@@ -387,16 +299,13 @@ public class Customer extends NPC {
 	            if(!walking) {
 	                findTable();
 	            } else {
-	                walkToTable();
-	                if(currentChair != null) {
-		                if(currentChair.hitbox.intersects(hitbox)) {
-		                    walking = false;
-		                    atTable = true;
-		                    hitbox.x = currentChair.hitbox.x+16;
-		                    hitbox.y = currentChair.hitbox.y;
-		                    direction = "Right";
-		                }
-	                }
+	            	if(walkToBuilding(currentChair, currentChair.hitbox)) {
+	            		 walking = false;
+		                 atTable = true;
+		                 hitbox.x = currentChair.hitbox.x+16;
+		                 hitbox.y = currentChair.hitbox.y;
+		                 direction = "Right";
+	            	}
 	            }
 	        }
 	    } else {
@@ -430,7 +339,7 @@ public class Customer extends NPC {
 	                currentChair.available = true;
 	                ordered = false;
 	                eating = false;
-	                goToToilet();
+	                goingToToilet = true;
 	            }
 	        }
 	    }

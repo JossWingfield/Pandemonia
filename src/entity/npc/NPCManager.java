@@ -43,6 +43,14 @@ public class NPCManager {
     	DishWasher server = new DishWasher(gp, 10*48, 9*48);
     	npcs.add(server);
     }
+    public void addDuck() {
+    	Duck duck = new Duck(gp, 10*48, 9*48);
+    	if(gp.mapM.isInRoom(0)) {
+    		npcs.add(duck);
+    	} else {
+    		gp.mapM.addNPCToRoom(duck, 0);
+    	}
+    }
     public void addRat() {
     	int x = 0;
     	int y = 0;
@@ -144,7 +152,8 @@ public class NPCManager {
 
             int cellSize = gp.tileSize / i.pathF.nodesPerTile;
 
-            for (Node node : i.pathF.pathList) {
+            ArrayList<Node> path = new ArrayList<Node>(i.pathF.pathList);
+            for (Node node : path) {
                 int x = node.col * cellSize;
                 int y = node.row * cellSize;
                 g2.fillRect(x, y, cellSize, cellSize);

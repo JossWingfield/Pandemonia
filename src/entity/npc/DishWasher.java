@@ -15,14 +15,12 @@ import main.GamePanel;
 public class DishWasher extends Employee {
 
 	private int variant;
-	private boolean walking = false;
 	private boolean collectingPlates = true;
 	private boolean washingPlates = false;
 	
 	private Sink sink;
 	private TablePlate table;
 	private Plate plate;
-    public Rectangle2D.Float interactHitbox;
 	
 	public DishWasher(GamePanel gp, int xPos, int yPos) {
 		super(gp, xPos, yPos);
@@ -57,13 +55,10 @@ public class DishWasher extends Employee {
 	}
 	
 	private void findTable() {
-		table = gp.mapM.findTablePlate(0);
-		if(table != null) {
-			walking = true;
-		}
+		table =  (TablePlate)findBuildingInRoom("Table Plate", currentRoomNum);
     }
 	private void findSink() {
-		sink = gp.mapM.findSink(0);
+		sink = (Sink)findBuildingInRoom("Kitchen Sink 1", currentRoomNum);
     }
     public void updateInteractHitbox() {
         float baseX = hitbox.x;
@@ -115,17 +110,13 @@ public class DishWasher extends Employee {
 			findSink();
 		}
 		
-		int goalCol = (int)((sink.hitbox.x + sink.hitbox.width/2) / gp.tileSize) + 1;
-	    int goalRow = (int)((sink.hitbox.y + sink.hitbox.height/2)/gp.tileSize);
-	    searchPath(goalCol, goalRow);
-	    
-	    if(sink.hitbox.intersects(interactHitbox)) {
+		if(walkToBuildingWithInteractHitbox(sink, sink.npcHitbox)) {
 	    	walking = false;
 	    	washingPlates = true;
 	    	sink.addPlate(plate);
 	    	plate = null;
 	    	table = null;
-	    }
+		}
     }
 	public void update() {
 		updateInteractHitbox();
@@ -134,22 +125,17 @@ public class DishWasher extends Employee {
 			findTable();
 		} else {
 			if(collectingPlates) {
-				walking = true;
-				int goalCol = (int)((table.hitbox.x + table.hitbox.width/2)/gp.tileSize)-1;
-		        int goalRow = (int)((table.hitbox.y + table.hitbox.height)/gp.tileSize)-1;  
-				walkToPoint(goalCol, goalRow);
-				if(table.hitbox != null) {
-					if(table.hitbox.intersects(hitbox)) {
-						collectingPlates = false;
-						table.showDirtyPlate = false;
-						plate = table.plate;
-						table.plate = null;
-					}
+				if(walkToBuilding(table, table.npcHitbox)) {
+					collectingPlates = false;
+					table.showDirtyPlate = false;
+					plate = table.plate;
+					table.plate = null;
 				}
 			} else if(washingPlates) {
 				if(!sink.hasDirtyPlates()) {
 					collectingPlates = true;
 					washingPlates = false;
+					table = null;
 				} else {
 					sink.washPlates();
 					walking = false;

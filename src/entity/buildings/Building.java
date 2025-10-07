@@ -50,6 +50,8 @@ public class Building extends Entity {
 	
 	protected String name = "";
 	protected String description = "No Description"; 
+	
+	public Rectangle2D.Float npcHitbox;
 
 	public Building(GamePanel gp, float xPos, float yPos, float width, float height) {
 		super(gp, xPos, yPos, width, height);

@@ -3,248 +3,12 @@ package ai;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Random;
 
 import entity.buildings.Building;
 import main.GamePanel;
 import map.Room;
 
-/*
-public class PathFinder { //TODO fix this all
-	
-    GamePanel gp;
-
-    Node[][] node;
-    ArrayList<Node> openList = new ArrayList<>();
-    public ArrayList<Node> pathList = new ArrayList<>();
-    private Node startNode, goalNode, currentNode;
-    boolean goalReached = false;
-    int step = 0;
-    public int nodesPerTile = 1;
-
-    public PathFinder(GamePanel gp) {
-        this.gp = gp;
-        instantiateNodes(gp.mapM.getRoom(0));
-    }
-    public void instantiateNodes(Room room) { //TODO this will break when in different sized rooms
-    	
-        node = new Node[room.mapWidth][room.mapHeight];
-
-        for (int i = 0; i < room.mapHeight; i++) {
-
-            for (int j = 0; j < room.mapWidth; j++) {
-
-                node[j][i] = new Node(j, i);
-            }
-        }
-
-    }
-    public void resetNodes(Room room) {
-
-        for (int i = 0; i < room.mapHeight; i++) {
-
-            for (int j = 0; j < room.mapWidth; j++) {
-
-                node[j][i].open = false;
-                node[j][i].checked = false;
-                node[j][i].solid = false;
-            }
-        }
-
-        openList.clear();
-        pathList.clear();
-        goalReached = false;
-        step = 0;
-    }
-
-    public void setNodes(int startCol, int startRow, int goalCol, int goalRow, Room room) {
-    	
-        resetNodes(room);
-
-        //Set start and goal nodes
-        startNode = node[startCol][startRow];
-        currentNode = startNode;
-        goalNode = node[goalCol][goalRow];
-        openList.add(currentNode);
-
-        for (int i = 0; i < room.mapHeight; i++) {
-
-            for (int j = 0; j <room.mapWidth; j++) {
-
-                //Set solid nodes
-                int tileNum = room.mapGrid[1][j][i];
-                if(gp.mapM.tiles[tileNum].solid) {
-                    node[j][i].solid = true;
-                }
-                //Set costs
-                getCost(node[j][i]);
-
-            }
-        }
-        for (Building b : room.getBuildings()) {
-            if (b != null && b.isSolid) {
-                // Convert building hitbox to tile coordinates
-                int tileX = (int) ((b.hitbox.x + b.hitbox.width / 2) / gp.tileSize);
-                int tileY = (int) ((b.hitbox.y + b.hitbox.height / 2) / gp.tileSize);
-
-                if (tileX >= 0 && tileX < room.mapWidth && tileY >= 0 && tileY < room.mapHeight) {
-                    node[tileX][tileY].solid = true;
-                }
-            }
-        }
-    }
-
-    public void getCost(Node node) {
-        //calculates MANHATTAN values (heuristic)
-
-        //Get G cost
-        int xDistance = Math.abs(node.col - startNode.col);
-        int yDistance = Math.abs(node.row - startNode.row);
-
-        node.gCost = xDistance + yDistance;
-
-        //Get H cost
-        xDistance = Math.abs(node.col - goalNode.col);
-        yDistance = Math.abs(node.row - goalNode.row);
-        node.hCost = xDistance + yDistance;
-
-        //Get F cost
-        node.fCost = node.gCost + node.hCost;
-    }
-
-    public boolean search(Room room) {
-        while(!goalReached && step < 500) {
-
-            int col = currentNode.col;
-            int row = currentNode.row;
-
-            //Check current node
-            currentNode.checked = true;
-            openList.remove(currentNode);
-
-            //Open the Up node
-            if(row - 1 >= 0) {
-                openNode(node[col][row-1]);
-            }
-            //Open the Left node
-            if(col - 1 >= 0) {
-                openNode(node[col-1][row]);
-            }
-            //Open the Down node
-            if(row + 1 < room.mapHeight) {
-                openNode(node[col][row+1]);
-            }
-            //Open the Right node
-            if(col + 1 < room.mapWidth) {
-                openNode(node[col+1][row]);
-            }
-            //TODO testing diagonal pathfinding
-            if(row - 1 >= 0 && col - 1 >= 0) { //UP LEFT
-                openNode(node[col-1][row-1]);
-            }
-            if(row - 1 >= 0 && col + 1 < room.mapWidth) { //UP RIGHT
-                openNode(node[col+1][row-1]);
-            }
-            if(row + 1 < room.mapHeight && col - 1 >= 0) { //DOWN LEFT
-                openNode(node[col-1][row+1]);
-            }
-            if(row + 1 < room.mapHeight && col + 1 < room.mapWidth) { //DOWN RIGHT
-                openNode(node[col+1][row+1]);
-            }
-
-
-            int bestNodeIndex = 0;
-            int bestNodefCost = 999;
-
-            for(int i = 0; i < openList.size(); i++) {
-
-                if(openList.get(i).fCost < bestNodefCost) {
-                    bestNodeIndex = i;
-                    bestNodefCost = openList.get(i).fCost;
-                } else if(openList.get(i).fCost == bestNodefCost) {
-                    if(openList.get(i).gCost < openList.get(bestNodeIndex).gCost) {
-                        bestNodeIndex = i;
-                    }
-                }
-            }
-
-            if(openList.size() == 0) {
-                break;
-            }
-
-            currentNode = openList.get(bestNodeIndex);
-
-            if(currentNode == goalNode) {
-                goalReached = true;
-                trackThePath();
-            }
-            step++;
-        }
-
-        return goalReached;
-    }
-
-    public void openNode(Node node) {
-
-        if(!node.open && !node.checked && !node.solid) {
-
-            node.open = true;
-            node.parent = currentNode;
-            openList.add(node);
-
-        }
-
-    }
-
-    public void trackThePath() {
-
-        Node current = goalNode;
-
-        while(current != startNode) {
-            pathList.add(0, currentNode);
-            current = current.parent;
-        }
-
-    }
-
-    public void drawNodes(Graphics2D g2) {
-
-        for (int i = 0; i < gp.mapM.currentRoom.mapHeight; i++) {
-            for (int j = 0; j < gp.mapM.currentRoom.mapWidth; j++) {
-
-                g2.setColor(Color.GREEN);
-                if(node[j][i].solid) {
-                    g2.setColor(Color.RED);
-                } else if(node[j][i] == goalNode) {
-                    g2.setColor(Color.ORANGE);
-                } else if(node[j][i] == startNode) {
-                    g2.setColor(Color.BLUE);
-                } else if(node[j][i] == currentNode) {
-                    g2.setColor(Color.PINK);
-                }
-                g2.fillRect(j*48, i*48, 48, 48);
-            }
-        }
-
-        if(goalReached) {
-            Node node = pathList.get(0);
-
-            for (int i = 0; i < pathList.size(); i++) {
-
-                g2.setColor(Color.white);
-                int x = node.col * gp.tileSize;
-                int y = node.row * gp.tileSize;
-
-                g2.fillRect(x, y, 48, 48);
-
-                node = node.parent;
-
-            }
-        }
-
-    }
-
-}
-*/
 public class PathFinder {
 
     GamePanel gp;
@@ -441,8 +205,42 @@ public class PathFinder {
     public void trackThePath() {
         Node current = goalNode;
         while (current != null && current != startNode) {
-            pathList.add(0, current); // ✅ fixed: add "current"
+            pathList.add(0, current);
             current = current.parent;
         }
+    }
+    public int[] getRandomReachableNode(Room room, float avoidX, float avoidY, float minDistance) {
+        Random random = new Random();
+        int width = room.mapWidth * nodesPerTile;
+        int height = room.mapHeight * nodesPerTile;
+
+        int maxAttempts = 200;
+        for (int i = 0; i < maxAttempts; i++) {
+            int randCol = random.nextInt(width);
+            int randRow = random.nextInt(height);
+            Node candidate = node[randCol][randRow];
+
+            if (candidate != null && !candidate.solid) {
+                int tileCol = randCol / nodesPerTile;
+                int tileRow = randRow / nodesPerTile;
+
+                // Check it's a floor tile (mapGrid tile #9)
+                if (room.mapGrid[1][tileCol][tileRow] != 9) continue;
+
+                // Check distance from player
+                float nodeX = tileCol * gp.tileSize + gp.tileSize/2f;
+                float nodeY = tileRow * gp.tileSize + gp.tileSize/2f;
+                float dx = nodeX - avoidX;
+                float dy = nodeY - avoidY;
+                if (dx*dx + dy*dy < minDistance*minDistance) continue;
+
+                return new int[]{tileCol, tileRow};
+            }
+        }
+
+        // fallback: move opposite direction of player if no random node found
+        int fallbackCol = (int)((avoidX - (avoidX - gp.player.hitbox.x)) / gp.tileSize);
+        int fallbackRow = (int)((avoidY - (avoidY - gp.player.hitbox.y)) / gp.tileSize);
+        return new int[]{fallbackCol, fallbackRow};
     }
 }
