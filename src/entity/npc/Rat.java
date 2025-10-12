@@ -9,6 +9,7 @@ import entity.buildings.EscapeHole;
 import entity.buildings.Fridge;
 import entity.items.Food;
 import main.GamePanel;
+import utility.RoomHelperMethods;
 
 public class Rat extends NPC {
 	
@@ -57,11 +58,7 @@ public class Rat extends NPC {
 		} else {
 			if(fetchingItem) {
 				if(inKitchen) {
-					if(walkToDoorWithDoorNum(1)) {
-						inKitchen = false;
-					}
-				} else {
-					if(walkToBuildingWithName("Escape Hole", true)) {
+					if(walkToBuildingInRoom("Escape Hole", RoomHelperMethods.STORES, true)) {
 						removeNPCFromRoom();
 					}
 				}
@@ -76,7 +73,7 @@ public class Rat extends NPC {
 				}
 			} else if(retrievingItem) {
 				if(!inKitchen) {
-					if(walkToDoorWithDoorNum(0)) {
+					if(walkToDoorWithDoorNum(RoomHelperMethods.MAIN)) {
 						inKitchen = true;
 					}
 				} else {

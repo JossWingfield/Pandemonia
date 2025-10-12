@@ -6,7 +6,16 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
+import java.util.Set;
 
 import ai.Node;
 import ai.PathFinder;
@@ -16,6 +25,7 @@ import entity.buildings.Door;
 import main.GamePanel;
 import map.Room;
 import utility.CollisionMethods;
+import utility.RoomHelperMethods;
 
 public abstract class NPC extends Entity {
 
@@ -47,6 +57,8 @@ public abstract class NPC extends Entity {
     private int nextX, nextY;
     protected double movementAngle = -1;
     protected int currentRoomNum = 0;
+    protected final float TOO_CLOSE = 48 * 48;  // Stop if within 48 pixels
+    protected float TOO_FAR = 96 * 96;  
     
     protected int drawWidth, drawHeight, xOffset, yOffset;
     
@@ -503,6 +515,137 @@ public abstract class NPC extends Entity {
 		}
 		return false;
     }
+    protected boolean walkToBuildingInRoom(String name, int roomNum, boolean isNPCHitbox) {
+        // Step 1: find target building
+        Building building = findBuildingInRoom(name, roomNum); // Search all rooms by name
+        if (building == null) return false;
+
+        // Step 2: if already in same room, just walk there
+        if (roomNum == currentRoomNum) {
+            return walkToBuildingWithName(name, isNPCHitbox);
+        }
+        // Step 4: find path of rooms using BFS
+        List<Integer> roomPath = findRoomPath(currentRoomNum, roomNum, RoomHelperMethods.roomGraph);
+        if (roomPath == null || roomPath.isEmpty()) return false;
+
+        // Step 5: walk through each room in path
+        for (int i = 1; i < roomPath.size(); i++) {
+            int nextRoom = roomPath.get(i);
+
+            // Walk to door that leads to nextRoom
+            boolean reachedDoor = walkToDoorWithDoorNum(nextRoom);
+            if (!reachedDoor) return false;
+
+            // The door handling will internally call changeRoom()
+            // Once that happens, we’re now inside nextRoom
+        }
+
+        // Step 6: now we’re in the destination room
+        return walkToBuildingWithName(name, isNPCHitbox);
+    }
+    private List<Integer> findRoomPath(int start, int target, Map<Integer, int[]> graph) {
+        Queue<List<Integer>> queue = new LinkedList<>();
+        Set<Integer> visited = new HashSet<>();
+
+        queue.add(Collections.singletonList(start));
+        visited.add(start);
+
+        while (!queue.isEmpty()) {
+            List<Integer> path = queue.poll();
+            int last = path.get(path.size() - 1);
+            if (last == target) return path;
+
+            for (int neighbor : graph.getOrDefault(last, new int[0])) {
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    List<Integer> newPath = new ArrayList<>(path);
+                    newPath.add(neighbor);
+                    queue.add(newPath);
+                }
+            }
+        }
+        return null;
+    }
+    protected boolean followNPC(NPC target) {
+        if (target == null) return false;
+
+        // --- Step 1: Check if they’re in the same room ---
+        if (target.currentRoomNum != currentRoomNum) {
+            // Follow across rooms (find room path and move through doors)
+            List<Integer> roomPath = findRoomPath(currentRoomNum, target.currentRoomNum, RoomHelperMethods.roomGraph);
+            if (roomPath == null || roomPath.isEmpty()) return false;
+
+            // Go through each connecting door until we reach the target’s room
+            for (int i = 1; i < roomPath.size(); i++) {
+                int nextRoom = roomPath.get(i);
+                boolean reachedDoor = walkToDoorWithDoorNum(nextRoom);
+                if (!reachedDoor) return false;
+            }
+
+            // Once we’ve reached the target’s room, continue below
+        }
+
+        // --- Step 2: Determine distance ---
+        float dx = (target.hitbox.x + target.hitbox.width / 2f) - (hitbox.x + hitbox.width / 2f);
+        float dy = (target.hitbox.y + target.hitbox.height / 2f) - (hitbox.y + hitbox.height / 2f);
+        float distSq = dx * dx + dy * dy;
+
+        // --- Step 3: Behavior depending on distance ---
+        if (distSq < TOO_CLOSE) {
+            // Close enough — stop walking
+            walking = false;
+            pathF.pathList.clear();
+            return true; // Following complete (close enough)
+        }
+
+        // --- Step 4: Pathfind towards target if too far ---
+        if (distSq > TOO_FAR || pathF.pathList.isEmpty()) {
+            int goalCol = (int)((target.hitbox.x + target.hitbox.width / 2f) / gp.tileSize);
+            int goalRow = (int)((target.hitbox.y + target.hitbox.height / 2f - 1) / gp.tileSize);
+            searchPath(goalCol, goalRow);
+            walking = true;
+        }
+
+        // --- Step 5: Follow the path (per-frame movement) ---
+        if (!pathF.pathList.isEmpty()) {
+            followPath();
+        }
+
+        return false; // Still following
+    }
+    protected void removeLights() {}
+	protected void leave() {
+		
+		Door door;
+    	if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
+			door = gp.buildingM.findDoor(RoomHelperMethods.OUTDOORS);
+		} else {
+			door =gp.mapM.getRoom(currentRoomNum).findDoor(RoomHelperMethods.OUTDOORS);
+		}
+    	
+		int goalCol = (int)((door.npcHitbox.x + door.npcHitbox.width/2)/gp.tileSize);
+        int goalRow = (int)((door.npcHitbox.y + door.npcHitbox.height/2 - 1)/gp.tileSize);  
+        searchPath(goalCol, goalRow);
+    	
+    	walking = true;
+    	if(door.npcHitbox != null) {
+    		if(door.npcHitbox.intersects(hitbox)) {
+    	    	removeLights();
+    	    	if(gp.player.currentRoomIndex == currentRoomNum) {
+    				gp.npcM.removeNPC(this);
+    			} else {
+    				gp.mapM.getRoom(currentRoomNum).removeNPC(this);
+    			}
+    		}
+    	}
+    }
+	public void removeOtherNPC(NPC npcToRemove) {
+		if(gp.player.currentRoomIndex == npcToRemove.currentRoomNum) {
+			gp.npcM.removeNPC(npcToRemove);
+		} else {
+			gp.mapM.getRoom(npcToRemove.currentRoomNum).removeNPC(npcToRemove);
+		}
+	}
     public void draw(Graphics2D g2) {
         animationSpeed+=animationUpdateSpeed; //Update the animation frame
         if(animationSpeed == 12) {

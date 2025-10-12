@@ -29,6 +29,7 @@ import utility.KeyboardInput;
 import utility.MouseInput;
 import utility.ProgressManager;
 import utility.RecipeManager;
+import utility.RoomHelperMethods;
 import utility.Settings;
 import utility.UpgradeManager;
 import utility.World;
@@ -103,6 +104,7 @@ public class GamePanel extends JPanel implements Runnable {
     public UpgradeManager upgradeM = new UpgradeManager(this);
     public ProgressManager progressM = new ProgressManager(this);
     public MiniGameManager minigameM = new MiniGameManager(this);
+    public RoomHelperMethods roomH = new RoomHelperMethods();
     public SaveManager saveM = new SaveManager(this);
     public MapBuilder mapB = new MapBuilder(this);
     //THREAD initialising the thread which the game loop is run off

@@ -2,73 +2,96 @@ package entity.npc;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.GamePanel;
 
-public class Duck extends NPC {
+public class Pet extends NPC{
 	
 	Random r;
 	private boolean leaving = false;
 	private int timesPetted = 0;
+	private Customer owner;
+	private int petType;
 
-	public Duck(GamePanel gp, float xPos, float yPos) {
+	public Pet(GamePanel gp, float xPos, float yPos, Customer npc, int petType) {
 		super(gp, xPos, yPos, 48, 48);
-		animationSpeedFactor = 2;
+		this.owner = npc;
+		this.petType = petType;
+		animationSpeedFactor = 4;
 		drawScale = 3;
 		drawWidth = 32*drawScale;
 	    drawHeight = 16*drawScale;
 	    xDrawOffset = 24;
-		speed = 4;
-		npcType = "Duck";
+		speed = 1;
+		npcType = "Pet";
 		r = new Random();
+		
 		gp.world.animalPresent = true;
 	
-		
 		importImages();
 	}
 	private void importImages() {
 		animations = new BufferedImage[5][10][10];
 		
-		name = "Duck";
-		
-		importFromSpriteSheet("/npcs/duck/Duck.png", 2, 1, 0, 0, 0, 32, 16, 0);
-		importFromSpriteSheet("/npcs/duck/Duck.png", 5, 1, 1, 0, 16, 32, 16, 0);
+		switch(petType) {
+		case 0:
+			name = "Dexter";
+			importFromSpriteSheet("/npcs/pet/Dog.png", 6, 1, 0, 0, 0, 32, 16, 0);
+			importFromSpriteSheet("/npcs/pet/Dog.png", 8, 1, 1, 0, 16, 32, 16, 0);
+			break;
+		case 1:
+			drawWidth = 48*3;
+			drawHeight = 48*3;
+			xDrawOffset = 48;
+			yDrawOffset = 48;
+			name = "Catherine";
+			importFromSpriteSheet("/npcs/pet/Cat1.png", 6, 1, 0, 0, 0, 48, 48, 0);
+			importFromSpriteSheet("/npcs/pet/Cat1.png", 8, 1, 1, 0, 96, 48, 48, 0);
+			break;
+		case 2:
+			drawWidth = 48*3;
+			drawHeight = 48*3;
+			xDrawOffset = 48;
+			yDrawOffset = 48;
+			name = "Snorf";
+			importFromSpriteSheet("/npcs/pet/Cat2.png", 6, 1, 0, 0, 0, 48, 48, 0);
+			importFromSpriteSheet("/npcs/pet/Cat2.png", 8, 1, 1, 0, 96, 48, 48, 0);
+			break;
+		case 3:
+			drawWidth = 48*3;
+			drawHeight = 48*3;
+			xDrawOffset = 48;
+			yDrawOffset = 48;
+			name = "Olive";
+			importFromSpriteSheet("/npcs/pet/Cat3.png", 6, 1, 0, 0, 0, 48, 48, 0);
+			importFromSpriteSheet("/npcs/pet/Cat3.png", 8, 1, 1, 0, 96, 48, 48, 0);
+			break;
+		case 4:
+			drawWidth = 48*3;
+			drawHeight = 48*3;
+			xDrawOffset = 48;
+			yDrawOffset = 48;
+			name = "Ginger";
+			importFromSpriteSheet("/npcs/pet/Cat4.png", 6, 1, 0, 0, 0, 48, 48, 0);
+			importFromSpriteSheet("/npcs/pet/Cat4.png", 8, 1, 1, 0, 96, 48, 48, 0);
+			break;
+		}
+
 	}    
 	public void update() {
-		if(!leaving) {
-			fleeFromPlayer();
-			if(hitbox.intersects(gp.player.hitbox)) {
-				if(gp.keyI.ePressed) {
-					timesPetted++;
-					if(timesPetted >= 60) {
-						gp.world.animalPresent = false;
-						gp.npcM.removeNPC(this);
-						leaving = true;
-					}
-				}
-			}
-		} else {
-			walking = true;
-			leave();
-		}
-    }
-	
-	protected void leave() {
-		super.leave();
-		gp.gui.addMessage("The duck is leaving now", Color.GREEN);
+		followNPC(owner);
     }
 	   
 	public void draw(Graphics2D g2) {
         animationSpeed+=animationUpdateSpeed; //Update the animation frame
         if(walking) {
         	currentAnimation = 1;
-    		animationSpeedFactor = 2;
+    		animationSpeedFactor = 3;
         } else {
           	currentAnimation = 0;
-    		animationSpeedFactor = 8;
+    		animationSpeedFactor = 6;
         }
         if(animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;
@@ -98,7 +121,7 @@ public class Duck extends NPC {
 	    	  }
 	    	  a = 0;
 	    	  img = animations[a][currentAnimation][animationCounter];
-		    	  if(direction.equals("Right")){
+		    	  if(direction.equals("Left")){
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }

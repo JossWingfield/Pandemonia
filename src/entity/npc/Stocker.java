@@ -14,6 +14,7 @@ import entity.items.Item;
 import entity.items.Plate;
 import main.GamePanel;
 import utility.Recipe;
+import utility.RoomHelperMethods;
 
 public class Stocker extends Employee {
 	
@@ -34,7 +35,7 @@ public class Stocker extends Employee {
 		super(gp, xPos, yPos);
 		drawWidth = 48;
 		drawHeight = 48*2;
-		speed = 2;
+		speed = 1;
 		
 		npcType = "Stocker";
 		
@@ -67,16 +68,11 @@ public class Stocker extends Employee {
 			fetchingItem = true;
 		} else {
 			if(fetchingItem) {
-				if(inKitchen) {
-					if(walkToDoorWithDoorNum(1)) {
-						inKitchen = false;
-					}
-				} else {
-					if(walkToBuildingWithName("Storage Fridge", true)) {
-						stocking = true;
-						walking = false;
-						fetchingItem = false;
-					}
+				if(walkToBuildingInRoom("Storage Fridge", RoomHelperMethods.STORES, true)) {
+					stocking = true;
+					walking = false;
+					fetchingItem = false;
+					inKitchen = false;
 				}
 			} else if(stocking) {
 				stockTimer++;
@@ -91,7 +87,7 @@ public class Stocker extends Employee {
 				}
 			} else if(retrievingItem) {
 				if(!inKitchen) {
-					if(walkToDoorWithDoorNum(0)) {
+					if(walkToDoorWithDoorNum(RoomHelperMethods.MAIN)) {
 						inKitchen = true;
 					}
 				} else {

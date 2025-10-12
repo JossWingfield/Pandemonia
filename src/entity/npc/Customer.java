@@ -14,6 +14,7 @@ import main.GamePanel;
 import utility.Recipe;
 import utility.RecipeManager;
 import utility.RoomHelperMethods;
+import utility.RoomHelperMethods.*;
 
 public class Customer extends NPC {
 	
@@ -31,7 +32,6 @@ public class Customer extends NPC {
 	public Recipe foodOrder = null;
 	private int eatTime = 60*5;
 	private int eatCounter = 0;
-	private Rectangle2D.Float doorHitbox;
 	protected BufferedImage orderSign, warningOrderSign;
 	private int orderTime = 0;
 	private int maxOrderTime = 210;
@@ -57,6 +57,8 @@ public class Customer extends NPC {
 	
 	public BufferedImage faceIcon;
 	private Graphics2D g2;
+	
+	private Pet pet;
 
 	public Customer(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -72,8 +74,6 @@ public class Customer extends NPC {
 		type = r.nextInt(7);
 		
 		talkHitbox = new Rectangle2D.Float(hitbox.x - 16, hitbox.y - 16, hitbox.width + 32, hitbox.height + 32);
-
-		doorHitbox = new Rectangle2D.Float(9*48, 11*48, 48, 48);
 		
 		if(RoomHelperMethods.isCelebrityPresent(gp.mapM.getRoom(0).getNPCs())) {
 			celebrityPresent = true;
@@ -126,6 +126,20 @@ public class Customer extends NPC {
 	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
 			break;
 		}
+		
+		//PET
+		boolean addPet = r.nextInt(10) == 0;
+		//addPet = true;
+		if(addPet) {
+			int petType = r.nextInt(5);
+			pet = new Pet(gp, hitbox.x, hitbox.y, this, petType);
+			if(gp.player.currentRoomIndex == currentRoomNum) {
+				gp.npcM.addNPC(pet);
+			} else {
+				gp.mapM.getRoom(currentRoomNum).addNPC(pet);
+			}
+		}
+		
 	}
 	
 	protected void findTable() {
@@ -145,16 +159,6 @@ public class Customer extends NPC {
 		} else {
 			toilet = gp.mapM.getRoom(currentRoomNum).findFreeToilet();
 		}
-    }
-	protected void leave() {
-		int goalCol = (int)(9);
-	    int goalRow = (int)(11);  
-	    searchPath(goalCol, goalRow);
-	    
-	    if(doorHitbox.intersects(hitbox)) {
-	    	removeLights();
-	    	gp.npcM.removeNPC(this);
-	    }
     }
 	protected void removeLights() {
 		
@@ -261,6 +265,12 @@ public class Customer extends NPC {
 	        waitingToOrder = false;
 	    }
 	}
+	protected void leave() {
+		super.leave();
+		if(pet != null) {
+			removeOtherNPC(pet);
+		}
+	}
 	public void update() {
 		if(gp.progressM.fasterCustomers) {
 			speed = 2;
@@ -268,14 +278,14 @@ public class Customer extends NPC {
 	    if(!atTable) {
 	        if(leaving) {
 	        	if(inToilet) {
-	        		if(walkToDoorWithDoorNum(0)) {
+	        		if(walkToDoorWithDoorNum(RoomHelperMethods.MAIN)) {
 				    	inToilet = false;
 	        		}
 	        	} else {
 	        		leave();
 	        	}
 	        } else if(goingToToilet && !inToilet) {
-	        	if(walkToDoorWithDoorNum(4)) {
+	        	if(walkToDoorWithDoorNum(RoomHelperMethods.BATHROOM)) {
 	            	inToilet = true;
 	        	}
 	        } else if(inToilet && !onToilet) {

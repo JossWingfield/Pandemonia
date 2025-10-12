@@ -105,7 +105,7 @@ public class World {
         currentWeather = Weather.SUNNY;
         resetWeatherTimer();
         
-        gp.npcM.addDishWasher();
+        //gp.npcM.addStocker();
     }
 
     // === Specials generation ===
