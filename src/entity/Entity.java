@@ -169,7 +169,7 @@ public abstract class Entity implements Cloneable {
                entityScreenY + hitbox.height > -buffer && entityScreenY < height + buffer;
     }
     
-    public void draw(Graphics2D g2) {}
+    public void draw(Graphics2D g2, int xDiff, int yDiff) {}
 
 }
 

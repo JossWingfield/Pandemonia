@@ -145,11 +145,11 @@ public class SpecialCustomer extends Customer {
 		}
 		super.setCelebrityPresent(isPresent);
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(isGhost) {
 			gp.lightingM.moveLight(ghostLight, (int)(hitbox.x + hitbox.width/2 - 8), (int)(hitbox.y +  hitbox.height/2));
 		}
-		super.draw(g2);
+		super.draw(g2, xDiff, yDiff);
         
 	}
 	

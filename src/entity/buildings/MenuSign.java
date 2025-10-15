@@ -84,7 +84,7 @@ public class MenuSign extends Building {
     }
 
     @Override
-    public void draw(Graphics2D g2) {
+    public void draw(Graphics2D g2, int xDiff, int yDiff) {
 
         if(firstUpdate) {
             firstUpdate = false;
@@ -96,8 +96,8 @@ public class MenuSign extends Building {
                 || (gp.world.getCurrentPhase() == DayPhase.SERVICE && !gp.world.isMenuChosen());
         if(interactHitbox.intersects(gp.player.interactHitbox) && canInteract) {
 
-            g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, 
-                    (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+            g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, 
+                    (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 
             // Open UI on key press
             if(gp.keyI.ePressed && clickCooldown == 0) {
@@ -110,7 +110,7 @@ public class MenuSign extends Building {
                 }
             }
         } else {
-  		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+  		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
          
         	uiOpen = false;
         }
@@ -164,7 +164,7 @@ public class MenuSign extends Building {
 	    return data;
 	}
     // Draw the menu UI
-	public void drawOverlayUI(Graphics2D g2) {
+	public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {
 	    if (!uiOpen) return;
 
 	    // Background

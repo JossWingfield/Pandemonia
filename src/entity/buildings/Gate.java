@@ -47,7 +47,7 @@ public class Gate extends Building {
        	animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(64, 64, 32, 32);
        	animations[0][0][1] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(96, 64, 32, 32);
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(firstUpdate) {
 			hitbox2 = new Rectangle2D.Float(hitbox.x + hitbox.width, hitbox.y, 48, 38);
@@ -69,10 +69,10 @@ public class Gate extends Building {
 			}
 		}
 
-		g2.drawImage(animations[0][0][i], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		g2.drawImage(animations[0][0][i], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
        		 
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 	        
 	}

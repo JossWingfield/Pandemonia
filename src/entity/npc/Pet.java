@@ -84,7 +84,7 @@ public class Pet extends NPC{
 		followNPC(owner);
     }
 	   
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
         animationSpeed+=animationUpdateSpeed; //Update the animation frame
         if(walking) {
         	currentAnimation = 1;
@@ -125,10 +125,10 @@ public class Pet extends NPC{
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - gp.player.xDiff), (int) (hitbox.y - yDrawOffset - gp.player.yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
         }
 	      
         //g2.setColor(new Color(255, 0, 0, 50)); // red transparent
-        //g2.fillOval((int)((hitbox.x + hitbox.width / 2f) - ALERT_DISTANCE - gp.player.xDiff),(int)((hitbox.y + hitbox.height / 2f) - ALERT_DISTANCE - gp.player.yDiff),ALERT_DISTANCE * 2,ALERT_DISTANCE * 2);
+        //g2.fillOval((int)((hitbox.x + hitbox.width / 2f) - ALERT_DISTANCE - xDiff),(int)((hitbox.y + hitbox.height / 2f) - ALERT_DISTANCE - yDiff),ALERT_DISTANCE * 2,ALERT_DISTANCE * 2);
 	  }
 }

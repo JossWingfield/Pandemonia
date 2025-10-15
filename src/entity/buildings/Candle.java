@@ -52,7 +52,7 @@ public class Candle extends Building{
 	public void destroy() {
 		gp.lightingM.removeLight(light);
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, float xDiff, float yDiff) {
 		
 		if(firstUpdate) {
 			firstUpdate = false;
@@ -61,10 +61,10 @@ public class Candle extends Building{
 		}
 		
 
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	     g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 	    
 	}

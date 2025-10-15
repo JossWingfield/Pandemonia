@@ -40,7 +40,7 @@ public class Calendar extends Building {
      	animations[0][0][2] = importImage("/decor/calendar.png").getSubimage(32, 0, 16, 32);
      	animations[0][0][3] = importImage("/decor/calendar.png").getSubimage(48, 0, 16, 32);
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, float xDiff, float yDiff) {
 		int season = -1;
 		switch(gp.world.getCurrentSeason()) {
 		case SPRING:
@@ -56,10 +56,10 @@ public class Calendar extends Building {
 			season = 3;
 			break;
 		}
-	     g2.drawImage(animations[0][0][season], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	     g2.drawImage(animations[0][0][season], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	     
 		 if(destructionUIOpen) {
-		     g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		     g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		 }
 	        
 	}

@@ -128,7 +128,7 @@ public class TablePlate extends Building {
 			break;
 		}
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			initInteractHitbox();
 			firstUpdate = false;
@@ -138,10 +138,10 @@ public class TablePlate extends Building {
 				currentCustomer = chair.currentCustomer;
 			}
 		}
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
 	     
 		if(currentCustomer != null) {
-		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
 		}
 		
 	    //g2.setColor(Color.RED);
@@ -149,7 +149,7 @@ public class TablePlate extends Building {
 	    
 		if(currentCustomer != null) {
 		    if(interactHitbox.intersects(gp.player.interactHitbox)) {
-			    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			    if(gp.keyI.ePressed) {
 				    if(currentCustomer != null) {
 				    	if(gp.player.currentItem != null) {
@@ -168,7 +168,7 @@ public class TablePlate extends Building {
 		}
 	    if(orderCompleted) {
 	    	if(currentCustomer.isEating()) {
-	    		g2.drawImage(currentCustomer.foodOrder.finishedPlate, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	    		g2.drawImage(currentCustomer.foodOrder.finishedPlate, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    	} else {
 	    		orderCompleted = false;
 	    		showDirtyPlate = true;
@@ -179,7 +179,7 @@ public class TablePlate extends Building {
 	    }
 	    
 	    if(showDirtyPlate) {
-    		g2.drawImage(plate.dirtyImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+    		g2.drawImage(plate.dirtyImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    	if(gp.keyI.ePressed) {
 		    	if(interactHitbox.intersects(gp.player.interactHitbox)) {
 		    		if(gp.player.currentItem == null) {
@@ -193,7 +193,7 @@ public class TablePlate extends Building {
 	    }
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 		
 		//g2.setColor(Color.YELLOW);

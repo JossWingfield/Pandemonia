@@ -44,10 +44,10 @@ public class Leak extends Building {
 
      	animations[0][0][1] = importImage("/decor/Leak.png").getSubimage(64, 0, 64, 64);
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 	    
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
-		    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    if(gp.keyI.ePressed) {
 		    	spillCount++;
 		    	if(spillCount >= maxSpillTime) {
@@ -58,7 +58,7 @@ public class Leak extends Building {
 		    	}
 		    }
 	    } else {
-		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    }
 	    if(effectArea.intersects(gp.player.hitbox)) {
 		    gp.player.slowSpeed();
@@ -70,17 +70,17 @@ public class Leak extends Building {
 	    }
 	    
 	    if(spillCount > 0) {
-	    	drawChoppingBar(g2, hitbox.x+24 + 48, hitbox.y+24 + 48+32, spillCount, maxSpillTime);
+	    	drawChoppingBar(g2, hitbox.x+24 + 48, hitbox.y+24 + 48+32, spillCount, maxSpillTime, xDiff, yDiff);
 	    }
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 	    
 	}
-	private void drawChoppingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime) {
-	    float screenX = worldX - xDrawOffset - gp.player.xDiff;
-	    float screenY = worldY - yDrawOffset - gp.player.yDiff;
+	private void drawChoppingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {
+	    float screenX = worldX - xDrawOffset - xDiff;
+	    float screenY = worldY - yDrawOffset - yDiff;
 
 	    int barWidth = 48;
 	    int barHeight = 6;

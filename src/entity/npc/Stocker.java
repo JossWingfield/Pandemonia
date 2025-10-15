@@ -118,7 +118,7 @@ public class Stocker extends Employee {
 		}
 		
 	}	
-	public void drawCurrentItem(Graphics2D g2) {
+	public void drawCurrentItem(Graphics2D g2, int xDiff, int yDiff) {
 	    	if(currentItem == null) {
 	    		return;
 	    	}
@@ -146,7 +146,7 @@ public class Stocker extends Employee {
 	    		Food f = (Food)currentItem;
 	    		img = f.getImage();
 	    	}
-    		g2.drawImage(img, (int)(hitbox.x - gp.player.xDiff- xDrawOffset + xOffset), (int)(hitbox.y - gp.player.yDiff - yDrawOffset + yOffset), (int)(48), (int)(48), null);
+    		g2.drawImage(img, (int)(hitbox.x - xDiff- xDrawOffset + xOffset), (int)(hitbox.y - yDiff - yDrawOffset + yOffset), (int)(48), (int)(48), null);
 
 	    }
     private void pickUpItem() {
@@ -162,9 +162,9 @@ public class Stocker extends Employee {
     	}
 		
     }
-    public void draw(Graphics2D g2) {
+    public void draw(Graphics2D g2, int xDiff, int yDiff) {
         if(direction == "Up") {
-        	drawCurrentItem(g2);
+        	drawCurrentItem(g2, xDiff, yDiff);
         }
         animationSpeed+=animationUpdateSpeed; //Update the animation frame
         if(animationSpeed == 5) {
@@ -218,13 +218,13 @@ public class Stocker extends Employee {
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }   
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - gp.player.xDiff), (int) (hitbox.y - yDrawOffset - gp.player.yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
         }
         if(talking) {
         	//gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- gp.player.xDiff, (int)hitbox.y - 48*3- gp.player.yDiff, dialogues[dialogueIndex], this);
         }
         if(direction != "Up") {
-        	drawCurrentItem(g2);
+        	drawCurrentItem(g2, xDiff, yDiff);
         }
     }
 }

@@ -284,7 +284,7 @@ public class SeasonalDecoration extends Building {
         }
 		
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			firstUpdate = false;
 		} 
@@ -305,19 +305,19 @@ public class SeasonalDecoration extends Building {
 			break;
 		}
 		if(invisHitbox == null) {
-		     g2.drawImage(animations[0][0][season], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     g2.drawImage(animations[0][0][season], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		} else {
 			if(gp.player.hitbox.intersects(invisHitbox)) {
 				BufferedImage img = animations[0][0][season];
 				img = CollisionMethods.reduceImageAlpha(img, 0.25f);
-				g2.drawImage(img, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				g2.drawImage(img, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			} else {
-			    g2.drawImage(animations[0][0][season], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    g2.drawImage(animations[0][0][season], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			}
 		}
 	     
 		 if(destructionUIOpen) {
-		     g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		     g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		 }
 	        
 	}

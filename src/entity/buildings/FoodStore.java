@@ -94,7 +94,7 @@ public class FoodStore extends Building {
 		}
 		yDrawOffset = 48;
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
@@ -102,7 +102,7 @@ public class FoodStore extends Building {
 		}
 				
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			if(gp.keyI.ePressed) {
 				if (gp.player.currentItem == null) {
 				    String itemName = null;
@@ -135,7 +135,7 @@ public class FoodStore extends Building {
 				}
 			}
 		} else {
-		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		}
 		
 		//g2.setColor(Color.YELLOW);
@@ -143,7 +143,7 @@ public class FoodStore extends Building {
       		
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 	        
 	}

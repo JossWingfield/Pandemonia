@@ -229,7 +229,7 @@ public class Customiser {
 	public void update() {
 		
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		int mouseX = gp.mouseI.mouseX;
 		int mouseY = gp.mouseI.mouseY;
@@ -749,8 +749,8 @@ public class Customiser {
 		if(selectedBuilding != null) {
 			if(mouseY < gp.frameHeight-ySize || !showBuildings) {
 				int size = 4*3;
-				int xPos = (int)((mouseX+gp.player.xDiff)/size) * size;
-				int yPos = (int)((mouseY+gp.player.yDiff)/size) * size;
+				int xPos = (int)((mouseX+xDiff)/size) * size;
+				int yPos = (int)((mouseY+yDiff)/size) * size;
 				boolean canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, xPos, yPos, selectedBuilding.hitbox.width, selectedBuilding.hitbox.height);
 				BufferedImage img = selectedBuilding.animations[0][0][0];
 				if(canPlace) {
@@ -758,7 +758,7 @@ public class Customiser {
 				} else {
 					img = CollisionMethods.getMaskedImage(noBuild, img);
 				}
-				g2.drawImage(img, xPos-gp.player.xDiff - selectedBuilding.xDrawOffset, yPos-gp.player.yDiff - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getWidth()*3, selectedBuilding.animations[0][0][0].getHeight()*3, null);
+				g2.drawImage(img, xPos-xDiff - selectedBuilding.xDrawOffset, yPos-yDiff - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getWidth()*3, selectedBuilding.animations[0][0][0].getHeight()*3, null);
 
 				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 					if(canPlace) {

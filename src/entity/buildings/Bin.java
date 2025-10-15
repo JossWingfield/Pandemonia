@@ -54,7 +54,7 @@ public class Bin extends Building {
     	xDrawOffset = 24;
     	yDrawOffset = 24;
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, float xDiff, float yDiff) {
 		
 		if(firstUpdate) {
 			firstUpdate = false;
@@ -62,9 +62,9 @@ public class Bin extends Building {
 		}
 		
 		if(!binHitbox.intersects(gp.player.interactHitbox)) {
-		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		} else {
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			if(clickCooldown == 0 && gp.keyI.ePressed) {
 				if(gp.player.currentItem != null) {
 					if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {
@@ -95,7 +95,7 @@ public class Bin extends Building {
 				if(p.getUsername() != gp.player.getUsername()) {
 					if(p.currentRoomIndex == gp.player.currentRoomIndex) {
 						if(binHitbox.intersects(p.interactHitbox)) {
-							g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+							g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 						}
 					}
 				}
@@ -111,7 +111,7 @@ public class Bin extends Building {
 		}
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 	        
 	}

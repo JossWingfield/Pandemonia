@@ -258,8 +258,6 @@ public class MapManager {
 
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;
-	    	gp.player.reCalculateMaxDiffVals();
-	    	gp.player.setDiffValues();
 	    }
 	    public void changeRoom(int roomNum, Door previousDoor) {
 	    	gp.lightingM.removeLight(gp.player.playerLight);
@@ -297,8 +295,6 @@ public class MapManager {
 	    	gp.buildingM.setDoorCooldowns();
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;
-	    	gp.player.reCalculateMaxDiffVals();
-	    	gp.player.setDiffValues();
 	    	gp.player.currentRoomIndex = roomNum;
 	    	if(gp.multiplayer) {
 	            Packet05ChangeRoom packet = new Packet05ChangeRoom(gp.player.getUsername(), roomNum);
@@ -336,8 +332,6 @@ public class MapManager {
 	    	gp.buildingM.setDoorCooldowns();
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;
-	    	gp.player.reCalculateMaxDiffVals();
-	    	gp.player.setDiffValues();
 	    	gp.player.currentRoomIndex = roomNum;
 	    	if(gp.multiplayer) {
 	            Packet05ChangeRoom packet = new Packet05ChangeRoom(gp.player.getUsername(), roomNum);

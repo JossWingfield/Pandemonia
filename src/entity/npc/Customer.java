@@ -392,9 +392,9 @@ public class Customer extends NPC {
 	public int getMaxPatienceTime() {
 		return maxPatienceTime;
 	}
-	private void drawOrderBar(Graphics2D g2, float worldX, float worldY, int orderTime, int maxOrderTime) {
-	    float screenX = worldX - xOffset - gp.player.xDiff;
-	    float screenY = worldY - yOffset - gp.player.yDiff;
+	private void drawOrderBar(Graphics2D g2, float worldX, float worldY, int orderTime, int maxOrderTime, int xDiff, int yDiff) {
+	    float screenX = worldX - xOffset - xDiff;
+	    float screenY = worldY - yOffset - yDiff;
 
 	    int barWidth = 48;
 	    int barHeight = 6;
@@ -415,7 +415,7 @@ public class Customer extends NPC {
 	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight);
 
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		this.g2 = g2;
 		  animationSpeed+=animationUpdateSpeed; //Update the animation frame
 	      if(animationSpeed == animationSpeedFactor) {
@@ -450,11 +450,11 @@ public class Customer extends NPC {
 		          }
 	    	  }
 	    	  
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - gp.player.xDiff), (int) (hitbox.y - yDrawOffset - gp.player.yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
 	      }
 	      
 	      if(orderTime > 0) {
-	    	  drawOrderBar(g2, hitbox.x, hitbox.y+8, orderTime, maxOrderTime);
+	    	  drawOrderBar(g2, hitbox.x, hitbox.y+8, orderTime, maxOrderTime, xDiff, yDiff);
 	      }
   	      float patienceRatio = patienceCounter / (float) maxPatienceTime;
 	      if(patienceRatio >= 0.5f) {
@@ -475,10 +475,10 @@ public class Customer extends NPC {
 	    	        }
 	    	    }
 
-	    	    g2.drawImage(currentSign,(int)(hitbox.x - xOffset - gp.player.xDiff),(int)(hitbox.y - yOffset - gp.player.yDiff - 48), 48, 48, null);
+	    	    g2.drawImage(currentSign,(int)(hitbox.x - xOffset - xDiff),(int)(hitbox.y - yOffset - yDiff - 48), 48, 48, null);
 	    	}
 	      if(talking) {
-	    	  //gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- gp.player.xDiff, (int)hitbox.y - 48*3- gp.player.yDiff, dialogues[dialogueIndex], this);
+	    	  //gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- xDiff, (int)hitbox.y - 48*3- yDiff, dialogues[dialogueIndex], this);
 	      }
 	      
 	  }

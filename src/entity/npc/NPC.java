@@ -278,8 +278,8 @@ public abstract class NPC extends Entity {
     	}
 
     }
-    public void drawHitbox(Graphics2D g) {
-        g.drawRect((int)(hitbox.x- gp.player.xDiff), (int) (hitbox.y- gp.player.yDiff), (int)(hitbox.width), (int)(hitbox.height));
+    public void drawHitbox(Graphics2D g, int xDiff, int yDiff) {
+        g.drawRect((int)(hitbox.x- xDiff), (int) (hitbox.y- yDiff), (int)(hitbox.width), (int)(hitbox.height));
     }
     
     public void interact() {
@@ -646,7 +646,7 @@ public abstract class NPC extends Entity {
 			gp.mapM.getRoom(npcToRemove.currentRoomNum).removeNPC(npcToRemove);
 		}
 	}
-    public void draw(Graphics2D g2) {
+    public void draw(Graphics2D g2, int xDiff, int yDiff) {
         animationSpeed+=animationUpdateSpeed; //Update the animation frame
         if(animationSpeed == 12) {
             animationSpeed = 0;
@@ -656,7 +656,7 @@ public abstract class NPC extends Entity {
             if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
                 animationCounter = 0; //Loops the animation
             }
-            g2.drawImage(animations[0][currentAnimation][animationCounter], (int)(hitbox.x - xOffset - gp.player.xDiff), (int) (hitbox.y - yOffset - gp.player.yDiff), (int)(drawWidth), (int)(drawHeight), null);
+            g2.drawImage(animations[0][currentAnimation][animationCounter], (int)(hitbox.x - xOffset - xDiff), (int) (hitbox.y - yOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
         }
         if(talking) {
         	//gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- gp.player.xDiff, (int)hitbox.y - 48*3- gp.player.yDiff, dialogues[dialogueIndex], this);

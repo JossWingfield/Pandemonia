@@ -303,21 +303,21 @@ public class MapBuilder {
 		}
 	}
 	
-	public void update() {
+	public void update(int xDiff, int yDiff) {
 		
 		int mouseX = gp.mouseI.mouseX;
 		int mouseY = gp.mouseI.mouseY;
 		
 		if(gp.mouseI.leftClickPressed && (mouseY < gp.frameHeight-ySize || !showTiles)) {
-			int xTile = (int)((mouseX+gp.player.xDiff)/gp.tileSize);
-			int yTile = (int)((mouseY+gp.player.yDiff)/gp.tileSize);
+			int xTile = (int)((mouseX+xDiff)/gp.tileSize);
+			int yTile = (int)((mouseY+yDiff)/gp.tileSize);
 			
 			writeToMap(xTile, yTile);
 		}
 		
 	}
 	
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		int mouseX = gp.mouseI.mouseX;
 		int mouseY = gp.mouseI.mouseY;
@@ -984,9 +984,9 @@ public class MapBuilder {
 		if(selectedTile != -1) {
 			
 			if(mouseY < gp.frameHeight-ySize || !showTiles) {
-				int xPos = (int)((mouseX+gp.player.xDiff)/gp.tileSize) * gp.tileSize;
-				int yPos = (int)((mouseY+gp.player.yDiff)/gp.tileSize) * gp.tileSize;
-				g2.drawImage(gp.mapM.tiles[selectedTile].image, xPos-gp.player.xDiff, yPos-gp.player.yDiff, 48, 48, null);
+				int xPos = (int)((mouseX+xDiff)/gp.tileSize) * gp.tileSize;
+				int yPos = (int)((mouseY+yDiff)/gp.tileSize) * gp.tileSize;
+				g2.drawImage(gp.mapM.tiles[selectedTile].image, xPos-xDiff, yPos-yDiff, 48, 48, null);
 			}
 		} 
 		
@@ -994,9 +994,9 @@ public class MapBuilder {
 			selectedTile = -1;
 			if(mouseY < gp.frameHeight-ySize || !showTiles) {
 				int size = 4*3;
-				int xPos = (int)((mouseX+gp.player.xDiff)/size) * size;
-				int yPos = (int)((mouseY+gp.player.yDiff)/size) * size;
-				g2.drawImage(selectedBuilding.animations[0][0][0], xPos-gp.player.xDiff - selectedBuilding.xDrawOffset, yPos-gp.player.yDiff - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getWidth()*3, selectedBuilding.animations[0][0][0].getHeight()*3, null);
+				int xPos = (int)((mouseX+xDiff)/size) * size;
+				int yPos = (int)((mouseY+yDiff)/size) * size;
+				g2.drawImage(selectedBuilding.animations[0][0][0], xPos-xDiff - selectedBuilding.xDrawOffset, yPos-yDiff - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getWidth()*3, selectedBuilding.animations[0][0][0].getHeight()*3, null);
 				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 					gp.buildingM.addBuilding((Building)selectedBuilding.clone(), xPos, yPos);
 					clickCounter = 20;

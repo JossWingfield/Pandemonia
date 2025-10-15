@@ -53,8 +53,8 @@ public abstract class Item extends Entity {
 
     public void update() {}
 
-    public void draw(Graphics2D g) {
-        g.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+    public void draw(Graphics2D g, int xDiff, int yDiff) {
+        g.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
     }
     public String getDescription() {
     	return description;

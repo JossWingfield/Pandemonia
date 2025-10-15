@@ -45,7 +45,7 @@ public class HerbBasket extends Building {
 
 		yDrawOffset = 48;
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
@@ -57,7 +57,7 @@ public class HerbBasket extends Building {
 		}
 				
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			if(gp.keyI.ePressed && clickCooldown == 0) {
 				if(gp.player.currentItem == null) {
 					openUI = !openUI;
@@ -66,7 +66,7 @@ public class HerbBasket extends Building {
 			}
 		} else {
 			openUI = false;
-		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		}
 		
 		//g2.setColor(Color.YELLOW);
@@ -74,17 +74,17 @@ public class HerbBasket extends Building {
       		
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 	        
 	}
 	
-	public void drawOverlayUI(Graphics2D g2) {
+	public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {
 	    if (!openUI) return;
 
 	    // Determine base position for UI (above the basket)
-	    int basketScreenX = (int) (hitbox.x - xDrawOffset - gp.player.xDiff);
-	    int basketScreenY = (int) (hitbox.y - gp.player.yDiff) - yDrawOffset + 20;
+	    int basketScreenX = (int) (hitbox.x - xDrawOffset - xDiff);
+	    int basketScreenY = (int) (hitbox.y - yDiff) - yDrawOffset + 20;
 
 	    // Dimensions for each slot
 	    int slotSize = 20 * 2;

@@ -56,7 +56,7 @@ public class Food extends Item {
 	public int getFoodLayer() {
 		return foodLayer;
 	}
-	 public void draw(Graphics2D g) {
+	 public void draw(Graphics2D g, int xDiff, int yDiff) {
 		 BufferedImage img = animations[0][0][0];
 		 switch(foodState) {
 		 case RAW:
@@ -76,7 +76,7 @@ public class Food extends Item {
 			 break;
 		 }
 		 
-		 g.drawImage(img, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 g.drawImage(img, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 
 	 }
 	 public BufferedImage getImage() {

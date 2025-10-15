@@ -43,7 +43,7 @@ public class TipJar extends Building {
 	public void destroy() {
 		gp.progressM.tipJarPresent = false;
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		int a = 0;
 		if(gp.world.getCurrentPhase() == DayPhase.SERVICE) {
@@ -52,10 +52,10 @@ public class TipJar extends Building {
 			a = 2;
 		}
         
-	    g2.drawImage(animations[0][0][a], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	    g2.drawImage(animations[0][0][a], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
         
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff), gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDiff, (int) (hitbox.y - yDiff), gp.tileSize, gp.tileSize, null);
 		}
 	        
 	}

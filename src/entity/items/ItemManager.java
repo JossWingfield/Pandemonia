@@ -58,10 +58,10 @@ public class ItemManager {
 
     }
 
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g, int xDiff, int yDiff) {
         for(Item i: items) { //Loops through the items on the current map
             if(i != null) {
-            	i.draw(g); //Draws the item
+            	i.draw(g, xDiff, yDiff); //Draws the item
             }
         }
     }

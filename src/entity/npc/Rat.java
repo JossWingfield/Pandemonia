@@ -103,7 +103,7 @@ public class Rat extends NPC {
 		}
 		
 	}	
-	  public void drawCurrentItem(Graphics2D g2) {
+	  public void drawCurrentItem(Graphics2D g2, int xDiff, int yDiff) {
 	    	if(currentItem == null) {
 	    		return;
 	    	}
@@ -136,17 +136,17 @@ public class Rat extends NPC {
 	    		Food f = (Food)currentItem;
 	    		img = f.getImage();
 	    	}
-  		g2.drawImage(img, (int)(hitbox.x - gp.player.xDiff- + xOffset), (int)(hitbox.y - gp.player.yDiff + yOffset), (int)(48), (int)(48), null);
+  		g2.drawImage(img, (int)(hitbox.x - xDiff- + xOffset), (int)(hitbox.y - yDiff + yOffset), (int)(48), (int)(48), null);
 
 	    }
 	  private void pickUpItem() {
 		  currentItem = fridge.getRandomItem();
 	  }
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
         if(direction == "Up") {
         	//drawCurrentItem(g2);
         }
-        drawCurrentItem(g2);
+        drawCurrentItem(g2, xDiff, yDiff);
         animationSpeed+=animationUpdateSpeed; //Update the animation frame
         if(animationSpeed == 5) {
             animationSpeed = 0;
@@ -179,7 +179,7 @@ public class Rat extends NPC {
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - gp.player.xDiff), (int) (hitbox.y - yDrawOffset - gp.player.yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
         }
         if(direction != "Up") {
         	//drawCurrentItem(g2);

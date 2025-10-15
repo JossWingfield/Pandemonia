@@ -78,14 +78,7 @@ public class Player extends Entity{
     private int invincibilityCounter = 0;
 
     //SCREEN SCROLL SETTINGS
-    public int xDiff; //The difference in the drawn background and the actual position
-    public int yDiff; //The difference in the drawn background and the actual position
-    private final double topBorder; //A border at the top of the screen, when the player moves past this the screen scrolls
-    private final double bottomBorder; //A border at the bottom of the screen, when the player moves past this the screen scrolls
-    private final double leftBorder; //A border on the left of the screen, when the player moves past this the screen scrolls
-    private final double rightBorder; //A border on the right of the screen, when the player moves past this the screen scrolls
-    private int maxXDiffValue;
-    private int maxYDiffValue;
+    private boolean controlEnabled = true;
     
     public int currentRoomIndex = 0;
     
@@ -109,14 +102,6 @@ public class Player extends Entity{
         initialSpeed = 5;
         speed = initialSpeed;
         currentSpeed = speed;
-       
-        maxXDiffValue = (gp.mapM.currentRoom.mapWidth * gp.tileSize) - gp.frameWidth; //change to worldsize
-        maxYDiffValue = (gp.mapM.currentRoom.mapHeight * gp.tileSize) - gp.frameHeight;
-
-        topBorder = gp.frameHeight * 0.45;
-        bottomBorder = gp.frameHeight * 0.55;
-        leftBorder = gp.frameWidth * 0.45;
-        rightBorder = gp.frameWidth * 0.55;
         
         interactHitbox = new Rectangle2D.Float(0, 0, 1, 1);
         
@@ -139,9 +124,6 @@ public class Player extends Entity{
         drawHeight = 80*drawScale;
         xDrawOffset = 34*drawScale;
         yDrawOffset = 36*drawScale;
-        
-        xDiff = 0;
-        yDiff = 0;
         
         playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.WHITE, 100);
         
@@ -189,8 +171,6 @@ public class Player extends Entity{
     public void setSpawnPoint(int xPos, int yPos) {
     	hitbox.x = xPos;
     	hitbox.y = yPos;
-    	xDiff = xPos;
-    	yDiff = yPos;
     }
     
     public int getCurrentAnimation() {
@@ -204,26 +184,6 @@ public class Player extends Entity{
     }
     public void setNormalSpeed() {
     	this.speed = initialSpeed;
-    }
-    public void reCalculateMaxDiffVals() {
-    	maxXDiffValue = (gp.mapM.currentRoom.mapWidth * gp.tileSize) - gp.frameWidth;
-        maxYDiffValue = (gp.mapM.currentRoom.mapHeight * gp.tileSize) - gp.frameHeight;
-    }
-    public void setDiffValues() {
-        // Center camera on player
-    	int playerX = (int)hitbox.x;
-    	int playerY = (int)hitbox.y;
-        xDiff = playerX - gp.frameWidth / 2;
-        yDiff = playerY - gp.frameHeight / 2;
-
-        // Clamp so we don't scroll past map edges
-        int maxX = gp.mapM.currentMapWidth * gp.tileSize - gp.frameWidth;
-        int maxY = gp.mapM.currentMapHeight * gp.tileSize - gp.frameHeight;
-
-        if (xDiff < 0) xDiff = 0;
-        if (yDiff < 0) yDiff = 0;
-        if (xDiff > maxX) xDiff = maxX;
-        if (yDiff > maxY) yDiff = maxY;
     }
     public void importImages() {
 
@@ -400,7 +360,7 @@ public class Player extends Entity{
     public void sendPacket(Packet packet) {
     	packet.writeData(gp.socketClient);
     }
-    private void handleDebugMode() {
+    private void handleDebugMode(int xDiff, int yDiff) {
         System.out.println((int)((mouseI.mouseX + xDiff) / gp.tileSize) + "   " + (int)((mouseI.mouseY + yDiff) / gp.tileSize));
     }
     public void takeDamage(int damage) {
@@ -419,42 +379,6 @@ public class Player extends Entity{
     private void death() {
         gp.currentState = gp.gameOverState;
         alive = false;
-    }
-    private void checkBorders() {
-        float scrollSpeed = currentSpeed+0.1f; //Number of pixels for which the diff value is changed by each update
-        //CHECKS IF PLAYER IS CLOSE ENOUGH TO TOP FOR SCREEN TO MOVE
-        if ((hitbox.y - yDiff) <= topBorder) {
-            yDiff -= scrollSpeed;
-        }
-        //TOP OF THE MAP
-        if (yDiff <= 0) {
-            yDiff = 0;
-        }
-        //CHECKS IF PLAYER IS CLOSE ENOUGH TO BOTTOM FOR SCREEN TO MOVE
-        if ((hitbox.y - yDiff) >= bottomBorder) {
-            yDiff += scrollSpeed;
-        }
-        //BOTTOM OF THE MAP
-        if (yDiff >= maxYDiffValue) {
-            yDiff = maxYDiffValue;
-        }
-
-        if ((hitbox.x - xDiff) <= leftBorder) {
-            xDiff -= scrollSpeed;
-        }
-        //TOP OF THE MAP
-        if (xDiff <= 0) {
-            xDiff = 0;
-        }
-        //CHECKS IF PLAYER IS CLOSE ENOUGH TO BOTTOM FOR SCREEN TO MOVE
-        if ((hitbox.x - xDiff) >= rightBorder) {
-            xDiff += scrollSpeed;
-        }
-        //BOTTOM OF THE MAP
-        if (xDiff >= maxXDiffValue) {
-            xDiff = maxXDiffValue;
-        }
-
     }
     private void updateCounters() {
         if(invincibilityCounter>0) {
@@ -638,19 +562,17 @@ public class Player extends Entity{
                 break;
         }
     }
+    public void setControlEnabled(boolean isEnabled) {
+    	controlEnabled = isEnabled;
+    }
     public void update() {
 
-    	if(!gp.minigameM.miniGameActive) {
+    	if(!gp.minigameM.miniGameActive && controlEnabled) {
     		handleMovement();
-    		checkBorders();
     		updateCounters();
     		updateInteractHitbox();
     		handleItems();
     	}
-        
-        if (keyI.debugMode) {
-        	handleDebugMode();
-        }
     }
     
     public void setCurrentAnimation(int currentAnimation) {
@@ -659,7 +581,7 @@ public class Player extends Entity{
     public void setDirection(int direction) {
         this.direction = direction;
     }
-    public void drawCurrentItem(Graphics2D g2) {
+    public void drawCurrentItem(Graphics2D g2, int xDiff, int yDiff) {
     	if(currentItem == null) {
     		return;
     	}
@@ -712,9 +634,9 @@ public class Player extends Entity{
     public void setUsername(String newName) {
     	username = newName;
     }
-    public void draw(Graphics2D g2) {
+    public void draw(Graphics2D g2, int xDiff, int yDiff) {
     	if(direction == 3) {
-    		drawCurrentItem(g2);
+    		drawCurrentItem(g2, xDiff, yDiff);
     	}
 
         animationSpeed++; //Updating animation frame
@@ -743,7 +665,7 @@ public class Player extends Entity{
     	g2.drawImage(img, (int)(hitbox.x - xDiff - xDrawOffset), (int)(hitbox.y - yDiff - yDrawOffset), (int)(drawWidth), (int)(drawHeight), null);
 	    
         if(direction != 3) {
-    		drawCurrentItem(g2);
+    		drawCurrentItem(g2, xDiff, yDiff);
     	}	 
 	    //g2.drawImage(handImg, (int)(hitbox.x - xDiff - xDrawOffset), (int)(hitbox.y - yDiff - yDrawOffset), (int)(drawWidth), (int)(drawHeight), null);    
         //Draw username
@@ -775,6 +697,10 @@ public class Player extends Entity{
             gp.itemM.drawItemHitboxes(g2, xDiff, yDiff);
             g2.setColor(Color.GREEN);
             gp.npcM.drawNPCHitboxes(g2);
+        }
+        
+        if (keyI.debugMode) {
+        	handleDebugMode(xDiff, yDiff);
         }
     }
 

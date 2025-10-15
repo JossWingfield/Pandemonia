@@ -3,7 +3,9 @@ package map;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
@@ -12,12 +14,14 @@ import java.util.List;
 import java.util.Map;
 
 import entity.items.Item;
+import main.Camera;
 import main.GamePanel;
 import utility.Settings;
 
 public class LightingManager {
 
     GamePanel gp;
+    Camera camera;
     private List<LightSource> lights; // List of light sources
 
     private Color ambientColor = new Color(255, 244, 214); // Default sunlight
@@ -48,8 +52,9 @@ public class LightingManager {
     private Color evening = new Color(255, 180, 120); // 18h
     private Color night   = new Color(20, 20, 40);    // 0h / 24h
 
-    public LightingManager(GamePanel gp) {
+    public LightingManager(GamePanel gp, Camera camera) {
         this.gp = gp;
+        this.camera = camera;
         lights = new ArrayList<>();
     }
 
@@ -156,6 +161,13 @@ public class LightingManager {
 
     // --- Lighting pass ---
     public BufferedImage applyLighting(BufferedImage colorBuffer, Graphics2D g2) {
+    	
+    	if(Settings.bloomEnabled) {
+    		BufferedImage emissiveBuffer = new BufferedImage(gp.frameWidth, gp.frameHeight, BufferedImage.TYPE_INT_ARGB);
+    		Graphics2D ge = emissiveBuffer.createGraphics();
+    		ge.setComposite(AlphaComposite.SrcOver);
+    	}
+    	
         int width = colorBuffer.getWidth();
         int height = colorBuffer.getHeight();
 
@@ -286,8 +298,13 @@ public class LightingManager {
 
         return litImageScaled;
     }
-    
-
+    private BufferedImage deepCopy(BufferedImage src) {
+        BufferedImage copy = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
+        Graphics2D g = copy.createGraphics();
+        g.drawImage(src, 0, 0, null);
+        g.dispose();
+        return copy;
+    }
     private void updateLightCache() {
         int n = lights.size();
         if (premulR == null || premulR.length != n) {

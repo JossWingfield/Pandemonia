@@ -229,9 +229,9 @@ public class Plate extends Item {
         Recipe matched = RecipeManager.getMatchingRecipe(getIngredients());
         return matched != null ? matched.getName() : null;
     }
-    public void draw(Graphics2D g) {
-        int baseX = (int) hitbox.x - xDrawOffset - gp.player.xDiff;
-        int baseY = (int) hitbox.y - yDrawOffset - gp.player.yDiff;
+    public void draw(Graphics2D g, int xDiff, int yDiff) {
+        int baseX = (int) hitbox.x - xDrawOffset - xDiff;
+        int baseY = (int) hitbox.y - yDrawOffset - yDiff;
 
         if(isDirty) {
             g.drawImage(dirtyImage, baseX, baseY, drawWidth, drawHeight, null);

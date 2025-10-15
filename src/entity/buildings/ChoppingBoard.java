@@ -63,16 +63,16 @@ public class ChoppingBoard extends Building {
 	    this.currentItem = item;
 	    this.chopCount = 0;
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(gp.progressM.choppingBoardUpgradeI) {
 			maxChopCount = 8;
 		}
 		 
-		g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
       		 
 	    if(hitbox.intersects(gp.player.hitbox)) {
-		    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    if(gp.keyI.ePressed) {
 		    	if(clickCooldown == 0) {
 			    	if(gp.player.currentItem != null) {
@@ -132,11 +132,11 @@ public class ChoppingBoard extends Building {
 	    }
 	    
 	    if(currentItem != null) {
-		    g2.drawImage(animations[0][0][2], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    g2.drawImage(animations[0][0][2], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    if(currentItem.foodState == FoodState.RAW) {
-		    	g2.drawImage(currentItem.animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    	g2.drawImage(currentItem.animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    } else {
-		    	g2.drawImage(currentItem.animations[0][0][4], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    	g2.drawImage(currentItem.animations[0][0][4], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    }
 	    }
 	    
@@ -145,11 +145,11 @@ public class ChoppingBoard extends Building {
 	    }
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 		if(currentItem != null) {
 			if(currentItem.foodState == FoodState.RAW && canChop(currentItem.getName())) {
-				drawChoppingBar(g2, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, chopCount, maxChopCount);
+				drawChoppingBar(g2, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, chopCount, maxChopCount, xDiff, yDiff);
 			}
 		}
 	}
@@ -173,9 +173,9 @@ public class ChoppingBoard extends Building {
 		}
 	}
 
-	private void drawChoppingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime) {
-	    float screenX = worldX - xDrawOffset - gp.player.xDiff;
-	    float screenY = worldY - yDrawOffset - gp.player.yDiff;
+	private void drawChoppingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {
+	    float screenX = worldX - xDrawOffset - xDiff;
+	    float screenY = worldY - yDrawOffset - yDiff;
 
 	    int barWidth = 48;
 	    int barHeight = 6;

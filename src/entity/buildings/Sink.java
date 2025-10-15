@@ -114,9 +114,9 @@ public class Sink extends Building {
 		}
 		litPlateImage = null;
 	}
-	private void drawWashingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime) {
-	    float screenX = worldX - xDrawOffset - gp.player.xDiff;
-	    float screenY = worldY - yDrawOffset - gp.player.yDiff;
+	private void drawWashingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {
+	    float screenX = worldX - xDrawOffset - xDiff;
+	    float screenY = worldY - yDrawOffset - yDiff;
 
 	    int barWidth = 48;
 	    int barHeight = 6;
@@ -137,7 +137,7 @@ public class Sink extends Building {
 	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight);
 
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(gp.progressM.sinkUpgradeI) {
 			maxWashCount = 60*6;
@@ -150,19 +150,19 @@ public class Sink extends Building {
 		}
 		
 		if(cleanedPlateCount == 0) {
-		     g2.drawImage(animations[0][0][7], (int) hitbox.x - xDrawOffset - gp.player.xDiff+18, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, 48, 48, null);
+		     g2.drawImage(animations[0][0][7], (int) hitbox.x - xDrawOffset - xDiff+18, (int) (hitbox.y - yDiff)-yDrawOffset, 48, 48, null);
 		} else {
-		     g2.drawImage(animations[0][0][7+cleanedPlateCount], (int) hitbox.x - xDrawOffset - gp.player.xDiff+18, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, 48, 48, null);
+		     g2.drawImage(animations[0][0][7+cleanedPlateCount], (int) hitbox.x - xDrawOffset - xDiff+18, (int) (hitbox.y - yDiff)-yDrawOffset, 48, 48, null);
 		}
 		
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		 
 		if(sinkHitbox != null) {
 			if(gp.player.currentItem != null) {
 				if(gp.player.currentItem instanceof Plate plate) {
 					if(plate.isDirty()) {
 						if(sinkHitbox.intersects(gp.player.hitbox)) {
-						    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+						    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 						    if(gp.keyI.ePressed && clickCooldown == 0) {
 						    	if(currentPlate == null) {
 							    	clickCooldown = 8;
@@ -179,7 +179,7 @@ public class Sink extends Building {
 				}
 			} else if(currentPlate != null) {
 				if(sinkHitbox.intersects(gp.player.hitbox)) {
-				    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 				    if(gp.keyI.ePressed) {
 				    	chopCount++;
 				    	if(chopCount == maxWashCount) {
@@ -210,13 +210,13 @@ public class Sink extends Building {
 				img = animations[0][0][4];
 				break;
 			}
-			 g2.drawImage(img, (int) hitbox.x - xDrawOffset - gp.player.xDiff + 19, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset+30, 48, 48, null);
+			 g2.drawImage(img, (int) hitbox.x - xDrawOffset - xDiff + 19, (int) (hitbox.y - yDiff)-yDrawOffset+30, 48, 48, null);
 
 			
 		    if(sinkHitbox.intersects(gp.player.hitbox)) {
-		    	g2.drawImage(animations[0][0][5], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    	g2.drawImage(animations[0][0][5], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    } else {
-				g2.drawImage(animations[0][0][6], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				g2.drawImage(animations[0][0][6], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    }
 		}
 		
@@ -247,12 +247,12 @@ public class Sink extends Building {
 		}
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 	}
-	public void drawOverlayUI(Graphics2D g2) {
+	public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {
 		if(currentPlate != null) {
-			drawWashingBar(g2, hitbox.x+30, hitbox.y+32, chopCount, maxWashCount);
+			drawWashingBar(g2, hitbox.x+30, hitbox.y+32, chopCount, maxWashCount, xDiff, yDiff);
 		}
 	}
 }

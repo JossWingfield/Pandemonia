@@ -60,14 +60,14 @@ public class Oven extends Building {
 	
        	ovenOn = importImage("/decor/OvenOn.png");
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 	    
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
 	    	if(currentItem == null) {
-			    g2.drawImage(animations[0][0][4], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    g2.drawImage(animations[0][0][4], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			} else {
-			    g2.drawImage(animations[0][0][3], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    g2.drawImage(animations[0][0][3], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			}
 		    if(gp.keyI.ePressed) {
 		    	if(clickCooldown == 0) {
@@ -97,9 +97,9 @@ public class Oven extends Building {
 		    }
 	    } else {
 			if(currentItem == null) {
-			    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			} else {
-			    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			}
 	    }
 	    
@@ -108,15 +108,15 @@ public class Oven extends Building {
 	    }
 	    
 	    if(cooking) {
-		    g2.drawImage(ovenOn, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    g2.drawImage(ovenOn, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    }
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 		if(currentItem != null) {
 			if(currentItem.foodState == FoodState.RAW) {
-				drawCookingBar(g2, (int) hitbox.x - gp.player.xDiff + 24, (int) (hitbox.y - gp.player.yDiff) + 24+48, cookCount, maxCookCount);
+				drawCookingBar(g2, (int) hitbox.x - xDiff + 24, (int) (hitbox.y - yDiff) + 24+48, cookCount, maxCookCount, xDiff, yDiff);
 			}
 		}
 	}
@@ -140,9 +140,9 @@ public class Oven extends Building {
 			}
 		}
 	}
-	private void drawCookingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime) {
-	    float screenX = worldX - xDrawOffset - gp.player.xDiff;
-	    float screenY = worldY - yDrawOffset - gp.player.yDiff;
+	private void drawCookingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {
+	    float screenX = worldX - xDrawOffset - xDiff;
+	    float screenY = worldY - yDrawOffset - yDiff;
 
 	    int barWidth = 48;
 	    int barHeight = 6;

@@ -50,18 +50,18 @@ public class Chair extends Building {
 	public void refreshImages() {
 		animations[0][0][0] = gp.mapM.getRooms()[roomNum].getChairSkin().getImage();
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, float xDiff, float yDiff) {
 		if(firstUpdate) {
 			tablePlate = new TablePlate(gp, hitbox.x, hitbox.y, facing, this);
 			gp.buildingM.addBuilding(tablePlate);
 			firstUpdate = false;
 		}
 		 
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	    g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 
 	     
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 	    
 	}

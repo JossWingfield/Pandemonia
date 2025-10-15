@@ -435,11 +435,11 @@ public class BuildingManager {
             }
         }
     }
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g, int xDiff, int yDiff) {
     	
         for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
-            	i.draw(g); //Draws the item
+            	i.draw(g, xDiff, yDiff); //Draws the item
             }
         }
 

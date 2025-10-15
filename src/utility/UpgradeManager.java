@@ -97,6 +97,7 @@ public class UpgradeManager {
         		RewardType.KITCHEN));
         
         
+        
         //PHASE 2
         registerUpgrade(new Upgrade(gp, "Fridge Upgrade II",
         		"Increases Fridge Space /nto 15!)",
@@ -116,7 +117,7 @@ public class UpgradeManager {
         		2,
         		RewardType.KITCHEN));
         
-        //ADD EITHER SEASONING/SOUPS
+        //ADD SOUPS
     	
     }
     protected BufferedImage importImage(String filePath) {

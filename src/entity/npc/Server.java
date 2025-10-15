@@ -89,7 +89,7 @@ public class Server extends Employee {
 		}
 		
 	}	
-    public void draw(Graphics2D g2) {
+    public void draw(Graphics2D g2, int xDiff, int yDiff) {
     	
         animationSpeed+=animationUpdateSpeed; //Update the animation frame
         if(animationSpeed == 5) {
@@ -132,7 +132,7 @@ public class Server extends Employee {
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }   
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - gp.player.xDiff), (int) (hitbox.y - yDrawOffset - gp.player.yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
         }
         if(talking) {
         	//gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- gp.player.xDiff, (int)hitbox.y - 48*3- gp.player.yDiff, dialogues[dialogueIndex], this);

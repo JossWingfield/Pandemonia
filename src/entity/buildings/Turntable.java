@@ -42,7 +42,7 @@ public class Turntable extends Building {
 	public void destroy() {
 		gp.progressM.turntablePresent = false;
 	}
-	public void draw(Graphics2D g2) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		animationSpeed++; //Updating animation frame
         if (animationSpeed == animationSpeedFactor) {
@@ -54,10 +54,10 @@ public class Turntable extends Building {
             animationCounter = 0;
         }		
         
-	    g2.drawImage(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	    g2.drawImage(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
         
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff), gp.tileSize, gp.tileSize, null);
+		    g2.drawImage(destructionImage, (int) hitbox.x - xDiff, (int) (hitbox.y - yDiff), gp.tileSize, gp.tileSize, null);
 		}
 	        
 	}

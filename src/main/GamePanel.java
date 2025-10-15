@@ -33,6 +33,7 @@ import utility.RoomHelperMethods;
 import utility.Settings;
 import utility.UpgradeManager;
 import utility.World;
+import utility.cutscene.CutsceneManager;
 import utility.minigame.MiniGameManager;
 import utility.save.SaveManager;
 
@@ -97,7 +98,8 @@ public class GamePanel extends JPanel implements Runnable {
     public ItemRegistry itemRegistry = new ItemRegistry(this);
     public BuildingRegistry buildingRegistry = new BuildingRegistry(this);
     public World world = new World(this);
-    public LightingManager lightingM = new LightingManager(this);
+    public Camera camera = new Camera(this);
+    public LightingManager lightingM = new LightingManager(this, camera);
     public Customiser customiser = new Customiser(this);
     public Catalogue catalogue = new Catalogue(this);
     public RecipeManager recipeM = new RecipeManager();
@@ -105,6 +107,7 @@ public class GamePanel extends JPanel implements Runnable {
     public ProgressManager progressM = new ProgressManager(this);
     public MiniGameManager minigameM = new MiniGameManager(this);
     public RoomHelperMethods roomH = new RoomHelperMethods();
+    public CutsceneManager cutsceneManager = new CutsceneManager(this);
     public SaveManager saveM = new SaveManager(this);
     public MapBuilder mapB = new MapBuilder(this);
     //THREAD initialising the thread which the game loop is run off
@@ -174,7 +177,8 @@ public class GamePanel extends JPanel implements Runnable {
     	gColor.setColor(backgroundColour);
     	gColor.fillRect(0, 0, frameWidth, frameHeight);
         gColor.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF));
-
+        camera.follow(player);
+        camera.setZoom(1.0f);
     }
     public void startGame() {
     	player = new Player(this, 48*10, 48*10, keyI, mouseI, "");
@@ -185,7 +189,10 @@ public class GamePanel extends JPanel implements Runnable {
         updateEntityList.clear();
         entityList.clear();
         world = new World(this);
-        lightingM = new LightingManager(this);
+        camera = new Camera(this);
+        camera.follow(player);
+        camera.setZoom(1.0f);
+        lightingM = new LightingManager(this, camera);
         customiser = new Customiser(this);
         catalogue = new Catalogue(this);
         recipeM = new RecipeManager();
@@ -456,6 +463,17 @@ public class GamePanel extends JPanel implements Runnable {
     //UPDATES THE GAME
     public void update() {    	
     	
+    	float viewWidthWorld  = frameWidth  / camera.zoom;
+    	float viewHeightWorld = frameHeight / camera.zoom;
+
+    	// Top-left of camera view in world coords
+    	float viewLeftWorld = camera.x - viewWidthWorld * 0.5f;
+    	float viewTopWorld  = camera.y - viewHeightWorld * 0.5f;
+
+    	// These are *positive* offsets from world to screen
+    	int xDiff = Math.round(viewLeftWorld);
+    	int yDiff = Math.round(viewTopWorld);
+    	
     	if(errorCounter > 0) {
     		errorCounter--;
     		if(errorCounter == 0) {
@@ -496,13 +514,14 @@ public class GamePanel extends JPanel implements Runnable {
 		    	npcM.update();
 		    	itemM.update();
 		    	world.update();
+    			camera.update();
 		    	lightingM.update();
 		    	minigameM.update();
 		    	if(currentState == customiseRestaurantState) {
 		    		customiser.update();
 		    	}
 	    	} else if(currentState == mapBuildState) {
-	    		mapB.update();
+	    		mapB.update(xDiff, yDiff);
 	    		buildingM.update();
 	    	}
     		gui.update();
@@ -548,6 +567,18 @@ public class GamePanel extends JPanel implements Runnable {
     }
     
     public void draw(Graphics2D g2) {
+    	
+    	float viewWidthWorld  = frameWidth  / camera.zoom;
+    	float viewHeightWorld = frameHeight / camera.zoom;
+
+    	// Top-left of camera view in world coords
+    	float viewLeftWorld = camera.x - viewWidthWorld * 0.5f;
+    	float viewTopWorld  = camera.y - viewHeightWorld * 0.5f;
+
+    	// These are *positive* offsets from world to screen
+    	int xDiff = Math.round(viewLeftWorld);
+    	int yDiff = Math.round(viewTopWorld);
+    		
         
         if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == catalogueState || currentState == customiseRestaurantState || currentState == xpState) {
         	
@@ -557,22 +588,19 @@ public class GamePanel extends JPanel implements Runnable {
         	gColor.fillRect(0, 0, frameWidth, frameHeight);
             gColor.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF));
 
-        	
-        		int xDiff = player.xDiff;
-        		int yDiff = player.yDiff;
         		mapM.draw(gColor, xDiff, yDiff);	 
         		
         		Building[] bottomLayer = buildingM.getBottomLayer();
     	        for(int i = 0; i < bottomLayer.length-1; i++) {
     	        	if(bottomLayer[i] != null) {
-    	        		bottomLayer[i].draw(gColor);
+    	        		bottomLayer[i].draw(gColor, xDiff, yDiff);
     	        	}
     	        }
     	        
     	        Building[] secondLayer = buildingM.getSecondLayer();
     	        for(int i = 0; i < secondLayer.length-1; i++) {
     	        	if(secondLayer[i] != null) {
-    	        		secondLayer[i].draw(gColor);
+    	        		secondLayer[i].draw(gColor, xDiff, yDiff);
     	        	}
     	        }
         		
@@ -581,8 +609,8 @@ public class GamePanel extends JPanel implements Runnable {
 	    	            if (getPlayerList().get(i) != null) {
 	    	            	Player p = getPlayerList().get(i);
 	    	            	if(p != player) {
-	    	            		p.xDiff = player.xDiff;
-	    	            		p.yDiff = player.yDiff;
+	    	            		//p.xDiff = player.xDiff;
+	    	            		//p.yDiff = player.yDiff;
 	    	            	}
 	    	            	if(p.currentRoomIndex == player.currentRoomIndex) {
 		    	            	entityList.add(p);
@@ -630,7 +658,7 @@ public class GamePanel extends JPanel implements Runnable {
 	            	Entity a = entityList.get(i);
 	            	if(a != null) {
 		            	if(a.isOnScreen(xDiff, yDiff, frameWidth, frameHeight)) {
-		            		a.draw(gColor);
+		            		a.draw(gColor, xDiff, yDiff);
 		            	}
 	            	}
 	            }
@@ -640,28 +668,28 @@ public class GamePanel extends JPanel implements Runnable {
 	            Building[] thirdLayer = buildingM.getThirdLayer();
 		        for(int i = 0; i < thirdLayer.length-1; i++) {
 		        	if(thirdLayer[i] != null) {
-		        		thirdLayer[i].draw(gColor);
+		        		thirdLayer[i].draw(gColor, xDiff, yDiff);
 		        	}
 		        }
 		        
 		        List<Item> items = new ArrayList<Item>(itemM.getItems());
 		        for(Item item: items) {
 		        	if(item != null) {
-		        		item.draw(gColor);
+		        		item.draw(gColor, xDiff, yDiff);
 		        	}
 		        }
 		    
 		        Building[] fourthLayer = buildingM.getFourthLayer();
 		        for(int i = 0; i < fourthLayer.length-1; i++) {
 		        	if(fourthLayer[i] != null) {
-		        		fourthLayer[i].draw(gColor);
+		        		fourthLayer[i].draw(gColor, xDiff, yDiff);
 		        	}
 		        }
 		        
 		        Building[] fifthLayer = buildingM.getFifthLayer();
 		        for(int i = 0; i < fifthLayer.length-1; i++) {
 		        	if(fifthLayer[i] != null) {
-		        		fifthLayer[i].draw(gColor);
+		        		fifthLayer[i].draw(gColor, xDiff, yDiff);
 		        	}
 		        }
 		        
@@ -669,34 +697,74 @@ public class GamePanel extends JPanel implements Runnable {
 	            
 		        gColor.dispose();
 
-		        if(Settings.fancyLighting) {
-		        	// === 2. Apply lighting ===
-		        	lightingM.applyLighting(colorBuffer, g2);
-        		} else {
-        			g2.drawImage(colorBuffer, 0, 0, frameWidth, frameHeight, null);
-        		}
+		        if (Settings.fancyLighting) {
+		            // Compute full-screen lit image (same resolution as colorBuffer)
+		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, g2); // returns full-size lit image
+
+		            // Compute source rectangle in litFull to display (zooming)
+		            // srcW,srcH are the portion of the litFull that maps to the current camera view before scaling
+		            int srcW = Math.max(1, (int) Math.round(frameWidth  / camera.zoom));
+		            int srcH = Math.max(1, (int) Math.round(frameHeight / camera.zoom));
+
+		            // Buffer coords of camera center: for a litFull image that already represents the camera's view,
+		            // the camera center in buffer pixels is simply frameWidth/2, frameHeight/2.
+		            // (Because we rendered the view into colorBuffer with the top-left = viewLeftWorld).
+		            int centerX = frameWidth / 2;
+		            int centerY = frameHeight / 2;
+
+		            int srcX = centerX - srcW / 2;
+		            int srcY = centerY - srcH / 2;
+
+		            // Clamp
+		            if (srcX < 0) srcX = 0;
+		            if (srcY < 0) srcY = 0;
+		            if (srcX + srcW > litFull.getWidth()) srcX = litFull.getWidth() - srcW;
+		            if (srcY + srcH > litFull.getHeight()) srcY = litFull.getHeight() - srcH;
+
+		            // Extract the region and draw it scaled to full panel (this performs the zoom)
+		            BufferedImage viewSub = litFull.getSubimage(srcX, srcY, srcW, srcH);
+		            g2.drawImage(viewSub, 0, 0, frameWidth, frameHeight, null);
+
+		        } else {
+		        	int bufferCamX = Math.round(camera.x);
+		        	int bufferCamY = Math.round(camera.y);
+		        	int srcW = Math.max(1, (int) Math.round(frameWidth / camera.zoom));
+		        	int srcH = Math.max(1, (int) Math.round(frameHeight / camera.zoom));
+
+		        	int srcX = bufferCamX - srcW / 2;
+		        	int srcY = bufferCamY - srcH / 2;
+
+		        	// clamp to buffer edges
+		        	if (srcX < 0) srcX = 0;
+		        	if (srcY < 0) srcY = 0;
+		        	if (srcX + srcW > colorBuffer.getWidth()) srcX = colorBuffer.getWidth() - srcW;
+		        	if (srcY + srcH > colorBuffer.getHeight()) srcY = colorBuffer.getHeight() - srcH;
+
+		        	BufferedImage viewSub = colorBuffer.getSubimage(srcX, srcY, srcW, srcH);
+		        	g2.drawImage(viewSub, 0, 0, frameWidth, frameHeight, null);
+		        }
 	            
 	            for (int i = 0; i < thirdLayer.length; i++) {
 	                if (thirdLayer[i] != null) {
-	                    thirdLayer[i].drawOverlayUI(g2);
+	                    thirdLayer[i].drawOverlayUI(g2, xDiff, yDiff);
 	                }
 	            }
 
 	            for (int i = 0; i < fourthLayer.length; i++) {
 	                if (fourthLayer[i] != null) {
-	                    fourthLayer[i].drawOverlayUI(g2);
+	                    fourthLayer[i].drawOverlayUI(g2, xDiff, yDiff);
 	                }
 	            }
 
 	            for (int i = 0; i < fifthLayer.length; i++) {
 	                if (fifthLayer[i] != null) {
-	                    fifthLayer[i].drawOverlayUI(g2);
+	                    fifthLayer[i].drawOverlayUI(g2, xDiff, yDiff);
 	                }
 	            }
 	            builds = buildingM.getBuildings();
 	            for (int i = 0; i < builds.length; i++) {
 	                if (builds[i] != null) {
-	                    builds[i].drawOverlayUI(g2);
+	                    builds[i].drawOverlayUI(g2, xDiff, yDiff);
 	                }
 	            }
 		        
@@ -706,52 +774,52 @@ public class GamePanel extends JPanel implements Runnable {
         
         
         if(currentState == mapBuildState) {
-        	mapM.draw(g2, player.xDiff, player.yDiff);
-        	mapM.drawForeground(g2, player.xDiff, player.yDiff);
+        	mapM.draw(g2, xDiff, yDiff);
+        	mapM.drawForeground(g2, xDiff, yDiff);
         	
         	Building[] bottomLayer = buildingM.getBottomLayer();
 	        for(int i = 0; i < bottomLayer.length-1; i++) {
 	        	if(bottomLayer[i] != null) {
-	        		bottomLayer[i].draw(g2);
+	        		bottomLayer[i].draw(g2, xDiff, yDiff);
 	        	}
 	        }
 	        Building[] middleLayer = buildingM.getSecondLayer();
 	        for(int i = 0; i < middleLayer.length-1; i++) {
 	        	if(middleLayer[i] != null) {
-	        		middleLayer[i].draw(g2);
+	        		middleLayer[i].draw(g2, xDiff, yDiff);
 	        	}
 	        }
         	
         	Building[] main = buildingM.getBuildingsToDraw();
 	        for(int i = 0; i < main.length-1; i++) {
 	        	if(main[i] != null) {
-	        		main[i].draw(g2);
+	        		main[i].draw(g2, xDiff, yDiff);
 	        	}
 	        }
         	
         	Building[] secondLayer = buildingM.getThirdLayer();
 	        for(int i = 0; i < secondLayer.length-1; i++) {
 	        	if(secondLayer[i] != null) {
-	        		secondLayer[i].draw(g2);
+	        		secondLayer[i].draw(g2, xDiff, yDiff);
 	        	}
 	        }
 	        Building[] thirdLayer = buildingM.getFourthLayer();
 	        for(int i = 0; i < thirdLayer.length-1; i++) {
 	        	if(thirdLayer[i] != null) {
-	        		thirdLayer[i].draw(g2);
+	        		thirdLayer[i].draw(g2, xDiff, yDiff);
 	        	}
 	        }
 	        Building[] fourthLayer = buildingM.getFifthLayer();
 	        for(int i = 0; i < fourthLayer.length-1; i++) {
 	        	if(fourthLayer[i] != null) {
-	        		fourthLayer[i].draw(g2);
+	        		fourthLayer[i].draw(g2, xDiff, yDiff);
 	        	}
 	        }
         	
-        	mapB.draw(g2);
+        	mapB.draw(g2, xDiff, yDiff);
         } 
         if(currentState == customiseRestaurantState) {
-        	customiser.draw(g2);
+        	customiser.draw(g2, xDiff, yDiff);
         }
         
     	minigameM.draw(g2);

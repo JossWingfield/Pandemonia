@@ -90,7 +90,7 @@ public class CookingItem extends Item {
 	public int getMaxCookTime() {
 	    return maxCookTime;
 	}
-	public void drawCookingWarning(Graphics2D g2, int x) {
+	public void drawCookingWarning(Graphics2D g2, int x, int xDiff, int yDiff) {
 		
 		 flickerCounter++;
 		 if (flickerCounter >= flickerSpeed) {
@@ -106,9 +106,9 @@ public class CookingItem extends Item {
 	 	         currentSign = warningOrderSign;
 	 	     }
 	
-	 	    g2.drawImage(currentSign,(int)(x - gp.player.xDiff),(int)(hitbox.y - gp.player.yDiff - 48),48, 48,null);
+	 	    g2.drawImage(currentSign,(int)(x - xDiff),(int)(hitbox.y - yDiff - 48),48, 48,null);
 		} else {
-	 	    g2.drawImage(completeSign,(int)(x - gp.player.xDiff),(int)(hitbox.y - gp.player.yDiff - 48),48, 48,null);
+	 	    g2.drawImage(completeSign,(int)(x - xDiff),(int)(hitbox.y - yDiff - 48),48, 48,null);
 		}
 	}
 }
