@@ -46,7 +46,7 @@ public class Cauldron extends Building {
     	animations[0][0][0] = importImage("/decor/Cauldron.png").getSubimage(0, 0, 32, 32);
     	animations[0][0][1] = importImage("/decor/Cauldron.png").getSubimage(32, 0, 32, 32);
 	}
-	public void draw(Graphics2D g2, float xDiff, float yDiff) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 
 		if(!isActive) {
 			if(gp.player.interactHitbox.intersects(hitbox)) {

@@ -54,7 +54,7 @@ public class Bin extends Building {
     	xDrawOffset = 24;
     	yDrawOffset = 24;
 	}
-	public void draw(Graphics2D g2, float xDiff, float yDiff) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(firstUpdate) {
 			firstUpdate = false;

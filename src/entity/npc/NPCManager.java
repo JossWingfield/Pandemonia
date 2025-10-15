@@ -188,7 +188,9 @@ public class NPCManager {
     public void update() {
     	for (NPC i : new ArrayList<>(npcs)) {
     	    if (i != null) {
-    	        i.update();
+    	    	if(i.ableToUpdate) {
+    	    		i.update();
+    	    	}
     	    }
     	}
         

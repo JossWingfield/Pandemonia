@@ -50,7 +50,7 @@ public class Chair extends Building {
 	public void refreshImages() {
 		animations[0][0][0] = gp.mapM.getRooms()[roomNum].getChairSkin().getImage();
 	}
-	public void draw(Graphics2D g2, float xDiff, float yDiff) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			tablePlate = new TablePlate(gp, hitbox.x, hitbox.y, facing, this);
 			gp.buildingM.addBuilding(tablePlate);

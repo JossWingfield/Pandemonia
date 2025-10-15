@@ -107,7 +107,7 @@ public class GamePanel extends JPanel implements Runnable {
     public ProgressManager progressM = new ProgressManager(this);
     public MiniGameManager minigameM = new MiniGameManager(this);
     public RoomHelperMethods roomH = new RoomHelperMethods();
-    public CutsceneManager cutsceneManager = new CutsceneManager(this);
+    public CutsceneManager cutsceneM = new CutsceneManager(this);
     public SaveManager saveM = new SaveManager(this);
     public MapBuilder mapB = new MapBuilder(this);
     //THREAD initialising the thread which the game loop is run off
@@ -515,6 +515,7 @@ public class GamePanel extends JPanel implements Runnable {
 		    	itemM.update();
 		    	world.update();
     			camera.update();
+    			cutsceneM.update();
 		    	lightingM.update();
 		    	minigameM.update();
 		    	if(currentState == customiseRestaurantState) {
@@ -698,36 +699,25 @@ public class GamePanel extends JPanel implements Runnable {
 		        gColor.dispose();
 
 		        if (Settings.fancyLighting) {
-		            // Compute full-screen lit image (same resolution as colorBuffer)
-		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, g2); // returns full-size lit image
-
-		            // Compute source rectangle in litFull to display (zooming)
-		            // srcW,srcH are the portion of the litFull that maps to the current camera view before scaling
-		            int srcW = Math.max(1, (int) Math.round(frameWidth  / camera.zoom));
+		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, g2, xDiff, yDiff);
+		            
+		            int bufferCamX = Math.round(camera.x - xDiff);
+		            int bufferCamY = Math.round(camera.y - yDiff);
+		            int srcW = Math.max(1, (int) Math.round(frameWidth / camera.zoom));
 		            int srcH = Math.max(1, (int) Math.round(frameHeight / camera.zoom));
 
-		            // Buffer coords of camera center: for a litFull image that already represents the camera's view,
-		            // the camera center in buffer pixels is simply frameWidth/2, frameHeight/2.
-		            // (Because we rendered the view into colorBuffer with the top-left = viewLeftWorld).
-		            int centerX = frameWidth / 2;
-		            int centerY = frameHeight / 2;
+		            int srcX = bufferCamX - srcW / 2;
+		            int srcY = bufferCamY - srcH / 2;
 
-		            int srcX = centerX - srcW / 2;
-		            int srcY = centerY - srcH / 2;
+		            // clamp to litFull edges
+		            srcX = Math.max(0, Math.min(srcX, litFull.getWidth() - srcW));
+		            srcY = Math.max(0, Math.min(srcY, litFull.getHeight() - srcH));
 
-		            // Clamp
-		            if (srcX < 0) srcX = 0;
-		            if (srcY < 0) srcY = 0;
-		            if (srcX + srcW > litFull.getWidth()) srcX = litFull.getWidth() - srcW;
-		            if (srcY + srcH > litFull.getHeight()) srcY = litFull.getHeight() - srcH;
-
-		            // Extract the region and draw it scaled to full panel (this performs the zoom)
 		            BufferedImage viewSub = litFull.getSubimage(srcX, srcY, srcW, srcH);
 		            g2.drawImage(viewSub, 0, 0, frameWidth, frameHeight, null);
-
 		        } else {
-		        	int bufferCamX = Math.round(camera.x);
-		        	int bufferCamY = Math.round(camera.y);
+		        	int bufferCamX = Math.round(camera.x - xDiff);
+		        	int bufferCamY = Math.round(camera.y - yDiff);
 		        	int srcW = Math.max(1, (int) Math.round(frameWidth / camera.zoom));
 		        	int srcH = Math.max(1, (int) Math.round(frameHeight / camera.zoom));
 

@@ -62,7 +62,7 @@ public class Breaker extends Building{
 			gp.mapM.getRoom(3).addLight(light);
 		}
 	}
-	public void draw(Graphics2D g2, float xDiff, float yDiff) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(powerOn) {
 		    if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			    g2.drawImage(animations[0][0][2], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);

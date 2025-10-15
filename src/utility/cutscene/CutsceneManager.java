@@ -3,6 +3,7 @@ package utility.cutscene;
 import java.util.ArrayList;
 import java.util.List;
 
+import entity.buildings.Chair;
 import entity.npc.Customer;
 import entity.npc.NPC;
 import entity.npc.Pet;
@@ -51,29 +52,30 @@ public class CutsceneManager {
     public boolean isActive() {
         return active;
     }
-    
     public void startGhostEntranceCutscene() {
 
         // 1. Spawn ghost offscreen
-        NPC ghost = new SpecialCustomer(gp, 48*9, 48*14); 
-        //ghost.setAnimation("float"); // if your NPC has animation system
+        NPC ghost = new SpecialCustomer(gp, 48*9, 48*9); 
+        gp.npcM.addNPC(ghost);
 
         List<CutsceneEvent> events = new ArrayList<>();
 
-        // 2. Move ghost into scene
-        events.add(new NPCMoveEvent(ghost, 48*9, 48*9, 0.05f));
+        // 2. Camera follows ghost while zooming in
+        events.add(new CameraFollowEvent(gp, ghost, 1.6f));
+        
+        // 3. Move ghost into scene
+        Chair chair = gp.buildingM.findFreeChair();
+        events.add(new NPCMoveEvent(ghost, chair, gp));
 
-        // 3. Camera follows ghost while zooming in
-        events.add(new CameraFollowEvent(gp, ghost, 0.1f, 1.5f));
 
         // 4. Show dialogue above ghost for 3 seconds (assuming 60 FPS → 180 frames)
-        events.add(new DialogueEvent(gp, ghost, "Boo! Welcome to Pandemonia...", 180));
+        events.add(new DialogueEvent(gp, "Boo! Welcome to Pandemonia..."));
 
         // 5. Pause for a moment (can be a WaitEvent)
         events.add(new WaitEvent(60)); // wait 1 second
 
         // 6. Camera returns to player and zooms back to normal
-        //events.add(new CameraFollowEvent(gp, gp.player, 0.1f, 1.0f));
+        events.add(new EndCutscene(gp));
 
         startCutscene(events);
     }

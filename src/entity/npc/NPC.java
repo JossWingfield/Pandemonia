@@ -32,7 +32,7 @@ public abstract class NPC extends Entity {
     GamePanel gp;
 
     protected String direction;
-    PathFinder pathF;
+    public PathFinder pathF;
     Random r; 
     
     //DIALOGUE
@@ -65,8 +65,13 @@ public abstract class NPC extends Entity {
     private int cooldownCounter = 0;
     private Integer pfGoalCol = null, pfGoalRow = null;
     
+    
+	protected boolean ableToUpdate = true;
+    
     //FLEE LOGIC
-    protected boolean walking, fleeing;
+    public boolean walking;
+
+	protected boolean fleeing;
 	protected int fleeCooldown = 0; 
 	protected final int ALERT_DISTANCE = 2 * 48; 
     protected final int SAFE_DISTANCE = 4 * 48;
@@ -91,6 +96,9 @@ public abstract class NPC extends Entity {
     }
     public String getNPCType() {
 		return npcType;
+	}
+	public void setAbleToUpdate(boolean isAble) {
+		ableToUpdate = isAble;
 	}
 	public void update() {
 		
@@ -199,7 +207,7 @@ public abstract class NPC extends Entity {
         walking = false;
         pathF.pathList.clear();
     }
-    protected void followPath() {
+    public void followPath() {
         if (pathF.pathList.isEmpty()) return;
 
         Node node = pathF.pathList.get(0);

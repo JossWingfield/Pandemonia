@@ -52,7 +52,7 @@ public class Candle extends Building{
 	public void destroy() {
 		gp.lightingM.removeLight(light);
 	}
-	public void draw(Graphics2D g2, float xDiff, float yDiff) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(firstUpdate) {
 			firstUpdate = false;

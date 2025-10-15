@@ -160,7 +160,7 @@ public class LightingManager {
     }
 
     // --- Lighting pass ---
-    public BufferedImage applyLighting(BufferedImage colorBuffer, Graphics2D g2) {
+    public BufferedImage applyLighting(BufferedImage colorBuffer, Graphics2D g2, int xDiff, int yDiff) {
     	
     	if(Settings.bloomEnabled) {
     		BufferedImage emissiveBuffer = new BufferedImage(gp.frameWidth, gp.frameHeight, BufferedImage.TYPE_INT_ARGB);
@@ -226,8 +226,8 @@ public class LightingManager {
         for (int i = 0; i < lights.size(); i++) {
             LightSource light = lights.get(i);
 
-            int lx = Math.round(light.getX() / scale);
-            int ly = Math.round(light.getY() / scale);
+            int lx = Math.round((light.getX() - xDiff) / scale);
+            int ly = Math.round((light.getY() - yDiff) / scale);
             int radius = Math.round(light.getRadius() / scale);
 
             int minTileX = Math.max(0, (lx - radius) / tileSize);
@@ -286,11 +286,12 @@ public class LightingManager {
             }
         }
 
-        // Scale up
         BufferedImage litImageScaled = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        g2.drawImage(litImageUnscaled, 0, 0, width, height, null);
-
+        Graphics2D gScaled = litImageScaled.createGraphics();
+        gScaled.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        gScaled.drawImage(litImageUnscaled, 0, 0, width, height, null);
+        gScaled.dispose();
+        
         // Bloom
         if (Settings.bloomEnabled) {
             applyBloomInPlace(litImageScaled);

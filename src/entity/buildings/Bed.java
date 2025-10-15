@@ -41,7 +41,7 @@ public class Bed extends Building{
 		name = "Bed";
     	animations[0][0][0] = importImage("/decor/bed.png").getSubimage(160, 96, 32, 48);
 	}
-	public void draw(Graphics2D g2, float xDiff, float yDiff) {
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(cooldown > 0) {
 			cooldown--;
