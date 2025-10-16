@@ -51,6 +51,7 @@ public class LightingManager {
     final float minBrightness = 0.55f;
     int minBrightness255 = (int)(minBrightness * 255); // 0.55 * 255 ≈ 140
     private int[] occlusionLUT = new int[256];
+    private int[][] occlusionARGBTable = new int[256][256];
 
     private Color morning = new Color(255, 200, 150); // 6h
     private Color noon    = new Color(255, 255, 255); // 12h
@@ -63,6 +64,7 @@ public class LightingManager {
         this.camera = camera;
         lights = new ArrayList<>();
         computeOcclusionLUT();
+        computeOcclusionARGBTable();
         getRoomOcclusion();
     }
 
@@ -159,7 +161,7 @@ public class LightingManager {
     }
 
     // --- Lighting pass ---
-    public BufferedImage applyLighting(BufferedImage colorBuffer, Graphics2D g2, int xDiff, int yDiff) {
+    public BufferedImage applyLighting(BufferedImage colorBuffer, int xDiff, int yDiff) {
     	
     	if(Settings.bloomEnabled) {
     		BufferedImage emissiveBuffer = new BufferedImage(gp.frameWidth, gp.frameHeight, BufferedImage.TYPE_INT_ARGB);
@@ -356,10 +358,12 @@ public class LightingManager {
                 int occX = x * wOcc / wLight;
 
                 int occFactor = occlusionLUT[occData[occRow + occX] & 0xFF];
-                lightData[idx] = (lightData[idx] & 0xFF000000) |
-                                 (((lightData[idx] >> 16) & 0xFF) * occFactor / 255 << 16) |
-                                 (((lightData[idx] >> 8) & 0xFF) * occFactor / 255 << 8) |
-                                 ((lightData[idx] & 0xFF) * occFactor / 255);
+                int pixel = lightData[idx];
+                int a = (pixel >>> 24) & 0xFF;
+                int r = occlusionARGBTable[occFactor][(pixel >>> 16) & 0xFF];
+                int g = occlusionARGBTable[occFactor][(pixel >>> 8) & 0xFF];
+                int b = occlusionARGBTable[occFactor][pixel & 0xFF];
+                lightData[idx] = (a << 24) | (r << 16) | (g << 8) | b;
             }
         }
     }
@@ -586,6 +590,14 @@ public class LightingManager {
 
     private int clamp(int v, int min, int max) {
         return (v < min) ? min : (v > max ? max : v);
+    }
+    private void computeOcclusionARGBTable() {
+        for (int occ = 0; occ < 256; occ++) {
+            int factor = occlusionLUT[occ];
+            for (int base = 0; base < 256; base++) {
+                occlusionARGBTable[occ][base] = base * factor / 255;
+            }
+        }
     }
     private void computeOcclusionLUT() {
         for (int i = 0; i < 256; i++) {

@@ -706,7 +706,7 @@ public class GamePanel extends JPanel implements Runnable {
 		        
 
 		        if (Settings.fancyLighting) {
-		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, g2, xDiff, yDiff);
+		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, xDiff, yDiff);
 		            
 		            int bufferCamX = Math.round(camera.x - xDiff);
 		            int bufferCamY = Math.round(camera.y - yDiff);
