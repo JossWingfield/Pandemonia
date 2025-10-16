@@ -1,6 +1,5 @@
 package map;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -47,7 +46,7 @@ public class LightingManager {
     
     //Light Occlusion Settings
     private final Map<Integer, BufferedImage> roomOcclusionCache = new HashMap<>();
-    
+    private BufferedImage occlusion;
     final float minBrightness = 0.55f;
     int minBrightness255 = (int)(minBrightness * 255); // 0.55 * 255 ≈ 140
     private int[] occlusionLUT = new int[256];
@@ -160,18 +159,9 @@ public class LightingManager {
         this.ambientIntensity = Math.max(0, Math.min(1, intensity));
     }
 
-    // --- Lighting pass ---
     public BufferedImage applyLighting(BufferedImage colorBuffer, int xDiff, int yDiff) {
-    	
-    	if(Settings.bloomEnabled) {
-    		BufferedImage emissiveBuffer = new BufferedImage(gp.frameWidth, gp.frameHeight, BufferedImage.TYPE_INT_ARGB);
-    		Graphics2D ge = emissiveBuffer.createGraphics();
-    		ge.setComposite(AlphaComposite.SrcOver);
-    	}
-    	
         int width = colorBuffer.getWidth();
         int height = colorBuffer.getHeight();
-
         int scale = 3;
         int unscaledWidth = width / scale;
         int unscaledHeight = height / scale;
@@ -181,7 +171,6 @@ public class LightingManager {
         if (litImageUnscaled == null ||
             litImageUnscaled.getWidth() != unscaledWidth ||
             litImageUnscaled.getHeight() != unscaledHeight) {
-
             litImageUnscaled = new BufferedImage(unscaledWidth, unscaledHeight, BufferedImage.TYPE_INT_ARGB);
             litData = ((DataBufferInt) litImageUnscaled.getRaster().getDataBuffer()).getData();
         }
@@ -189,68 +178,80 @@ public class LightingManager {
         int[] colorData = ((DataBufferInt) colorBuffer.getRaster().getDataBuffer()).getData();
 
         // Precompute ambient multiplier
-        float ambR = (ambientColor.getRed() / 255f) * ambientIntensity;
-        float ambG = (ambientColor.getGreen() / 255f) * ambientIntensity;
-        float ambB = (ambientColor.getBlue() / 255f) * ambientIntensity;
+        int ambR255 = Math.round(ambientColor.getRed() * ambientIntensity);
+        int ambG255 = Math.round(ambientColor.getGreen() * ambientIntensity);
+        int ambB255 = Math.round(ambientColor.getBlue() * ambientIntensity);
 
         updateLightCache();
 
-        // Fill with ambient
+        // Fill ambient
         for (int y = 0; y < unscaledHeight; y++) {
             int row = y * unscaledWidth;
+            int idxScaledRow = (y * scale) * width;
             for (int x = 0; x < unscaledWidth; x++) {
-                int idxScaled = (y * scale) * width + (x * scale);
+                int idxScaled = idxScaledRow + x * scale;
                 int baseRGB = colorData[idxScaled];
                 int a = (baseRGB >>> 24) & 0xFF;
                 if (a == 0) {
                     litData[row + x] = 0;
                     continue;
                 }
-
                 int rBase = (baseRGB >>> 16) & 0xFF;
                 int gBase = (baseRGB >>> 8) & 0xFF;
                 int bBase = baseRGB & 0xFF;
 
-                float totalR = rBase * ambR;
-                float totalG = gBase * ambG;
-                float totalB = bBase * ambB;
-
                 litData[row + x] =
                         (a << 24) |
-                        (Math.min(255, Math.round(totalR)) << 16) |
-                        (Math.min(255, Math.round(totalG)) << 8) |
-                        Math.min(255, Math.round(totalB));
+                        (Math.min(255, rBase * ambR255 / 255) << 16) |
+                        (Math.min(255, gBase * ambG255 / 255) << 8) |
+                        Math.min(255, bBase * ambB255 / 255);
             }
         }
 
-        // Apply lights
-        for (int i = 0; i < lights.size(); i++) {
+        for (int i = 0, n = lights.size(); i < n; i++) {
             LightSource light = lights.get(i);
 
-            int lx = Math.round((light.getX() - xDiff) / scale);
-            int ly = Math.round((light.getY() - yDiff) / scale);
-            int radius = Math.round(light.getRadius() / scale);
+            int lx = (light.getX() - xDiff) / scale;
+            int ly = (light.getY() - yDiff) / scale;
+            int radius = Math.max(1, light.getRadius() / scale);
+
+            // Skip lights completely offscreen
+            if (lx + radius < 0 || lx - radius >= unscaledWidth || ly + radius < 0 || ly - radius >= unscaledHeight)
+                continue;
+
+            int radius2 = radius * radius;
+            float intensity = light.getIntensity();
+
+            // Precompute scaled falloff × premul color for this light
+            float[] falloffTable = getCachedFalloff(radius);
+
+            float rMul = premulR[i] * intensity;
+            float gMul = premulG[i] * intensity;
+            float bMul = premulB[i] * intensity;
 
             int minTileX = Math.max(0, (lx - radius) / tileSize);
             int maxTileX = Math.min(unscaledWidth / tileSize - 1, (lx + radius) / tileSize);
             int minTileY = Math.max(0, (ly - radius) / tileSize);
             int maxTileY = Math.min(unscaledHeight / tileSize - 1, (ly + radius) / tileSize);
 
-            float[] falloffTable = getCachedFalloff(radius);
-
             for (int ty = minTileY; ty <= maxTileY; ty++) {
-                for (int tx = minTileX; tx <= maxTileX; tx++) {
-                    int startX = tx * tileSize;
-                    int endX = Math.min(startX + tileSize, unscaledWidth);
-                    int startY = ty * tileSize;
-                    int endY = Math.min(startY + tileSize, unscaledHeight);
+                int startY = ty * tileSize;
+                int endY = Math.min(startY + tileSize, unscaledHeight);
+                for (int y = startY; y < endY; y++) {
+                    int row = y * unscaledWidth;
+                    int dy = ly - y;
+                    int dy2 = dy * dy;
 
-                    for (int y = startY; y < endY; y++) {
-                        int row = y * unscaledWidth;
+                    for (int tx = minTileX; tx <= maxTileX; tx++) {
+                        int startX = tx * tileSize;
+                        int endX = Math.min(startX + tileSize, unscaledWidth);
                         for (int x = startX; x < endX; x++) {
+                            int dx = lx - x;
+                            int dist2 = dx * dx + dy2;
+                            if (dist2 > radius2) continue;
+
                             int idx = row + x;
                             int idxScaled = (y * scale) * width + (x * scale);
-
                             int baseRGB = colorData[idxScaled];
                             int a = (baseRGB >>> 24) & 0xFF;
                             if (a == 0) continue;
@@ -259,51 +260,124 @@ public class LightingManager {
                             int gBase = (baseRGB >>> 8) & 0xFF;
                             int bBase = baseRGB & 0xFF;
 
-                            float dx = lx - x;
-                            float dy = ly - y;
-                            int dist2 = (int) (dx * dx + dy * dy);
-                            if (dist2 > radius * radius) continue;
+                            float attenuation = falloffTable[dist2];
 
-                            float attenuation = falloffTable[dist2] * light.getIntensity();
+                            // Integer approximation: round by casting
+                            int rAdd = Math.min(255, (int)(rBase * rMul * attenuation));
+                            int gAdd = Math.min(255, (int)(gBase * gMul * attenuation));
+                            int bAdd = Math.min(255, (int)(bBase * bMul * attenuation));
 
                             int prevRGB = litData[idx];
-                            float totalR = ((prevRGB >>> 16) & 0xFF);
-                            float totalG = ((prevRGB >>> 8) & 0xFF);
-                            float totalB = (prevRGB & 0xFF);
+                            int r = Math.min(255, ((prevRGB >>> 16) & 0xFF) + rAdd);
+                            int g = Math.min(255, ((prevRGB >>> 8) & 0xFF) + gAdd);
+                            int b = Math.min(255, (prevRGB & 0xFF) + bAdd);
 
-                            // Add premultiplied light contribution
-                            totalR += rBase * premulR[i] * attenuation;
-                            totalG += gBase * premulG[i] * attenuation;
-                            totalB += bBase * premulB[i] * attenuation;
-
-                            litData[idx] =
-                                    (a << 24) |
-                                    (Math.min(255, Math.round(totalR)) << 16) |
-                                    (Math.min(255, Math.round(totalG)) << 8) |
-                                    Math.min(255, Math.round(totalB));
+                            litData[idx] = (a << 24) | (r << 16) | (g << 8) | b;
                         }
                     }
                 }
             }
+            if (Settings.shadowsEnabled) {
+                applyShadows(light, lx, ly, unscaledWidth, unscaledHeight, scale);
+            }
         }
 
+        // Scale up
         BufferedImage litImageScaled = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D gScaled = litImageScaled.createGraphics();
         gScaled.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         gScaled.drawImage(litImageUnscaled, 0, 0, width, height, null);
         gScaled.dispose();
-        
+
+        // Apply occlusion
         if (Settings.lightOcclusionEnabled) {
-            BufferedImage occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
-            applyOcclusionMask(litImageScaled, occlusion);
+            occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
+            applyOcclusionMaskOptimized(litImageScaled, occlusion);
         }
-        
+
         // Bloom
         if (Settings.bloomEnabled) {
-            applyBloomInPlace(litImageScaled);
+            int[] litDataArr = ((DataBufferInt) litImageScaled.getRaster().getDataBuffer()).getData();
+            applyBloomDirect(litDataArr, litImageScaled.getWidth(), litImageScaled.getHeight());
         }
 
         return litImageScaled;
+    }
+    private void applyShadows(LightSource light, int lx, int ly, int unscaledWidth, int unscaledHeight, int scale) {
+        int radius = Math.max(1, light.getRadius() / scale);
+        float[] falloff = getCachedFalloff(radius);
+
+        // Coarse ray angle step for performance
+        int angleStep = 8; // 360/8 = 45 rays, can tweak for quality/speed
+
+        for (int angle = 0; angle < 360; angle += angleStep) {
+            double rad = Math.toRadians(angle);
+            double dx = Math.cos(rad);
+            double dy = Math.sin(rad);
+
+            double px = lx;
+            double py = ly;
+
+            for (int r = 0; r < radius; r++) {
+                int xi = (int) px;
+                int yi = (int) py;
+
+                if (xi < 0 || yi < 0 || xi >= unscaledWidth || yi >= unscaledHeight) break;
+
+                // Map to tile coordinates for occlusion check
+                int tx = xi * scale / gp.tileSize;
+                int ty = yi * scale / gp.tileSize;
+                if (!CollisionMethods.canLightPassThroughTile(tx, ty, gp)) break;
+
+                int idx = yi * unscaledWidth + xi;
+
+                // Shadow attenuation: stronger near obstacles
+                float attenuation = falloff[r * r]; 
+
+                int prevRGB = litData[idx];
+                int a = (prevRGB >>> 24) & 0xFF;
+                int rC = (int)(((prevRGB >>> 16) & 0xFF) * attenuation);
+                int gC = (int)(((prevRGB >>> 8) & 0xFF) * attenuation);
+                int bC = (int)((prevRGB & 0xFF) * attenuation);
+
+                litData[idx] = (a << 24) | (rC << 16) | (gC << 8) | bC;
+
+                px += dx;
+                py += dy;
+            }
+        }
+    }
+    private void applyOcclusionMaskOptimized(BufferedImage lightBuffer, BufferedImage occlusionLowRes) {
+        int[] lightData = ((DataBufferInt) lightBuffer.getRaster().getDataBuffer()).getData();
+        int[] occData = ((DataBufferInt) occlusionLowRes.getRaster().getDataBuffer()).getData();
+
+        int wLight = lightBuffer.getWidth();
+        int hLight = lightBuffer.getHeight();
+        int wOcc = occlusionLowRes.getWidth();
+        int hOcc = occlusionLowRes.getHeight();
+
+        int[] occXLookup = new int[wLight];
+        for (int x = 0; x < wLight; x++) occXLookup[x] = x * wOcc / wLight;
+
+        int[] occYLookup = new int[hLight];
+        for (int y = 0; y < hLight; y++) occYLookup[y] = y * hOcc / hLight;
+
+        for (int y = 0; y < hLight; y++) {
+            int row = y * wLight;
+            int occY = occYLookup[y];
+            int occRow = occY * wOcc;
+            for (int x = 0; x < wLight; x++) {
+                int idx = row + x;
+                int occX = occXLookup[x];
+                int occFactor = occlusionLUT[occData[occRow + occX] & 0xFF];
+                int pixel = lightData[idx];
+                int a = (pixel >>> 24) & 0xFF;
+                int r = occlusionARGBTable[occFactor][(pixel >>> 16) & 0xFF];
+                int g = occlusionARGBTable[occFactor][(pixel >>> 8) & 0xFF];
+                int b = occlusionARGBTable[occFactor][pixel & 0xFF];
+                lightData[idx] = (a << 24) | (r << 16) | (g << 8) | b;
+            }
+        }
     }
     private BufferedImage getOcclusionForRoom(int roomId, int width, int height) {
         // Return cached if exists
@@ -339,34 +413,6 @@ public class LightingManager {
         roomOcclusionCache.put(roomId, blurred);
         return blurred;
     }
-    private void applyOcclusionMask(BufferedImage lightBuffer, BufferedImage occlusionLowRes) {
-        int[] lightData = ((DataBufferInt) lightBuffer.getRaster().getDataBuffer()).getData();
-        int[] occData = ((DataBufferInt) occlusionLowRes.getRaster().getDataBuffer()).getData();
-
-        int wLight = lightBuffer.getWidth();
-        int hLight = lightBuffer.getHeight();
-        int wOcc = occlusionLowRes.getWidth();
-        int hOcc = occlusionLowRes.getHeight();
-
-        for (int y = 0; y < hLight; y++) {
-            int row = y * wLight;
-            int occY = y * hOcc / hLight; 
-            int occRow = occY * wOcc;
-
-            for (int x = 0; x < wLight; x++) {
-                int idx = row + x;
-                int occX = x * wOcc / wLight;
-
-                int occFactor = occlusionLUT[occData[occRow + occX] & 0xFF];
-                int pixel = lightData[idx];
-                int a = (pixel >>> 24) & 0xFF;
-                int r = occlusionARGBTable[occFactor][(pixel >>> 16) & 0xFF];
-                int g = occlusionARGBTable[occFactor][(pixel >>> 8) & 0xFF];
-                int b = occlusionARGBTable[occFactor][pixel & 0xFF];
-                lightData[idx] = (a << 24) | (r << 16) | (g << 8) | b;
-            }
-        }
-    }
     public void getRoomOcclusion() {
         int roomId = gp.mapM.currentRoom.preset;
         BufferedImage occlusion = getOcclusionForRoom(roomId, gp.frameWidth, gp.frameHeight);
@@ -401,100 +447,69 @@ public class LightingManager {
     private float[] getCachedFalloff(int radius) {
         return falloffCache.computeIfAbsent(radius, this::getFalloffTable);
     }
+    private void applyBloomDirect(int[] baseData, int baseW, int baseH) {
+        // --- Step 1: Downscale ---
+        float downscale = 0.0625f; // 1/16
+        int wSmall = Math.max(1, Math.round(baseW * downscale));
+        int hSmall = Math.max(1, Math.round(baseH * downscale));
 
-    // --- Bloom ---
-    private void applyBloomInPlace(BufferedImage base) {
-        // 1. Extract bright areas + downscale
-        bloomSmall = extractAndDownscale(base, bloomThreshold, 0.25f);
-
-        // 2. Blur
-        if (bloomBlurred == null ||
-            bloomBlurred.getWidth() != bloomSmall.getWidth() ||
-            bloomBlurred.getHeight() != bloomSmall.getHeight()) {
-            bloomBlurred = new BufferedImage(bloomSmall.getWidth(), bloomSmall.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        }
-        bloomBlurred = blurImage(bloomSmall, bloomStrength);
-
-        // 3. Upscale blurred bloom back to full res
-        if (bloomUpscaled == null ||
-            bloomUpscaled.getWidth() != base.getWidth() ||
-            bloomUpscaled.getHeight() != base.getHeight()) {
-            bloomUpscaled = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        }
-        Graphics2D g2 = bloomUpscaled.createGraphics();
-        g2.setComposite(AlphaComposite.Clear);
-        g2.fillRect(0, 0, bloomUpscaled.getWidth(), bloomUpscaled.getHeight());
-        g2.setComposite(AlphaComposite.SrcOver);
-        g2.drawImage(bloomBlurred, 0, 0, base.getWidth(), base.getHeight(), null);
-        g2.dispose();
-
-        // 4. Additive blend into base
-        addBloomInPlace(base, bloomUpscaled);
-    }
-
-    private void addBloomInPlace(BufferedImage base, BufferedImage bloom) {
-        int[] baseData = ((DataBufferInt) base.getRaster().getDataBuffer()).getData();
-        int[] bloomData = ((DataBufferInt) bloom.getRaster().getDataBuffer()).getData();
-
-        for (int i = 0; i < baseData.length; i++) {
-            int b = bloomData[i];
-            if (b == 0) continue;
-
-            int br = (b >>> 16) & 0xFF;
-            int bg = (b >>> 8) & 0xFF;
-            int bb = b & 0xFF;
-
-            int o = baseData[i];
-            int or = (o >>> 16) & 0xFF;
-            int og = (o >>> 8) & 0xFF;
-            int ob = o & 0xFF;
-
-            int r = Math.min(255, or + Math.round(br * bloomIntensity));
-            int g = Math.min(255, og + Math.round(bg * bloomIntensity));
-            int bl = Math.min(255, ob + Math.round(bb * bloomIntensity));
-
-            baseData[i] = (0xFF << 24) | (r << 16) | (g << 8) | bl;
-        }
-    }
-
-    private BufferedImage extractAndDownscale(BufferedImage src, int threshold, float factor) {
-        int w = Math.max(1, Math.round(src.getWidth() * factor));
-        int h = Math.max(1, Math.round(src.getHeight() * factor));
-
-        if (bloomSmall == null || bloomSmall.getWidth() != w || bloomSmall.getHeight() != h) {
-            bloomSmall = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        // Create images if null or size changed
+        if (bloomSmall == null || bloomSmall.getWidth() != wSmall || bloomSmall.getHeight() != hSmall) {
+            bloomSmall = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
+            bloomBlurred = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
         }
 
-        int[] srcData = ((DataBufferInt) src.getRaster().getDataBuffer()).getData();
-        int[] dstData = ((DataBufferInt) bloomSmall.getRaster().getDataBuffer()).getData();
+        int[] smallData = ((DataBufferInt) bloomSmall.getRaster().getDataBuffer()).getData();
+        int[] blurData  = ((DataBufferInt) bloomBlurred.getRaster().getDataBuffer()).getData();
 
-        int scaleX = src.getWidth() / w;
-        int scaleY = src.getHeight() / h;
-
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
+        // Extract bright pixels into smallData
+        int scaleX = baseW / wSmall;
+        int scaleY = baseH / hSmall;
+        for (int y = 0; y < hSmall; y++) {
+            int srcY = y * scaleY;
+            int rowSmall = y * wSmall;
+            int rowBase  = srcY * baseW;
+            for (int x = 0; x < wSmall; x++) {
                 int srcX = x * scaleX;
-                int srcY = y * scaleY;
-                int idx = srcY * src.getWidth() + srcX;
-                int pixel = srcData[idx];
-                int a = (pixel >>> 24) & 0xFF;
-                if (a == 0) {
-                    dstData[y * w + x] = 0;
-                    continue;
-                }
+                int pixel = baseData[rowBase + srcX];
                 int r = (pixel >>> 16) & 0xFF;
                 int g = (pixel >>> 8) & 0xFF;
                 int b = pixel & 0xFF;
-                int brightness = Math.max(r, Math.max(g, b));
-
-                if (brightness > threshold) {
-                    dstData[y * w + x] = (0xFF << 24) | (r << 16) | (g << 8) | b;
-                } else {
-                    dstData[y * w + x] = 0;
-                }
+                int bright = Math.max(r, Math.max(g, b));
+                smallData[rowSmall + x] = (bright > bloomThreshold) ? (0xFF << 24) | (r << 16) | (g << 8) | b : 0;
             }
         }
-        return bloomSmall;
+
+        // --- Step 2: Blur ---
+        boxBlur(smallData, blurData, wSmall, hSmall, bloomStrength);
+
+        // --- Step 3: Upscale & Additive blend ---
+        int bloomIntensityInt = Math.round(bloomIntensity * 256);
+        for (int y = 0; y < baseH; y++) {
+            int srcY = Math.min(hSmall - 1, y * hSmall / baseH);
+            int rowSmall = srcY * wSmall;
+            int rowBase  = y * baseW;
+
+            for (int x = 0; x < baseW; x++) {
+                int srcX = Math.min(wSmall - 1, x * wSmall / baseW);
+                int bPixel = blurData[rowSmall + srcX];
+                if (bPixel == 0) continue;
+
+                int br = (bPixel >>> 16) & 0xFF;
+                int bg = (bPixel >>> 8) & 0xFF;
+                int bb = bPixel & 0xFF;
+
+                int o = baseData[rowBase + x];
+                int or = (o >>> 16) & 0xFF;
+                int og = (o >>> 8) & 0xFF;
+                int ob = o & 0xFF;
+
+                baseData[rowBase + x] = (0xFF << 24) |
+                                        (Math.min(255, or + ((br * bloomIntensityInt) >> 8)) << 16) |
+                                        (Math.min(255, og + ((bg * bloomIntensityInt) >> 8)) << 8) |
+                                        Math.min(255, ob + ((bb * bloomIntensityInt) >> 8));
+            }
+        }
     }
 
     private BufferedImage blurImage(BufferedImage src, int radius) {
@@ -518,6 +533,51 @@ public class LightingManager {
         return src;
     }
 
+    private void boxBlur(int[] src, int[] dst, int w, int h, int radius) {
+        int div = radius * 2 + 1;
+        int[] tmp = new int[src.length];
+
+        // Horizontal pass
+        for (int y = 0; y < h; y++) {
+            int sumR = 0, sumG = 0, sumB = 0;
+            int row = y * w;
+            for (int x = -radius; x <= radius; x++) {
+                int px = src[row + clamp(x, 0, w - 1)];
+                sumR += (px >>> 16) & 0xFF;
+                sumG += (px >>> 8) & 0xFF;
+                sumB += px & 0xFF;
+            }
+            for (int x = 0; x < w; x++) {
+                tmp[row + x] = (0xFF << 24) | ((sumR / div) << 16) | ((sumG / div) << 8) | (sumB / div);
+                int pxOut = src[row + clamp(x - radius, 0, w - 1)];
+                int pxIn  = src[row + clamp(x + radius + 1, 0, w - 1)];
+                sumR += ((pxIn >>> 16) & 0xFF) - ((pxOut >>> 16) & 0xFF);
+                sumG += ((pxIn >>> 8) & 0xFF) - ((pxOut >>> 8) & 0xFF);
+                sumB += (pxIn & 0xFF) - (pxOut & 0xFF);
+            }
+        }
+
+        // Vertical pass
+        for (int x = 0; x < w; x++) {
+            int sumR = 0, sumG = 0, sumB = 0;
+            for (int y = -radius; y <= radius; y++) {
+                int yy = clamp(y, 0, h - 1);
+                int px = tmp[yy * w + x];
+                sumR += (px >>> 16) & 0xFF;
+                sumG += (px >>> 8) & 0xFF;
+                sumB += px & 0xFF;
+            }
+            for (int y = 0; y < h; y++) {
+                dst[y * w + x] = (0xFF << 24) | ((sumR / div) << 16) | ((sumG / div) << 8) | (sumB / div);
+                int pxOut = tmp[clamp(y - radius, 0, h - 1) * w + x];
+                int pxIn  = tmp[clamp(y + radius + 1, 0, h - 1) * w + x];
+                sumR += ((pxIn >>> 16) & 0xFF) - ((pxOut >>> 16) & 0xFF);
+                sumG += ((pxIn >>> 8) & 0xFF) - ((pxOut >>> 8) & 0xFF);
+                sumB += (pxIn & 0xFF) - (pxOut & 0xFF);
+            }
+        }
+    }
+    
     private void boxBlurPass(int[] src, int[] dst, int w, int h, int radius, boolean horizontal) {
         int div = radius * 2 + 1;
 

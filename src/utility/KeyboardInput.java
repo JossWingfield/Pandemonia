@@ -55,10 +55,10 @@ public class KeyboardInput implements KeyListener {
             	gp.progressM.moveToNextPhase();
             }
             if(num == KeyEvent.VK_H) {
-            	gp.camera.setZoom(1.5f);
+            	//gp.camera.setZoom(1.5f);
             }
             if(num == KeyEvent.VK_J) {
-            	gp.camera.resetToDefaultZoom();
+            	//gp.camera.resetToDefaultZoom();
             }
             if(num == KeyEvent.VK_Q) {
             	gp.player.soulsServed = gp.player.nextLevelAmount;
