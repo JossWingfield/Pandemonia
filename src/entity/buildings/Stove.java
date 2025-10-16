@@ -108,14 +108,13 @@ public class Stove extends Building {
 		gp.lightingM.removeLight(rightLight);
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-		
 		if(firstUpdate) {
 			firstUpdate = false;
 			leftSlot = new SmallPan(gp, hitbox.x, hitbox.y);
 			rightSlot = new FryingPan(gp, hitbox.x, hitbox.y);
 			int hitboxWidth = 20;
-			leftHitbox = new Rectangle2D.Float(hitbox.x - xDrawOffset - xDiff + 24 + hitboxWidth/2, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, hitboxWidth, 64);
-			rightHitbox = new Rectangle2D.Float((int) hitbox.x - xDrawOffset - xDiff + 48 + 30 + hitboxWidth/2, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, hitboxWidth, 64);
+			leftHitbox = new Rectangle2D.Float(hitbox.x - xDrawOffset + 24 + hitboxWidth/2, (int) (hitbox.y)-yDrawOffset+48+16, hitboxWidth, 64);
+			rightHitbox = new Rectangle2D.Float((int) hitbox.x - xDrawOffset + 48 + 30 + hitboxWidth/2, (int) (hitbox.y)-yDrawOffset+48+16, hitboxWidth, 64);
 		}
 		
 		if(canBePlaced) {
@@ -312,6 +311,7 @@ public class Stove extends Building {
 									foodName = leftSlot.cookingItem.getName();
 									foodState = leftSlot.cookingItem.getState();
 									cookTime = leftSlot.getCookTime();
+									gp.lightingM.addLight(leftLight);
 								}
 								itemName = leftSlot.getName();
 							}
@@ -326,7 +326,6 @@ public class Stove extends Building {
 			    	                    cookTime);
 		    	                packet.writeData(gp.socketClient);
 		    	            }
-							gp.lightingM.addLight(leftLight);
 							gp.player.currentItem = null;
 							clickCooldown = 12;
 						}
@@ -496,10 +495,10 @@ public class Stove extends Building {
 									foodName = rightSlot.cookingItem.getName();
 									foodState = rightSlot.cookingItem.getState();
 									cookTime = rightSlot.getCookTime();
+									gp.lightingM.addLight(rightLight);
 								}
 								itemName = rightSlot.getName();
 							}
-							gp.lightingM.addLight(rightLight);
 							if(gp.multiplayer) {
 								Packet09PlaceItemOnStove packet = new Packet09PlaceItemOnStove(
 			    	                	gp.player.getUsername(),

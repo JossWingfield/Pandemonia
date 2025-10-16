@@ -361,7 +361,7 @@ public class Player extends Entity{
     	packet.writeData(gp.socketClient);
     }
     private void handleDebugMode(int xDiff, int yDiff) {
-        System.out.println((int)((mouseI.mouseX + xDiff) / gp.tileSize) + "   " + (int)((mouseI.mouseY + yDiff) / gp.tileSize));
+        //System.out.println((int)((mouseI.mouseX + xDiff) / gp.tileSize) + "   " + (int)((mouseI.mouseY + yDiff) / gp.tileSize));
     }
     public void takeDamage(int damage) {
     	

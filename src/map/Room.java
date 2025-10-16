@@ -27,6 +27,7 @@ import entity.buildings.Lantern;
 import entity.buildings.Leak;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
+import entity.buildings.RoomSpawn;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
 import entity.buildings.Spill;
@@ -63,12 +64,14 @@ public class Room {
     private List<LightSource> lights = new ArrayList<>(); 
 	public int buildingArrayCounter = 0;
 	//public boolean shouldUpdate = false;
-	private int preset;
+	public int preset;
 	public WallPaper wallpaper = null;
 	public FloorPaper floorpaper = null;
 	public Beam beam = null;
 	public ChairSkin chairSkin = null;
 	public TableSkin tableSkin = null;
+	
+	public RoomSpawn roomSpawn;
 	
 	public Room(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -193,6 +196,7 @@ public class Room {
 		int arrayCounter = 0;
 		switch(preset) {
 		case 0:
+			roomSpawn = new RoomSpawn(gp, 480, 504);
 			buildings[arrayCounter] = new Door(gp, 684, 144+48, 0, 0);
 			arrayCounter++;
 			Door door = new Door(gp, 456, 504+48, 1, 0);
@@ -1800,6 +1804,7 @@ public class Room {
 		int arrayCounter = 0;
 		switch(preset) {
 		case 0:
+			roomSpawn = new RoomSpawn(gp, 384, 600);
 			buildings[arrayCounter] = new Chair(gp, 732, 504-24, 3);
 			arrayCounter++;
 			buildings[arrayCounter] = new Chair(gp, 780, 504-24, 3);
@@ -2460,7 +2465,7 @@ public class Room {
 		return null;
 	}
     public void addCustomer() {
-    	Customer customer = new Customer(gp, 10*48, 11*48);
+    	Customer customer = new Customer(gp, (int)getSpawnX(), (int)getSpawnY());
     	npcs.add(customer);
     }
 	public Chair findFreeChair() {
@@ -2492,7 +2497,7 @@ public class Room {
 		return null;
 	}
 	public void addSpecialCustomer() {
-		npcs.add(new SpecialCustomer(gp, 10*48, 9*48));
+		npcs.add(new SpecialCustomer(gp, (int)getSpawnX(), (int)getSpawnY()));
 	}
 	public boolean hasBuildingWithName(String name) {
 		for(Building b: buildings) {
@@ -2538,7 +2543,12 @@ public class Room {
 	public void addLight(LightSource light) {
 		lights.add(light);
 	}
-    
+	public float getSpawnX() {
+		return roomSpawn.hitbox.x + roomSpawn.hitbox.width/2;
+	}
+	public float getSpawnY() {
+		return roomSpawn.hitbox.y + roomSpawn.hitbox.height/2;
+	}
     public void update() {
     	for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {

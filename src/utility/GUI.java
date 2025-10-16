@@ -57,6 +57,7 @@ public class GUI {
 	private Font fancyTitleFont = new Font("monogram", Font.ITALIC, 100);
     private Font nameFont = new Font("monogram", Font.ITALIC, 20);
     private Font timeFont = new Font("monogram", Font.PLAIN, 40);
+    private Font settingsFont = new Font("monogram", Font.PLAIN, 32);
     
 	
 	//COUNTERS
@@ -1469,7 +1470,7 @@ public class GUI {
 		g2.drawImage(videoSettingsFrame, x, y, 112*3, 112*3, null);
 		
 		String text;
-		g2.setFont(timeFont);
+		g2.setFont(settingsFont);
 		x += 40;
 		y += 140;
 		
@@ -1528,6 +1529,25 @@ public class GUI {
 			drawCheckBoxHover(g2, x+boxOffset, y, 9*3, 9*3);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
             	Settings.bloomEnabled = !Settings.bloomEnabled;
+                clickCooldown = 20;
+            }
+        }
+		y += 20;
+		
+		y+=40;
+		g2.setColor(titleColour1);
+		text = "Light Occlusion";
+		g2.drawString(text, x, y);
+		y-= 20;
+		if(Settings.lightOcclusionEnabled) {
+			g2.drawImage(checkedBox, x+boxOffset, y, 9*3, 9*3, null);
+		} else {
+			g2.drawImage(uncheckedBox, x+boxOffset, y, 9*3, 9*3, null);
+		}
+		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
+			drawCheckBoxHover(g2, x+boxOffset, y, 9*3, 9*3);
+            if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
+            	Settings.lightOcclusionEnabled = !Settings.lightOcclusionEnabled;
                 clickCooldown = 20;
             }
         }

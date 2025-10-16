@@ -54,11 +54,11 @@ public class CutsceneManager {
     }
     public void startGhostEntranceCutscene() {
 
-        // 1. Spawn ghost offscreen
-        NPC ghost = new SpecialCustomer(gp, 48*9, 48*9); 
-        gp.npcM.addNPC(ghost);
-
         List<CutsceneEvent> events = new ArrayList<>();
+        
+        // 1. Spawn ghost offscreen
+        NPC ghost = new SpecialCustomer(gp, 0, 0); 
+        events.add(new AddNPCEvent(gp, ghost));
 
         // 2. Camera follows ghost while zooming in
         events.add(new CameraFollowEvent(gp, ghost, 1.6f));

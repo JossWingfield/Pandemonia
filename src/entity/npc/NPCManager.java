@@ -26,25 +26,25 @@ public class NPCManager {
         this.gp = gp;
     }
     public void addCustomer() {
-    	Customer customer = new Customer(gp, 10*48, 11*48);
+    	Customer customer = new Customer(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
     	npcs.add(customer);
     	//gp.mapM.addNPCToRoom(customer, 0);
     }
     public void addStocker() {
-    	Stocker stocker = new Stocker(gp, 10*48, 9*48);
+    	Stocker stocker = new Stocker(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
     	npcs.add(stocker);
     	//gp.mapM.addNPCToRoom(stocker, 0);
     }
     public void addServer() {
-    	Server server = new Server(gp, 10*48, 9*48);
+    	Server server = new Server(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
     	npcs.add(server);
     }
     public void addDishWasher() {
-    	DishWasher server = new DishWasher(gp, 10*48, 9*48);
+    	DishWasher server = new DishWasher(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
     	npcs.add(server);
     }
     public void addDuck() {
-    	Duck duck = new Duck(gp, 10*48, 9*48);
+    	Duck duck = new Duck(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
     	if(gp.mapM.isInRoom(0)) {
     		npcs.add(duck);
     	} else {

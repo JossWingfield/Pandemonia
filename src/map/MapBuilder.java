@@ -33,6 +33,7 @@ import entity.buildings.Gate;
 import entity.buildings.Lantern;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
+import entity.buildings.RoomSpawn;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
 import entity.buildings.Stove;
@@ -89,6 +90,8 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new FloorDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
+		buildings[totalBuildingCount] = new RoomSpawn(gp, 0, 0);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Gate(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new SoulLantern(gp, 0, 0);
@@ -159,6 +162,7 @@ public class MapBuilder {
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Trapdoor(gp, 0, 0, 1);
 		totalBuildingCount++;
+		
 		for(int i = 0; i < 10; i++) {
 			buildings[totalBuildingCount] = new FoodStore(gp, 0, 0, i);
 			totalBuildingCount++;

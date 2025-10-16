@@ -3,9 +3,7 @@ package map;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
@@ -13,9 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import entity.items.Item;
 import main.Camera;
 import main.GamePanel;
+import utility.CollisionMethods;
 import utility.Settings;
 
 public class LightingManager {
@@ -29,11 +27,6 @@ public class LightingManager {
     private boolean firstUpdate = true;
     private boolean powerOff = false;
 
-    // --- Bloom settings (more visible) ---
-    private int bloomThreshold = 60;      // was 100 → lower so more pixels count as "bright"
-    private int bloomStrength = 12;       // was 10 → slightly bigger blur
-    private float bloomIntensity = 2.5f;  // was 1.5 → much stronger additive blend
-
     // Cache kernels by radius
     private final Map<Integer, float[]> falloffCache = new HashMap<>();
 
@@ -43,64 +36,70 @@ public class LightingManager {
     private float[] premulG;
     private float[] premulB;
 
+    //Bloom Settings
     private BufferedImage bloomSmall;   // downscaled + bright
     private BufferedImage bloomBlurred; // blurred, same size as bloomSmall
     private BufferedImage bloomUpscaled;// resized back to full
+    public int bloomThreshold = 140;     // Only really bright pixels bloom
+    public int bloomStrength = 6;        // Softer blur radius
+    public float bloomIntensity = 0.15f;   // was 1.5 → much stronger additive blend
+    
+    
+    //Light Occlusion Settings
+    private final Map<Integer, BufferedImage> roomOcclusionCache = new HashMap<>();
+    
+    final float minBrightness = 0.55f;
+    int minBrightness255 = (int)(minBrightness * 255); // 0.55 * 255 ≈ 140
+    private int[] occlusionLUT = new int[256];
 
     private Color morning = new Color(255, 200, 150); // 6h
     private Color noon    = new Color(255, 255, 255); // 12h
     private Color evening = new Color(255, 180, 120); // 18h
     private Color night   = new Color(20, 20, 40);    // 0h / 24h
+    
 
     public LightingManager(GamePanel gp, Camera camera) {
         this.gp = gp;
         this.camera = camera;
         lights = new ArrayList<>();
+        computeOcclusionLUT();
+        getRoomOcclusion();
     }
 
     private void startLights() {
         // Example lights:
-        // lights.add(new LightSource(13*48, 4*48, Color.BLUE, 100*4));
+        //lights.add(new LightSource(13*48, 4*48, Color.BLUE, 100*4));
         // lights.add(new LightSource(9*48, 6*48, Color.RED, 100*3));
         // lights.add(new LightSource(9*48, 9*48, Color.YELLOW, 100*4));
     }
-
     private Color lerpColor(Color a, Color b, float t) {
         int r = Math.round(a.getRed() + (b.getRed() - a.getRed()) * t);
         int g = Math.round(a.getGreen() + (b.getGreen() - a.getGreen()) * t);
         int bC = Math.round(a.getBlue() + (b.getBlue() - a.getBlue()) * t);
         return new Color(r, g, bC);
     }
-
     // --- Light management ---
     public void addLight(int x, int y, Color color, int radius, int layer) {
         lights.add(new LightSource(x, y, color, radius));
     }
-
     public void addLight(LightSource light) {
         lights.add(light);
     }
-
     public void setDay() {
         setAmbientLight(new Color(255, 255, 255), 1f); // DAY
     }
-
     public void setNight() {
         setAmbientLight(new Color(20, 20, 25), 1f); // NIGHT
     }
-
     public void clearLights() {
         lights.clear();
     }
-
     public List<LightSource> getLights() {
         return lights;
     }
-
     public void setLights(List<LightSource> lights) {
         this.lights = lights;
     }
-
     public void removeLightFromPos(int x, int y, int radius, int layer) {
         for (LightSource l : lights) {
             if (l.getX() == x && l.getY() == y && l.getRadius() == radius) {
@@ -292,6 +291,11 @@ public class LightingManager {
         gScaled.drawImage(litImageUnscaled, 0, 0, width, height, null);
         gScaled.dispose();
         
+        if (Settings.lightOcclusionEnabled) {
+            BufferedImage occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
+            applyOcclusionMask(litImageScaled, occlusion);
+        }
+        
         // Bloom
         if (Settings.bloomEnabled) {
             applyBloomInPlace(litImageScaled);
@@ -299,12 +303,70 @@ public class LightingManager {
 
         return litImageScaled;
     }
-    private BufferedImage deepCopy(BufferedImage src) {
-        BufferedImage copy = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
-        Graphics2D g = copy.createGraphics();
-        g.drawImage(src, 0, 0, null);
+    private BufferedImage getOcclusionForRoom(int roomId, int width, int height) {
+        // Return cached if exists
+        if (roomOcclusionCache.containsKey(roomId)) return roomOcclusionCache.get(roomId);
+
+        int tileSize = gp.tileSize;
+        BufferedImage occlusion = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = occlusion.createGraphics();
+
+        // Fill with white (no occlusion)
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, width, height);
+
+        g.setColor(Color.BLACK);
+        // Get room tile boundaries
+        int startTileX = 0;
+        int startTileY = 0;
+        int endTileX = gp.mapM.currentMapWidth;
+        int endTileY = gp.mapM.currentMapHeight;
+
+        // Draw black for solid tiles
+        for (int ty = startTileY; ty < endTileY; ty++) {
+            for (int tx = startTileX; tx < endTileX; tx++) {
+                if (!CollisionMethods.canLightPassThroughTile(tx, ty, gp)) {
+                    g.fillRect(tx * tileSize, ty * tileSize, tileSize, tileSize);
+                }
+            }
+        }
         g.dispose();
-        return copy;
+
+        // Pre-blur
+        BufferedImage blurred = blurImage(occlusion, 3);
+        roomOcclusionCache.put(roomId, blurred);
+        return blurred;
+    }
+    private void applyOcclusionMask(BufferedImage lightBuffer, BufferedImage occlusionLowRes) {
+        int[] lightData = ((DataBufferInt) lightBuffer.getRaster().getDataBuffer()).getData();
+        int[] occData = ((DataBufferInt) occlusionLowRes.getRaster().getDataBuffer()).getData();
+
+        int wLight = lightBuffer.getWidth();
+        int hLight = lightBuffer.getHeight();
+        int wOcc = occlusionLowRes.getWidth();
+        int hOcc = occlusionLowRes.getHeight();
+
+        for (int y = 0; y < hLight; y++) {
+            int row = y * wLight;
+            int occY = y * hOcc / hLight; 
+            int occRow = occY * wOcc;
+
+            for (int x = 0; x < wLight; x++) {
+                int idx = row + x;
+                int occX = x * wOcc / wLight;
+
+                int occFactor = occlusionLUT[occData[occRow + occX] & 0xFF];
+                lightData[idx] = (lightData[idx] & 0xFF000000) |
+                                 (((lightData[idx] >> 16) & 0xFF) * occFactor / 255 << 16) |
+                                 (((lightData[idx] >> 8) & 0xFF) * occFactor / 255 << 8) |
+                                 ((lightData[idx] & 0xFF) * occFactor / 255);
+            }
+        }
+    }
+    public void getRoomOcclusion() {
+        int roomId = gp.mapM.currentRoom.preset;
+        BufferedImage occlusion = getOcclusionForRoom(roomId, gp.frameWidth, gp.frameHeight);
+        roomOcclusionCache.put(roomId, occlusion);
     }
     private void updateLightCache() {
         int n = lights.size();
@@ -524,6 +586,12 @@ public class LightingManager {
 
     private int clamp(int v, int min, int max) {
         return (v < min) ? min : (v > max ? max : v);
+    }
+    private void computeOcclusionLUT() {
+        for (int i = 0; i < 256; i++) {
+            // Map black (0) → minBrightness, white (255) → 255
+            occlusionLUT[i] = minBrightness255 + (i * (255 - minBrightness255)) / 255;
+        }
     }
 
     public void update() {

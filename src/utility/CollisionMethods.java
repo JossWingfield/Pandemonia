@@ -112,6 +112,18 @@ public class CollisionMethods {
         int value = gp.mapM.currentRoom.mapGrid[1][(int)(x/gp.tileSize)][(int)(y/gp.tileSize)];
         return gp.mapM.tiles[value].solid;
     }
+    public static boolean canLightPassThroughTile(int tx, int ty, GamePanel gp) {
+        // bounds: if outside world, treat as solid (or treat as passable depending on your game)
+        if (tx < 0 || ty < 0 || tx >= gp.mapM.currentMapWidth || ty >= gp.mapM.currentMapHeight) {
+            return false; // outside = blocked; set to true if you prefer outside to be open
+        }
+
+        // NOTE: common layout is mapGrid[layer][row][col] => [layer][y][x]
+        int value = gp.mapM.currentRoom.mapGrid[3][tx][ty];
+
+        // If 88 really means "empty/passable" keep equality; otherwise invert.
+        return value != 88;
+    }
 
     //Calculates the position for an entity to sit flush with the wall
     public static float getWallPos(float x, GamePanel gp) {

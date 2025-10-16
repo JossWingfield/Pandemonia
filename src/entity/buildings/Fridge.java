@@ -148,7 +148,7 @@ public class Fridge extends Building {
         }
     }
 
-    public void drawOverlayUI(Graphics2D g2) {
+    public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {
         if (uiOpen) {
             int baseX = (int)(hitbox.x - (112 * 1.5));
             int baseY = (int)hitbox.y;

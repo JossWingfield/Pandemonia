@@ -23,6 +23,7 @@ import net.GameServer;
 import net.packets.Packet00Login;
 import utility.BuildingRegistry;
 import utility.Catalogue;
+import utility.Debug;
 import utility.GUI;
 import utility.ItemRegistry;
 import utility.KeyboardInput;
@@ -110,6 +111,7 @@ public class GamePanel extends JPanel implements Runnable {
     public CutsceneManager cutsceneM = new CutsceneManager(this);
     public SaveManager saveM = new SaveManager(this);
     public MapBuilder mapB = new MapBuilder(this);
+    public Debug debug = new Debug(this);
     //THREAD initialising the thread which the game loop is run off
     public Thread thread;
 
@@ -179,6 +181,7 @@ public class GamePanel extends JPanel implements Runnable {
         gColor.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF));
         camera.follow(player);
         camera.setZoom(1.0f);
+        playSinglePlayer(1);
     }
     public void startGame() {
     	player = new Player(this, 48*10, 48*10, keyI, mouseI, "");
@@ -518,6 +521,9 @@ public class GamePanel extends JPanel implements Runnable {
     			cutsceneM.update();
 		    	lightingM.update();
 		    	minigameM.update();
+		        if(keyI.debugMode) {
+		        	debug.update();
+		        }
 		    	if(currentState == customiseRestaurantState) {
 		    		customiser.update();
 		    	}
@@ -697,6 +703,7 @@ public class GamePanel extends JPanel implements Runnable {
 	            mapM.drawForeground(gColor, xDiff, yDiff);
 	            
 		        gColor.dispose();
+		        
 
 		        if (Settings.fancyLighting) {
 		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, g2, xDiff, yDiff);
@@ -760,6 +767,9 @@ public class GamePanel extends JPanel implements Runnable {
 		        
 		        world.drawFilters(g2);
 		        world.drawWeather(g2);
+		        if(keyI.debugMode) {
+		        	debug.draw(g2);
+		        }
         }
         
         

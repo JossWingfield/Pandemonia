@@ -258,6 +258,7 @@ public class MapManager {
 
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;
+	    	gp.lightingM.getRoomOcclusion();
 	    }
 	    public void changeRoom(int roomNum, Door previousDoor) {
 	    	gp.lightingM.removeLight(gp.player.playerLight);
@@ -300,6 +301,7 @@ public class MapManager {
 	            Packet05ChangeRoom packet = new Packet05ChangeRoom(gp.player.getUsername(), roomNum);
 	            packet.writeData(gp.socketClient);
             }
+	    	gp.lightingM.getRoomOcclusion();
 	    }
 	    public void changeRoom(int roomNum, Trapdoor trapdoor) {
 	    	gp.lightingM.removeLight(gp.player.playerLight);
@@ -337,6 +339,7 @@ public class MapManager {
 	            Packet05ChangeRoom packet = new Packet05ChangeRoom(gp.player.getUsername(), roomNum);
 	            packet.writeData(gp.socketClient);
             }
+	    	gp.lightingM.getRoomOcclusion();
 	    }
 	    public Room getCurrentRoom(NPC npc) {
 	    	for(Room room: rooms) {

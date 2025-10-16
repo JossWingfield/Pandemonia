@@ -9,7 +9,6 @@ import main.GamePanel;
 
 public class EscapeHole extends Building {
 	
-	public Rectangle2D.Float npcHitbox;
 	private boolean firstUpdate = true;
 	
 	public EscapeHole(GamePanel gp, float xPos, float yPos) {
