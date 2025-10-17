@@ -1553,25 +1553,6 @@ public class GUI {
         }
 		y += 20;
 		
-		y+=40;
-		g2.setColor(titleColour1);
-		text = "Shadows";
-		g2.drawString(text, x, y);
-		y-= 20;
-		if(Settings.shadowsEnabled) {
-			g2.drawImage(checkedBox, x+boxOffset, y, 9*3, 9*3, null);
-		} else {
-			g2.drawImage(uncheckedBox, x+boxOffset, y, 9*3, 9*3, null);
-		}
-		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
-			drawCheckBoxHover(g2, x+boxOffset, y, 9*3, 9*3);
-            if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
-            	Settings.shadowsEnabled = !Settings.shadowsEnabled;
-                clickCooldown = 20;
-            }
-        }
-		y += 20;
-		
 		g2.setColor(titleColour1);
 		text = "Back";
 		x = 542;

@@ -7,6 +7,5 @@ public class Settings {
 	public static boolean fancyLighting = true;
 	public static boolean bloomEnabled = true;
 	public static boolean lightOcclusionEnabled = true;
-	public static boolean shadowsEnabled = true;
 	
 }

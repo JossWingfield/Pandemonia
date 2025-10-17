@@ -118,11 +118,11 @@ public class CollisionMethods {
             return false; // outside = blocked; set to true if you prefer outside to be open
         }
 
-        // NOTE: common layout is mapGrid[layer][row][col] => [layer][y][x]
         int value = gp.mapM.currentRoom.mapGrid[3][tx][ty];
+        int value2 = gp.mapM.currentRoom.mapGrid[0][tx][ty];
 
         // If 88 really means "empty/passable" keep equality; otherwise invert.
-        return value != 88;
+        return value != 88 && value2 != 1110;
     }
 
     //Calculates the position for an entity to sit flush with the wall

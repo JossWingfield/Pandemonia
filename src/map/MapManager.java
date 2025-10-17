@@ -103,6 +103,9 @@ public class MapManager {
 	        importTilesFromSpriteSheet("/tiles/dirt/SimpleDirt1", 4, 5, false);
 	        importTilesFromSpriteSheet("/tiles/dirt/SimpleDirt3", 5, 11, false);
 	        importFloorFromSpriteSheet("/tiles/flooring/Floor12", 8, 7, false);
+	        
+	    	tiles[arrayIndex] = new Tile(gp, "/tiles/Air.png", importImage("/tiles/Air.png"));
+	        arrayIndex++;
 
 	    }
 	    public Room[] getRooms() {
@@ -234,6 +237,8 @@ public class MapManager {
 	    	}
 	    	gp.lightingM.clearLights();
 	    	loadRooms();
+	    	gp.lightingM.clearRoomOcclusionCache();
+	    	gp.lightingM.getRoomOcclusion();
 	    	gp.player.currentRoomIndex = 0;
 	    	gp.player.hitbox.x = 8*48;
 	    	gp.player.hitbox.y = 12*48;

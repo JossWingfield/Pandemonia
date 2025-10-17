@@ -155,6 +155,10 @@ public class KeyboardInput implements KeyListener {
         		gp.mapB.selectedTile = 0;
         		gp.mapB.selectedBuilding = null;
         	}
+         	if(num == KeyEvent.VK_L) {
+        		gp.mapB.selectedTile = 1110;
+        		gp.mapB.selectedBuilding = null;
+        	}
         } else if(gp.currentState == gp.pauseState) {
         	if(num == KeyEvent.VK_ESCAPE) {
             	gp.currentState = gp.playState;

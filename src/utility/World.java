@@ -52,7 +52,7 @@ public class World {
     private int lastTimePeriod = 0;
     
     // === Event system ===
-    private boolean eventsOn = true;
+    private boolean eventsOn = false;
     private int eventTimer = 0;
     private int nextEventTime; // in frames
     private int minEventInterval = 60 * 45;  // 10 in-game minutes

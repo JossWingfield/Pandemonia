@@ -1,11 +1,15 @@
 package map;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +42,6 @@ public class LightingManager {
     //Bloom Settings
     private BufferedImage bloomSmall;   // downscaled + bright
     private BufferedImage bloomBlurred; // blurred, same size as bloomSmall
-    private BufferedImage bloomUpscaled;// resized back to full
     public int bloomThreshold = 140;     // Only really bright pixels bloom
     public int bloomStrength = 6;        // Softer blur radius
     public float bloomIntensity = 0.15f;   // was 1.5 → much stronger additive blend
@@ -46,7 +49,10 @@ public class LightingManager {
     
     //Light Occlusion Settings
     private final Map<Integer, BufferedImage> roomOcclusionCache = new HashMap<>();
-    private BufferedImage occlusion;
+    private BufferedImage occlusion, lowRes;
+    Graphics2D gLowRes;
+    private int[] pixelData;
+
     final float minBrightness = 0.55f;
     int minBrightness255 = (int)(minBrightness * 255); // 0.55 * 255 ≈ 140
     private int[] occlusionLUT = new int[256];
@@ -120,7 +126,11 @@ public class LightingManager {
             lights.get(index).setPosition(x, y);
         }
     }
-
+    public void clearRoomOcclusionCache() {
+        if (roomOcclusionCache != null) {
+            roomOcclusionCache.clear();
+        }
+    }
     public void updateLight(int index, int x, int y) {
         if (index >= 0 && index < lights.size()) {
             lights.get(index).setPosition(x, y);
@@ -277,10 +287,9 @@ public class LightingManager {
                     }
                 }
             }
-            if (Settings.shadowsEnabled) {
-                applyShadows(light, lx, ly, unscaledWidth, unscaledHeight, scale);
-            }
         }
+        
+        
 
         // Scale up
         BufferedImage litImageScaled = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -289,10 +298,16 @@ public class LightingManager {
         gScaled.drawImage(litImageUnscaled, 0, 0, width, height, null);
         gScaled.dispose();
 
+                
         // Apply occlusion
         if (Settings.lightOcclusionEnabled) {
-            occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
-            applyOcclusionMaskOptimized(litImageScaled, occlusion);
+        	occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
+
+        	// Directly modify the occlusion for the current frame:
+        	int px = (int)(gp.player.hitbox.x + gp.player.hitbox.width / 2);
+        	int py = (int)(gp.player.hitbox.y + gp.player.hitbox.height / 2);
+        	applyPlayerLOS(occlusion, px, py);
+        	applyOcclusionMaskOptimized(litImageScaled, occlusion);
         }
 
         // Bloom
@@ -303,47 +318,150 @@ public class LightingManager {
 
         return litImageScaled;
     }
-    private void applyShadows(LightSource light, int lx, int ly, int unscaledWidth, int unscaledHeight, int scale) {
-        int radius = Math.max(1, light.getRadius() / scale);
-        float[] falloff = getCachedFalloff(radius);
+    public void drawOcclusionDebug(Graphics2D g) {
 
-        // Coarse ray angle step for performance
-        int angleStep = 8; // 360/8 = 45 rays, can tweak for quality/speed
+        BufferedImage occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
+        if (occlusion == null) return;
 
-        for (int angle = 0; angle < 360; angle += angleStep) {
-            double rad = Math.toRadians(angle);
-            double dx = Math.cos(rad);
-            double dy = Math.sin(rad);
+        // --- CONFIG ---
+        final int previewSize = 160; // width of the debug image
+        final float alpha = 0.7f;    // transparency level
+        final int margin = 20;       // distance from screen edges
+        // --------------
 
-            double px = lx;
-            double py = ly;
+        // Maintain aspect ratio
+        float aspect = (float) occlusion.getHeight() / occlusion.getWidth();
+        int drawW = previewSize;
+        int drawH = (int) (previewSize * aspect);
 
-            for (int r = 0; r < radius; r++) {
-                int xi = (int) px;
-                int yi = (int) py;
+        // Bottom-left corner position
+        int drawX = margin;
+        int drawY = gp.getHeight() - drawH - margin;
 
-                if (xi < 0 || yi < 0 || xi >= unscaledWidth || yi >= unscaledHeight) break;
+        // Semi-transparent overlay
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
-                // Map to tile coordinates for occlusion check
-                int tx = xi * scale / gp.tileSize;
-                int ty = yi * scale / gp.tileSize;
-                if (!CollisionMethods.canLightPassThroughTile(tx, ty, gp)) break;
+        // Draw scaled occlusion image
+        g.drawImage(occlusion, drawX, drawY, drawW, drawH, null);
 
-                int idx = yi * unscaledWidth + xi;
+        // White border
+        g.setComposite(AlphaComposite.SrcOver);
+        g.setColor(Color.WHITE);
+        g.drawRect(drawX, drawY, drawW, drawH);
 
-                // Shadow attenuation: stronger near obstacles
-                float attenuation = falloff[r * r]; 
+        // Label
+        g.setFont(g.getFont().deriveFont(12f));
+        g.drawString("Occlusion Debug", drawX + 6, drawY + 14);
 
-                int prevRGB = litData[idx];
-                int a = (prevRGB >>> 24) & 0xFF;
-                int rC = (int)(((prevRGB >>> 16) & 0xFF) * attenuation);
-                int gC = (int)(((prevRGB >>> 8) & 0xFF) * attenuation);
-                int bC = (int)((prevRGB & 0xFF) * attenuation);
+        // Reset composite
+        g.setComposite(AlphaComposite.SrcOver);
+    }
+    private void applyPlayerLOS(BufferedImage occlusion, int playerX, int playerY) {
+        // Determine the tile the player is standing on
+        int playerTileX = playerX / gp.tileSize;
+        int playerTileY = playerY / gp.tileSize;
 
-                litData[idx] = (a << 24) | (rC << 16) | (gC << 8) | bC;
+        // If player is in a tile that blocks light, skip all occlusion
+        if (!CollisionMethods.canLightPassThroughTile(playerTileX, playerTileY, gp)) {
+            return; // leave occlusion buffer as-is
+        }
 
-                px += dx;
-                py += dy;
+        int width = occlusion.getWidth();
+        int height = occlusion.getHeight();
+        int scale = 3; // downscale factor
+
+        int lowW = Math.max(1, width / scale);
+        int lowH = Math.max(1, height / scale);
+
+        // Create or resize low-res buffer
+        if (lowRes == null || lowRes.getWidth() != lowW || lowRes.getHeight() != lowH) {
+            lowRes = new BufferedImage(lowW, lowH, BufferedImage.TYPE_INT_ARGB);
+            pixelData = ((DataBufferInt) lowRes.getRaster().getDataBuffer()).getData();
+        }
+
+        // Fill buffer white (fully visible)
+        Arrays.fill(pixelData, 0xFFFFFFFF);
+
+        int px = playerX / scale;
+        int py = playerY / scale;
+        int tileSize = gp.tileSize / scale;
+        int losRadius = Math.max(lowW, lowH);
+
+        int minTileX = Math.max(0, (px - losRadius) / tileSize);
+        int maxTileX = Math.min(gp.mapM.currentMapWidth - 1, (px + losRadius) / tileSize);
+        int minTileY = Math.max(0, (py - losRadius) / tileSize);
+        int maxTileY = Math.min(gp.mapM.currentMapHeight - 1, (py + losRadius) / tileSize);
+
+        // Loop through relevant tiles
+        for (int ty = minTileY; ty <= maxTileY; ty++) {
+            for (int tx = minTileX; tx <= maxTileX; tx++) {
+                if (CollisionMethods.canLightPassThroughTile(tx, ty, gp)) continue;
+
+                // Tile corners
+                int left = tx * tileSize;
+                int top = ty * tileSize;
+                int right = Math.min(lowW, left + tileSize);
+                int bottom = Math.min(lowH, top + tileSize);
+
+                int[][] corners = { {left, top}, {right, top}, {right, bottom}, {left, bottom} };
+                int[][] projected = new int[4][2];
+
+                // Project each corner away from player
+                for (int i = 0; i < 4; i++) {
+                    float dx = corners[i][0] - px;
+                    float dy = corners[i][1] - py;
+                    float len = Math.max(1f, Math.abs(dx) + Math.abs(dy));
+                    projected[i][0] = corners[i][0] + Math.round(dx / len * losRadius * 2);
+                    projected[i][1] = corners[i][1] + Math.round(dy / len * losRadius * 2);
+                }
+
+                // Draw 4 shadow polygons (quads) using scanline fill
+                for (int i = 0; i < 4; i++) {
+                    int next = (i + 1) % 4;
+                    int[] xs = { corners[i][0], corners[next][0], projected[next][0], projected[i][0] };
+                    int[] ys = { corners[i][1], corners[next][1], projected[next][1], projected[i][1] };
+                    fillPolygon(pixelData, lowW, lowH, xs, ys, 0xFF000000);
+                }
+            }
+        }
+
+        // Scale back to full resolution (nearest-neighbor for speed)
+        Graphics2D gMain = occlusion.createGraphics();
+        gMain.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        gMain.drawImage(lowRes, 0, 0, width, height, null);
+        gMain.dispose();
+    }
+
+    // Simple scanline polygon fill for int[] pixel buffer
+    private void fillPolygon(int[] pixels, int width, int height, int[] xs, int[] ys, int color) {
+        int n = xs.length;
+        int yMin = Integer.MAX_VALUE;
+        int yMax = Integer.MIN_VALUE;
+
+        for (int y : ys) {
+            yMin = Math.min(yMin, y);
+            yMax = Math.max(yMax, y);
+        }
+
+        yMin = Math.max(0, yMin);
+        yMax = Math.min(height - 1, yMax);
+
+        for (int y = yMin; y <= yMax; y++) {
+            ArrayList<Integer> nodes = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                int j = (i + 1) % n;
+                if ((ys[i] < y && ys[j] >= y) || (ys[j] < y && ys[i] >= y)) {
+                    int x = xs[i] + (y - ys[i]) * (xs[j] - xs[i]) / (ys[j] - ys[i]);
+                    nodes.add(x);
+                }
+            }
+            Collections.sort(nodes);
+            for (int i = 0; i + 1 < nodes.size(); i += 2) {
+                int xStart = Math.max(0, nodes.get(i));
+                int xEnd = Math.min(width - 1, nodes.get(i + 1));
+                for (int x = xStart; x <= xEnd; x++) {
+                    pixels[y * width + x] = color;
+                }
             }
         }
     }
@@ -384,7 +502,7 @@ public class LightingManager {
         if (roomOcclusionCache.containsKey(roomId)) return roomOcclusionCache.get(roomId);
 
         int tileSize = gp.tileSize;
-        BufferedImage occlusion = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        occlusion = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = occlusion.createGraphics();
 
         // Fill with white (no occlusion)
