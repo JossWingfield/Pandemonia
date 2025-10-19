@@ -192,8 +192,6 @@ public class LightingManager {
         int ambG255 = Math.round(ambientColor.getGreen() * ambientIntensity);
         int ambB255 = Math.round(ambientColor.getBlue() * ambientIntensity);
 
-        updateLightCache();
-
         // Fill ambient
         for (int y = 0; y < unscaledHeight; y++) {
             int row = y * unscaledWidth;
@@ -217,9 +215,10 @@ public class LightingManager {
                         Math.min(255, bBase * ambB255 / 255);
             }
         }
-
-        for (int i = 0, n = lights.size(); i < n; i++) {
-            LightSource light = lights.get(i);
+        updateLightCache();
+        List<LightSource> copy = new ArrayList<>(lights);
+        for (int i = 0, n = copy.size(); i < n; i++) {
+            LightSource light = copy.get(i);
 
             int lx = (light.getX() - xDiff) / scale;
             int ly = (light.getY() - yDiff) / scale;
@@ -288,8 +287,6 @@ public class LightingManager {
                 }
             }
         }
-        
-        
 
         // Scale up
         BufferedImage litImageScaled = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -356,6 +353,7 @@ public class LightingManager {
         // Reset composite
         g.setComposite(AlphaComposite.SrcOver);
     }
+    
     private void applyPlayerLOS(BufferedImage occlusion, int playerX, int playerY) {
         // Determine the tile the player is standing on
         int playerTileX = playerX / gp.tileSize;
@@ -430,6 +428,8 @@ public class LightingManager {
         gMain.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         gMain.drawImage(lowRes, 0, 0, width, height, null);
         gMain.dispose();
+        
+
     }
 
     // Simple scanline polygon fill for int[] pixel buffer

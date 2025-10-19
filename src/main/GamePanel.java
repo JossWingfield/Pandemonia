@@ -17,6 +17,7 @@ import map.Customiser;
 import map.LightingManager;
 import map.MapBuilder;
 import map.MapManager;
+import map.particles.ParticleSystem;
 import net.DiscoveryManager;
 import net.GameClient;
 import net.GameServer;
@@ -101,6 +102,7 @@ public class GamePanel extends JPanel implements Runnable {
     public World world = new World(this);
     public Camera camera = new Camera(this);
     public LightingManager lightingM = new LightingManager(this, camera);
+    public ParticleSystem particleM = new ParticleSystem(this);
     public Customiser customiser = new Customiser(this);
     public Catalogue catalogue = new Catalogue(this);
     public RecipeManager recipeM = new RecipeManager();
@@ -521,6 +523,7 @@ public class GamePanel extends JPanel implements Runnable {
     			cutsceneM.update();
 		    	lightingM.update();
 		    	minigameM.update();
+		    	particleM.update();
 		        if(keyI.debugMode) {
 		        	debug.update();
 		        }
@@ -704,7 +707,6 @@ public class GamePanel extends JPanel implements Runnable {
 	            
 		        gColor.dispose();
 		        
-
 		        if (Settings.fancyLighting) {
 		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, xDiff, yDiff);
 		            
@@ -764,6 +766,8 @@ public class GamePanel extends JPanel implements Runnable {
 	                    builds[i].drawOverlayUI(g2, xDiff, yDiff);
 	                }
 	            }
+	            
+	            particleM.draw(g2, xDiff, yDiff);
 		        
 		        world.drawFilters(g2);
 		        world.drawWeather(g2);

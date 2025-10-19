@@ -23,6 +23,7 @@ import entity.buildings.HerbBasket;
 import entity.buildings.Lantern;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
+import entity.buildings.RoomSpawn;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
 import entity.buildings.StorageFridge;
@@ -188,6 +189,7 @@ public class BuildingRegistry {
 			case "Turntable" -> i = new Turntable(gp, x, y);
 			case "Tip Jar" -> i = new TipJar(gp, x, y);
 			case "Herb Basket" -> i = new HerbBasket(gp, x, y);
+			case "Room Spawn" -> i = new RoomSpawn(gp, x, y);
 		}
 
 		return i;
