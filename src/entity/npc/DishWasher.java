@@ -1,6 +1,5 @@
 package entity.npc;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -8,7 +7,6 @@ import java.util.Random;
 
 import entity.buildings.Sink;
 import entity.buildings.TablePlate;
-import entity.items.Food;
 import entity.items.Plate;
 import main.GamePanel;
 
@@ -55,7 +53,11 @@ public class DishWasher extends Employee {
 	}
 	
 	private void findTable() {
-		table =  (TablePlate)findBuildingInRoom("Table Plate", currentRoomNum);
+		if(gp.player.currentRoomIndex == currentRoomNum){
+			table = gp.buildingM.findDirtyPlate();
+		} else {
+			table = gp.mapM.getRoom(currentRoomNum).findDirtyPlate();
+		}
     }
 	private void findSink() {
 		sink = (Sink)findBuildingInRoom("Kitchen Sink 1", currentRoomNum);
@@ -115,7 +117,6 @@ public class DishWasher extends Employee {
 	    	washingPlates = true;
 	    	sink.addPlate(plate);
 	    	plate = null;
-	    	table = null;
 		}
     }
 	public void update() {
@@ -125,7 +126,7 @@ public class DishWasher extends Employee {
 			findTable();
 		} else {
 			if(collectingPlates) {
-				if(walkToBuilding(table, table.npcHitbox)) {
+				if(walkToBuilding(table)) {
 					collectingPlates = false;
 					table.showDirtyPlate = false;
 					plate = table.plate;

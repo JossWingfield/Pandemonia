@@ -590,7 +590,7 @@ public class GamePanel extends JPanel implements Runnable {
     	int yDiff = Math.round(viewTopWorld);
     		
         
-        if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == catalogueState || currentState == customiseRestaurantState || currentState == xpState) {
+        if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState) {
         	
         	gColor = colorBuffer.createGraphics();
         	gColor.setComposite(AlphaComposite.SrcOver);
@@ -742,6 +742,8 @@ public class GamePanel extends JPanel implements Runnable {
 		        	BufferedImage viewSub = colorBuffer.getSubimage(srcX, srcY, srcW, srcH);
 		        	g2.drawImage(viewSub, 0, 0, frameWidth, frameHeight, null);
 		        }
+		        
+		        //lightingM.drawOcclusionDebug(g2);
 	            
 	            for (int i = 0; i < thirdLayer.length; i++) {
 	                if (thirdLayer[i] != null) {

@@ -58,7 +58,7 @@ public class Rat extends NPC {
 		} else {
 			if(fetchingItem) {
 				if(inKitchen) {
-					if(walkToBuildingInRoom("Escape Hole", RoomHelperMethods.STORES, true)) {
+					if(walkToBuildingInRoom("Escape Hole", RoomHelperMethods.STORES)) {
 						removeNPCFromRoom();
 					}
 				}
@@ -81,7 +81,7 @@ public class Rat extends NPC {
 						if(fridge == null) {
 							findFridge();
 						} else {
-							if(walkToBuilding(fridge, fridge.npcHitbox)) {
+							if(walkToBuilding(fridge)) {
 								depositing = true;
 								walking = false;
 							}

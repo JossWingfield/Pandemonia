@@ -57,7 +57,7 @@ public class CutsceneManager {
         List<CutsceneEvent> events = new ArrayList<>();
         
         // 1. Spawn ghost offscreen
-        NPC ghost = new SpecialCustomer(gp, 0, 0); 
+        NPC ghost = new SpecialCustomer(gp, 0, 0);
         events.add(new AddNPCEvent(gp, ghost));
 
         // 2. Camera follows ghost while zooming in
@@ -65,8 +65,7 @@ public class CutsceneManager {
         
         // 3. Move ghost into scene
         Chair chair = gp.buildingM.findFreeChair();
-        events.add(new NPCMoveEvent(ghost, chair, gp));
-
+        events.add(new NPCMoveEvent(ghost, chair));
 
         // 4. Show dialogue above ghost for 3 seconds (assuming 60 FPS → 180 frames)
         events.add(new DialogueEvent(gp, "Boo! Welcome to Pandemonia..."));
@@ -75,7 +74,7 @@ public class CutsceneManager {
         events.add(new WaitEvent(60)); // wait 1 second
 
         // 6. Camera returns to player and zooms back to normal
-        events.add(new EndCutscene(gp));
+        events.add(new EndCutscene(gp, ghost));
 
         startCutscene(events);
     }

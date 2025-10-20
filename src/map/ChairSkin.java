@@ -20,8 +20,9 @@ public class ChairSkin {
 	public ChairSkin(GamePanel gp, int preset) {
 		this.gp = gp;
 		this.preset = preset;
+		cost = 20;
+		description = "New Seating for your restaurant.";
 		importImages();
-		cost = 30;
 	}
 	public void importImages() {
 		
@@ -43,36 +44,47 @@ public class ChairSkin {
 			break;
 		case 5://SQUARE
 	        img = importImage("/decor/chair.png").getSubimage(2, 73-32, 16, 16);
+	        cost = 40;
 			break;
 		case 6:
 	        img = importImage("/decor/chair.png").getSubimage(2+32, 73-32, 16, 16);
+	        cost = 40;
 			break;
 		case 7:
 	        img = importImage("/decor/chair.png").getSubimage(2+64, 73-32, 16, 16);
+	        cost = 40;
 			break;
 		case 8:
 	        img = importImage("/decor/chair.png").getSubimage(2+64+32, 73-32, 16, 16);
+	        cost = 40;
 			break;
 		case 9:
 	        img = importImage("/decor/chair.png").getSubimage(2+64+64, 73-32, 16, 16);
+	        cost = 40;
 			break;
 		case 10: //BACK CHAIR
 	        img = importImage("/decor/chair.png").getSubimage(2, 73-64, 16, 16);
+	        cost = 50;
 			break;
 		case 11:
 	        img = importImage("/decor/chair.png").getSubimage(2+32, 73-64, 16, 16);
+	        cost = 50;
 			break;
 		case 12:
 	        img = importImage("/decor/chair.png").getSubimage(2+64, 73-64, 16, 16);
+	        cost = 50;
 			break;
 		case 13: //OTHER SHAPES
 	        img = importImage("/decor/chair.png").getSubimage(2, 73+32, 16, 16);
+	        cost = 40;
 			break;
 		case 14:
 	        img = importImage("/decor/chair.png").getSubimage(2+32, 73+32, 16, 16);
+	        cost = 40;
 			break;
 		case 15:
 	        img = importImage("/decor/chair.png").getSubimage(2+96, 73+32, 16, 16);
+	        cost = 100;
 			break;
 		}
 		

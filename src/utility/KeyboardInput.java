@@ -55,7 +55,7 @@ public class KeyboardInput implements KeyListener {
             	gp.progressM.moveToNextPhase();
             }
             if(num == KeyEvent.VK_H) {
-            	//gp.camera.setZoom(1.5f);
+            	gp.cutsceneM.startGhostEntranceCutscene();
             }
             if(num == KeyEvent.VK_J) {
             	//gp.camera.resetToDefaultZoom();

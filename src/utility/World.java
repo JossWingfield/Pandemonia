@@ -52,11 +52,12 @@ public class World {
     private int lastTimePeriod = 0;
     
     // === Event system ===
-    private boolean eventsOn = false;
+    private boolean eventsOn = true;
     private int eventTimer = 0;
     private int nextEventTime; // in frames
     private int minEventInterval = 60 * 45;  // 10 in-game minutes
     private int maxEventInterval = 60 * 60*3;  // 3 in-game hour
+    private int serviceEventGracePeriod = 60 * 60; 
     private DayPhase lastPhase = DayPhase.AFTER_HOURS;
     
     // === Weather system ===
@@ -105,7 +106,7 @@ public class World {
         currentWeather = Weather.SUNNY;
         resetWeatherTimer();
         
-        //gp.npcM.addStocker();
+        //gp.npcM.addDishWasher();
     }
 
     // === Specials generation ===
@@ -222,7 +223,6 @@ public class World {
         // Placeholder: plug in your event system here
         int eventId = random.nextInt(8);
         
-        eventId = 0;
         switch (eventId) {
             case 0: //Powercut
             	powerCut();
@@ -311,15 +311,19 @@ public class World {
 	            }
 	        }
         }
-        if(eventsOn) {
-	        if(currentPhase == DayPhase.SERVICE) {
-	        // === Event handling ===
-		        eventTimer++;
-		        if (eventTimer >= nextEventTime) {
-		            triggerRandomEvent();
-		            resetEventTimer();
-		        }
-	        }
+        if (eventsOn) {
+            if (currentPhase == DayPhase.SERVICE) {
+                // If we just entered SERVICE phase, give a grace period before first event
+                if (lastPhase != DayPhase.SERVICE && eventTimer == 0) {
+                    eventTimer = -serviceEventGracePeriod; // start below zero so timer "waits" to reach 0
+                }
+
+                eventTimer++;
+                if (eventTimer >= nextEventTime) {
+                    triggerRandomEvent();
+                    resetEventTimer();
+                }
+            }
 	          
 	        if(spawnRats) {
 	        	ratSpawnTimer++;

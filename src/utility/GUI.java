@@ -2001,6 +2001,30 @@ public class GUI {
 			clickCooldown--;
 		}
 	}
+	public List<String> wrapText(String text, Graphics2D g2, int maxWidth) {
+	    List<String> lines = new ArrayList<>();
+	    String[] words = text.split(" ");
+	    StringBuilder currentLine = new StringBuilder();
+
+	    for (String word : words) {
+	        String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+	        int lineWidth = (int) g2.getFontMetrics().getStringBounds(testLine, g2).getWidth();
+	        if (lineWidth > maxWidth) {
+	            if (currentLine.length() > 0) {
+	                lines.add(currentLine.toString());
+	            }
+	            currentLine = new StringBuilder(word);
+	        } else {
+	            currentLine = new StringBuilder(testLine);
+	        }
+	    }
+
+	    if (currentLine.length() > 0) {
+	        lines.add(currentLine.toString());
+	    }
+
+	    return lines;
+	}
 	public void drawCheckBoxHover(Graphics2D g2, int x, int y, int w, int h) {
 	    int size = 16 * 3;
 

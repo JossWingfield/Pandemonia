@@ -68,7 +68,7 @@ public class Stocker extends Employee {
 			fetchingItem = true;
 		} else {
 			if(fetchingItem) {
-				if(walkToBuildingInRoom("Storage Fridge", RoomHelperMethods.STORES, true)) {
+				if(walkToBuildingInRoom("Storage Fridge", RoomHelperMethods.STORES)) {
 					stocking = true;
 					walking = false;
 					fetchingItem = false;
@@ -95,7 +95,7 @@ public class Stocker extends Employee {
 						if(fridge == null) {
 							findFridge();
 						} else {
-							if(walkToBuilding(fridge, fridge.npcHitbox)) {
+							if(walkToBuilding(fridge)) {
 								depositing = true;
 								walking = false;
 							}

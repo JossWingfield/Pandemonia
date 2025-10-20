@@ -307,7 +307,7 @@ public abstract class NPC extends Entity {
     }
     public void searchPath(int goalCol, int goalRow) {
 
-        Room currentRoom = gp.mapM.getCurrentRoom(this);
+        Room currentRoom = gp.mapM.getRooms()[currentRoomNum];
 
         // Rebuild path only when needed (goal changed or no current path)
         boolean needNewPath =
@@ -400,16 +400,19 @@ public abstract class NPC extends Entity {
             }
         }
     }
-    protected boolean walkToBuilding(Building building, Rectangle2D.Float stopHitbox) {
-    	if(stopHitbox == null) {
+    public boolean walkToBuilding(Building building) {
+    	if(building == null) {
+    		return false;
+    	}
+    	if(building.npcHitbox == null) {
     		return false;
     	}
 		if(building != null) {
 	    	walking = true;
-			int goalCol = (int)((stopHitbox.x + stopHitbox.width/2)/gp.tileSize);
-	        int goalRow = (int)((stopHitbox.y + stopHitbox.height/2 - 1)/gp.tileSize);  
+			int goalCol = (int)((building.npcHitbox.x + building.npcHitbox.width/2)/gp.tileSize);
+	        int goalRow = (int)((building.npcHitbox.y + building.npcHitbox.height/2 - 1)/gp.tileSize);  
 	        searchPath(goalCol, goalRow);
-	        if(stopHitbox.intersects(hitbox)) {
+	        if(building.npcHitbox.intersects(hitbox)) {
 	        	return true;
 	        }
 		}
@@ -427,16 +430,12 @@ public abstract class NPC extends Entity {
 		}
 		return false;
     }
-    protected boolean walkToBuildingWithName(String name, boolean isNPCHitbox) {
+    protected boolean walkToBuildingWithName(String name) {
     	Building building = findBuildingInRoom(name, currentRoomNum);
     	walking = true;
 		if(building != null) {
 			Rectangle2D.Float stopHitbox = building.hitbox;
-			if(isNPCHitbox) {
-				if(building.npcHitbox != null) {
-					stopHitbox =building.npcHitbox;
-				}
-			}
+			stopHitbox = building.npcHitbox;
 			int goalCol = (int)((stopHitbox.x + stopHitbox.width/2)/gp.tileSize);
 	        int goalRow = (int)((stopHitbox.y + stopHitbox.height/2 - 1)/gp.tileSize);  
 	        searchPath(goalCol, goalRow);
@@ -453,6 +452,9 @@ public abstract class NPC extends Entity {
 		} else {
 			door =gp.mapM.getRoom(currentRoomNum).findDoor(doorRoomNum);
 		}
+    	if(door == null) {
+    		return false;
+    	}
     	
 		int goalCol = (int)((door.npcHitbox.x + door.npcHitbox.width/2)/gp.tileSize);
         int goalRow = (int)((door.npcHitbox.y + door.npcHitbox.height/2 - 1)/gp.tileSize);  
@@ -520,14 +522,14 @@ public abstract class NPC extends Entity {
 		}
 		return false;
     }
-    protected boolean walkToBuildingInRoom(String name, int roomNum, boolean isNPCHitbox) {
+    protected boolean walkToBuildingInRoom(String name, int roomNum) {
         // Step 1: find target building
         Building building = findBuildingInRoom(name, roomNum); // Search all rooms by name
         if (building == null) return false;
 
         // Step 2: if already in same room, just walk there
         if (roomNum == currentRoomNum) {
-            return walkToBuildingWithName(name, isNPCHitbox);
+            return walkToBuildingWithName(name);
         }
         // Step 4: find path of rooms using BFS
         List<Integer> roomPath = findRoomPath(currentRoomNum, roomNum, RoomHelperMethods.roomGraph);
@@ -546,7 +548,7 @@ public abstract class NPC extends Entity {
         }
 
         // Step 6: now we’re in the destination room
-        return walkToBuildingWithName(name, isNPCHitbox);
+        return walkToBuildingWithName(name);
     }
     private List<Integer> findRoomPath(int start, int target, Map<Integer, int[]> graph) {
         Queue<List<Integer>> queue = new LinkedList<>();

@@ -292,7 +292,7 @@ public class Customer extends NPC {
 	        	if(toilet == null) {
 	        		findToilet();
 	        	}
-	        	if(walkToBuilding(toilet, toilet.npcHitbox)) {
+	        	if(walkToBuilding(toilet)) {
 	        		onToilet = true;
 			    	hitbox.x = toilet.hitbox.x;
 			    	hitbox.y = toilet.hitbox.y;
@@ -309,7 +309,7 @@ public class Customer extends NPC {
 	            if(!walking) {
 	                findTable();
 	            } else {
-	            	if(walkToBuilding(currentChair, currentChair.hitbox)) {
+	            	if(walkToBuilding(currentChair)) {
 	            		 walking = false;
 		                 atTable = true;
 		                 hitbox.x = currentChair.hitbox.x+16;

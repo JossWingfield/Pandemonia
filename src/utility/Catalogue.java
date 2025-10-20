@@ -133,9 +133,6 @@ public class Catalogue {
 		}
 	}
 	private void addBuildings() {
-		addToInventory(new Sink(gp, 0, 0));
-		addToInventory(new Toilet(gp, 0, 0, 0));
-		addToInventory(new FoodStore(gp, 0, 0, 1));
 		addToInventory(new WallPaper(gp, 0));
 		addToInventory(new WallPaper(gp, 1));
 		addToInventory(new WallPaper(gp, 2));
@@ -830,7 +827,7 @@ public class Catalogue {
 			
 			g2.setFont(descriptionFont);
 			text = description;
-			for(String line: text.split("\n")) {
+			for(String line: gp.gui.wrapText(description, g2, 49*3)) {
 				g2.drawString(line, xPos + 64*3, yPos + 24*3+ 12);
 				yPos += 30;
 			}

@@ -17,6 +17,8 @@ public class Lantern extends Building{
 	public Lantern(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48*2);
 		
+		description = "Light up your restaurant.";
+		cost = 20;
 		
 		drawWidth = 48;
 		isDecor = true;

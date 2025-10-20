@@ -20,8 +20,9 @@ public class TableSkin {
 	public TableSkin(GamePanel gp, int preset) {
 		this.gp = gp;
 		this.preset = preset;
-		importImages();
 		cost = 36;
+		description = "Give your kitchen counters a fresh look.";
+		importImages();
 	}
 	public void importImages() {
 		
@@ -31,9 +32,11 @@ public class TableSkin {
 			break;
 		case 1:
 	        img = importImage("/decor/connected table.png");
+			cost = 60;
 			break;
 		case 2:
 	        img = importImage("/decor/TableCloth.png");
+			cost = 100;
 			break;
 		}
 		

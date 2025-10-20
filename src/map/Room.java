@@ -34,6 +34,7 @@ import entity.buildings.Spill;
 import entity.buildings.Stove;
 import entity.buildings.Table;
 import entity.buildings.Table2;
+import entity.buildings.TablePlate;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
 import entity.buildings.Trapdoor;
@@ -2548,6 +2549,19 @@ public class Room {
 	}
 	public float getSpawnY() {
 		return roomSpawn.hitbox.y + roomSpawn.hitbox.height/2;
+	}
+	public TablePlate findDirtyPlate() {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Table Plate")) {
+					TablePlate table = (TablePlate)b;
+					if(table.showDirtyPlate && table.plate != null) {
+						return table;
+					}
+				}	
+			}
+		}
+		return null;
 	}
     public void update() {
     	for(Building i: buildings) { //Loops through the items on the current map

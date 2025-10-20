@@ -203,6 +203,19 @@ public class BuildingManager {
 		}
 		return null;
 	}
+	public TablePlate findDirtyPlate() {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Table Plate")) {
+					TablePlate table = (TablePlate)b;
+					if(table.showDirtyPlate && table.plate != null) {
+						return table;
+					}
+				}	
+			}
+		}
+		return null;
+	}
 	public Chair isFreeChair() {
 		for(Building b: buildings) {
 			if(b != null) {

@@ -57,6 +57,7 @@ public class Building extends Entity {
 		super(gp, xPos, yPos, width, height);
 		this.gp = gp;
 		destructionImage = importImage("/UI/DestructionImage.png");
+		npcHitbox = hitbox;
 	}
 	
 	public Building(GamePanel gp) {

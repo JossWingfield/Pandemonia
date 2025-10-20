@@ -304,7 +304,7 @@ public class LightingManager {
         	int px = (int)(gp.player.hitbox.x + gp.player.hitbox.width / 2);
         	int py = (int)(gp.player.hitbox.y + gp.player.hitbox.height / 2);
         	applyPlayerLOS(occlusion, px, py);
-        	applyOcclusionMaskOptimized(litImageScaled, occlusion);
+        	applyOcclusionMaskOptimized(litImageScaled, occlusion, xDiff, yDiff);
         }
 
         // Bloom
@@ -465,38 +465,71 @@ public class LightingManager {
             }
         }
     }
-    private void applyOcclusionMaskOptimized(BufferedImage lightBuffer, BufferedImage occlusionLowRes) {
-        int[] lightData = ((DataBufferInt) lightBuffer.getRaster().getDataBuffer()).getData();
-        int[] occData = ((DataBufferInt) occlusionLowRes.getRaster().getDataBuffer()).getData();
-
-        int wLight = lightBuffer.getWidth();
-        int hLight = lightBuffer.getHeight();
-        int wOcc = occlusionLowRes.getWidth();
-        int hOcc = occlusionLowRes.getHeight();
-
-        int[] occXLookup = new int[wLight];
-        for (int x = 0; x < wLight; x++) occXLookup[x] = x * wOcc / wLight;
-
-        int[] occYLookup = new int[hLight];
-        for (int y = 0; y < hLight; y++) occYLookup[y] = y * hOcc / hLight;
-
-        for (int y = 0; y < hLight; y++) {
-            int row = y * wLight;
-            int occY = occYLookup[y];
-            int occRow = occY * wOcc;
-            for (int x = 0; x < wLight; x++) {
-                int idx = row + x;
-                int occX = occXLookup[x];
-                int occFactor = occlusionLUT[occData[occRow + occX] & 0xFF];
-                int pixel = lightData[idx];
-                int a = (pixel >>> 24) & 0xFF;
-                int r = occlusionARGBTable[occFactor][(pixel >>> 16) & 0xFF];
-                int g = occlusionARGBTable[occFactor][(pixel >>> 8) & 0xFF];
-                int b = occlusionARGBTable[occFactor][pixel & 0xFF];
-                lightData[idx] = (a << 24) | (r << 16) | (g << 8) | b;
-            }
-        }
-    }
+    private void applyOcclusionMaskOptimized(BufferedImage lightBuffer, BufferedImage occlusionLowRes,int xDiff, int yDiff) {
+		int[] lightData = ((DataBufferInt) lightBuffer.getRaster().getDataBuffer()).getData();
+		int[] occData   = ((DataBufferInt) occlusionLowRes.getRaster().getDataBuffer()).getData();
+		
+		int wLight = lightBuffer.getWidth();
+		int hLight = lightBuffer.getHeight();
+		int wOcc   = occlusionLowRes.getWidth();
+		int hOcc   = occlusionLowRes.getHeight();
+		
+		// Map world pixels → occlusion texture pixels.
+		// Compute room size in world pixels (map width in tiles * tileSize)
+		int roomPixelW = gp.mapM.currentMapWidth * gp.tileSize;
+		int roomPixelH = gp.mapM.currentMapHeight * gp.tileSize;
+		
+		// If your occlusion image was created with frame size (gp.frameWidth/gp.frameHeight)
+		// but the room is larger, use roomPixelW/H. If occlusion image is already room-sized,
+		// this mapping will still be correct.
+		float occScaleX = (float) wOcc / (float) Math.max(1, roomPixelW);
+		float occScaleY = (float) hOcc / (float) Math.max(1, roomPixelH);
+		
+		// Precompute lookup arrays (cheap and keeps inner loop fast)
+		int[] occXLookup = new int[wLight];
+		for (int x = 0; x < wLight; x++) {
+		// worldX = bufferX + xDiff
+		// buffer pixel x corresponds to world X coordinate at (x + xDiff)
+		int worldX = x + xDiff;
+		int occX = (int) (worldX * occScaleX);
+		if (occX < 0) occX = 0;
+		else if (occX >= wOcc) occX = wOcc - 1;
+		occXLookup[x] = occX;
+		}
+		
+		int[] occYLookup = new int[hLight];
+		for (int y = 0; y < hLight; y++) {
+		int worldY = y + yDiff;
+		int occY = (int) (worldY * occScaleY);
+		if (occY < 0) occY = 0;
+		else if (occY >= hOcc) occY = hOcc - 1;
+		occYLookup[y] = occY;
+		}
+		
+		// Apply occlusion using the lookups
+		for (int y = 0; y < hLight; y++) {
+		int row = y * wLight;
+		int occY = occYLookup[y];
+		int occRow = occY * wOcc;
+		for (int x = 0; x < wLight; x++) {
+		int idx = row + x;
+		int occX = occXLookup[x];
+		
+		int occVal = occData[occRow + occX] & 0xFF;
+		int occFactor = occlusionLUT[occVal];
+		
+		int pixel = lightData[idx];
+		int a = (pixel >>> 24) & 0xFF;
+		if (a == 0) continue;
+		
+		int r = occlusionARGBTable[occFactor][(pixel >>> 16) & 0xFF];
+		int g = occlusionARGBTable[occFactor][(pixel >>> 8) & 0xFF];
+		int b = occlusionARGBTable[occFactor][pixel & 0xFF];
+		
+		lightData[idx] = (a << 24) | (r << 16) | (g << 8) | b;
+		}
+		}
+	}
     private BufferedImage getOcclusionForRoom(int roomId, int width, int height) {
         // Return cached if exists
         if (roomOcclusionCache.containsKey(roomId)) return roomOcclusionCache.get(roomId);

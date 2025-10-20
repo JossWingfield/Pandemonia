@@ -373,7 +373,8 @@ public class Customiser {
 							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
 
 			    			xStart+= 37*3;
-			    			if(counter >= 16) {
+			    			counter++;
+			    			if(counter >= 10) {
 			    				xStart = originalXStart;
 			    				yPos += 37*3;
 			    				counter = 0;
@@ -382,7 +383,6 @@ public class Customiser {
 					} else {
 						counter = 0;
 					}
-	    			counter++;
 	    			index++;
 				}
 			} else if(pageNum == 2) {
@@ -417,7 +417,8 @@ public class Customiser {
 							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
 
 			    			xStart+= 37*3;
-			    			if(counter >= 16) {
+			    			counter++;
+			    			if(counter >= 10) {
 			    				xStart = originalXStart;
 			    				yPos += 37*3;
 			    				counter = 0;
@@ -426,7 +427,6 @@ public class Customiser {
 					} else {
 						counter = 0;
 					}
-	    			counter++;
 	    			index++;
 				}
 				
@@ -463,7 +463,8 @@ public class Customiser {
 			    			g2.drawImage(border, xStart+(55) - 24, yPos+28, 48, 48, null);
 
 			    			xStart+= 37*3;
-			    			if(counter >= 9) {
+			    			counter++;
+			    			if(counter >= 10) {
 			    				xStart = originalXStart;
 			    				yPos += 37*3;
 			    				counter = 0;
@@ -472,7 +473,6 @@ public class Customiser {
 					} else {
 						counter = 0;
 					}
-	    			counter++;
 	    			index++;
 				}
 			} else if(pageNum == 4) {
@@ -508,7 +508,8 @@ public class Customiser {
 			    			g2.drawImage(border, xStart+(55) - 24, yPos+28, 48, 48, null);
 
 			    			xStart+= 37*3;
-			    			if(counter >= 9) {
+			    			counter++;
+			    			if(counter >= 10) {
 			    				xStart = originalXStart;
 			    				yPos += 37*3;
 			    				counter = 0;
@@ -517,7 +518,6 @@ public class Customiser {
 					} else {
 						counter = 0;
 					}
-	    			counter++;
 	    			index++;
 				}
 			} else if(pageNum == 5) {
@@ -554,7 +554,8 @@ public class Customiser {
 			    			g2.drawImage(border, xStart+(55) - 24, yPos+28, 48, 48, null);
 
 			    			xStart+= 37*3;
-			    			if(counter >= 9) {
+			    			counter++;
+			    			if(counter >= 10) {
 			    				xStart = originalXStart;
 			    				yPos += 37*3;
 			    				counter = 0;
@@ -563,7 +564,6 @@ public class Customiser {
 					} else {
 						counter = 0;
 					}
-	    			counter++;
 	    			index++;
 				}
 			} else if(pageNum == 6) {
@@ -598,7 +598,8 @@ public class Customiser {
 							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
 
 			    			xStart+= 37*3;
-			    			if(counter >= 9) {
+			    			counter++;
+			    			if(counter >= 10) {
 			    				xStart = originalXStart;
 			    				yPos += 37*3;
 			    				counter = 0;
@@ -607,7 +608,6 @@ public class Customiser {
 					} else {
 						counter = 0;
 					}
-	    			counter++;
 	    			index++;
 				}
 			}  else if(pageNum == 7) {
@@ -642,7 +642,8 @@ public class Customiser {
 							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
 
 			    			xStart+= 37*3;
-			    			if(counter >= 9) {
+			    			counter++;
+			    			if(counter >= 10) {
 			    				xStart = originalXStart;
 			    				yPos += 37*3;
 			    				counter = 0;
@@ -651,7 +652,6 @@ public class Customiser {
 					} else {
 						counter = 0;
 					}
-	    			counter++;
 	    			index++;
 				}
 			} else if(pageNum == 8) {
@@ -686,7 +686,8 @@ public class Customiser {
 			    			g2.drawImage(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
 
 			    			xStart+= 37*3;
-			    			if(counter >= 9) {
+			    			counter++;
+			    			if(counter >= 10) {
 			    				xStart = originalXStart;
 			    				yPos += 37*3;
 			    				counter = 0;
@@ -695,7 +696,6 @@ public class Customiser {
 					} else {
 						counter = 0;
 					}
-	    			counter++;
 	    			index++;
 				}
 			} else if(pageNum == 9) {
@@ -730,7 +730,8 @@ public class Customiser {
 			    			g2.drawImage(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
 
 			    			xStart+= 37*3;
-			    			if(counter >= 9) {
+			    			counter++;
+			    			if(counter >= 10) {
 			    				xStart = originalXStart;
 			    				yPos += 37*3;
 			    				counter = 0;
@@ -739,7 +740,6 @@ public class Customiser {
 					} else {
 						counter = 0;
 					}
-	    			counter++;
 	    			index++;
 				}
 			}

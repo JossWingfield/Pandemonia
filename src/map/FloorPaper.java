@@ -23,6 +23,8 @@ public class FloorPaper {
 		this.gp = gp;
 		this.preset = preset;
 	    tiles = new Tile[64];
+	    cost = 35;
+		description = "New Flooring for your restaurant.";
 		importImages();
 	}
 	public void importImages() {

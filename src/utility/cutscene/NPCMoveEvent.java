@@ -8,26 +8,13 @@ public class NPCMoveEvent extends CutsceneEvent {
 
     private NPC npc;
     private Building targetBuilding;
-    private float tolerance;
-    private GamePanel gp;
 
-    public NPCMoveEvent(NPC npc, Building building, GamePanel gp) {
+    public NPCMoveEvent(NPC npc, Building building) {
         this.npc = npc;
         this.targetBuilding = building;
-        this.gp = gp;
-        this.tolerance = 2f; // small buffer to consider "arrived"
         
 
-        // Set up initial path to building
-        if (building != null) {
-            float bx = building.hitbox.x + building.hitbox.width / 2f;
-            float by = building.hitbox.y + building.hitbox.height / 2f;
-            int goalCol = (int)(bx / gp.tileSize);
-            int goalRow = (int)(by / gp.tileSize);
-            npc.searchPath(goalCol, goalRow);
-            npc.walking = true;
-            npc.setAbleToUpdate(false);
-        }
+        npc.walking = true;
     }
 
     @Override
@@ -36,15 +23,16 @@ public class NPCMoveEvent extends CutsceneEvent {
             finished = true;
             return;
         }
+        
+        npc.walking = true;
 
         // Move NPC along path
-        npc.followPath();
-
-        // Check if NPC has actually reached the building
-        if (targetBuilding.hitbox.intersects(npc.hitbox)) {
+        if(npc.walkToBuilding(targetBuilding)) {
             finished = true;
+            npc.hitbox.x = targetBuilding.hitbox.x;
+            npc.hitbox.y = targetBuilding.hitbox.y;
             npc.walking = false; // stop moving
-            npc.setAbleToUpdate(true);
-        }
+        };
+
     }
 }

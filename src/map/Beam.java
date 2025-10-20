@@ -22,6 +22,8 @@ public class Beam {
 		this.gp = gp;
 		this.preset = preset;
 	    tiles = new Tile[64];
+		cost = 35;
+		description = "A new set of beams for the room.";
 		importImages();
 	}
 	public void importImages() {

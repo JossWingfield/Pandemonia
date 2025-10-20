@@ -11,6 +11,7 @@ public class AddNPCEvent extends CutsceneEvent {
 	    public AddNPCEvent(GamePanel gp, NPC npc) {
 	        this.gp = gp;
 	        this.npc = npc;
+	        npc.setAbleToUpdate(false);
 	    }
 
 	    @Override
