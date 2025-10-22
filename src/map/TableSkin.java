@@ -38,6 +38,9 @@ public class TableSkin {
 	        img = importImage("/decor/TableCloth.png");
 			cost = 100;
 			break;
+		case 3:
+	        img = importImage("/decor/destroyed/OldTable.png");
+			break;
 		}
 		
 	}

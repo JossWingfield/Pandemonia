@@ -95,39 +95,51 @@ public class WallPaper {
 			break;
 		case 21: //START OF COLOURED WALLS
 		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 0, 0, true);
+			description = "Add some colour to your restaurant.";
 		    cost = 40;
 			break;
 		case 22:
 		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*1, 0, true);
+			description = "Add some colour to your restaurant.";
 		    cost = 40;
 			break;
 		case 23:
 		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*2, 0, true);
+			description = "Add some colour to your restaurant.";
 		    cost = 40;
 			break;
 		case 24:
 		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*3, 0, true);
+			description = "Add some colour to your restaurant.";
 		    cost = 40;
 			break;
 		case 25:
 		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*4, 0, true);
+			description = "Add some colour to your restaurant.";
 		    cost = 40;
 			break;
 		case 26:
 		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*5, 0, true);
+			description = "Add some colour to your restaurant.";
 		    cost = 40;
 			break;
 		case 27:
 		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*6, 0, true);
+			description = "Add some colour to your restaurant.";
 		    cost = 40;
 			break;
 		case 28:
 		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*7, 0, true);
+			description = "Add some colour to your restaurant.";
 		    cost = 40;
 			break;
 		case 29:
 		    importWallFromSpriteSheet("/tiles/walls/ColoredWalls", 6, 4, 64*8, 0, true);
 		    cost = 40;
+			description = "Add some colour to your restaurant.";
+			break;
+		case 30:
+			importWallFromSpriteSheet("/decor/destroyed/OldWallpaper", 6, 4, true);
 			break;
 		}
 		

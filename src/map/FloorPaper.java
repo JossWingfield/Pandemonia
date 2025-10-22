@@ -66,6 +66,9 @@ public class FloorPaper {
 		case 11:
 			importFloorFromSpriteSheet("/tiles/flooring/Floor11", 8, 7, false);
 			break;
+		case 12:
+			importFloorFromSpriteSheet("/decor/destroyed/OldFloor", 8, 7, false);
+			break;
 		}
 		
 	}
@@ -90,7 +93,6 @@ public class FloorPaper {
     }
     private void importFloorFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
         BufferedImage img = importImage(filePath+".png");
-        BufferedImage normalImg = importImage(filePath+"Normal.png");
         int tileSize = 16;
         for(int j = 0; j < rows; j++) {
             for(int i = 0; i < columns; i++) {

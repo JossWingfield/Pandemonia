@@ -1,6 +1,5 @@
 package utility.cutscene;
 
-
 import entity.npc.NPC;
 import main.GamePanel;
 
@@ -8,16 +7,17 @@ public class DialogueEvent extends CutsceneEvent {
 
     private String message;
     private GamePanel gp;
+    private NPC npc;
 
-    public DialogueEvent(GamePanel gp, String message) {
+    public DialogueEvent(GamePanel gp, NPC npc, String message) {
         this.gp = gp;
+        this.npc = npc;
         this.message = message;
     }
 
     @Override
     public void update() {
-        // Draw dialogue above NPC
-        gp.gui.addMessage(message); // assume you have a method in UI to draw dialogue
+    	gp.gui.setDialogue(message, npc);
         finished = true;
     }
 }

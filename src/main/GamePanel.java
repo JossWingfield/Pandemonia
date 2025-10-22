@@ -135,6 +135,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int chooseRecipeState = 13;
     public final int chooseSaveState = 14;
     public final int chooseUpgradeState = 15;
+    public final int dialogueState = 16;
 
     // AESTHETICS
     private Color backgroundColour = new Color(51, 60, 58);
@@ -199,10 +200,12 @@ public class GamePanel extends JPanel implements Runnable {
         camera.setZoom(1.0f);
         lightingM = new LightingManager(this, camera);
         customiser = new Customiser(this);
+        cutsceneM = new CutsceneManager(this);
         catalogue = new Catalogue(this);
         recipeM = new RecipeManager();
         upgradeM = new UpgradeManager(this);
         progressM = new ProgressManager(this);
+        mapM.getRoom(0).setDestroyed();
     }
     public void playSinglePlayer(int saveSlot) {
     	saveM.currentSave = saveSlot;
@@ -590,7 +593,7 @@ public class GamePanel extends JPanel implements Runnable {
     	int yDiff = Math.round(viewTopWorld);
     		
         
-        if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState) {
+        if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
         	
         	gColor = colorBuffer.createGraphics();
         	gColor.setComposite(AlphaComposite.SrcOver);

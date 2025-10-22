@@ -10,7 +10,7 @@ import main.GamePanel;
 public class Spill extends Building {
 	
 	private int spillCount = 0;
-	private int maxSpillTime = 60*7;
+	private int maxSpillTime = 60*5;
 	private Rectangle2D.Float effectArea;
 	private boolean removedSpill = false;
 	
@@ -60,12 +60,12 @@ public class Spill extends Building {
 		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    }
 	    if(effectArea.intersects(gp.player.hitbox)) {
-		    gp.player.slowSpeed();
+		    //gp.player.slowSpeed();
 	    } else {
-	    	gp.player.setNormalSpeed();
+	    	//gp.player.setNormalSpeed();
 	    }
 	    if(removedSpill) {
-	    	gp.player.setNormalSpeed();
+	    	//gp.player.setNormalSpeed();
 	    }
 	    
 	    if(spillCount > 0) {

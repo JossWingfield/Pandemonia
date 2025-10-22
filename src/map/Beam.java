@@ -44,6 +44,9 @@ public class Beam {
 		case 4:
 	        importBeamFromSpriteSheet("/tiles/beams/Beam 5", 3, 6, true);
 			break;
+		case 5:
+	        importBeamFromSpriteSheet("/decor/destroyed/OldBeam", 3, 6, true);
+			break;
 		}
 		
 	}
@@ -68,7 +71,6 @@ public class Beam {
     }
     private void importBeamFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
     	BufferedImage img = importImage(filePath+".png");
-        BufferedImage normalImg = importImage(filePath+"Normal.png");
         int tileSize = 16;
         for(int j = 0; j < rows; j++) {
             for(int i = 0; i < columns; i++) {

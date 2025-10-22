@@ -11,6 +11,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import entity.buildings.Building;
+import entity.buildings.Candle;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
 import entity.buildings.Lantern;
@@ -172,6 +173,9 @@ public class Catalogue {
 		addToInventory(new Beam(gp, 3));
 		addToInventory(new Beam(gp, 4));
 		addToInventory(new Lantern(gp, 0, 0));
+		addToInventory(new Candle(gp, 0, 0, 0));
+		addToInventory(new Candle(gp, 0, 0, 1));
+		addToInventory(new FloorDecor_Building(gp, 0, 0, 17));
 		addToInventory(new ChairSkin(gp, 1));
 		addToInventory(new ChairSkin(gp, 2));
 		addToInventory(new ChairSkin(gp, 5));

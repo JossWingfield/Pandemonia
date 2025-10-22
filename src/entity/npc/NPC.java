@@ -34,7 +34,7 @@ public abstract class NPC extends Entity {
     
     //DIALOGUE
     protected Rectangle2D.Float talkHitbox, interactHitbox;
-    String dialogues[];
+    public String dialogues[];
     int dialogueIndex = 0;
     protected boolean talking = false;
     public boolean isSolid = false;
@@ -477,7 +477,7 @@ public abstract class NPC extends Entity {
 			gp.mapM.getRoom(currentRoomNum).removeNPC(this);
 		}
     }
-    protected void walkToPoint(int x, int y) {
+    public void walkToPoint(int x, int y) {
     	searchPath(x, y);
     	walking = true;
     }

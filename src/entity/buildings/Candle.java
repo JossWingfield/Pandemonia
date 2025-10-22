@@ -42,12 +42,17 @@ public class Candle extends Building{
 		case 0:
 			name = "Candle 1";
 	    	animations[0][0][0] = importImage("/decor/Candles.png").getSubimage(0, 0, 16, 16);
+			cost = 8;
 			break;
 		case 1:
 			name = "Candle 2";
 	    	animations[0][0][0] = importImage("/decor/Candles.png").getSubimage(16, 0, 16, 16);
+			cost = 20;
 			break;
 		}
+		
+		description = "Cosy lights for a candlelit dinner.";
+		
 	}
 	public void destroy() {
 		gp.lightingM.removeLight(light);

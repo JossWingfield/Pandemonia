@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import entity.PlayerMP;
 import entity.items.Food;
 import entity.npc.Customer;
+import entity.npc.NPC;
 import entity.npc.SpecialCustomer;
 import main.GamePanel;
 import net.DiscoveryManager;
@@ -40,6 +41,7 @@ public class GUI {
     private BufferedImage shoppingUI, shoppingButtonUI, leftArrow, rightArrow, basketUI, basketButtons;
     private BufferedImage leftProgress1, leftProgress2, middleProgress1, middleProgress2, rightProgress1, rightProgress2;
     private BufferedImage saveBorder, deleteSave;
+    private BufferedImage dialogueFrame;
     
 	//COLOURS
 	private Color darkened;
@@ -58,7 +60,7 @@ public class GUI {
     private Font nameFont = new Font("monogram", Font.ITALIC, 20);
     private Font timeFont = new Font("monogram", Font.PLAIN, 40);
     private Font settingsFont = new Font("monogram", Font.PLAIN, 32);
-    
+    private Font nameFont2 = new Font("monogram", Font.PLAIN, 50);
 	
 	//COUNTERS
 	private int timeAnimationCounter, timeAnimationSpeed, currentTimeAnimation;
@@ -99,6 +101,17 @@ public class GUI {
 	private final int videoState = 2;
 	private final int audioState = 3;
 	private final int multiplayerState = 4;
+	
+	//DIALOGUE
+	private NPC currentTalkingNPC;
+	private String currentDialogue;
+	private int charIndex = 0;
+	private long lastCharTime = 0;
+	private String displayedText = "";
+	private boolean finishedTyping = false;
+
+	// Typing speed (milliseconds per character)
+	private static final int CHAR_DELAY = 25;
 	
 	//SAVE
 	private boolean doDestroySave;
@@ -191,6 +204,8 @@ public class GUI {
 		cursedRecipeBorder = importImage("/UI/recipe/HauntedOrderBorder.png");
 		saveBorder = importImage("/UI/saves/SaveUI.png");
 		deleteSave = importImage("/UI/saves/DeleteSave.png");
+		
+		dialogueFrame = importImage("/UI/customise/CustomiseFrame.png");
 	}
 	protected BufferedImage[] importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height) {
 		BufferedImage animations[] = new BufferedImage[20];
@@ -1020,6 +1035,9 @@ public class GUI {
 			break;
 		case 15:
 			drawChooseUpgradeScreen(g2);
+			break;
+		case 16:
+			drawDialogueState(g2);
 			break;
 		}
 		
@@ -2024,6 +2042,74 @@ public class GUI {
 	    }
 
 	    return lines;
+	}
+	public void setDialogue(String message, NPC npc) {
+		this.currentDialogue = message;
+		this.currentTalkingNPC = npc;
+        gp.currentState = gp.dialogueState;
+        this.charIndex = 0;
+        this.displayedText = "";
+        this.finishedTyping = false;
+        this.lastCharTime = System.currentTimeMillis();
+	}
+	public void drawDialogueState(Graphics2D g2) {
+	    int width = 384 * 3;
+	    int height = 126 * 3;
+	    int x = (gp.screenWidth - width) / 2;
+	    int y = gp.screenHeight - height + 200;
+
+	    // Draw dialogue frame
+	    g2.drawImage(dialogueFrame, x, y, width, height, null);
+
+	    // Font setup
+	    g2.setFont(saveFont);
+	    g2.setColor(titleColour2);
+
+	    // Typing effect update
+	    long now = System.currentTimeMillis();
+	    if (!finishedTyping && currentDialogue != null) {
+	        if (now - lastCharTime > CHAR_DELAY && charIndex < currentDialogue.length()) {
+	            charIndex++;
+	            displayedText = currentDialogue.substring(0, charIndex);
+	            lastCharTime = now;
+	        }
+
+	        if (charIndex >= currentDialogue.length()) {
+	            finishedTyping = true;
+	        }
+	    }
+
+	    // Draw dialogue text
+	    int textX = x + 30;
+	    int textY = y + 50;
+
+	    if (displayedText != null) {
+	        List<String> lines = wrapText(displayedText, g2, width - 60);
+	        for (String line : lines) {
+	            g2.drawString(line, textX, textY);
+	            textY += g2.getFontMetrics().getHeight() + 2;
+	        }
+	    }
+
+	    // Draw NPC name
+	    if (currentTalkingNPC != null && currentTalkingNPC.getName() != null && !currentTalkingNPC.getName().isEmpty()) {
+	        g2.setFont(headingFont);
+	        g2.setColor(Color.WHITE);
+	        g2.drawString(currentTalkingNPC.getName(), x + 20, y - 10);
+	    }
+
+	    // Handle click: skip or finish
+	    if (gp.mouseI.leftClickPressed) {
+	        if (!finishedTyping) {
+	            // Finish instantly
+	            displayedText = currentDialogue;
+	            charIndex = currentDialogue.length();
+	            finishedTyping = true;
+	        } else {
+	            // Move to next state / close dialogue
+	            gp.currentState = gp.playState;
+	        }
+	    }
 	}
 	public void drawCheckBoxHover(Graphics2D g2, int x, int y, int w, int h) {
 	    int size = 16 * 3;

@@ -44,25 +44,29 @@ public class WallDecor_Building extends Building {
 			 name = "Painting 1";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(64, 0, 16, 16);
 	         isDecor = true;
-	         cost = 12;
+	      	 cost = 30;
+	      	 description = "Artwork to be hung on the wall.";
 	         break;
 		 case 1:
 			 name = "Painting 2";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(80, 0, 16, 16);
 	         isDecor = true;
-	         cost = 12;
+	      	 cost = 30;
+	      	 description = "Artwork to be hung on the wall.";
 	         break;
 		 case 2:
 			 name = "Painting 3";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(0, 0, 16, 16);
 	         isDecor = true;
-	         cost = 12;
+	      	 cost = 30;
+	      	 description = "Artwork to be hung on the wall.";
 	         break;
 		 case 3:
 			 name = "Painting 4";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(16, 0, 16, 16);
 	         isDecor = true;
-	         cost = 12;
+	      	 cost = 30;
+	      	 description = "Artwork to be hung on the wall.";
 	         break;
 		 case 4:
 			 name = "Hanging Plant 1";
@@ -70,7 +74,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	         drawHeight = 96;
 	         hitbox.height = 80;
-	         cost = 12;
+	         cost = 20;
+	    	 description = "Plants to be hung on the wall.";
 	         break;
 		 case 5:
 			 name = "Hanging Plant 2";
@@ -78,7 +83,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	         drawHeight = 96;
 	         hitbox.height = 80;
-	         cost = 12;
+	         cost = 20;
+	    	 description = "Plants to be hung on the wall.";
 	         break;
 		 case 6:
 			 name = "Shelf Piece";
@@ -206,7 +212,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	 		 drawWidth = 32*3;
 	 		 xDrawOffset = 12;
-	 	     cost = 14;
+	 	   	 cost = 40;
+	      	 description = "Artwork to be hung on the wall.";
 	         break;
 		 case 23:
 			 name = "Hanging Plant 3";
@@ -222,7 +229,8 @@ public class WallDecor_Building extends Building {
 	         drawHeight = 96;
 	         isDecor = true;
 	         hitbox.height = 80;
-	         cost = 12;
+	         cost = 20;
+	    	 description = "Plants to be hung on the wall.";
 	         break;
 		 case 25:
 			 name = "Toilet Paper";
@@ -256,25 +264,29 @@ public class WallDecor_Building extends Building {
 	         name = "Painting 6";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(32, 0, 16, 16);
 	         isDecor = true;
-	         cost = 12;
+	         cost = 30;
+	      	 description = "Artwork to be hung on the wall.";
 	         break;
 		 case 29:
 	         name = "Painting 7";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(48, 0, 16, 16);
 	         isDecor = true;
-	         cost = 12;
+	         cost = 30;
+	      	 description = "Artwork to be hung on the wall.";
 	         break;
 		 case 30:
 	         name = "Painting 8";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(32, 16, 16, 16);
 	         isDecor = true;
-	         cost = 12;
+	         cost = 30;
+	      	 description = "Artwork to be hung on the wall.";
 	         break;
 		 case 31:
 	         name = "Painting 9";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(48, 16, 16, 16);
 	         isDecor = true;
-	         cost = 12;
+	         cost = 30;
+	      	 description = "Artwork to be hung on the wall.";
 	         break;
         }
 		
@@ -287,9 +299,7 @@ public class WallDecor_Building extends Building {
 				invisHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, 80, hitbox.height);
 				break;
 			}
-		} 
-		
-		
+		}
 		
 		if(invisHitbox == null) {
 		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
@@ -302,7 +312,7 @@ public class WallDecor_Building extends Building {
 			     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	
 				}
-		}
+			}
 	     
 		 if(destructionUIOpen) {
 		     g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);

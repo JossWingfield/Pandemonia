@@ -52,29 +52,28 @@ public class CutsceneManager {
     public boolean isActive() {
         return active;
     }
-    public void startGhostEntranceCutscene() {
+    public void enterDestroyedRestaurant() {
 
         List<CutsceneEvent> events = new ArrayList<>();
         
-        // 1. Spawn ghost offscreen
-        NPC ghost = new SpecialCustomer(gp, 0, 0);
-        events.add(new AddNPCEvent(gp, ghost));
+        // 1.
+        NPC owner = new SpecialCustomer(gp, 0, 0);
+        events.add(new AddNPCEvent(gp, owner));
 
         // 2. Camera follows ghost while zooming in
-        events.add(new CameraFollowEvent(gp, ghost, 1.6f));
+        events.add(new CameraFollowEvent(gp, owner, 1.6f));
         
         // 3. Move ghost into scene
-        Chair chair = gp.buildingM.findFreeChair();
-        events.add(new NPCMoveEvent(ghost, chair));
+        events.add(new NPCMoveEvent(owner, 11, 7));
 
         // 4. Show dialogue above ghost for 3 seconds (assuming 60 FPS → 180 frames)
-        events.add(new DialogueEvent(gp, "Boo! Welcome to Pandemonia..."));
+        events.add(new DialogueEvent(gp, owner, "This place is a dump. Lets first clear some of this mess up."));
 
         // 5. Pause for a moment (can be a WaitEvent)
-        events.add(new WaitEvent(60)); // wait 1 second
+        events.add(new WaitEvent(120)); // wait 1 second
 
         // 6. Camera returns to player and zooms back to normal
-        events.add(new EndCutscene(gp, ghost));
+        events.add(new EndCutscene(gp, owner));
 
         startCutscene(events);
     }

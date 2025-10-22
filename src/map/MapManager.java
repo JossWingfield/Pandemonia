@@ -180,7 +180,7 @@ public class MapManager {
 	        return importedImage;
 	    }
 	    public void update() {
-	    	
+	    		    	
 	    	for(Room room: rooms) {
 	    		if(room != null) {
 	    			if(currentRoom != room) {

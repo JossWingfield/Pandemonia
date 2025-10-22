@@ -48,6 +48,8 @@ public class FloorDecor_Building extends Building {
         switch(type) {
         case 0:
             name = "Plant 1";
+        	cost = 30;
+        	description = "Add some greenery to the area.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16, 64, 16, 32);
         	yDrawOffset = 32;
             drawHeight = 96;
@@ -57,6 +59,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 1:
             name = "Plant 2";
+        	cost = 30;
+        	description = "Add some greenery to the area.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32, 64, 16, 32);
             yDrawOffset = 32;
             drawHeight = 96;
@@ -66,6 +70,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 2:
             name = "Plant 3";
+        	cost = 30;
+        	description = "Add some greenery to the area.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48, 64, 16, 32);
             yDrawOffset = 32;
             drawHeight = 96;
@@ -75,6 +81,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 3:
             name = "Plant 4";
+        	cost = 30;
+        	description = "Add some greenery to the area.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64, 64, 16, 32);
             yDrawOffset = 32;
             drawHeight = 96;
@@ -249,6 +257,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 17:
             name = "Barrel";
+        	cost = 20;
+        	description = "A decorative barrel to be placed on the floor or on tables.";
         	animations[0][0][0] = importImage("/decor/barrel.png").getSubimage(16, 32, 16, 32);
         	drawHeight = 48*2;
         	isThirdLayer = true;
@@ -265,6 +275,8 @@ public class FloorDecor_Building extends Building {
             mustBePlacedOnTable = true;
         	break;
         case 19:
+        	cost = 16;
+        	description = "A small rug to keep your feet warm.";
             name = "Small Carpet 1";
         	animations[0][0][0] = importImage("/decor/carpet/carpet 1.png").getSubimage(0, 0, 32, 16);
         	isSolid = false;
@@ -323,6 +335,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 25:
             name = "Small Plant 1";
+        	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16, 0, 16, 16);
 
         	isSolid = false;
@@ -333,6 +347,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 26:
             name = "Flowers 1";
+        	cost = 30;
+        	description = "Decorative flowers to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(80, 96, 16, 32);
         	isSolid = false;
         	drawHeight = 48*2;
@@ -354,6 +370,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 28:
             name = "Flowers 2";
+            cost = 30;
+        	description = "Decorative flowers to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(80+48, 96, 16, 32);
         	isSolid = false;
         	drawHeight = 48*2;
@@ -552,6 +570,8 @@ public class FloorDecor_Building extends Building {
 	       	break;
         case 46:
 	       	name = "Large Floor Plant 1";
+	     	cost = 30;
+        	description = "Add some greenery to the area.";
 	       	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(96, 64, 16, 32);
 	       	isSolid = true;
 	        yDrawOffset = 24;
@@ -573,6 +593,8 @@ public class FloorDecor_Building extends Building {
 	       	break;
         case 48:
             name = "Flowers 3";
+        	cost = 30;
+        	description = "Decorative flowers to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(96, 96, 16, 32);
 
         	isSolid = false;
@@ -586,6 +608,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 49:
             name = "Flowers 4";
+        	cost = 30;
+        	description = "Decorative flowers to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(96+16, 96, 16, 32);
 
         	isSolid = false;
@@ -693,6 +717,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 58:
         	name = "Large Carpet 1";
+        	cost = 50;
+        	description = "A large cosy carpet.";
         	animations[0][0][0] = importImage("/decor/carpet/GreenCarpet.png").getSubimage(0, 32, 64, 64);
         	drawWidth = 64*3;
         	drawHeight = 64*3;
@@ -806,6 +832,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 70:
             name = "Small Plant 2";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32, 0, 16, 16);
 
         	isSolid = false;
@@ -816,6 +844,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 71:
             name = "Small Plant 3";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48, 0, 16, 16);
 
         	isSolid = false;
@@ -826,6 +856,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 72:
             name = "Small Plant 4";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64, 0, 16, 16);
 
         	isSolid = false;
@@ -836,6 +868,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 73:
             name = "Small Plant 5";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16, 16, 16, 16);
 
         	isSolid = false;
@@ -846,6 +880,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 74:
             name = "Small Plant 6";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32, 16, 16, 16);
 
         	isSolid = false;
@@ -856,6 +892,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 75:
             name = "Small Plant 7";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48, 16, 16, 16);
 
         	isSolid = false;
@@ -866,6 +904,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 76:
             name = "Small Plant 8";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64, 16, 16, 16);
 
         	isSolid = false;
@@ -876,6 +916,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 77:
             name = "Small Plant 9";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16, 32, 16, 16);
 
         	isSolid = false;
@@ -886,6 +928,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 78:
             name = "Small Plant 10";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32, 32, 16, 16);
 
         	isSolid = false;
@@ -896,6 +940,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 79:
             name = "Small Plant 11";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48, 32, 16, 16);
 
         	isSolid = false;
@@ -906,6 +952,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 80:
             name = "Small Plant 12";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64, 32, 16, 16);
 
         	isSolid = false;
@@ -916,6 +964,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 81:
             name = "Small Plant 13";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16, 48, 16, 16);
 
         	isSolid = false;
@@ -926,6 +976,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 82:
             name = "Small Plant 14";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32, 48, 16, 16);
 
         	isSolid = false;
@@ -936,6 +988,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 83:
             name = "Small Plant 15";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48, 48, 16, 16);
 
         	isSolid = false;
@@ -946,6 +1000,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 84:
             name = "Small Plant 16";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64, 48, 16, 16);
 
         	isSolid = false;
@@ -956,6 +1012,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 85:
             name = "Small Plant 17";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(80, 0, 16, 16);
 
         	isSolid = false;
@@ -966,6 +1024,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 86:
             name = "Small Plant 18";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32+64, 0, 16, 16);
 
         	isSolid = false;
@@ -976,6 +1036,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 87:
             name = "Small Plant 19";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48+64, 0, 16, 16);
 
         	isSolid = false;
@@ -986,6 +1048,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 88:
             name = "Small Plant 20";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64+64, 0, 16, 16);
 
         	isSolid = false;
@@ -996,6 +1060,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 89:
             name = "Small Plant 21";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16+64, 16, 16, 16);
 
         	isSolid = false;
@@ -1006,6 +1072,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 90:
             name = "Small Plant 22";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32+64, 16, 16, 16);
 
         	isSolid = false;
@@ -1016,6 +1084,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 91:
             name = "Small Plant 23";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48+64, 16, 16, 16);
 
         	isSolid = false;
@@ -1026,6 +1096,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 92:
             name = "Small Plant 24";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64+64, 16, 16, 16);
 
         	isSolid = false;
@@ -1036,6 +1108,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 93:
             name = "Small Plant 25";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16+64, 32, 16, 16);
 
         	isSolid = false;
@@ -1046,6 +1120,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 94:
             name = "Small Plant 26";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32+64, 32, 16, 16);
 
         	isSolid = false;
@@ -1056,6 +1132,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 95:
             name = "Small Plant 27";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48+64, 32, 16, 16);
 
         	isSolid = false;
@@ -1066,6 +1144,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 96:
             name = "Small Plant 28";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64+64, 32, 16, 16);
 
         	isSolid = false;
@@ -1076,6 +1156,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 97:
             name = "Small Plant 29";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(16+64, 48, 16, 16);
 
         	isSolid = false;
@@ -1086,6 +1168,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 98:
             name = "Small Plant 30";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(32+64, 48, 16, 16);
 
         	isSolid = false;
@@ -1096,6 +1180,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 99:
             name = "Small Plant 31";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(48+64, 48, 16, 16);
 
         	isSolid = false;
@@ -1106,6 +1192,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 100:
             name = "Small Plant 32";
+          	cost = 20;
+        	description = "A small plant to be placed on a table or a shelf.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(64+64, 48, 16, 16);
 
         	isSolid = false;
@@ -1116,6 +1204,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 101:
             name = "Plant 5";
+         	cost = 30;
+        	description = "Add some greenery to the area.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(80, 64, 16, 32);
             yDrawOffset = 32;
             drawHeight = 96;
@@ -1125,6 +1215,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 102:
             name = "Plant 6";
+         	cost = 30;
+        	description = "Add some greenery to the area.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(96, 64, 16, 32);
             yDrawOffset = 32;
             drawHeight = 96;
@@ -1134,6 +1226,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 103:
             name = "Plant 7";
+         	cost = 30;
+        	description = "Add some greenery to the area.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(112, 64, 16, 32);
             yDrawOffset = 32;
             drawHeight = 96;
@@ -1143,6 +1237,8 @@ public class FloorDecor_Building extends Building {
         	break;
         case 104:
             name = "Plant 8";
+         	cost = 30;
+        	description = "Add some greenery to the area.";
         	animations[0][0][0] = importImage("/decor/plants.png").getSubimage(112+16, 64, 16, 32);
             yDrawOffset = 32;
             drawHeight = 96;

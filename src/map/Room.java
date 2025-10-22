@@ -28,6 +28,7 @@ import entity.buildings.Leak;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
+import entity.buildings.Rubble;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
 import entity.buildings.Spill;
@@ -98,7 +99,7 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(0);
 			setChairSkin(0);
-			setTableSkin(0);
+			setTableSkin(3);
 			break;
 		case 1:
 			roomType = "Stores";
@@ -177,6 +178,32 @@ public class Room {
 				b.roomNum = preset;
 			}
 		}
+	}
+	public void setDestroyed() {
+		setTableSkin(3);
+		setWallpaper(30);
+		setFloorpaper(12);
+		setBeam(5);
+		gp.buildingM.addSpill(0);
+		gp.buildingM.addSpill(1);
+		
+		
+		
+		Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+		lantern.turnOff();
+		
+		gp.buildingM.refreshBuildings();
+	}
+	public void setRestored() {
+		setTableSkin(0);
+		setWallpaper(0);
+		setFloorpaper(0);
+		setBeam(0);
+		
+		Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+		lantern.turnOn();
+		
+		gp.buildingM.refreshBuildings();
 	}
 	private void setBuildings(int preset) {
 		int phase = 1;
@@ -284,8 +311,8 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 480, 492, 19);
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 468, 28);
-			arrayCounter++;
+			//buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 468, 28);
+			//arrayCounter++;
 			buildings[arrayCounter] = new Table(gp, 756, 276);
 			arrayCounter++;
 			buildings[arrayCounter] = new Sink(gp, 348, 300);
@@ -294,17 +321,25 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Bin(gp, 384, 240);
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 372, 0);
+			//buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 372, 0);
+			//arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 636, 144);;
 			arrayCounter++;
-			buildings[arrayCounter] = new Lantern(gp, 636, 144);
-			arrayCounter++;
-			buildings[arrayCounter] = new Candle(gp, 756, 408, 1);
-			arrayCounter++;
-			buildings[arrayCounter] = new Candle(gp, 756, 336, 0);
-			arrayCounter++;
+			//buildings[arrayCounter] = new Candle(gp, 756, 408, 1);
+			//arrayCounter++;
+			//buildings[arrayCounter] = new Candle(gp, 756, 336, 0);
+			//arrayCounter++;
 			buildings[arrayCounter] = new CornerTable(gp, 348, 384, 2);
 			arrayCounter++;
-			buildings[arrayCounter] = new Candle(gp, 348, 372, 1);
+			//buildings[arrayCounter] = new Candle(gp, 348, 372, 1);
+			//arrayCounter++;
+			buildings[arrayCounter] = new Rubble(gp, 408, 288+48, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new Rubble(gp, 564, 300+48, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new Rubble(gp, 696, 324, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new Rubble(gp, 648, 432, 0);
 			arrayCounter++;
 			break;
 		case 1:
