@@ -314,8 +314,10 @@ public class LightingManager {
         	// Directly modify the occlusion for the current frame:
         	int px = (int)(gp.player.hitbox.x + gp.player.hitbox.width / 2);
         	int py = (int)(gp.player.hitbox.y + gp.player.hitbox.height / 2);
-        	applyPlayerLOS(occlusion, px, py);
-        	applyOcclusionMaskOptimized(litImageScaled, occlusion, xDiff, yDiff);
+        	if(occlusion != null) {
+            	applyPlayerLOS(occlusion, px, py);
+            	applyOcclusionMaskOptimized(litImageScaled, occlusion, xDiff, yDiff);
+        	}
         }
 
         // Bloom
@@ -373,6 +375,10 @@ public class LightingManager {
         // If player is in a tile that blocks light, skip all occlusion
         if (!CollisionMethods.canLightPassThroughTile(playerTileX, playerTileY, gp)) {
             return; // leave occlusion buffer as-is
+        }
+        
+        if(occlusion == null) {
+        	return;
         }
 
         int width = occlusion.getWidth();
@@ -480,7 +486,7 @@ public class LightingManager {
 		int[] lightData = ((DataBufferInt) lightBuffer.getRaster().getDataBuffer()).getData();
 		int[] occData   = ((DataBufferInt) occlusionLowRes.getRaster().getDataBuffer()).getData();
 		
-		int wLight = lightBuffer.getWidth();
+		int wLight = lightBuffer.getWidth(); 
 		int hLight = lightBuffer.getHeight();
 		int wOcc   = occlusionLowRes.getWidth();
 		int hOcc   = occlusionLowRes.getHeight();

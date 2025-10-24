@@ -54,6 +54,13 @@ public class StoryCharacter extends NPC {
 	        importPlayerSpriteSheet("/npcs/blacksmith/Walk", 8, 1, 1, 0, 0, 80, 80);
 	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
 			break;
+		case 2:
+			name = "Player";
+	        importPlayerSpriteSheet("/player/idle", 4, 1, 0, 0, 0, 80, 80);
+	        importPlayerSpriteSheet("/player/walk", 8, 1, 1, 0, 0, 80, 80);
+	        
+	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
+			break;
 		}
 		
 		portrait = faceIcon;
@@ -68,6 +75,9 @@ public class StoryCharacter extends NPC {
 	public void update() {
 		talkHitbox.x = hitbox.x - 16;
 	    talkHitbox.y = hitbox.y - 16;
+	    if(npcToFollow != null) {
+			followNPC(npcToFollow);
+		}
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		this.g2 = g2;

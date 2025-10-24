@@ -44,7 +44,7 @@ public class NPCManager {
     	npcs.add(server);
     }
     public void addDuck() {
-    	Duck duck = new Duck(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    	Duck duck = new Duck(gp, (int)gp.mapM.getRooms()[0].getSpawnX(), (int)gp.mapM.getRooms()[0].getSpawnY());
     	if(gp.mapM.isInRoom(0)) {
     		npcs.add(duck);
     	} else {

@@ -10,7 +10,7 @@ import main.GamePanel;
 public class Spill extends Building {
 	
 	private int spillCount = 0;
-	private int maxSpillTime = 60*5;
+	private int maxSpillTime = 60*3;
 	private Rectangle2D.Float effectArea;
 	private boolean removedSpill = false;
 	

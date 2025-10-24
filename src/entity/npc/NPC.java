@@ -53,7 +53,7 @@ public abstract class NPC extends Entity {
     private boolean onPath = false;
     private int nextX, nextY;
     protected double movementAngle = -1;
-    protected int currentRoomNum = 0;
+    public int currentRoomNum = 0;
     protected final float TOO_CLOSE = 48 * 48;  // Stop if within 48 pixels
     protected float TOO_FAR = 96 * 96;  
     
@@ -64,6 +64,7 @@ public abstract class NPC extends Entity {
     
     
 	protected boolean ableToUpdate = true;
+	protected NPC npcToFollow;
     
     //FLEE LOGIC
     public boolean walking;
@@ -115,6 +116,9 @@ public abstract class NPC extends Entity {
 			}
 		}
 		
+		if(npcToFollow != null) {
+			followNPC(npcToFollow);
+		}
 	}
 	protected void fleeFromPlayer() {
         float playerX = gp.player.hitbox.x + gp.player.hitbox.width / 2f;
@@ -522,9 +526,35 @@ public abstract class NPC extends Entity {
 		}
 		return false;
     }
-    protected boolean walkToBuildingInRoom(String name, int roomNum) {
+    public boolean walkToBuildingInRoom(String name, int roomNum) {
         // Step 1: find target building
         Building building = findBuildingInRoom(name, roomNum); // Search all rooms by name
+        if (building == null) return false;
+
+        // Step 2: if already in same room, just walk there
+        if (roomNum == currentRoomNum) {
+            return walkToBuildingWithName(name);
+        }
+        // Step 4: find path of rooms using BFS
+        List<Integer> roomPath = findRoomPath(currentRoomNum, roomNum, RoomHelperMethods.roomGraph);
+        if (roomPath == null || roomPath.isEmpty()) return false;
+
+        // Step 5: walk through each room in path
+        for (int i = 1; i < roomPath.size(); i++) {
+            int nextRoom = roomPath.get(i);
+
+            // Walk to door that leads to nextRoom
+            boolean reachedDoor = walkToDoorWithDoorNum(nextRoom);
+            if (!reachedDoor) return false;
+
+            // The door handling will internally call changeRoom()
+            // Once that happens, we’re now inside nextRoom
+        }
+
+        // Step 6: now we’re in the destination room
+        return walkToBuildingWithName(name);
+    }
+    public boolean walkToBuildingInRoom(Building building, int roomNum) {
         if (building == null) return false;
 
         // Step 2: if already in same room, just walk there
@@ -573,7 +603,7 @@ public abstract class NPC extends Entity {
         }
         return null;
     }
-    protected boolean followNPC(NPC target) {
+    public boolean followNPC(NPC target) {
         if (target == null) return false;
 
         // --- Step 1: Check if they’re in the same room ---
@@ -646,6 +676,14 @@ public abstract class NPC extends Entity {
     		}
     	}
     }
+	public void setFollowNPC(NPC npcToFollow) {
+		this.npcToFollow = npcToFollow;
+		ableToUpdate = true;
+	}
+	public void stopFollowingNPC() {
+		npcToFollow = null;
+		ableToUpdate = false;
+	}
 	public void removeOtherNPC(NPC npcToRemove) {
 		if(gp.player.currentRoomIndex == npcToRemove.currentRoomNum) {
 			gp.npcM.removeNPC(npcToRemove);

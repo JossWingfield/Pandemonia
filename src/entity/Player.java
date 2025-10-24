@@ -83,6 +83,7 @@ public class Player extends Entity{
     public int currentRoomIndex = 0;
     
     public LightSource playerLight;
+    public boolean isInvisible = false;
     
     //INVENTORY
     //public Headgear currentHeadgear = null;
@@ -636,6 +637,9 @@ public class Player extends Entity{
     	username = newName;
     }
     public void draw(Graphics2D g2, int xDiff, int yDiff) {
+    	if(isInvisible) {
+    		return;
+    	}
     	if(direction == 3) {
     		drawCurrentItem(g2, xDiff, yDiff);
     	}

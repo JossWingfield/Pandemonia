@@ -28,6 +28,7 @@ public class Breaker extends Building{
 		isSolid = true;
 		canBePlaced = false;
 		interactHitbox = new Rectangle2D.Float(hitbox.x+56, hitbox.y+48, 32, hitbox.height);
+		npcHitbox = interactHitbox;
 	}
 	public Building clone() {
 		Breaker building = new Breaker(gp, hitbox.x, hitbox.y);

@@ -54,9 +54,6 @@ public class KeyboardInput implements KeyListener {
             if(num == KeyEvent.VK_G) {
             	gp.progressM.moveToNextPhase();
             }
-            if(num == KeyEvent.VK_H) {
-            	gp.cutsceneM.enterDestroyedRestaurant();
-            }
             if(num == KeyEvent.VK_Q) {
             	gp.player.soulsServed = gp.player.nextLevelAmount;
             }

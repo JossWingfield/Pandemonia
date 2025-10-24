@@ -205,7 +205,8 @@ public class GamePanel extends JPanel implements Runnable {
         recipeM = new RecipeManager();
         upgradeM = new UpgradeManager(this);
         progressM = new ProgressManager(this);
-        mapM.getRoom(0).setDestroyed();
+      	
+        //cutsceneM.enterDestroyedRestaurant();
     }
     public void playSinglePlayer(int saveSlot) {
     	saveM.currentSave = saveSlot;

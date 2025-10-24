@@ -26,6 +26,7 @@ public class Bed extends Building{
 		interactHitbox = new Rectangle2D.Float(hitbox.x+56, hitbox.y+48, 32, hitbox.height);
 		isDecor = true;
 		mustBePlacedOnFloor = true;
+		npcHitbox = interactHitbox;
 	}
 	public Building clone() {
 		Bed building = new Bed(gp, hitbox.x, hitbox.y);
