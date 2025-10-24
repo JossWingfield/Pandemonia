@@ -11,6 +11,7 @@ public class Camera {
     public float zoom = 1.0f; // current zoom
     public float targetZoom = 1.0f;
     public float lerpSpeed = 0.1f;
+    private float targetX, targetY;
 
     private Entity target;    // the entity camera follows
 
@@ -32,6 +33,8 @@ public class Camera {
     }
     public void resetToDefaultZoom() {
     	targetZoom = 1.0f;
+    	targetX = gp.frameWidth/2;
+    	targetY = gp.frameHeight/2;
     }
 
     public void update() {
@@ -44,8 +47,10 @@ public class Camera {
         }
 
         if (target != null && zoom != 1.0f) {
-            float targetX = (target.hitbox.x + target.hitbox.width / 2f);
-            float targetY = (target.hitbox.y + target.hitbox.height / 2f);
+        	if(targetZoom != 1.0f) {
+        		targetX = (target.hitbox.x + target.hitbox.width / 2f);
+            	targetY = (target.hitbox.y + target.hitbox.height / 2f);
+        	}
 
             // lerp speed in world units, scaled by zoom so it feels consistent
             float worldLerp = lerpSpeed;

@@ -367,12 +367,6 @@ public class Customer extends NPC {
 	    if (flickerCounter >= flickerSpeed) {
 	        flickerCounter = 0;
 	    }
-	    
-	    if(walking && !atTable) {
-	    	currentAnimation = 1;
-	    } else {
-	    	currentAnimation = 0;
-	    }
 	      talkHitbox.x = hitbox.x - 16;
 	      talkHitbox.y = hitbox.y - 16;
 	}
@@ -417,6 +411,13 @@ public class Customer extends NPC {
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		this.g2 = g2;
+		
+	    if(walking && !atTable) {
+	    	currentAnimation = 1;
+	    } else {
+	    	currentAnimation = 0;
+	    }
+	    
 		  animationSpeed+=animationUpdateSpeed; //Update the animation frame
 	      if(animationSpeed == animationSpeedFactor) {
 	    	  animationSpeed = 0;

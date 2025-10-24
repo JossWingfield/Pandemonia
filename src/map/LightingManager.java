@@ -176,6 +176,9 @@ public class LightingManager {
         int unscaledWidth = width / scale;
         int unscaledHeight = height / scale;
         int tileSize = 16;
+        
+        //xDiff = Math.round(xDiff / scale) * scale;
+        //yDiff = Math.round(yDiff / scale) * scale;
 
         // Reuse buffer
         if (litImageUnscaled == null ||
@@ -289,10 +292,18 @@ public class LightingManager {
         }
 
         // Scale up
+        float fracX = xDiff % scale;
+        float fracY = yDiff % scale;
+
         BufferedImage litImageScaled = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D gScaled = litImageScaled.createGraphics();
         gScaled.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        gScaled.drawImage(litImageUnscaled, 0, 0, width, height, null);
+        gScaled.drawImage(
+            litImageUnscaled,
+            (int)-fracX, (int)-fracY, width - (int)fracX, height - (int)fracY,
+            0, 0, litImageUnscaled.getWidth(), litImageUnscaled.getHeight(),
+            null
+        );
         gScaled.dispose();
 
                 

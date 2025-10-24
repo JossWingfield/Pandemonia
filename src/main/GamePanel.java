@@ -591,7 +591,10 @@ public class GamePanel extends JPanel implements Runnable {
     	// These are *positive* offsets from world to screen
     	int xDiff = Math.round(viewLeftWorld);
     	int yDiff = Math.round(viewTopWorld);
-    		
+    	
+    	 xDiff = Math.round(xDiff / scale) * scale;
+         yDiff = Math.round(yDiff / scale) * scale;
+    	
         
         if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
         	
@@ -720,6 +723,12 @@ public class GamePanel extends JPanel implements Runnable {
 
 		            int srcX = bufferCamX - srcW / 2;
 		            int srcY = bufferCamY - srcH / 2;
+		            
+		            int lightingScale = 3;
+
+		            // snap to lighting buffer's pixel grid
+		            srcX = Math.round(srcX / (float) lightingScale) * lightingScale;
+		            srcY = Math.round(srcY / (float) lightingScale) * lightingScale;
 
 		            // clamp to litFull edges
 		            srcX = Math.max(0, Math.min(srcX, litFull.getWidth() - srcW));

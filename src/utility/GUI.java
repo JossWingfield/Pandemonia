@@ -2096,6 +2096,8 @@ public class GUI {
 	        g2.setFont(headingFont);
 	        g2.setColor(Color.WHITE);
 	        g2.drawString(currentTalkingNPC.getName(), x + 20, y - 10);
+	        
+	        g2.drawImage(currentTalkingNPC.portrait, x + 20 - 24, y + 110, 32*3, 32*3, null);
 	    }
 
 	    // Handle click: skip or finish

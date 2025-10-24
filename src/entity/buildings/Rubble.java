@@ -20,7 +20,7 @@ public class Rubble extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		this.preset = preset;
 		
-		isSolid = false;
+		isSolid = true;
 		isBottomLayer = true;
 		blueprint = false;
 		drawWidth = 16*3;

@@ -89,8 +89,10 @@ public class World {
     
     // Sleep
     private boolean sleeping = false;
-    private boolean fadingOut = false;
+    public boolean fadingOut = false;
     private float fadeAlpha = 0f;
+    public boolean fadingIn = false;
+    private float fadeSpeed = 0.02f; // tweak for faster/slower fade
 
     public World(GamePanel gp) {
         this.gp = gp;
@@ -253,8 +255,13 @@ public class World {
     public void update() {
         if (paused) return;
         
-        updateSleep();
+        if(gp.cutsceneM.cutsceneActive) {
+            updateCutsceneEffects();
+        	return;
+        }
 
+        updateSleep();
+        
         frameCounter++;
         if (frameCounter >= framesPerGameMinute) {
             frameCounter = 0;
@@ -481,8 +488,6 @@ public class World {
     public void updateSleep() {
         if (!sleeping) return;
 
-        float fadeSpeed = 0.02f; // tweak for faster/slower fade
-
         if (fadingOut) {
             fadeAlpha += fadeSpeed;
             if (fadeAlpha >= 1f) {
@@ -502,6 +507,32 @@ public class World {
                 sleeping = false; // done fading
             }
         }
+    }
+    public void startFadeOut() {
+        fadingOut = true;
+    }
+    public void startFadeIn() {
+        fadingIn = true;
+    }
+    private void updateCutsceneEffects() {
+    	if(!gp.cutsceneM.cutsceneActive) {
+    		return;
+    	}
+    	
+    	if (fadingOut) {
+            fadeAlpha += fadeSpeed;
+            if (fadeAlpha >= 1f) {
+                fadeAlpha = 1f;
+                fadingOut = false;
+            }
+        }
+    	if(fadingIn) {
+    		fadeAlpha -= fadeSpeed;
+            if (fadeAlpha <= 0f) {
+                fadeAlpha = 0f;
+                fadingIn = false;
+            }
+    	}
     }
     private void updateWeather() {
         if (!weatherOn) return; // optional if you only want weather during events
