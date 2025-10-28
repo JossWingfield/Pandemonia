@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 import main.GamePanel;
 import map.LightSource;
@@ -14,6 +15,11 @@ public class Lantern extends Building{
 	private LightSource light;
 	private boolean firstUpdate = true;
 	private boolean turnedOn = true;
+	
+	private boolean flickerEnabled = false;
+	private float flickerTimer = 0;
+	private float nextFlickerTime = 0;
+	private Random random = new Random();
 	
 	public Lantern(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48*2);
@@ -56,14 +62,42 @@ public class Lantern extends Building{
 	public void destroy() {
 		gp.lightingM.removeLight(light);
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-		
-		if(firstUpdate) {
-			firstUpdate = false;
-			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.ORANGE, 240);
+	public void setFlicker(boolean enabled) {
+		this.flickerEnabled = enabled;
+		if (enabled) {
+			flickerTimer = 0;
+			nextFlickerTime = random.nextFloat() * 0.5f + 0.1f; // random time before first flicker
+		}
+		if(!flickerEnabled) {
 			light.setIntensity(0.4f);
-			if(turnedOn) {
+		}
+	}
+
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+		if (firstUpdate) {
+			firstUpdate = false;
+			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + hitbox.height / 2),
+					Color.ORANGE, 240);
+			light.setIntensity(0.4f);
+			if (turnedOn) {
 				gp.lightingM.addLight(light);
+			}
+		}
+		
+		if (flickerEnabled && turnedOn) {
+			flickerTimer += 0.02f;
+			
+			if (flickerTimer >= nextFlickerTime) {
+				// briefly turn off or dim the light
+				if (random.nextFloat() < 0.5f) {
+					light.setIntensity(0.0f + random.nextFloat() * 0.3f); // dim randomly
+				} else {
+					light.setIntensity(0.4f); // restore normal brightness
+				}
+				
+				// reset flicker timer
+				flickerTimer = 0;
+				nextFlickerTime = random.nextFloat() * 0.05f + 0.01f; // next flicker between 0.05s–0.45s
 			}
 		}
 		
@@ -71,7 +105,10 @@ public class Lantern extends Building{
 		if(!turnedOn) {
 			i = 1;
 		}
-
+		if(light.getIntensity() < 0.4f) {
+			i = 1;
+		}
+		
 	     g2.drawImage(animations[0][0][i], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    
 		if(destructionUIOpen) {

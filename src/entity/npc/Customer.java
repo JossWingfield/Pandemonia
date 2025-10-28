@@ -160,7 +160,7 @@ public class Customer extends NPC {
 			toilet = gp.mapM.getRoom(currentRoomNum).findFreeToilet();
 		}
     }
-	protected void removeLights() {
+	public void removeLights() {
 		
 	}
 	private void makeOrder() {

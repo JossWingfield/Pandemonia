@@ -650,8 +650,9 @@ public class GamePanel extends JPanel implements Runnable {
 		        		entityList.add(itemsInBuildings[i]);
 		        	}
 		        }
-		        List<NPC> npcs = npcM.getNPCs();
-		        for(NPC npc: npcs) {
+		        List<NPC> copy = new ArrayList<NPC>(npcM.getNPCs());
+		        
+		        for(NPC npc: copy) {
 		        	if(npc != null) {
 		        		entityList.add(npc);
 		        	}

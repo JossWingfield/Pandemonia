@@ -74,6 +74,9 @@ public class KeyboardInput implements KeyListener {
             if (num == KeyEvent.VK_Q) {
                 qPressed = true;
             }
+            if (num == KeyEvent.VK_H) {
+            	gp.cutsceneM.seeGhostsTalking();
+            }
             if (num == KeyEvent.VK_C) {
             	gp.currentState = gp.customiseRestaurantState;
             }

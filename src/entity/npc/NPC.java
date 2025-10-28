@@ -650,7 +650,10 @@ public abstract class NPC extends Entity {
 
         return false; // Still following
     }
-    protected void removeLights() {}
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
+    public void removeLights() {}
 	protected void leave() {
 		
 		Door door;

@@ -15,6 +15,7 @@ public class RemoveNPCEvent extends CutsceneEvent {
 
 	  @Override
 	  public void update() {
+		  npc.removeLights();
 		  gp.npcM.removeNPC(npc);
 	      finished = true;
 	  }

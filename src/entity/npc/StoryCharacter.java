@@ -9,6 +9,7 @@ import entity.buildings.Chair;
 import entity.buildings.Toilet;
 import entity.items.Plate;
 import main.GamePanel;
+import map.LightSource;
 import utility.Recipe;
 import utility.RecipeManager;
 import utility.RoomHelperMethods;
@@ -19,6 +20,10 @@ public class StoryCharacter extends NPC {
 	
 	public BufferedImage faceIcon;
 	private Graphics2D g2;
+	private boolean firstDraw = true;
+	
+	private LightSource ghostLight;
+	private boolean hasLight = false;
 
 	public StoryCharacter(GamePanel gp, float xPos, float yPos, int type) {
 		super(gp, xPos, yPos, 48, 48);
@@ -61,13 +66,27 @@ public class StoryCharacter extends NPC {
 	        
 	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
 			break;
+		case 3: //GHOSTS
+			name = "???";
+			hasLight = true;
+			switch(r.nextInt(1)) {
+			case 0:
+				importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
+			    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
+			    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png");
+				break;
+			}
+			break;
 		}
 		
 		portrait = faceIcon;
 		
 	}
-	protected void removeLights() {
-		
+	public void removeLights() {
+		if(ghostLight != null) {
+			gp.lightingM.removeLight(ghostLight);
+		}
+		ghostLight = null;
 	}
 	protected void leave() {
 		super.leave();
@@ -81,7 +100,18 @@ public class StoryCharacter extends NPC {
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		this.g2 = g2;
+		if(firstDraw) {
+			if(hasLight) {
+				ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.BLUE, 48);
+				gp.lightingM.addLight(ghostLight);
+			}
+			firstDraw = false;
+		}
 		
+		if(hasLight) {
+			ghostLight.x = (int)(hitbox.x + hitbox.width / 2) - 8;
+	    	ghostLight.y = (int)(hitbox.y + hitbox.height / 2) - 8;
+		}
 	    
 	    if(walking) {
 	    	currentAnimation = 1;

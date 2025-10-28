@@ -18,7 +18,7 @@ import entity.Entity;
 import main.GamePanel;
 
 public class LightSource {
-    private int x, y, radius;
+    public int x, y, radius;
     private Color color;
     private float intensity = 1f;
 

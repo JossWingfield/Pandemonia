@@ -253,12 +253,12 @@ public class World {
     }
     // === Game loop ===
     public void update() {
-        if (paused) return;
-        
         if(gp.cutsceneM.cutsceneActive) {
             updateCutsceneEffects();
         	return;
         }
+        
+        if (paused) return;
 
         updateSleep();
         
@@ -360,13 +360,17 @@ public class World {
              gp.gui.addMessage("The restaurant is now OPEN!", Color.YELLOW);
          } else if (lastPhase == DayPhase.SERVICE) {
              gp.gui.addMessage("The restaurant is now CLOSED.", Color.YELLOW);
-
+             
              // Either trigger instantly OR wait
              if (gp.mapM.isRoomEmpty(0)) {
                  gp.gui.startLevelUpScreen();
              } else {
                  waitingForLevelUp = true;
              }
+             
+             if(day == 2) {
+        		 gp.cutsceneM.cutsceneQueued = true;
+        	 }
          }
          lastPhase = currentPhase;
      }
@@ -515,10 +519,6 @@ public class World {
         fadingIn = true;
     }
     private void updateCutsceneEffects() {
-    	if(!gp.cutsceneM.cutsceneActive) {
-    		return;
-    	}
-    	
     	if (fadingOut) {
             fadeAlpha += fadeSpeed;
             if (fadeAlpha >= 1f) {
@@ -591,7 +591,7 @@ public class World {
         weatherTimer = 0;
         nextWeatherTime = random.nextInt(maxWeatherDuration - minWeatherDuration) + minWeatherDuration;
     }
-    private void addLightning() {
+    public void addLightning() {
     	lightningSpawned = true;
     	lightningLight = new LightSource(0, gp.frameHeight/2, Color.WHITE, 48*8*4);
     	gp.lightingM.addLight(lightningLight);

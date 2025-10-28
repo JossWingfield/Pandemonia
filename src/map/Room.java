@@ -187,6 +187,11 @@ public class Room {
 		gp.buildingM.addSpill(0);
 		gp.buildingM.addSpill(1);
 		
+		gp.buildingM.addBuilding(new Rubble(gp, 408, 288+48, 1));
+		gp.buildingM.addBuilding(new Rubble(gp, 564, 300+48, 2));
+		gp.buildingM.addBuilding(new Rubble(gp, 696, 324, 0));
+		gp.buildingM.addBuilding(new Rubble(gp, 648, 432, 0));
+		
 		
 		
 		Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
@@ -333,14 +338,6 @@ public class Room {
 			arrayCounter++;
 			//buildings[arrayCounter] = new Candle(gp, 348, 372, 1);
 			//arrayCounter++;
-			buildings[arrayCounter] = new Rubble(gp, 408, 288+48, 1);
-			arrayCounter++;
-			buildings[arrayCounter] = new Rubble(gp, 564, 300+48, 2);
-			arrayCounter++;
-			buildings[arrayCounter] = new Rubble(gp, 696, 324, 0);
-			arrayCounter++;
-			buildings[arrayCounter] = new Rubble(gp, 648, 432, 0);
-			arrayCounter++;
 			break;
 		case 1:
 			door = new Door(gp, 600, 456+48, 1, 0);

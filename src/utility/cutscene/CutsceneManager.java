@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entity.buildings.Chair;
+import entity.buildings.Lantern;
 import entity.npc.Customer;
 import entity.npc.NPC;
 import entity.npc.Pet;
@@ -17,10 +18,14 @@ public class CutsceneManager {
     public boolean cutsceneActive = false;
     private List<CutsceneEvent> events;
     private int currentEventIndex = 0;
+    
+    public boolean cutsceneQueued = false;
+    private List<String> cutscenePlayed;
 
     public CutsceneManager(GamePanel gp) {
         this.gp = gp;
         events = new ArrayList<>();
+        cutscenePlayed = new ArrayList<String>();
     }
 
     public void startCutscene(List<CutsceneEvent> events) {
@@ -28,6 +33,7 @@ public class CutsceneManager {
         this.cutsceneActive = true;
         this.currentEventIndex = 0;
         gp.player.setControlEnabled(false); // freeze player input
+        gp.world.pauseTime();
     }
 
     public void update() {
@@ -48,12 +54,86 @@ public class CutsceneManager {
     public void endCutscene() {
     	cutsceneActive = false;
         gp.player.setControlEnabled(true); // re-enable player input
+        gp.world.resumeTime();
     }
 
     public boolean isActive() {
         return cutsceneActive;
     }
+    public void checkCutsceneTrigger() {
+    	if(!cutsceneQueued) {
+    		return;
+    	}
+
+    	
+    	if(gp.player.currentRoomIndex == 0) {
+    		if(!cutscenePlayed.contains("Ghosts talking")) {
+    			seeGhostsTalking();
+    		}
+    	}
+    	
+    	
+    	cutsceneQueued = false;
+    }
+    public void seeGhostsTalking() {
+    	
+    	cutscenePlayed.add("Ghosts talking");
+
+        List<CutsceneEvent> events = new ArrayList<>();
+        
+    	Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+        
+        events.add(new ActionEvent(() -> {
+        	lantern.setFlicker(true);
+        	gp.player.resetAnimation(0);
+        }));
+        
+        // 1.
+        NPC ghost1 = new StoryCharacter(gp, 0, 0, 3);
+        ghost1.setDirection("Left");
+        NPC ghost2 = new StoryCharacter(gp, 0, 0, 3);
+        events.add(new AddNPCEvent(gp, ghost1, 15, 9));
+        events.add(new AddNPCEvent(gp, ghost2, 14, 9));
+
+        events.add(new WaitEvent(120));
+        
+        events.add(new DialogueEvent(gp, ghost1, "He said the banquet must be flawless... no one leaves until every plate shines."));
+        events.add(new WaitEvent(60));
+        events.add(new DialogueEvent(gp, ghost2, "You’re still chasing his praise? He’s gone, Mero... we all are."));
+        
+        events.add(new WaitEvent(60));
+        
+        events.add(new ActionEvent(() -> {
+            ghost1.setDirection("Up");
+            ghost2.setDirection("Up");
+        }));
+        
+        
+        events.add(new DialogueEvent(gp, ghost2, "You shouldn't be here."));
+        
+        events.add(new ActionEvent(() -> {
+            gp.world.addLightning();
+        }));
+        events.add(new RemoveNPCEvent(gp, ghost1));
+        events.add(new RemoveNPCEvent(gp, ghost2));
+        events.add(new ActionEvent(() -> {
+        	lantern.setFlicker(false);
+        }));
+        
+        
+        events.add(new WaitEvent(60));
+        
+        //events.add(new removeNC(gp, ghost1));
+        
+        //events.add(new ResetZoomEvent(gp)); // wait 1 second
+        
+        events.add(new EndCutscene(gp));
+
+        startCutscene(events);
+    }
     public void enterDestroyedRestaurant() {
+    	
+    	cutscenePlayed.add("Destroyed Restaurant");
     	
         gp.mapM.getRoom(0).setDestroyed();
 
@@ -97,7 +177,7 @@ public class CutsceneManager {
         events.add(new NPCMoveEvent(gp, builder2, 9, 9));
         
         
-        events.add(new StartFadeOutEvent(gp));
+        events.add(new ActionEvent(() -> gp.mapM.currentRoom.setRestored()));
         events.add(new WaitEvent(20)); 
         events.add(new RemoveNPCEvent(gp, builder1));
         events.add(new RemoveNPCEvent(gp, builder2));

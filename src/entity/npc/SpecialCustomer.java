@@ -98,7 +98,7 @@ public class SpecialCustomer extends Customer {
 		}
 		
 	}
-	protected void removeLights() {
+	public void removeLights() {
 		gp.lightingM.removeLight(ghostLight);
 	}
 	public void completeOrder() {
