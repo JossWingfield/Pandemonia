@@ -59,7 +59,7 @@ public class Breaker extends Building{
 	public void update() {
 		if(firstUpdate) {
 			firstUpdate = false;
-			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.GREEN, 200);
+			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.GREEN, 100);
 			gp.mapM.getRoom(3).addLight(light);
 		}
 	}

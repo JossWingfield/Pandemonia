@@ -115,7 +115,7 @@ public class Player extends Entity{
         //hitbox.x = (float) spawnPoint.getX();
         //hitbox.y = (float) spawnPoint.getY();
         
-        animationSpeedFactor = 3;
+        animationSpeedFactor = 2;
         
         reachDistance = (3*gp.tileSize);
         talkDistance = (5*gp.tileSize);
