@@ -77,6 +77,12 @@ public class StoryCharacter extends NPC {
 				break;
 			}
 			break;
+		case 4:
+			name = "Pete";
+		    importPlayerSpriteSheet("/npcs/innKeeper/Idle", 4, 1, 0, 0, 0, 80, 80);
+	        importPlayerSpriteSheet("/npcs/innKeeper/Walk", 8, 1, 1, 0, 0, 80, 80);
+	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
+			break;
 		}
 		
 		portrait = faceIcon;

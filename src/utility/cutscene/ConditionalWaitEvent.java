@@ -1,6 +1,8 @@
 package utility.cutscene;
 
 import main.GamePanel;
+
+import java.awt.geom.Rectangle2D;
 import java.util.function.BooleanSupplier;
 
 public class ConditionalWaitEvent extends CutsceneEvent {

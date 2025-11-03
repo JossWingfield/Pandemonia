@@ -193,7 +193,6 @@ public class Room {
 		gp.buildingM.addBuilding(new Rubble(gp, 648, 432, 0));
 		
 		
-		
 		Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
 		lantern.turnOff();
 		
@@ -240,7 +239,11 @@ public class Room {
 			door.setDoorNum(4);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
-			buildings[arrayCounter] = new Chair(gp, 708, 444, 2);
+			door = new Door(gp, 792, 420, 3, 0);
+			door.setDoorNum(7);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			buildings[arrayCounter] = new Chair(gp, 708+16- 48*2, 432, 3);
 			arrayCounter++;
 			buildings[arrayCounter] = new Chair(gp, 708, 276, 2);
 			arrayCounter++;
@@ -275,8 +278,6 @@ public class Room {
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 156, 24);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 444, 144, 25);
-			arrayCounter++;
-			buildings[arrayCounter] = new Table(gp, 756, 408);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 384, 5);
 			arrayCounter++;
@@ -316,8 +317,6 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 480, 492, 19);
 			arrayCounter++;
-			//buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 468, 28);
-			//arrayCounter++;
 			buildings[arrayCounter] = new Table(gp, 756, 276);
 			arrayCounter++;
 			buildings[arrayCounter] = new Sink(gp, 348, 300);
@@ -326,18 +325,16 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Bin(gp, 384, 240);
 			arrayCounter++;
-			//buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 372, 0);
-			//arrayCounter++;
-			buildings[arrayCounter] = new Lantern(gp, 636, 144);;
+			buildings[arrayCounter] = new Lantern(gp, 636, 144);
 			arrayCounter++;
-			//buildings[arrayCounter] = new Candle(gp, 756, 408, 1);
-			//arrayCounter++;
-			//buildings[arrayCounter] = new Candle(gp, 756, 336, 0);
-			//arrayCounter++;
 			buildings[arrayCounter] = new CornerTable(gp, 348, 384, 2);
 			arrayCounter++;
-			//buildings[arrayCounter] = new Candle(gp, 348, 372, 1);
-			//arrayCounter++;
+			buildings[arrayCounter] = new Table2(gp, 708 - 48*2, 468);
+			arrayCounter++;
+			Rubble barricade = new Rubble(gp, 732, 432+16, 3);
+			barricade.setBarricade();
+			buildings[arrayCounter] = barricade;
+			arrayCounter++;
 			break;
 		case 1:
 			door = new Door(gp, 600, 456+48, 1, 0);
@@ -2565,12 +2562,17 @@ public class Room {
 		}
 	}
 	public void addSpill(int a) {
-		if(a == 0) {
+		if(gp.progressM.currentPhase == 0) {
 			buildings[buildingArrayCounter] = new Spill(gp, 15*gp.tileSize - 24, 8*gp.tileSize);
 			buildingArrayCounter++;
-		} else if(a == 1) {
-			buildings[buildingArrayCounter] = new Spill(gp, 9*gp.tileSize - 24, 9*gp.tileSize);
-			buildingArrayCounter++;
+		} else if(gp.progressM.currentPhase == 1) {
+			if(a == 0) {
+				buildings[buildingArrayCounter] = new Spill(gp, 15*gp.tileSize - 24, 8*gp.tileSize);
+				buildingArrayCounter++;
+			} else if(a == 1) {
+				buildings[buildingArrayCounter] = new Spill(gp, 9*gp.tileSize - 24, 9*gp.tileSize);
+				buildingArrayCounter++;
+			}
 		}
 	}
 	public void addLight(LightSource light) {

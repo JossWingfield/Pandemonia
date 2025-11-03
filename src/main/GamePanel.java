@@ -786,7 +786,8 @@ public class GamePanel extends JPanel implements Runnable {
 	            particleM.draw(g2, xDiff, yDiff);
 		        
 		        world.drawFilters(g2);
-		        world.drawWeather(g2);
+		        world.drawWeather(g2); 
+	            cutsceneM.draw(g2, xDiff, yDiff);
 		        if(keyI.debugMode) {
 		        	debug.draw(g2);
 		        }

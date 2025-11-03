@@ -370,6 +370,7 @@ public class World {
              
              if(day == 2) {
         		 gp.cutsceneM.cutsceneQueued = true;
+        		 gp.cutsceneM.cutsceneName = "Ghosts talking";     	 
         	 }
          }
          lastPhase = currentPhase;
@@ -401,6 +402,11 @@ public class World {
         // If there was an order waiting, deliver a package
         if (orderList != null && !orderList.isEmpty()) {
         	addParcel();
+        }
+        
+        if(day == 2) {
+        	gp.cutsceneM.cutsceneQueued = true;
+        	gp.cutsceneM.cutsceneName = "Customiser Tutorial";
         }
 
         // Reset menu for new day

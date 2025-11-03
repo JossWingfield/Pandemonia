@@ -15,6 +15,7 @@ public class Rubble extends Building {
 	private boolean removedSpill = false;
 	
 	private int preset;
+	private boolean barricade = false;
 	
 	public Rubble(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
@@ -64,16 +65,29 @@ public class Rubble extends Building {
           	hitbox.height = 16*3;
            	yDrawOffset = 48;
 			break;
+		case 3:
+			animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(96, 192, 32, 32);
+        	isSolid = true;
+          	drawWidth = 48*2;
+        	drawHeight = 48*2;
+        	hitbox.width = 32*3;
+          	hitbox.height = 16*3;
+           	yDrawOffset = 24;
+			break;
 
 		}
 		
     	animations[0][0][1] = animations[0][0][0];
 	}
+	public void setBarricade() {
+		name = "Barricade";
+		barricade = true;
+	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 	    
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
 		    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		    if(gp.keyI.ePressed) {
+		    if(gp.keyI.ePressed && !barricade) {
 		    	spillCount++;
 		    	if(spillCount >= maxSpillTime) {
 		    		spillCount = 0;
@@ -97,10 +111,6 @@ public class Rubble extends Building {
 	    if(spillCount > 0) {
 	    	drawChoppingBar(g2, hitbox.x+24, hitbox.y+24, spillCount, maxSpillTime, xDiff, yDiff);
 	    }
-	    
-		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
-		}
 	    
 	}
 	private void drawChoppingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {

@@ -80,6 +80,10 @@ public class Breaker extends Building{
 			    	gp.lightingM.removeLight(gp.player.playerLight);
 			    	gp.lightingM.setPowerOn();
 					gp.lightingM.updateLightColor(3, light, Color.GREEN);
+					if(!gp.cutsceneM.cutscenePlayed.contains("Ignis I")) {
+						gp.cutsceneM.cutsceneQueued = true;
+						gp.cutsceneM.cutsceneName = "Ignis I";
+					}
 			    }
 			} else {
 			    g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);

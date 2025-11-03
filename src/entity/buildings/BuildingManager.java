@@ -400,12 +400,17 @@ public class BuildingManager {
 		}
 	}
 	public void addSpill(int a) {
-		if(a == 0) {
+		if(gp.progressM.currentPhase == 0) {
 			buildings[arrayCounter] = new Spill(gp, 15*gp.tileSize - 24, 8*gp.tileSize);
 			arrayCounter++;
-		} else if(a == 1) {
-			buildings[arrayCounter] = new Spill(gp, 9*gp.tileSize - 24, 9*gp.tileSize);
-			arrayCounter++;
+		} else if(gp.progressM.currentPhase == 1) {
+			if(a == 0) {
+				buildings[arrayCounter] = new Spill(gp, 15*gp.tileSize - 24, 8*gp.tileSize);
+				arrayCounter++;
+			} else if(a == 1) {
+				buildings[arrayCounter] = new Spill(gp, 9*gp.tileSize - 24, 9*gp.tileSize);
+				arrayCounter++;
+			}
 		}
 	}
 	public void addLeak(int a) {
