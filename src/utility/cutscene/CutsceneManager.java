@@ -12,6 +12,8 @@ import entity.buildings.Building;
 import entity.buildings.Chair;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.Lantern;
+import entity.buildings.Rubble;
+import entity.buildings.Stove;
 import entity.npc.Customer;
 import entity.npc.NPC;
 import entity.npc.Pet;
@@ -86,7 +88,7 @@ public class CutsceneManager {
     			seeGhostsTalking();
     			played = true;
     		}
-    		else if(!cutscenePlayed.contains("Ignis I") && cutsceneName.equals("Ignis I")) {
+    		else if(!cutscenePlayed.contains("Ignis I") && cutscenePlayed.contains("Ghosts talking") && cutsceneName.equals("Ignis I")) {
     			ignisI();
     			played = true;
     		} else if(!cutscenePlayed.contains("Customiser Tutorial") && cutsceneName.equals("Customiser Tutorial")) {
@@ -105,8 +107,67 @@ public class CutsceneManager {
     	
 
         List<CutsceneEvent> events = new ArrayList<>();
-                
         
+    	Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+
+        
+        events.add(new ActionEvent(() -> {
+        	Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+        	stove.lightFlame();
+        	highlightArea = new Rectangle2D.Float(10*48, 6*48, 48*2, 48*2);
+        	lantern.setFlicker(true);
+        }));
+        
+        events.add(new ConditionalWaitEvent(gp, () -> {
+        	if(gp.player.hitbox.intersects(highlightArea)) {
+        		return true;
+        	}
+        	return false;
+        }));
+        
+        NPC ignis = new StoryCharacter(gp, 0, 0, 5);
+        NPC player = new StoryCharacter(gp, 0, 0, 2);
+        
+        events.add(new AddNPCEvent(gp, ignis, 11, 6));
+        events.add(new ActionEvent(() -> {
+        	lantern.setFlicker(false);
+          	lantern.turnOff();
+        }));
+        
+        events.add(new WaitEvent(60));
+        events.add(new CameraFollowEvent(gp, ignis, 1.6f));
+        
+        events.add(new WaitEvent(20));
+        events.add(new DialogueEvent(gp, ignis, "...I told them... the heat must never go out..."));
+        events.add(new WaitEvent(20));
+        events.add(new DialogueEvent(gp, ignis, "We must fix that damned breaker."));
+        
+        events.add(new ActionEvent(() -> {
+        	Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+        	stove.stopFlame();
+        	highlightArea = null;
+        }));
+        
+        events.add(new ActionEvent(() -> {
+            gp.world.addLightning();
+            
+        }));
+        
+        events.add(new RemoveNPCEvent(gp, ignis));
+        events.add(new ActionEvent(() -> {
+        	Rubble b = (Rubble)gp.buildingM.findBuildingWithName("Barricade");
+        	if(b != null) {
+        		b.explode();
+        		highlightArea = null;
+        	}
+        }));
+        
+        events.add(new ActionEvent(() -> {
+        	lantern.turnOn();
+        }));
+        
+        events.add(new DialogueEvent(gp, player, "It seems that rubble in front of the door has cleared."));
+        events.add(new WaitEvent(20)); 
         
         events.add(new EndCutscene(gp));
 
@@ -134,7 +195,7 @@ public class CutsceneManager {
 
         events.add(new WaitEvent(120));
         
-        events.add(new DialogueEvent(gp, ghost1, "Have you got your invitation to the banquet? I've heard its going to be the best night of the year!"));
+        events.add(new DialogueEvent(gp, ghost1, "...have you got your invitation to the banquet? I've heard its going to be the best night of the year!"));
         events.add(new WaitEvent(60));
         events.add(new DialogueEvent(gp, ghost2, "Yes I've just got mine last week, I better prepare my dress."));
         
@@ -157,13 +218,7 @@ public class CutsceneManager {
         	lantern.setFlicker(false);
         }));
         
-        
         events.add(new WaitEvent(60));
-        
-        //events.add(new removeNC(gp, ghost1));
-        
-        //events.add(new ResetZoomEvent(gp)); // wait 1 second
-        
         events.add(new EndCutscene(gp));
 
         startCutscene(events);
@@ -316,9 +371,9 @@ public class CutsceneManager {
         events.add(new NPCMoveEvent(gp, owner, "Toilet 1", 4));
         events.add(new DialogueEvent(gp, owner, "If customers need the bathroom, this is where they'll go."));
         
-        events.add(new NPCMoveEvent(gp, owner, "Storage Fridge", 1));
-        events.add(new DialogueEvent(gp, owner, "This is the storage room, you can take food from here and move it into the kitchen fridge, make sure to do this before the customers arrive though!"));
-
+        //events.add(new NPCMoveEvent(gp, owner, "Storage Fridge", 1));
+        //events.add(new DialogueEvent(gp, owner, "This is the storage room, you can take food from here and move it into the kitchen fridge, make sure to do this before the customers arrive though!"));
+        
         events.add(new NPCMoveEvent(gp, owner, "Breaker", 3));
         events.add(new DialogueEvent(gp, owner, "Here are the electrics for the restaurant, you'll only need to come here when things go wrong."));
 

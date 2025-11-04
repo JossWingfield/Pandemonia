@@ -68,6 +68,8 @@ public class MapManager {
 	        rooms[4] = new Room(gp, 4); //Toilet
 	        rooms[5] = new Room(gp, 5); //Bedroom
 	        rooms[6] = new Room(gp, 6); //Basement
+	        rooms[7] = new Room(gp, 7); //Abandoned Corridor
+	        rooms[8] = new Room(gp, 8); //Corrdor 1
 	        
 	        currentMapHeight = currentRoom.mapHeight;
 	        currentMapWidth = currentRoom.mapWidth;

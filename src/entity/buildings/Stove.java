@@ -6,6 +6,7 @@ import java.awt.Taskbar.State;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+import entity.items.Cheese;
 import entity.items.CookingItem;
 import entity.items.Food;
 import entity.items.FoodState;
@@ -35,6 +36,7 @@ public class Stove extends Building {
 	
 	private boolean firstUpdate = true;
 	private int clickCooldown = 0;
+	private boolean drawCooking = false;
 	
 	private BufferedImage leftCooking, rightCooking;
 	
@@ -72,6 +74,12 @@ public class Stove extends Building {
     	animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(0, 128, 48, 48);
     	leftCooking = importImage("/decor/StoveOn.png").getSubimage(0, 0, 48, 48);
     	rightCooking = importImage("/decor/StoveOn.png").getSubimage(48, 0, 48, 48);
+	}
+	public void lightFlame() {
+		drawCooking = true;
+	}
+	public void stopFlame() {
+		drawCooking = false;
 	}
 	public void update() {
 		if(gp.world.isPowerOn()) {
@@ -345,7 +353,7 @@ public class Stove extends Building {
 				}
 				if(rightSlot.getName().equals("Frying Pan")) {
 					FryingPan pan = (FryingPan)rightSlot;
-					if(pan.isCooking()) {
+					if(pan.isCooking() || drawCooking) {
 						g2.drawImage(rightSlot.animations[0][0][9], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
 					}
 					if(pan.cookingItem != null) {
@@ -566,6 +574,16 @@ public class Stove extends Building {
 			g2.drawImage(rightCooking, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 
 		}
+		
+		if(drawCooking) {
+			if(rightSlot instanceof SmallPan pan) {
+				g2.drawImage(rightCooking, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			} else if(rightSlot instanceof FryingPan pan) {
+				g2.drawImage(rightSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+				g2.drawImage(rightCooking, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			}
+		}
+		
 	}
 	
 	private void drawCookingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {

@@ -16,17 +16,22 @@ public class RoomHelperMethods {
 	public static int ELECTRICS = 3;
 	public static int BATHROOM = 4;
 	public static int BEDROOM = 5;
+	public static int BASEMENT = 6;
+	public static int ABANDONEDCORRIDOR = 7;
+	public static int CORRIDOR1 = 8;
+	public static int OLDKITCHEN = 9;
 	
     public static Map<Integer, int[]> roomGraph = new HashMap<>();
 
     
     public RoomHelperMethods() {
-        roomGraph.put(RoomHelperMethods.MAIN, new int[]{RoomHelperMethods.STORES, RoomHelperMethods.OUTDOORS, RoomHelperMethods.BATHROOM});
-        roomGraph.put(RoomHelperMethods.STORES, new int[]{RoomHelperMethods.MAIN, RoomHelperMethods.ELECTRICS});
+        roomGraph.put(RoomHelperMethods.MAIN, new int[]{RoomHelperMethods.CORRIDOR1, RoomHelperMethods.OUTDOORS, RoomHelperMethods.BATHROOM});
+        roomGraph.put(RoomHelperMethods.STORES, new int[]{RoomHelperMethods.OLDKITCHEN});
         roomGraph.put(RoomHelperMethods.OUTDOORS, new int[]{RoomHelperMethods.MAIN});
         roomGraph.put(RoomHelperMethods.BATHROOM, new int[]{RoomHelperMethods.MAIN});
-        roomGraph.put(RoomHelperMethods.ELECTRICS, new int[]{RoomHelperMethods.STORES, RoomHelperMethods.BEDROOM});
-        roomGraph.put(RoomHelperMethods.BEDROOM, new int[]{RoomHelperMethods.ELECTRICS});
+        roomGraph.put(RoomHelperMethods.ELECTRICS, new int[]{RoomHelperMethods.CORRIDOR1});
+        roomGraph.put(RoomHelperMethods.BEDROOM, new int[]{RoomHelperMethods.CORRIDOR1});
+        roomGraph.put(RoomHelperMethods.CORRIDOR1, new int[]{RoomHelperMethods.MAIN, RoomHelperMethods.BEDROOM, RoomHelperMethods.ELECTRICS});
     }
 	
 	public static List<NPC> setCelebrityPresent(List<NPC> npcs, boolean isPresent) {

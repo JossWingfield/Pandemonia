@@ -43,22 +43,22 @@ public class KeyboardInput implements KeyListener {
         if(gp.currentState == gp.playState) {
         	
         	if (num == KeyEvent.VK_4) {
-                gp.saveM.saveGame();
+                //gp.saveM.saveGame();
             }
         	if (num == KeyEvent.VK_5) {
-                gp.saveM.loadGame(gp.saveM.currentSave);
+                //gp.saveM.loadGame(gp.saveM.currentSave);
             }
             if(num == KeyEvent.VK_F) {
-            	gp.gui.startLevelUpScreen();
+            	//gp.gui.startLevelUpScreen();
             }
             if(num == KeyEvent.VK_G) {
-            	gp.progressM.moveToNextPhase();
+            	//gp.progressM.moveToNextPhase();
             }
             if(num == KeyEvent.VK_H) {
-            	//gp.cutsceneM.customiseTutorial();
+            	//gp.cutsceneM.enterDestroyedRestaurant();
             }
             if(num == KeyEvent.VK_Q) {
-            	gp.player.soulsServed = gp.player.nextLevelAmount;
+            	//gp.player.soulsServed = gp.player.nextLevelAmount;
             }
         	
             //MAIN INPUTS

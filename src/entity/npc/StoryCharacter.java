@@ -83,6 +83,13 @@ public class StoryCharacter extends NPC {
 	        importPlayerSpriteSheet("/npcs/innKeeper/Walk", 8, 1, 1, 0, 0, 80, 80);
 	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
 			break;
+		case 5:
+			name = "Ignis";
+			hasLight = true;
+			importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
+		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
+		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png");
+			break;
 		}
 		
 		portrait = faceIcon;

@@ -16,11 +16,13 @@ public class Rubble extends Building {
 	
 	private int preset;
 	private boolean barricade = false;
+	private int fadeAlpha = 255;
 	
 	public Rubble(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
 		this.preset = preset;
 		
+		animationSpeedFactor = 6;
 		isSolid = true;
 		isBottomLayer = true;
 		blueprint = false;
@@ -73,8 +75,7 @@ public class Rubble extends Building {
         	hitbox.width = 32*3;
           	hitbox.height = 16*3;
            	yDrawOffset = 24;
-			break;
-
+  			break;
 		}
 		
     	animations[0][0][1] = animations[0][0][0];
@@ -82,6 +83,12 @@ public class Rubble extends Building {
 	public void setBarricade() {
 		name = "Barricade";
 		barricade = true;
+	}
+	public void explode() {
+		if(name.equals("Barricade")) {
+			currentAnimation = 1;
+		    fadeAlpha = 255;
+		}
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 	    
@@ -97,6 +104,28 @@ public class Rubble extends Building {
 		    	}
 		    }
 	    } else {
+	    	if(currentAnimation == 1) {
+	    		// Fade-out effect for barricade rubble
+	    	    if (fadeAlpha > 0) {
+	    	        fadeAlpha -= 5; // fade speed (smaller = slower fade)
+	    	        if (fadeAlpha < 0) fadeAlpha = 0;
+	    	    }
+
+	    	    // Draw faded image
+	    	    g2.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, fadeAlpha / 255f));
+	    	    g2.drawImage(animations[0][0][0], 
+	    	        (int) hitbox.x - xDrawOffset - xDiff, 
+	    	        (int) (hitbox.y - yDiff) - yDrawOffset, 
+	    	        drawWidth, drawHeight, 
+	    	        null);
+	    	    g2.setComposite(java.awt.AlphaComposite.SrcOver); // reset alpha
+
+	    	    // Remove when fully faded
+	    	    if (fadeAlpha <= 0) {
+	    	        gp.buildingM.removeBuilding(this);
+	    	        return;
+	    	    }
+	    	}
 		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    }
 	    if(effectArea.intersects(gp.player.hitbox)) {

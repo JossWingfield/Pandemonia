@@ -171,6 +171,30 @@ public class Room {
 			setChairSkin(0);
 			setTableSkin(0);
 			break;
+		case 7:
+			roomType = "Abandonded Corridor";
+			filePath = "/maps/corridor2/Layer";
+		    importMap(filePath, mapWidth, mapHeight);
+		    roomID = "/corridor2";
+		    roomIDTag = "Layer";
+		    setWallpaper(0);
+			setFloorpaper(0);
+			setBeam(0);
+			setChairSkin(0);
+			setTableSkin(0);
+			break;
+		case 8:
+			roomType = "Corridor 1";
+			filePath = "/maps/corridor1/Layer";
+		    importMap(filePath, mapWidth, mapHeight);
+		    roomID = "/corridor1";
+		    roomIDTag = "Layer";
+		    setWallpaper(0);
+			setFloorpaper(0);
+			setBeam(0);
+			setChairSkin(0);
+			setTableSkin(0);
+			break;
 		}
 		setBuildings(preset);
 		for(Building b: buildings) {
@@ -210,30 +234,21 @@ public class Room {
 		gp.buildingM.refreshBuildings();
 	}
 	private void setBuildings(int preset) {
-		int phase = 1;
-		if(gp.progressM != null) {
-			phase = gp.progressM.currentPhase;
-		}
 		buildings = new Building[250];
-		switch(phase) {
-		case 1:
-			setPhase1Buildings();
-			break;
-		case 2:
-			setPhase2Buildings();
-			break;
-		}
+		setPhase1Buildings();
 	}
 	private void setPhase1Buildings() {
 		int arrayCounter = 0;
 		switch(preset) {
 		case 0:
 			roomSpawn = new RoomSpawn(gp, 480, 504);
-			buildings[arrayCounter] = new Door(gp, 684, 144+48, 0, 0);
-			arrayCounter++;
-			Door door = new Door(gp, 456, 504+48, 1, 0);
-			door.setDoorNum(2);
+			Door door = new Door(gp, 684, 144+48, 0, 0);
+			door.setDoorNum(8);
 			buildings[arrayCounter] = door;
+			arrayCounter++;
+			//Door door = new Door(gp, 456, 504+48, 1, 0);
+			//door.setDoorNum(2);
+			//buildings[arrayCounter] = door;
 			arrayCounter++;
 			door = new Door(gp, 336, 344+48, 2, 0);
 			door.setDoorNum(4);
@@ -429,10 +444,10 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Lantern(gp, 660, 156);
 			arrayCounter++;
-			door = new Door(gp, 672+24, 216+48, 3, 0);
-			door.setDoorNum(3);
-			buildings[arrayCounter] = door;
-			arrayCounter++;
+			//door = new Door(gp, 672+24, 216+48, 3, 0);
+			//door.setDoorNum(3);
+			//buildings[arrayCounter] = door;
+			//arrayCounter++;
 			break;
 		case 2:
 			buildings = new Building[1500];
@@ -1629,22 +1644,18 @@ public class Room {
 			break;
 		case 3:
 			door = new Door(gp, 432, 204+48, 2, 0);
-			door.setDoorNum(1);
+			door.setDoorNum(8);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
-			door = new Door(gp, 468, 144+48, 0, 0);
-			door.setDoorNum(5);
-			buildings[arrayCounter] = door;
-			arrayCounter++;
+			//door = new Door(gp, 468, 144+48, 0, 0);
+			//door.setDoorNum(5);
+			//buildings[arrayCounter] = door;
+			//arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 600, 372, 45);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 600, 408, 44);
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 600, 444, 46);
-			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 432, 360, 34);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 468, 312, 25);
 			arrayCounter++;
 			buildings[arrayCounter] = new WallDecor_Building(gp, 564, 324, 21);
 			arrayCounter++;
@@ -1664,6 +1675,8 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Trapdoor(gp, 516, 420, 0);
 			arrayCounter++;
+
+
 			break;
 		case 4:
 			door = new Door(gp, 720+24, 264+16+48, 3, 0);
@@ -1713,7 +1726,7 @@ public class Room {
 			break;
 		case 5:
 			door = new Door(gp, 420, 504+48, 1, 0);
-			door.setDoorNum(3);
+			door.setDoorNum(8);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
 			buildings[arrayCounter] = new Bed(gp, 648, 276);
@@ -1825,6 +1838,27 @@ public class Room {
 			buildings[arrayCounter] = new Cauldron(gp, 576, 384);
 			arrayCounter++;
 			buildings[arrayCounter] = new Trapdoor(gp, 552, 156, 1);
+			arrayCounter++;
+			break;
+		case 7: // Abandoned corridor
+			
+			break;
+		case 8: //Corridor 1
+			door = new Door(gp, 528, 552, 1, 0);
+			door.setDoorNum(0);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			door = new Door(gp, 648, 372, 3, 0);
+			door.setDoorNum(3);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			door = new Door(gp, 528, 240, 0, 0);
+			door.setDoorNum(5);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 612, 228);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 552, 504, 40);
 			arrayCounter++;
 			break;
 		}
