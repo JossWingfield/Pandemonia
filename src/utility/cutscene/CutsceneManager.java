@@ -102,6 +102,12 @@ public class CutsceneManager {
 	    	cutsceneQueued = false;
     	}
     }
+    public void setCutscenesWatched(List<String> cutscenePlayed) {
+		this.cutscenePlayed = cutscenePlayed;
+	}
+    public List<String> getCutscenesWatched() {
+		return cutscenePlayed;
+	}
     public void ignisI() {
     	cutscenePlayed.add("Ignis I");
     	

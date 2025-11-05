@@ -47,7 +47,6 @@ public class LightingManager {
     public float bloomIntensity = 0.15f;   // was 1.5 → much stronger additive blend
     private int[] bloomSmallData;
     private int[] bloomBlurredData;
-    private int[] tmpBuffer;
     
     
     //Light Occlusion Settings
@@ -224,9 +223,32 @@ public class LightingManager {
             }
         }
         updateLightCache();
+        
+        if (Settings.bloomEnabled) {
+            width = colorBuffer.getWidth();
+            height = colorBuffer.getHeight();
+            float downscale = 1f / 3f;
+            int wSmall = Math.max(1, Math.round(width * downscale));
+            int hSmall = Math.max(1, Math.round(height * downscale));
+
+            if (bloomSmall == null || bloomSmall.getWidth() != wSmall || bloomSmall.getHeight() != hSmall) {
+                bloomSmall = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
+                bloomBlurred = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
+                bloomSmallData = new int[wSmall * hSmall];
+                bloomBlurredData = new int[wSmall * hSmall];
+            } else {
+                Arrays.fill(bloomSmallData, 0); // clear previous bloom data
+            }
+        }
         List<LightSource> copy = new ArrayList<>(lights);
         for (int i = 0, n = copy.size(); i < n; i++) {
             LightSource light = copy.get(i);
+            
+            if (light.getType() == LightSource.Type.BLOOM_ONLY) {
+                // Skip normal lighting — but record for bloom buffer
+                addBloomLight(light, xDiff, yDiff);
+                continue;
+            }
 
             int lx = (light.getX() - xDiff) / scale;
             int ly = (light.getY() - yDiff) / scale;
@@ -332,6 +354,62 @@ public class LightingManager {
         }
 
         return litImageScaled;
+    }
+    private void addBloomLight(LightSource light, int xDiff, int yDiff) {
+        if (bloomSmall == null) return; // ensure bloom buffers exist
+
+        int scale = 3;
+        int lx = (light.getX() - xDiff) / scale;
+        int ly = (light.getY() - yDiff) / scale;
+        int radius = Math.max(1, light.getRadius() / scale);
+        float r = light.getColor().getRed() / 255f;
+        float g = light.getColor().getGreen() / 255f;
+        float b = light.getColor().getBlue() / 255f;
+
+        float intensity = light.getIntensity(); // base intensity
+        float bloomMultiplier = 2f;          
+        intensity *= bloomMultiplier;           // amplify glow
+
+        int w = bloomSmall.getWidth();
+        int h = bloomSmall.getHeight();
+        int[] bloomData = bloomSmallData;
+        if (bloomData == null) return;
+
+        int radius2 = radius * radius;
+        float exponent = 0.5f; // power-based falloff
+
+        for (int y = Math.max(0, ly - radius); y < Math.min(h, ly + radius); y++) {
+            int row = y * w;
+            int dy = y - ly;
+            int dy2 = dy * dy;
+
+            for (int x = Math.max(0, lx - radius); x < Math.min(w, lx + radius); x++) {
+                int dx = x - lx;
+                int dist2 = dx * dx + dy2;
+                if (dist2 > radius2) continue;
+
+                float attenuation = 1f - ((float) dist2 / radius2);
+                attenuation = (float) Math.pow(attenuation, exponent);
+                attenuation *= intensity;
+
+                int br = (int) (r * 255 * attenuation);
+                int bg = (int) (g * 255 * attenuation);
+                int bb = (int) (b * 255 * attenuation);
+
+                int idx = row + x;
+                int prev = bloomData[idx];
+
+                int pr = (prev >> 16) & 0xFF;
+                int pg = (prev >> 8) & 0xFF;
+                int pb = prev & 0xFF;
+
+                int nr = Math.min(255, pr + br);
+                int ng = Math.min(255, pg + bg);
+                int nb = Math.min(255, pb + bb);
+
+                bloomData[idx] = (0xFF << 24) | (nr << 16) | (ng << 8) | nb;
+            }
+        }
     }
     public void drawOcclusionDebug(Graphics2D g) {
 
@@ -593,51 +671,60 @@ public class LightingManager {
 
     private void applyBloomDirect(int[] baseData, int baseW, int baseH) {
         // --- Step 1: Downscale ---
-        float downscale = 0.03125f; // 1/32
+        float downscale = 1f / 3f;
         int wSmall = Math.max(1, Math.round(baseW * downscale));
         int hSmall = Math.max(1, Math.round(baseH * downscale));
 
-        // Create images if null or size changed
+        // Create buffers if needed
         if (bloomSmall == null || bloomSmall.getWidth() != wSmall || bloomSmall.getHeight() != hSmall) {
             bloomSmall = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
             bloomBlurred = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
         }
-        
+
         if (bloomSmallData == null || bloomSmallData.length != wSmall * hSmall) {
             bloomSmallData = new int[wSmall * hSmall];
             bloomBlurredData = new int[wSmall * hSmall];
-            tmpBuffer = new int[wSmall * hSmall];
         }
 
-        //int[] smallData = ((DataBufferInt) bloomSmall.getRaster().getDataBuffer()).getData();
-        //int[] blurData  = ((DataBufferInt) bloomBlurred.getRaster().getDataBuffer()).getData();
-
-        // Extract bright pixels into smallData
+        // --- Step 1: Bright-pixel extraction (additive) ---
         int scaleX = baseW / wSmall;
         int scaleY = baseH / hSmall;
         for (int y = 0; y < hSmall; y++) {
             int srcY = y * scaleY;
             int rowSmall = y * wSmall;
             int rowBase  = srcY * baseW;
+
             for (int x = 0; x < wSmall; x++) {
                 int srcX = x * scaleX;
                 int pixel = baseData[rowBase + srcX];
+
                 int r = (pixel >>> 16) & 0xFF;
                 int g = (pixel >>> 8) & 0xFF;
                 int b = pixel & 0xFF;
                 int bright = Math.max(r, Math.max(g, b));
-                bloomSmallData[rowSmall + x] = (bright > bloomThreshold) ? (0xFF << 24) | (r << 16) | (g << 8) | b : 0;
+
+                int dst = bloomSmallData[rowSmall + x]; // existing bloom data (from custom lights)
+                int dr = (dst >> 16) & 0xFF;
+                int dg = (dst >> 8) & 0xFF;
+                int db = dst & 0xFF;
+
+                if (bright > bloomThreshold) {
+                    int nr = Math.min(255, dr + r);
+                    int ng = Math.min(255, dg + g);
+                    int nb = Math.min(255, db + b);
+                    bloomSmallData[rowSmall + x] = (0xFF << 24) | (nr << 16) | (ng << 8) | nb;
+                }
             }
         }
 
         // --- Step 2: Blur ---
         boxBlur(bloomSmallData, bloomBlurredData, wSmall, hSmall, bloomStrength);
 
-        // --- Step 3: Upscale & Additive blend ---
+        // --- Step 3: Upscale & blend ---
         int bloomIntensityInt = Math.round(bloomIntensity * 256);
         for (int y = 0; y < baseH; y++) {
-        	int srcY = (y * hSmall) / baseH;
-        	if (srcY >= hSmall) srcY = hSmall - 1;
+            int srcY = (y * hSmall) / baseH;
+            if (srcY >= hSmall) srcY = hSmall - 1;
             int rowSmall = srcY * wSmall;
             int rowBase  = y * baseW;
 
@@ -859,7 +946,7 @@ public class LightingManager {
         Color ambient;
         float intensity;
 
-        if (!powerOff && !gp.mapM.isInRoom(6)) {
+        if (!powerOff) {
             if (time >= 6 && time < 12) {
                 float t = (time - 6f) / 6f;
                 ambient = lerpColor(morning, noon, t);
@@ -877,9 +964,27 @@ public class LightingManager {
                 ambient = lerpColor(night, morning, t);
                 intensity = 0.6f + 0.4f * t;
             }
+            
+            if (gp.mapM.currentRoom != null && gp.mapM.currentRoom.darkerRoom) {
+                // Make the room’s lighting darker (reduce intensity + darken color)
+                intensity *= 0.6f; // 40% darker
+                ambient = darkenColor(ambient, 0.75f); // darken by 50%
+            }
+            
             setAmbientLight(ambient, intensity);
         } else {
             setAmbientLight(night, 0.6f);
         }
+    }
+    private Color darkenColor(Color color, float factor) {
+        // factor = 0.5f means 50% darker
+        int r = (int) (color.getRed() * factor);
+        int g = (int) (color.getGreen() * factor);
+        int b = (int) (color.getBlue() * factor);
+        return new Color(
+            Math.max(0, Math.min(255, r)),
+            Math.max(0, Math.min(255, g)),
+            Math.max(0, Math.min(255, b))
+        );
     }
 }

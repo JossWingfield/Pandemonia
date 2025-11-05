@@ -18,15 +18,22 @@ import entity.Entity;
 import main.GamePanel;
 
 public class LightSource {
+	public enum Type { NORMAL, BLOOM_ONLY }
+	
     public int x, y, radius;
     private Color color;
     private float intensity = 1f;
+    private Type type = Type.NORMAL;
 
     public LightSource(int x, int y, Color color, int radius) {
         this.x = x;
         this.y = y;
         this.color = color;
         this.radius = radius;
+    }
+    public LightSource(int x, int y, Color color, int radius, Type type) {
+        this(x, y, color, radius);
+        this.type = type;
     }
 
     public void setPosition(int x, int y) {
@@ -45,6 +52,8 @@ public class LightSource {
     public void setIntensity(float i) { 
     	intensity = Math.max(0, i); 
     }
+    public Type getType() { return type; }
+    public void setType(Type type) { this.type = type; }
     public int getX() { return x; }
     public int getY() { return y; }
     public int getRadius() { return radius; }

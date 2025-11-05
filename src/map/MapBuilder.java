@@ -21,8 +21,10 @@ import entity.buildings.Calendar;
 import entity.buildings.Candle;
 import entity.buildings.Cauldron;
 import entity.buildings.Chair;
+import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
 import entity.buildings.CornerTable;
+import entity.buildings.CursedDecor;
 import entity.buildings.Door;
 import entity.buildings.EscapeHole;
 import entity.buildings.FloorDecor_Building;
@@ -82,6 +84,10 @@ public class MapBuilder {
 	}
 	
 	private void addBuildings() {
+		for(int i = 0; i < 32; i++) {
+			buildings[totalBuildingCount] = new CursedDecor(gp, 0, 0, i);
+			totalBuildingCount++;
+		}
 		for(int i = 0; i < 28; i++) {
 			buildings[totalBuildingCount] = new WallDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
@@ -90,6 +96,10 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new FloorDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
+		buildings[totalBuildingCount] = new ChefPortrait(gp, 0, 0);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new Door(gp, 0, 0, 0, 2);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new RoomSpawn(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Gate(gp, 0, 0);

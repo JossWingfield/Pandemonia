@@ -16,6 +16,7 @@ public class Door extends Building {
 	public int preset = 0;
 	public int cooldown = 0;
 	private boolean open = false;
+	private boolean locked = false;
 	
 	public Door(GamePanel gp, float xPos, float yPos, int facing, int presetNum) {
 		super(gp, xPos, yPos, 48*2, 48*2);
@@ -85,6 +86,11 @@ public class Door extends Building {
         	animations[0][0][1] = importImage("/buildings/House.png").getSubimage(32, 160, 32, 32);
         	drawHeight = 32*3;
 			break;
+		case 2:
+			animations[0][0][0] = importImage("/decor/Chefdoor.png").getSubimage(0, 0, 32, 48);
+        	animations[0][0][1] = importImage("/decor/door.png").getSubimage(32, 0, 32, 48);
+        	locked = true;
+			break;
 		}
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
@@ -113,9 +119,8 @@ public class Door extends Building {
 		
         //g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
-      	
 		 
-		if(!gp.player.interactHitbox.intersects(doorHitbox) && !gp.npcM.stockerCheck(npcVisualHitbox)) {
+		if((!gp.player.interactHitbox.intersects(doorHitbox) && !gp.npcM.stockerCheck(npcVisualHitbox)) || locked) {
 			if(!open) {
 			}
 			open = true;
@@ -133,7 +138,7 @@ public class Door extends Building {
 		//g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)npcHitbox.x, (int)npcHitbox.y, (int)npcHitbox.width, (int)npcHitbox.height);
 		
-		if(gp.player.interactHitbox.intersects(entryHitbox)) {
+		if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
 			if(cooldown == 0) {
 				gp.mapM.changeRoom(roomNum, this);
 			}

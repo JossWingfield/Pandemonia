@@ -199,6 +199,7 @@ public class ProgressManager {
     	data.moreCustomers = moreCustomers;
     	data.phase = currentPhase;
     	data.seasoningUnlocked = seasoningUnlocked;
+    	data.cutscenesWatched = gp.cutsceneM.getCutscenesWatched();
     	return data;
     }
     public void applySaveData(ProgressSaveData data) {
@@ -212,6 +213,7 @@ public class ProgressManager {
     	fasterCustomers = data.fasterCustomers;
     	moreCustomers = data.moreCustomers;
     	seasoningUnlocked = data.seasoningUnlocked;
+    	gp.cutsceneM.setCutscenesWatched(data.cutscenesWatched);
     }
     public void moveToNextPhase() {
     	currentPhase++;

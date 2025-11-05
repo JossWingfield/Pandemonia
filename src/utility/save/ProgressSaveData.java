@@ -1,6 +1,8 @@
 package utility.save;
 
 
+import java.util.List;
+
 import main.GamePanel;
 
 public class ProgressSaveData extends SaveData {
@@ -17,6 +19,7 @@ public class ProgressSaveData extends SaveData {
 	public boolean seasoningUnlocked;
 	
 	public int phase;
+	public List<String> cutscenesWatched;
 	
 	public void applySaveData(GamePanel gp) {
 		gp.progressM.applySaveData(this);

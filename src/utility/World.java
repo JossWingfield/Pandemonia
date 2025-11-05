@@ -319,7 +319,7 @@ public class World {
 	        }
         }
         if (eventsOn) {
-            if (currentPhase == DayPhase.SERVICE) {
+            if (currentPhase == DayPhase.SERVICE && menuChosen) {
                 // If we just entered SERVICE phase, give a grace period before first event
                 if (lastPhase != DayPhase.SERVICE && eventTimer == 0) {
                     eventTimer = -serviceEventGracePeriod; // start below zero so timer "waits" to reach 0

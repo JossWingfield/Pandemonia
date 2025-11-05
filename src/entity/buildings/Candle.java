@@ -61,7 +61,8 @@ public class Candle extends Building{
 		
 		if(firstUpdate) {
 			firstUpdate = false;
-			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.ORANGE, 48);
+			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.ORANGE, 32);
+	    	light.setIntensity(0.6f);
 			gp.lightingM.addLight(light);
 		}
 		

@@ -48,8 +48,8 @@ public class SoulLantern extends Building{
 		
 		if(firstUpdate) {
 			firstUpdate = false;
-			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), soulColour, 240);
-			light.setIntensity(0.4f);
+			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), soulColour, 64);
+			light.setIntensity(0.8f);
 			gp.lightingM.addLight(light);
 		}
 		

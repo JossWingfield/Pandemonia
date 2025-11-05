@@ -14,8 +14,10 @@ import entity.buildings.Calendar;
 import entity.buildings.Candle;
 import entity.buildings.Cauldron;
 import entity.buildings.Chair;
+import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
 import entity.buildings.CornerTable;
+import entity.buildings.CursedDecor;
 import entity.buildings.Door;
 import entity.buildings.EscapeHole;
 import entity.buildings.FloorDecor_Building;
@@ -72,6 +74,8 @@ public class Room {
 	public Beam beam = null;
 	public ChairSkin chairSkin = null;
 	public TableSkin tableSkin = null;
+	
+	public boolean darkerRoom = false;
 	
 	public RoomSpawn roomSpawn;
 	
@@ -177,7 +181,7 @@ public class Room {
 		    importMap(filePath, mapWidth, mapHeight);
 		    roomID = "/corridor2";
 		    roomIDTag = "Layer";
-		    setWallpaper(0);
+		    setWallpaper(1);
 			setFloorpaper(0);
 			setBeam(0);
 			setChairSkin(0);
@@ -195,6 +199,18 @@ public class Room {
 			setChairSkin(0);
 			setTableSkin(0);
 			break;
+		case 9:
+			roomType = "Old Kitchen";
+			filePath = "/maps/oldkitchen/Layer";
+		    importMap(filePath, mapWidth, mapHeight);
+		    roomID = "/oldkitchen";
+		    roomIDTag = "Layer";
+		    setWallpaper(0);
+			setFloorpaper(0);
+			setBeam(0);
+			setChairSkin(0);
+			setTableSkin(0);
+			break;
 		}
 		setBuildings(preset);
 		for(Building b: buildings) {
@@ -203,6 +219,21 @@ public class Room {
 			}
 		}
 	}
+	public void setDefaultValues() {
+		switch(preset) {
+		case 7:
+		    setWallpaper(1);
+		    darkerRoom = true;
+		    setFloorpaper(4);
+		    setBeam(5);
+			break;
+		case 6:
+			darkerRoom = true;
+			break;
+		}
+
+	}
+	
 	public void setDestroyed() {
 		setTableSkin(3);
 		setWallpaper(30);
@@ -1841,7 +1872,70 @@ public class Room {
 			arrayCounter++;
 			break;
 		case 7: // Abandoned corridor
-			
+			door = new Door(gp, 240, 384, 2, 0);
+			door.setDoorNum(0);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			door = new Door(gp, 360, 288, 0, 2);
+			door.setDoorNum(9);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			buildings[arrayCounter] = new ChefPortrait(gp, 312, 216);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChefPortrait(gp, 420, 216);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChefPortrait(gp, 528, 216);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChefPortrait(gp, 636, 216);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChefPortrait(gp, 744, 216);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChefPortrait(gp, 852, 216);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 288, 324, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 300, 384, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 360, 480, 3);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 480, 336, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 600, 360, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 828, 456, 6);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 312, 480, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 576, 372, 12);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 732, 480, 13);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 468, 480, 14);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 672, 468, 15);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 540, 468, 16);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 492, 408, 19);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 468, 444, 18);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 600, 444, 24);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 348, 408, 26);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 780, 444, 27);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 804, 348, 31);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 744, 360, 30);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 648, 384, 25);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 660, 336, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 408, 456, 23);
+			arrayCounter++;
 			break;
 		case 8: //Corridor 1
 			door = new Door(gp, 528, 552, 1, 0);
@@ -1860,6 +1954,8 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 552, 504, 40);
 			arrayCounter++;
+			break;
+		case 9: //Old Kitchen
 			break;
 		}
 		buildingArrayCounter = arrayCounter;

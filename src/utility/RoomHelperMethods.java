@@ -32,6 +32,7 @@ public class RoomHelperMethods {
         roomGraph.put(RoomHelperMethods.ELECTRICS, new int[]{RoomHelperMethods.CORRIDOR1});
         roomGraph.put(RoomHelperMethods.BEDROOM, new int[]{RoomHelperMethods.CORRIDOR1});
         roomGraph.put(RoomHelperMethods.CORRIDOR1, new int[]{RoomHelperMethods.MAIN, RoomHelperMethods.BEDROOM, RoomHelperMethods.ELECTRICS});
+        roomGraph.put(RoomHelperMethods.ABANDONEDCORRIDOR, new int[]{RoomHelperMethods.MAIN, RoomHelperMethods.OLDKITCHEN});
     }
 	
 	public static List<NPC> setCelebrityPresent(List<NPC> npcs, boolean isPresent) {

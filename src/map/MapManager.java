@@ -37,6 +37,8 @@ public class MapManager {
 	  public Room currentRoom;
 	  private Room[] rooms;
 	  
+	  private boolean firstUpdate = true;
+	  
 	  private boolean changingPhase = false;
 	  
 	  private int arrayIndex = 0;
@@ -60,7 +62,7 @@ public class MapManager {
 	        gp.buildingM.setBuildings(currentRoom.getBuildings());
 	        gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
 	        
-	        rooms = new Room[10];
+	        rooms = new Room[20];
 	        rooms[0] = currentRoom; //Main
 	        rooms[1] = new Room(gp, 1); //Stores
 	        //rooms[2] = new Room(gp, 2); //Outdoors
@@ -69,7 +71,8 @@ public class MapManager {
 	        rooms[5] = new Room(gp, 5); //Bedroom
 	        rooms[6] = new Room(gp, 6); //Basement
 	        rooms[7] = new Room(gp, 7); //Abandoned Corridor
-	        rooms[8] = new Room(gp, 8); //Corrdor 1
+	        rooms[8] = new Room(gp, 8); //Corridor 1
+	        rooms[9] = new Room(gp, 9); //Old Kitchen
 	        
 	        currentMapHeight = currentRoom.mapHeight;
 	        currentMapWidth = currentRoom.mapWidth;
@@ -439,6 +442,14 @@ public class MapManager {
 	        }
 	    }
 	    public void draw(Graphics2D g2, float xDiff, float yDiff) {
+	    	if(firstUpdate) {
+        		for(Room r: rooms) {
+        			if(r != null) {
+        				r.setDefaultValues();
+        			}
+        		}
+        		firstUpdate = false;
+	    	}
 	        drawBackground(g2, xDiff, yDiff);
 
 	        drawLayer(g2, xDiff, yDiff, 1); // main floor layer
