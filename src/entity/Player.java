@@ -2,6 +2,7 @@ package entity;
 
 import main.GamePanel;
 import map.LightSource;
+import map.particles.PlayerDustParticle;
 import net.packets.Packet;
 import net.packets.Packet02Move;
 import net.packets.Packet03PickupItem;
@@ -84,6 +85,7 @@ public class Player extends Entity{
     
     public LightSource playerLight;
     public boolean isInvisible = false;
+    private int dustCooldown = 0;
     
     //INVENTORY
     //public Headgear currentHeadgear = null;
@@ -574,7 +576,23 @@ public class Player extends Entity{
     		updateCounters();
     		updateInteractHitbox();
     		handleItems();
+    		
+    		if(gp.mapM.currentRoom.darkerRoom) {
+    			if (currentAnimation == 1) {
+    				dustCooldown--;
+    				if (dustCooldown <= 0) {
+    					dustCooldown = 2; // spawn every few frames
+    					spawnTrailDust();
+    				}
+    			}
+    		}
     	}
+    }
+    private void spawnTrailDust() {
+        float spawnX = hitbox.x + hitbox.width / 2f;
+        float spawnY = hitbox.y + hitbox.height; // near the player’s feet
+
+        gp.particleM.addParticle(new PlayerDustParticle(gp, spawnX, spawnY));
     }
     
     public void setCurrentAnimation(int currentAnimation) {
@@ -636,6 +654,7 @@ public class Player extends Entity{
     public void setUsername(String newName) {
     	username = newName;
     }
+    
     public void draw(Graphics2D g2, int xDiff, int yDiff) {
     	if(isInvisible) {
     		return;

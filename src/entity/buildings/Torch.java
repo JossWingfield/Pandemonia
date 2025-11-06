@@ -29,12 +29,14 @@ public class Torch extends Building{
 		
 		drawWidth = 48;
 		isDecor = true;
-        drawHeight = 96;
+        drawHeight = 48*3;
         hitbox.height = 80;
+        yDrawOffset = 48;
 		isSolid = false;
 		blueprint = false;
 		importImages();
 		mustBePlacedOnWall = true;
+		turnOff();
 	}
 	public Building clone() {
 		Torch building = new Torch(gp, hitbox.x, hitbox.y);
@@ -45,18 +47,20 @@ public class Torch extends Building{
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new BufferedImage[1][2][10];
 		
 		name = "Lantern";
-    	animations[0][0][0] = importImage("/decor/Torch.png");
-    	animations[0][0][1] = importImage("/decor/Torch.png");
+    	animations[0][0][0] = importImage("/decor/Torch.png").getSubimage(0, 0, 16, 48);
+		importFromSpriteSheet("/decor/Torch.png", 4, 1, 1, 16, 0, 16, 48, 0);
 	}
 	public void turnOff() {
 		turnedOn = false;
 		gp.lightingM.removeLight(light);
+		currentAnimation = 0;
 	}
 	public void turnOn() {
 		turnedOn = true;
+		currentAnimation = 1;
 		gp.lightingM.addLight(light);
 	}
 	public void destroy() {
@@ -76,8 +80,8 @@ public class Torch extends Building{
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if (firstUpdate) {
 			firstUpdate = false;
-			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + hitbox.height / 2),Color.GREEN, 40);
-			light.setIntensity(0.4f);
+			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 20),Color.ORANGE, 40);
+			light.setIntensity(0.8f);
 			if (turnedOn) {
 				gp.lightingM.addLight(light);
 			}
@@ -99,16 +103,20 @@ public class Torch extends Building{
 				nextFlickerTime = random.nextFloat() * 0.05f + 0.01f; // next flicker between 0.05s–0.45s
 			}
 		}
+		 animationSpeed++; //Updating animation frame
+	        if (animationSpeed == animationSpeedFactor) {
+	            animationSpeed = 0;
+	            animationCounter++;
+	        }
+
+	        if (animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
+	            animationCounter = 0;
+	            if(currentAnimation == 4) {
+	            	currentAnimation = 2;
+	            }
+	        }
 		
-		int i = 0;
-		if(!turnedOn) {
-			i = 1;
-		}
-		if(light.getIntensity() < 0.4f) {
-			i = 1;
-		}
-		
-	     g2.drawImage(animations[0][0][i], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	     g2.drawImage(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);

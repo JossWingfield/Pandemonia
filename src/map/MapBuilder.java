@@ -44,6 +44,7 @@ import entity.buildings.Table2;
 import entity.buildings.TablePlate;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
+import entity.buildings.Torch;
 import entity.buildings.Trapdoor;
 import entity.buildings.WallDecor_Building;
 import entity.buildings.Window;
@@ -97,6 +98,8 @@ public class MapBuilder {
 			totalBuildingCount++;
 		}
 		buildings[totalBuildingCount] = new ChefPortrait(gp, 0, 0);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new Torch(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Door(gp, 0, 0, 0, 2);
 		totalBuildingCount++;

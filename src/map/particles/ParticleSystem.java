@@ -15,10 +15,12 @@ public class ParticleSystem {
 
     private List<Particle> particles = new ArrayList<>();
     
-    private int targetCount = 60;
+    private int targetFireflyCount = 60;
     private int spawnCooldown = 0;
     
     private boolean firefliesActive = false;
+    private boolean dustActive = true;
+    private int dustTargetCount = 80;
     
     public ParticleSystem(GamePanel gp) {
     	this.gp = gp;
@@ -26,6 +28,9 @@ public class ParticleSystem {
     
     public void addParticle(Particle p) {
         particles.add(p);
+    }
+    public void setDustActive(boolean active) {
+        this.dustActive = active;
     }
     
     public void update() {
@@ -36,12 +41,26 @@ public class ParticleSystem {
             if(p.isDead()) it.remove();
         }
         
+        dustActive = gp.mapM.currentRoom.darkerRoom;
+        
+        if (dustActive) {
+            spawnCooldown--;
+            if (spawnCooldown <= 0) {
+                spawnCooldown = 3;
+                while (particles.size() < dustTargetCount) {
+                    float x = (float) (Math.random() * gp.screenWidth);
+                    float y = (float) (Math.random() * gp.screenHeight);
+                    addParticle(new DustParticle(gp, x, y));
+                }
+            }
+        }
+        
         if(firefliesActive) {
 	        // 🔹 Spawn new fireflies gradually
 	        spawnCooldown--;
 	        if (spawnCooldown <= 0) {
 	            spawnCooldown = 2; // every few frames, spawn one or two
-	            while (particles.size() < targetCount) {
+	            while (particles.size() < targetFireflyCount) {
 	                float x = (float) (Math.random() * gp.screenWidth);
 	                float y = (float) (Math.random() * gp.screenHeight);
 	                int lifetime = (int) (Math.random() * 200 + 100);
