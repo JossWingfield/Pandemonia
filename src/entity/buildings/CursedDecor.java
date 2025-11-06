@@ -7,7 +7,7 @@ import main.GamePanel;
 
 public class CursedDecor extends Building {
 	
-	private int preset;
+	public int preset;
 	
 	public CursedDecor(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);

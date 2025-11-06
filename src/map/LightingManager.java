@@ -3,7 +3,9 @@ package map;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferByte;
@@ -79,7 +81,7 @@ public class LightingManager {
 
     private void startLights() {
         // Example lights:
-        //lights.add(new LightSource(13*48, 4*48, Color.BLUE, 100*4));
+        //lights.add(new LightSource(13*48, 4*48, Color.BLUE, 100*4, LightSource.Type.BLOOM_ONLY));
         // lights.add(new LightSource(9*48, 6*48, Color.RED, 100*3));
         // lights.add(new LightSource(9*48, 9*48, Color.YELLOW, 100*4));
     }
@@ -173,7 +175,7 @@ public class LightingManager {
         this.ambientIntensity = Math.max(0, Math.min(1, intensity));
     }
 
-    public BufferedImage applyLighting(BufferedImage colorBuffer, int xDiff, int yDiff) {
+    public BufferedImage applyLighting(BufferedImage colorBuffer, BufferedImage emissiveBuffer, int xDiff, int yDiff) {
         int width = colorBuffer.getWidth();
         int height = colorBuffer.getHeight();
         int scale = 3;
@@ -193,6 +195,7 @@ public class LightingManager {
         }
 
         int[] colorData = ((DataBufferInt) colorBuffer.getRaster().getDataBuffer()).getData();
+        int[] emissiveData = ((DataBufferInt) emissiveBuffer.getRaster().getDataBuffer()).getData();
 
         // Precompute ambient multiplier
         int ambR255 = Math.round(ambientColor.getRed() * ambientIntensity);
@@ -211,15 +214,27 @@ public class LightingManager {
                     litData[row + x] = 0;
                     continue;
                 }
+                
+                int emisRGB = emissiveData[idxScaled];
+                int emisA = (emisRGB >>> 24) & 0xFF;
+                boolean isEmissive = emisA > 0;
+
+                // Normal color channels
                 int rBase = (baseRGB >>> 16) & 0xFF;
                 int gBase = (baseRGB >>> 8) & 0xFF;
                 int bBase = baseRGB & 0xFF;
 
-                litData[row + x] =
+                // If emissive, keep at full brightness (skip ambient dimming)
+                if (isEmissive) {
+                    litData[row + x] = baseRGB;
+                } else {
+                    litData[row + x] =
                         (a << 24) |
                         (Math.min(255, rBase * ambR255 / 255) << 16) |
                         (Math.min(255, gBase * ambG255 / 255) << 8) |
                         Math.min(255, bBase * ambB255 / 255);
+                }
+           
             }
         }
         updateLightCache();
@@ -294,6 +309,9 @@ public class LightingManager {
                             int baseRGB = colorData[idxScaled];
                             int a = (baseRGB >>> 24) & 0xFF;
                             if (a == 0) continue;
+                            
+                            int emisRGB = emissiveData[idxScaled];
+                            if ((emisRGB >>> 24) > 0) continue;
 
                             int rBase = (baseRGB >>> 16) & 0xFF;
                             int gBase = (baseRGB >>> 8) & 0xFF;
@@ -346,7 +364,9 @@ public class LightingManager {
             	applyOcclusionMaskOptimized(litImageScaled, occlusion, xDiff, yDiff);
         	}
         }
-
+        
+        blendAdditive(litImageScaled, emissiveBuffer);
+        
         // Bloom
         if (Settings.bloomEnabled) {
             int[] litDataArr = ((DataBufferInt) litImageScaled.getRaster().getDataBuffer()).getData();
@@ -354,6 +374,33 @@ public class LightingManager {
         }
 
         return litImageScaled;
+    }
+    private void blendAdditive(BufferedImage base, BufferedImage emissive) {
+        int w = base.getWidth();
+        int h = base.getHeight();
+
+        int[] baseData = ((DataBufferInt) base.getRaster().getDataBuffer()).getData();
+        int[] emisData = ((DataBufferInt) emissive.getRaster().getDataBuffer()).getData();
+
+        for (int i = 0; i < baseData.length; i++) {
+            int br = (baseData[i] >> 16) & 0xFF;
+            int bg = (baseData[i] >> 8) & 0xFF;
+            int bb = baseData[i] & 0xFF;
+
+            int er = (emisData[i] >> 16) & 0xFF;
+            int eg = (emisData[i] >> 8) & 0xFF;
+            int eb = emisData[i] & 0xFF;
+
+            float emissiveStrength = 0.6f; // 1.0 = full, <1.0 = dimmer
+            int nr = Math.min(255, br + (int)(er * emissiveStrength));
+            //int nr = Math.min(255, br + er);
+            //int ng = Math.min(255, bg + eg);
+            int ng = Math.min(255, bg + (int)(eg * emissiveStrength));
+            //int nb = Math.min(255, bb + eb);
+            int nb = Math.min(255, bb + (int)(eb * emissiveStrength));
+
+            baseData[i] = (0xFF << 24) | (nr << 16) | (ng << 8) | nb;
+        }
     }
     private void addBloomLight(LightSource light, int xDiff, int yDiff) {
         if (bloomSmall == null) return; // ensure bloom buffers exist

@@ -27,16 +27,19 @@ public class Torch extends Building{
 		description = "Light up your restaurant.";
 		cost = 20;
 		
+		animationSpeedFactor = 1;
+		
 		drawWidth = 48;
 		isDecor = true;
         drawHeight = 48*3;
+		currentAnimation = 1;
         hitbox.height = 80;
         yDrawOffset = 48;
-		isSolid = false;
+		isSolid = true;
 		blueprint = false;
 		importImages();
 		mustBePlacedOnWall = true;
-		turnOff();
+		//turnOff();
 	}
 	public Building clone() {
 		Torch building = new Torch(gp, hitbox.x, hitbox.y);
@@ -47,11 +50,12 @@ public class Torch extends Building{
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][2][10];
+		animations = new BufferedImage[1][3][10];
 		
-		name = "Lantern";
+		name = "Torch";
     	animations[0][0][0] = importImage("/decor/Torch.png").getSubimage(0, 0, 16, 48);
 		importFromSpriteSheet("/decor/Torch.png", 4, 1, 1, 16, 0, 16, 48, 0);
+		importFromSpriteSheet("/decor/TorchLight.png", 4, 1, 2, 16, 0, 16, 48, 0);
 	}
 	public void turnOff() {
 		turnedOn = false;
@@ -80,8 +84,8 @@ public class Torch extends Building{
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if (firstUpdate) {
 			firstUpdate = false;
-			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 20),Color.ORANGE, 40);
-			light.setIntensity(0.8f);
+			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 4),Color.ORANGE, 32);
+			light.setIntensity(1f);
 			if (turnedOn) {
 				gp.lightingM.addLight(light);
 			}
@@ -103,7 +107,7 @@ public class Torch extends Building{
 				nextFlickerTime = random.nextFloat() * 0.05f + 0.01f; // next flicker between 0.05s–0.45s
 			}
 		}
-		 animationSpeed++; //Updating animation frame
+		 	animationSpeed++; //Updating animation frame
 	        if (animationSpeed == animationSpeedFactor) {
 	            animationSpeed = 0;
 	            animationCounter++;
@@ -111,9 +115,6 @@ public class Torch extends Building{
 
 	        if (animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
 	            animationCounter = 0;
-	            if(currentAnimation == 4) {
-	            	currentAnimation = 2;
-	            }
 	        }
 		
 	     g2.drawImage(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
@@ -122,6 +123,11 @@ public class Torch extends Building{
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
 	    
+	}
+	public void drawEmissive(Graphics2D g2, int xDiff, int yDiff) {
+		if(turnedOn) {
+			g2.drawImage(animations[direction][2][animationCounter], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		}
 	}
 	
 	

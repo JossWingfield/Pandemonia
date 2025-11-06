@@ -11,8 +11,10 @@ import entity.buildings.Calendar;
 import entity.buildings.Candle;
 import entity.buildings.Cauldron;
 import entity.buildings.Chair;
+import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
 import entity.buildings.CornerTable;
+import entity.buildings.CursedDecor;
 import entity.buildings.Door;
 import entity.buildings.EscapeHole;
 import entity.buildings.FloorDecor_Building;
@@ -21,9 +23,11 @@ import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.HerbBasket;
 import entity.buildings.Lantern;
+import entity.buildings.Leak;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
+import entity.buildings.Rubble;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
 import entity.buildings.StorageFridge;
@@ -33,6 +37,7 @@ import entity.buildings.Table2;
 import entity.buildings.TipJar;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
+import entity.buildings.Torch;
 import entity.buildings.Trapdoor;
 import entity.buildings.Turntable;
 import entity.buildings.WallDecor_Building;
@@ -88,6 +93,16 @@ public class BuildingRegistry {
 					}  else if(b instanceof WallDecor_Building c) {
 						data.preset = c.type;
 						data.decorType = 1;
+					} else if(b instanceof CursedDecor c) {
+						data.preset = c.preset;
+						data.decorType = 2;
+					} else if(b instanceof Rubble c) {
+						data.preset = c.preset;
+						data.attribute1 = 0;
+						data.decorType = 3;
+						if(c.barricade) {
+							data.attribute1 = 1;
+						}
 					}
 				} else if(b instanceof Door d) {
 					data.preset = d.preset;
@@ -125,6 +140,15 @@ public class BuildingRegistry {
 					} else if(b.decorType == 1) {
 						Building build = new WallDecor_Building(gp, b.x, b.y, b.preset);
 						buildings.add(build);
+					} else if(b.decorType == 2) {
+						Building build = new CursedDecor(gp, b.x, b.y, b.preset);
+						buildings.add(build);
+					} else if(b.decorType == 3) {
+						Rubble build = new Rubble(gp, b.x, b.y, b.preset);
+						if(b.attribute1 == 1) {
+							build.setBarricade();
+						}
+						buildings.add(build);
 					}
 				} else {
 					if(b.name.equals("Door 1")) {
@@ -159,7 +183,7 @@ public class BuildingRegistry {
 		if(presetBuildingNames.contains(n)) {
 			return true;
 		}
-		if(b instanceof FloorDecor_Building || b instanceof WallDecor_Building) {
+		if(b instanceof FloorDecor_Building || b instanceof WallDecor_Building || b instanceof CursedDecor  || b instanceof Rubble) {
 			return true;
 		}
 		return false;
@@ -190,6 +214,8 @@ public class BuildingRegistry {
 			case "Tip Jar" -> i = new TipJar(gp, x, y);
 			case "Herb Basket" -> i = new HerbBasket(gp, x, y);
 			case "Room Spawn" -> i = new RoomSpawn(gp, x, y);
+			case "Chef Portrait" -> i = new ChefPortrait(gp, x, y);
+			case "Torch" -> i = new Torch(gp, x, y);
 		}
 
 		return i;

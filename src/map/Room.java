@@ -40,6 +40,7 @@ import entity.buildings.Table2;
 import entity.buildings.TablePlate;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
+import entity.buildings.Torch;
 import entity.buildings.Trapdoor;
 import entity.buildings.WallDecor_Building;
 import entity.buildings.Window;
@@ -1935,6 +1936,12 @@ public class Room {
 			buildings[arrayCounter] = new CursedDecor(gp, 660, 336, 4);
 			arrayCounter++;
 			buildings[arrayCounter] = new CursedDecor(gp, 408, 456, 23);
+			arrayCounter++;
+			buildings[arrayCounter] = new Torch(gp, 324, 288);
+			arrayCounter++;
+			buildings[arrayCounter] = new Torch(gp, 432, 288);
+			arrayCounter++;
+			buildings[arrayCounter] = new Torch(gp, 624, 288);
 			arrayCounter++;
 			break;
 		case 8: //Corridor 1

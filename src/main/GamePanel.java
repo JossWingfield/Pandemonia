@@ -157,7 +157,10 @@ public class GamePanel extends JPanel implements Runnable {
     
     //LIGHTING
     public BufferedImage colorBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
+    public BufferedImage emissiveBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
+
     private Graphics2D gColor;
+    private Graphics2D gEmissive;
 
 
     // INITIATES PANEL SETTINGS
@@ -605,6 +608,13 @@ public class GamePanel extends JPanel implements Runnable {
         	gColor.fillRect(0, 0, frameWidth, frameHeight);
             gColor.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF));
 
+            gEmissive = emissiveBuffer.createGraphics();
+            gEmissive.setComposite(AlphaComposite.Clear);
+            gEmissive.fillRect(0, 0, frameWidth, frameHeight); // make it fully transparent
+            // Switch back to normal drawing
+            gEmissive.setComposite(AlphaComposite.SrcOver);
+            gEmissive.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            
         		mapM.draw(gColor, xDiff, yDiff);	 
         		
         		Building[] bottomLayer = buildingM.getBottomLayer();
@@ -642,6 +652,7 @@ public class GamePanel extends JPanel implements Runnable {
 		        for(int i = 0; i < builds.length-1; i++) {
 		        	if(builds[i] != null) {
 		        		entityList.add(builds[i]);
+		        		builds[i].drawEmissive(gEmissive, xDiff, yDiff);
 		        	}
 		        }
 		        Item[] itemsInBuildings = buildingM.getBuildingItems();
@@ -716,7 +727,7 @@ public class GamePanel extends JPanel implements Runnable {
 		        gColor.dispose();
 		        
 		        if (Settings.fancyLighting) {
-		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, xDiff, yDiff);
+		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, emissiveBuffer, xDiff, yDiff);
 		            
 		            int bufferCamX = Math.round(camera.x - xDiff);
 		            int bufferCamY = Math.round(camera.y - yDiff);

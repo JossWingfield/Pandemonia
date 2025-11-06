@@ -14,8 +14,8 @@ public class Rubble extends Building {
 	private Rectangle2D.Float effectArea;
 	private boolean removedSpill = false;
 	
-	private int preset;
-	private boolean barricade = false;
+	public int preset;
+	public boolean barricade = false;
 	private int fadeAlpha = 255;
 	
 	public Rubble(GamePanel gp, float xPos, float yPos, int preset) {

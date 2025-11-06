@@ -197,5 +197,6 @@ public class Building extends Entity {
 		 }
 	        
 	}
-
+	public void drawEmissive(Graphics2D g2, int xDiff, int yDiff) {
+	}
 }

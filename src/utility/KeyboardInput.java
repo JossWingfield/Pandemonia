@@ -43,10 +43,10 @@ public class KeyboardInput implements KeyListener {
         if(gp.currentState == gp.playState) {
         	
         	if (num == KeyEvent.VK_4) {
-                //gp.saveM.saveGame();
+                gp.saveM.saveGame();
             }
         	if (num == KeyEvent.VK_5) {
-                //gp.saveM.loadGame(gp.saveM.currentSave);
+                gp.saveM.loadGame(gp.saveM.currentSave);
             }
             if(num == KeyEvent.VK_F) {
             	//gp.gui.startLevelUpScreen();
