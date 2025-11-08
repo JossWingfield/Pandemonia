@@ -370,7 +370,12 @@ public class World {
              
              if(day == 2) {
         		 gp.cutsceneM.cutsceneQueued = true;
-        		 gp.cutsceneM.cutsceneName = "Ghosts talking";     	 
+        		 gp.cutsceneM.cutsceneName = "Ghosts talking";
+        	 }
+             if(day == 7) {
+        		 gp.cutsceneM.cutsceneQueued = true;
+        		 gp.cutsceneM.cutsceneName = "Ignis II";
+        		 gp.cutsceneM.checkCutsceneTrigger();
         	 }
          }
          lastPhase = currentPhase;

@@ -19,7 +19,6 @@ public class CursedDecor extends Building {
 		hitbox.height = 48*2;
 		drawWidth = 48;
 		drawHeight = 48*2;
-		yDrawOffset = 24;
 		animationSpeedFactor = 6;
 		mustBePlacedOnFloor = true;
 		isDecor = true;
@@ -44,6 +43,7 @@ public class CursedDecor extends Building {
 			importFromSpriteSheet("/decor/grandfather clock.png", 8, 1, 0, 0, 0, 16, 32, 0);
 			hitbox.width = 32;
 			hitbox.height = 48 + 32;
+			animationSpeedFactor = 3;
 			drawWidth = 48;
 			drawHeight = 48*2;
 			xDrawOffset = 8;

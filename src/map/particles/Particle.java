@@ -30,6 +30,7 @@ public abstract class Particle {
     public abstract void update();
     
     public abstract void draw(Graphics2D g, int xDiff, int yDiff);
+    public abstract void drawEmissive(Graphics2D g, int xDiff, int yDiff);
     
     public boolean isDead() {
         return lifetime <= 0;

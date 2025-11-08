@@ -1873,6 +1873,7 @@ public class Room {
 			arrayCounter++;
 			break;
 		case 7: // Abandoned corridor
+			roomSpawn = new RoomSpawn(gp, 264, 420);
 			door = new Door(gp, 240, 384, 2, 0);
 			door.setDoorNum(0);
 			buildings[arrayCounter] = door;

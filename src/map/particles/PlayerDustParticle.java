@@ -48,4 +48,10 @@ public class PlayerDustParticle extends Particle {
         g.fillOval((int)(screenX - size/2), (int)(screenY - size/2), (int)size, (int)size);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
+
+	@Override
+	public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
+		// TODO Auto-generated method stub
+		
+	}
 }

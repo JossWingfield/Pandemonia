@@ -2,6 +2,8 @@ package entity.buildings;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import entity.items.Item;
 import main.GamePanel;
@@ -293,6 +295,15 @@ public class BuildingManager {
 			}
 		}
 		return null;
+	}
+	public List<Building> findBuildingsWithName(String name) {
+	    List<Building> result = new ArrayList<>();
+	    for (Building b : buildings) {
+	        if (b != null && b.getName().equals(name)) {
+	            result.add(b);
+	        }
+	    }
+	    return result;
 	}
 	public void setDoorCooldowns() {
 		for(Building b: buildings) {

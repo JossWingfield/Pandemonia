@@ -256,8 +256,12 @@ public class LightingManager {
             }
         }
         List<LightSource> copy = new ArrayList<>(lights);
+        ensurePremulCapacity(lights.size());
         for (int i = 0, n = copy.size(); i < n; i++) {
             LightSource light = copy.get(i);
+            if(light == null) {
+            	continue;
+            }
             
             if (light.getType() == LightSource.Type.BLOOM_ONLY) {
                 // Skip normal lighting — but record for bloom buffer
@@ -374,6 +378,19 @@ public class LightingManager {
         }
 
         return litImageScaled;
+    }
+    private void ensurePremulCapacity(int lightCount) {
+        if (premulR == null || premulR.length < lightCount) {
+            premulR = new float[lightCount];
+            premulG = new float[lightCount];
+            premulB = new float[lightCount];
+
+            for (int i = 0; i < lightCount; i++) {
+                premulR[i] = 1f; // default multiplier
+                premulG[i] = 1f;
+                premulB[i] = 1f;
+            }
+        }
     }
     private void blendAdditive(BufferedImage base, BufferedImage emissive) {
         int w = base.getWidth();
@@ -687,14 +704,23 @@ public class LightingManager {
         pixelData = null;
     }
     private void updateLightCache() {
-        int n = lights.size();
+        List<LightSource> copy = new ArrayList<>(lights);
+        int n = copy.size();
+
         if (premulR == null || premulR.length != n) {
             premulR = new float[n];
             premulG = new float[n];
             premulB = new float[n];
         }
+
         for (int i = 0; i < n; i++) {
-            Color c = lights.get(i).getColor();
+            LightSource light = copy.get(i);
+            if (light == null) {
+                premulR[i] = premulG[i] = premulB[i] = 0f;
+                continue;
+            }
+
+            Color c = light.getColor();
             premulR[i] = c.getRed() / 255f;
             premulG[i] = c.getGreen() / 255f;
             premulB[i] = c.getBlue() / 255f;

@@ -10,10 +10,12 @@ import java.util.List;
 
 import entity.buildings.Building;
 import entity.buildings.Chair;
+import entity.buildings.Door;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.Lantern;
 import entity.buildings.Rubble;
 import entity.buildings.Stove;
+import entity.buildings.Torch;
 import entity.npc.Customer;
 import entity.npc.NPC;
 import entity.npc.Pet;
@@ -77,6 +79,13 @@ public class CutsceneManager {
         return cutsceneActive;
     }
     public void checkCutsceneTrigger() {
+    	//FIRST ROOM ENTRY CUTSCENES
+    	if(gp.player.currentRoomIndex == 7) {
+    		if(!cutscenePlayed.contains("Enter Corridor")) {
+    			enterCorridor();
+    		}
+    	}
+    	
     	if(!cutsceneQueued) {
     		return;
     	}
@@ -91,11 +100,14 @@ public class CutsceneManager {
     		else if(!cutscenePlayed.contains("Ignis I") && cutscenePlayed.contains("Ghosts talking") && cutsceneName.equals("Ignis I")) {
     			ignisI();
     			played = true;
+    		} else if(!cutscenePlayed.contains("Ignis II") && cutscenePlayed.contains("Ignis I") && cutsceneName.equals("Ignis II")) {
+    			ignisII();
+    			played = true;
     		} else if(!cutscenePlayed.contains("Customiser Tutorial") && cutsceneName.equals("Customiser Tutorial")) {
     			customiseTutorial();
     			played = true;
     		} 
-    	}
+    	} 
     	
     	if(played) {
     		cutsceneName = "";
@@ -108,7 +120,81 @@ public class CutsceneManager {
     public List<String> getCutscenesWatched() {
 		return cutscenePlayed;
 	}
+    
+    public void enterCorridor() {
+    	cutscenePlayed.add("Enter Corridor");
+
+        List<CutsceneEvent> events = new ArrayList<>();    	
+        
+        
+        events.add(new ActionEvent(() -> {
+        	gp.player.isInvisible = true;
+        }));
+        NPC playerNPC = new StoryCharacter(gp, gp.player.hitbox.x, gp.player.hitbox.y, 2);
+        events.add(new AddNPCEvent(gp, playerNPC));
+        events.add(new WaitEvent(20));
+        
+        events.add(new NPCMoveEvent(gp, playerNPC, 12, 9));
+        
+        events.add(new WaitEvent(120)); 
+        
+        events.add(new DialogueEvent(gp, playerNPC, "This place feels... wrong."));
+        events.add(new WaitEvent(60)); 
+        
+
+    	events.add(new ActionEvent(() -> {
+    		List<Building> torches = gp.buildingM.findBuildingsWithName("Torch");
+    	    for (Building b: torches) {
+    	    	Torch t = (Torch)b;
+    	    	t.turnOn();
+    	    }
+    	}));
+        events.add(new WaitEvent(20)); 
+        events.add(new ActionEvent(() -> {
+    		gp.world.addLightning();
+    	}));
+        
+        events.add(new DialogueEvent(gp, playerNPC, "Did those lights just turn themselves on?"));
+
+        events.add(new WaitEvent(20)); 
+        
+        
+        events.add(new ActionEvent(() -> {
+    		gp.world.addLightning();
+    	}));
+        
+        events.add(new DialogueEvent(gp, playerNPC, "It looks as if they left everything behind. I wonder why this place closed down all those years ago."));
+        events.add(new WaitEvent(20)); 
+        
+    	events.add(new ActionEvent(() -> {
+    		List<Building> torches = gp.buildingM.findBuildingsWithName("Torch");
+    	    for (Building b: torches) {
+    	    	Torch t = (Torch)b;
+    	    	t.turnOff();
+    	    }
+    	}));
+    	
+        events.add(new WaitEvent(40)); 
+        events.add(new DialogueEvent(gp, playerNPC, "Maybe it was just a mind trick. I should get some rest."));
+
+        
+        events.add(new ResetZoomEvent(gp));
+        
+        events.add(new ActionEvent(() -> {
+        	gp.player.isInvisible = false;
+        	gp.player.hitbox.x = playerNPC.hitbox.x;
+        	gp.player.hitbox.y = playerNPC.hitbox.y;
+        	gp.player.setDirection(playerNPC.getDirection());
+        }));
+        events.add(new RemoveNPCEvent(gp, playerNPC));
+        
+        events.add(new EndCutscene(gp));
+
+        startCutscene(events);
+    }
+    
     public void ignisI() {
+
     	cutscenePlayed.add("Ignis I");
     	
 
@@ -173,6 +259,32 @@ public class CutsceneManager {
         }));
         
         events.add(new DialogueEvent(gp, player, "It seems that rubble in front of the door has cleared."));
+        events.add(new WaitEvent(20)); 
+        
+        events.add(new EndCutscene(gp));
+
+        startCutscene(events);
+    }
+    public void ignisII() {
+
+    	cutscenePlayed.add("Ignis II");
+    	
+        events.add(new WaitEvent(40)); 
+        
+        Door door = gp.buildingM.findDoor(7);
+        
+        float x = door.hitbox.x + door.hitbox.width/2 - 100;
+        float y = door.hitbox.y + door.hitbox.height/2;
+    	  
+    	   events.add(new ConditionalWaitEvent(gp, () -> {
+     		  gp.particleM.spawnEmberAlongPath(10*48, 5*48, x+16, y, 20);
+               if(gp.player.currentRoomIndex == 7) {
+               	return true;
+               } else {
+               	return false;
+               }
+           }));
+        
         events.add(new WaitEvent(20)); 
         
         events.add(new EndCutscene(gp));
@@ -310,6 +422,8 @@ public class CutsceneManager {
         // 1.
         NPC owner = new StoryCharacter(gp, 0, 0, 0);
         events.add(new AddNPCEvent(gp, owner));
+        
+        events.add(new NPCMoveEvent(gp, owner, 7, 9));
 
         // 2. Camera follows ghost while zooming in
         events.add(new CameraFollowEvent(gp, owner, 1.6f));

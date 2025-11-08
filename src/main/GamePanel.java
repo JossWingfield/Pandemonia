@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import ai.PathFinder;
 import entity.Entity;
 import entity.Player;
 import entity.PlayerMP;
@@ -104,6 +105,7 @@ public class GamePanel extends JPanel implements Runnable {
     public LightingManager lightingM = new LightingManager(this, camera);
     public ParticleSystem particleM = new ParticleSystem(this);
     public Customiser customiser = new Customiser(this);
+    public PathFinder pathF = new PathFinder(this);
     public Catalogue catalogue = new Catalogue(this);
     public RecipeManager recipeM = new RecipeManager();
     public UpgradeManager upgradeM = new UpgradeManager(this);
@@ -726,6 +728,9 @@ public class GamePanel extends JPanel implements Runnable {
 	            
 		        gColor.dispose();
 		        
+	            
+	            particleM.draw(gColor, xDiff, yDiff);
+	            particleM.drawEmissive(gEmissive, xDiff, yDiff);
 		        if (Settings.fancyLighting) {
 		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, emissiveBuffer, xDiff, yDiff);
 		            
@@ -793,8 +798,6 @@ public class GamePanel extends JPanel implements Runnable {
 	                    builds[i].drawOverlayUI(g2, xDiff, yDiff);
 	                }
 	            }
-	            
-	            particleM.draw(g2, xDiff, yDiff);
 		        
 		        world.drawFilters(g2);
 		        world.drawWeather(g2); 

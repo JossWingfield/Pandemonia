@@ -39,7 +39,8 @@ public class Torch extends Building{
 		blueprint = false;
 		importImages();
 		mustBePlacedOnWall = true;
-		//turnOff();
+		turnedOn = false;
+		currentAnimation = 0;
 	}
 	public Building clone() {
 		Torch building = new Torch(gp, hitbox.x, hitbox.y);
