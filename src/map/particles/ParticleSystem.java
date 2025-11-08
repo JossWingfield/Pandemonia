@@ -25,8 +25,13 @@ public class ParticleSystem {
     private boolean firefliesActive = false;
     private boolean dustActive = true;
     private int dustTargetCount = 80;
-    private int emberLightCooldown = 0; // controls how often a light is spawned
-    private final int EMBER_LIGHT_INTERVAL = 4; // create a light every 5 particles
+    private float startX, startY, endX, endY;
+    private int count;
+    private boolean startEmbers = false;
+    //SHAKING
+    private boolean randomShaking = false;
+    private int shakeCooldown = 0;
+    private final Random rand = new Random();
     
     public ParticleSystem(GamePanel gp) {
     	this.gp = gp;
@@ -74,6 +79,9 @@ public class ParticleSystem {
 	            }
 	        }
         }
+        if(startEmbers) {
+        	spawnEmberAlongPath(startX, startY, endX, endY, count);
+        }
         
         Iterator<EmberPath> pathIt = activeEmberPaths.iterator();
         while (pathIt.hasNext()) {
@@ -86,6 +94,18 @@ public class ParticleSystem {
             if (pos != null) {
                 EmberParticle ember = new EmberParticle(gp, pos[0], pos[1], ep.withLight);
                 addParticle(ember);
+            }
+        }
+        if (randomShaking) {
+            if (shakeCooldown <= 0) {
+                // Small random chance each frame to trigger a shake
+                    int duration = 10 + rand.nextInt(15);   // random duration between 10–25 frames
+                    int intensity = 1 + rand.nextInt(3) * 2; // random intensity between 1.5–3.5
+                    gp.screenShake(duration, intensity);
+                // Reset cooldown so we don’t trigger again too fast
+                shakeCooldown = 10 + rand.nextInt(30);
+            } else {
+                shakeCooldown--;
             }
         }
     }
@@ -104,7 +124,17 @@ public class ParticleSystem {
         List<Node> pathCopy = new ArrayList<>(gp.pathF.pathList);
         activeEmberPaths.add(new EmberPath(pathCopy, true));
     }
-    
+    public void setSpawnEmbers(float startX, float startY, float endX, float endY, int count) {
+    	startEmbers = true;
+    	this.startX = startX;
+    	this.startY = startY;
+    	this.endX = endX;
+    	this.endY = endY;
+    	this.count = count;
+    }
+    public void stopEmbers() {
+    	startEmbers = false;
+    }
     public void draw(Graphics2D g, int xDiff, int yDiff) {
         List<Particle> copy = new ArrayList<>(particles);
         for (Particle p : copy) {
@@ -112,6 +142,9 @@ public class ParticleSystem {
         		p.draw(g, xDiff, yDiff);
         	}
         }
+    }
+    public void setRandomShaking(boolean isShaking) {
+    	this.randomShaking = isShaking;
     }
     public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
         List<Particle> copy = new ArrayList<>(particles);

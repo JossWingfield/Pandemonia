@@ -1938,6 +1938,8 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new CursedDecor(gp, 408, 456, 23);
 			arrayCounter++;
+			buildings[arrayCounter] = new CursedDecor(gp, 300, 360, 23);
+			arrayCounter++;
 			buildings[arrayCounter] = new Torch(gp, 324, 288);
 			arrayCounter++;
 			buildings[arrayCounter] = new Torch(gp, 432, 288);

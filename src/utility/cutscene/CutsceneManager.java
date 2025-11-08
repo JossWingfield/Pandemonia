@@ -79,6 +79,9 @@ public class CutsceneManager {
         return cutsceneActive;
     }
     public void checkCutsceneTrigger() {
+    	if(isActive()) {
+    		return;
+    	}
     	//FIRST ROOM ENTRY CUTSCENES
     	if(gp.player.currentRoomIndex == 7) {
     		if(!cutscenePlayed.contains("Enter Corridor")) {
@@ -277,7 +280,9 @@ public class CutsceneManager {
         float y = door.hitbox.y + door.hitbox.height/2;
     	  
     	   events.add(new ConditionalWaitEvent(gp, () -> {
-     		  gp.particleM.spawnEmberAlongPath(10*48, 5*48, x+16, y, 20);
+    		   if(gp.player.currentRoomIndex == 0) {
+    			   gp.particleM.spawnEmberAlongPath(10*48, 5*48, x+16, y, 20);
+    		   }
                if(gp.player.currentRoomIndex == 7) {
                	return true;
                } else {
@@ -285,6 +290,60 @@ public class CutsceneManager {
                }
            }));
         
+        events.add(new ActionEvent(() -> {
+        	gp.player.isInvisible = true;
+        }));
+        
+        events.add(new ActionEvent(() -> {
+        	gp.particleM.setSpawnEmbers(5*48, 9*48, 8*48, 7*48, 20);
+        }));
+        NPC playerNPC = new StoryCharacter(gp, gp.player.hitbox.x, gp.player.hitbox.y, 2);
+        events.add(new AddNPCEvent(gp, playerNPC));
+        events.add(new WaitEvent(20));
+        
+        events.add(new NPCMoveEvent(gp, playerNPC, 11, 8));
+        events.add(new ActionEvent(() -> {
+        	playerNPC.setDirection("Left");
+        }));
+        
+        events.add(new WaitEvent(80)); 
+        
+        events.add(new DialogueEvent(gp, playerNPC, "What is that?"));
+        events.add(new WaitEvent(20));
+        events.add(new DialogueEvent(gp, playerNPC, "It seems to be leading in there..."));
+        events.add(new NPCMoveEvent(gp, playerNPC, 7, 8));
+        
+        events.add(new ActionEvent(() -> {
+        	gp.particleM.stopEmbers();
+         	playerNPC.setDirection("Up");
+         	Door door1 = gp.buildingM.findDoor(9);
+         	door1.setDoorLight(true);
+         	gp.particleM.setRandomShaking(true);
+        }));
+        
+        events.add(new WaitEvent(20)); 
+        NPC ignis = new StoryCharacter(gp, 0, 0, 5);
+        
+        events.add(new DialogueEvent(gp, ignis, "You dare tell me to lower the heat? You’ll burn with mediocrity!"));
+        events.add(new WaitEvent(20)); 
+        
+        events.add(new ActionEvent(() -> {
+        	Door door1 = gp.buildingM.findDoor(9);
+         	door1.setDoorLight(false);
+         	gp.particleM.setRandomShaking(false);
+        	door1.unlock();
+        }));
+        events.add(new WaitEvent(20)); 
+        events.add(new DialogueEvent(gp, ignis, "Did that door just unlock itself?!"));
+        events.add(new WaitEvent(20)); 
+        
+        events.add(new ActionEvent(() -> {
+        	gp.player.isInvisible = false;
+        	gp.player.hitbox.x = playerNPC.hitbox.x;
+        	gp.player.hitbox.y = playerNPC.hitbox.y;
+        	gp.player.setDirection(playerNPC.getDirection());
+        }));
+        events.add(new RemoveNPCEvent(gp, playerNPC));
         events.add(new WaitEvent(20)); 
         
         events.add(new EndCutscene(gp));

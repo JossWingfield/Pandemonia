@@ -532,7 +532,6 @@ public class GamePanel extends JPanel implements Runnable {
     			cutsceneM.update();
 		    	lightingM.update();
 		    	minigameM.update();
-		    	particleM.update();
 		        if(keyI.debugMode) {
 		        	debug.update();
 		        }
@@ -544,6 +543,7 @@ public class GamePanel extends JPanel implements Runnable {
 	    		buildingM.update();
 	    	}
     		gui.update();
+	    	particleM.update();
     	} else {
     		freezeCounter--;
     		if(freezeCounter<= 0) {

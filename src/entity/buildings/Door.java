@@ -6,6 +6,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import map.LightSource;
 
 public class Door extends Building {
 	
@@ -17,6 +18,9 @@ public class Door extends Building {
 	public int cooldown = 0;
 	private boolean open = false;
 	private boolean locked = false;
+	private boolean drawLight = false;
+	private LightSource light;
+	private boolean justUnlocked = false;
 	
 	public Door(GamePanel gp, float xPos, float yPos, int facing, int presetNum) {
 		super(gp, xPos, yPos, 48*2, 48*2);
@@ -55,8 +59,20 @@ public class Door extends Building {
 	public void setDoorNum(int num) {
 		roomNum = num;
 	}
+	public void setDoorLight(boolean doorLight) {
+		this.drawLight = doorLight;
+		if(doorLight) {
+			gp.lightingM.addLight(light);
+		} else {
+			gp.lightingM.removeLight(light);
+		}
+	}
+	public void unlock() {
+		locked = false;
+		justUnlocked = true;
+	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new BufferedImage[1][1][3];
 		
 		name = "Door 1";
 		switch(preset) {
@@ -89,7 +105,9 @@ public class Door extends Building {
 		case 2:
 			animations[0][0][0] = importImage("/decor/Chefdoor.png").getSubimage(0, 0, 32, 48);
         	animations[0][0][1] = importImage("/decor/door.png").getSubimage(32, 0, 32, 48);
+        	animations[0][0][2] = importImage("/decor/Chefdoor.png").getSubimage(64, 0, 32, 48);
         	locked = true;
+			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 25),Color.RED, 16);
 			break;
 		}
 	}
@@ -124,11 +142,18 @@ public class Door extends Building {
 			if(!open) {
 			}
 			open = true;
-		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+			if(!justUnlocked) {
+				g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);	
+			} else {
+				g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);	
+			}
 		} else {
 			if(open) {
 			}
 			open = false;
+			if(justUnlocked) {
+				justUnlocked = false;
+			}
 			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		}
 		
@@ -144,9 +169,17 @@ public class Door extends Building {
 			}
 		}
 		
+		if(drawLight && animations[0][0][2] != null) {
+			g2.drawImage(animations[0][0][2], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+		}
+		
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
-	        
+	}
+	public void drawEmissive(Graphics2D g2, int xDiff, int yDiff) {
+		if(drawLight && animations[0][0][2] != null) {
+			g2.drawImage(animations[0][0][2], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+		}
 	}
 }
