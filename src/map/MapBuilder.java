@@ -70,6 +70,8 @@ public class MapBuilder {
 	private int clickCounter = 0;
 	
 	public boolean showTiles = false;
+	private float scrollOffset = 0;
+	private float scrollSpeed = 25; // pixels per scroll tick
 	
 	public int pageNum = 1;
 	private Building[] buildings, outdoorBuildings;
@@ -85,7 +87,7 @@ public class MapBuilder {
 	}
 	
 	private void addBuildings() {
-		for(int i = 0; i < 32; i++) {
+		for(int i = 0; i < 36; i++) {
 			buildings[totalBuildingCount] = new CursedDecor(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
@@ -339,7 +341,7 @@ public class MapBuilder {
 		int mouseX = gp.mouseI.mouseX;
 		int mouseY = gp.mouseI.mouseY;
 		int yOffset = 32;
-
+		
 		if(showTiles) {
 			g2.setColor(c);
 			g2.fillRect(0, yStart, gp.frameWidth, ySize);
@@ -610,40 +612,57 @@ public class MapBuilder {
 				
 				yStart = gp.frameHeight-ySize+4 - 40 + yOffset;
 				
-			} else if(pageNum == 3) {
-				int counter = 0;
-				xStart = 0;
-				int originalXStart = xStart;
-				int yPos = yStart+32;
-				
-				int startDraw = 0;
-				
-				int index = 0;
-				for(Building b: buildings) {
-					if(index >= startDraw) {
-						if(b != null) {
-							g2.drawImage(b.animations[0][0][0], xStart, yPos, img.getWidth()/2, img.getHeight()/2, null);
-			    			if(containsMouse(xStart, yPos, 32*2, 32*2)) {
-			    				g2.setStroke(s);
-			    				g2.setColor(Color.YELLOW);
-			    				g2.drawRect(xStart, yPos, 32*2, 32*2);
-			    				if(gp.mouseI.leftClickPressed) {
-			    					selectedBuilding = b;
-			    				}
-			    			}
-			    			xStart+= 32*2;
-			    			if(counter >= 16) {
-			    				xStart = originalXStart;
-			    				yPos += 32*2;
-			    				counter = 0;
-			    			}
-						}
-					} else {
-						counter = 0;
-					}
-	    			counter++;
-	    			index++;
-				}
+			} else if (pageNum == 3) {
+			    // --- Scroll state ---
+			    if (gp.keyI.plus) scrollOffset -= 40;
+			    if (gp.keyI.minus) scrollOffset += 40;
+
+			    // Clamp scroll
+			    int totalBuildings = buildings.length;
+			    int columns = 17; // since you reset xStart after 16 columns (0..16)
+			    int rows = (int) Math.ceil(totalBuildings / (float) columns);
+			    int visibleRows = 5; // how many rows fit in panel
+			    int rowHeight = 32 * 2;
+			    float maxScroll = Math.max(0, (rows - visibleRows) * rowHeight);
+			    scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
+
+			    // --- Draw buildings with scroll offset ---
+			    int counter = 0;
+			    int originalXStart = xStart;
+			    int yPos = yStart + 32 - (int) scrollOffset; // apply scroll here
+			    int startDraw = 0;
+
+			    int index = 0;
+			    for (Building b : buildings) {
+			        if (index >= startDraw) {
+			            if (b != null) {
+			                // only draw if visible (for performance)
+			                if (yPos + rowHeight > yStart && yPos < gp.frameHeight) {
+			                    img = b.animations[0][0][0];
+			                    g2.drawImage(b.animations[0][0][0], xStart, yPos, img.getWidth()/2 * 3, img.getHeight()/2 * 3, null);
+			                    if (containsMouse(xStart, yPos, 32 * 2, 32 * 2)) {
+			                        g2.setStroke(s);
+			                        g2.setColor(Color.YELLOW);
+			                        g2.drawRect(xStart, yPos, 32 * 2, 32 * 2);
+			                        if (gp.mouseI.leftClickPressed) {
+			                            selectedBuilding = b;
+			                        }
+			                    }
+			                }
+
+			                xStart += 32 * 2;
+			                if (counter >= 16) {
+			                    xStart = originalXStart;
+			                    yPos += 32 * 2;
+			                    counter = 0;
+			                }
+			            }
+			        } else {
+			            counter = 0;
+			        }
+			        counter++;
+			        index++;
+			    }
 			} else if(pageNum == 4) {
 				img = importImage("/tiles/spring/Grass1.png");
 				g2.drawImage(img, xStart, yStart, img.getWidth()*2, img.getHeight()*2, null);

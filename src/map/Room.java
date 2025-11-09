@@ -231,38 +231,87 @@ public class Room {
 		case 6:
 			darkerRoom = true;
 			break;
+		case 9:
+			setFloorpaper(8);
+			setWallpaper(1);
+			break;
 		}
 
 	}
 	
 	public void setDestroyed() {
-		setTableSkin(3);
-		setWallpaper(30);
-		setFloorpaper(12);
-		setBeam(5);
-		gp.buildingM.addSpill(0);
-		gp.buildingM.addSpill(1);
-		
-		gp.buildingM.addBuilding(new Rubble(gp, 408, 288+48, 1));
-		gp.buildingM.addBuilding(new Rubble(gp, 564, 300+48, 2));
-		gp.buildingM.addBuilding(new Rubble(gp, 696, 324, 0));
-		gp.buildingM.addBuilding(new Rubble(gp, 648, 432, 0));
-		
-		
-		Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
-		lantern.turnOff();
-		
+		if(preset == 0) {
+			setTableSkin(3);
+			setWallpaper(30);
+			setFloorpaper(12);
+			setBeam(5);
+			gp.buildingM.addSpill(0);
+			gp.buildingM.addSpill(1);
+			
+			gp.buildingM.addBuilding(new Rubble(gp, 408, 288+48, 1));
+			gp.buildingM.addBuilding(new Rubble(gp, 564, 300+48, 2));
+			gp.buildingM.addBuilding(new Rubble(gp, 696, 324, 0));
+			gp.buildingM.addBuilding(new Rubble(gp, 648, 432, 0));
+			
+			Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+			lantern.turnOff();
+		} else if(preset == 9) {
+			setTableSkin(3);
+			darkerRoom = true;
+			//setWallpaper(30);
+			//setFloorpaper(12);
+			List<Building> torches = gp.buildingM.findBuildingsWithName("Lantern");
+    	    for (Building b: torches) {
+    	    	Lantern t = (Lantern)b;
+    	    	t.turnOff();
+    	    }
+			setBeam(5);
+			gp.buildingM.addBuilding(new CursedDecor(gp, 696, 456, 25));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 492, 348, 24));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 552, 396, 22));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 612, 504, 21));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 756, 396, 16));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 492, 396, 14));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 336, 504, 20));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 588, 408, 18));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 708, 372, 19));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 636, 348, 44));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 384, 300, 45));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 372, 348, 26));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 540, 396, 33));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 372, 504, 34));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 684, 504, 35));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 756, 432, 32));
+			gp.buildingM.addBuilding(new FloorDecor_Building(gp, 348, 312, 34));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 408, 348, 15));
+			gp.buildingM.addBuilding(new CursedDecor(gp, 612, 348, 23));
+		}
 		gp.buildingM.refreshBuildings();
 	}
 	public void setRestored() {
-		setTableSkin(0);
-		setWallpaper(0);
-		setFloorpaper(0);
-		setBeam(0);
+		if(preset == 0) {
+			setTableSkin(0);
+			setWallpaper(0);
+			setFloorpaper(0);
+			setBeam(0);
+			
+			Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+			lantern.turnOn();
 		
-		Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
-		lantern.turnOn();
-		
+		} else if(preset == 9) {
+			setBeam(0);
+			setTableSkin(0);
+			darkerRoom = false;
+			List<Building> torches = gp.buildingM.findBuildingsWithName("Lantern");
+    	    for (Building b: torches) {
+    	    	Lantern t = (Lantern)b;
+    	    	t.turnOn();
+    	    }
+    	    List<Building> mess = gp.buildingM.findBuildingsWithName("Mess");
+    	    for (Building b: mess) {
+    	    	gp.buildingM.removeBuilding(b);
+    	    }
+		}
 		gp.buildingM.refreshBuildings();
 	}
 	private void setBuildings(int preset) {
@@ -385,7 +434,7 @@ public class Room {
 			break;
 		case 1:
 			door = new Door(gp, 600, 456+48, 1, 0);
-			door.setDoorNum(0);
+			door.setDoorNum(9);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
 			buildings[arrayCounter] = new WallDecor_Building(gp, 432, 156, 6);
@@ -1966,6 +2015,87 @@ public class Room {
 			arrayCounter++;
 			break;
 		case 9: //Old Kitchen
+			roomSpawn = new RoomSpawn(gp, 480-24, 552);
+			door =  new Door(gp, 456, 600, 1, 0);
+			door.setDoorNum(7);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			door = new Door(gp, 348, 192+48, 0, 0);
+			door.setDoorNum(1);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 384, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 432, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 480, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 732, 516, 16);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 684, 516, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 636, 516, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 588, 516, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 564, 516, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 372, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 516, 15);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 372, 516, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 516, 6);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 348, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 444, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 396, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new Sink(gp, 300, 432);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 312, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 300, 7);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 408, 408, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 432, 408, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 480, 408, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 528, 408, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 576, 408, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 672, 408, 6);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChoppingBoard(gp, 420, 396);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 624, 408, 5);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChoppingBoard(gp, 636, 396);
+			arrayCounter++;
+			buildings[arrayCounter] = new Stove(gp, 456, 300);
+			arrayCounter++;
+			buildings[arrayCounter] = new Oven(gp, 564, 300);
+			arrayCounter++;
+			buildings[arrayCounter] = new Fridge(gp, 624, 252);
+			arrayCounter++;
+			buildings[arrayCounter] = new Sink(gp, 300, 336);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 720, 180);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 312, 180);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 720, 300, 29);
+			arrayCounter++;
+			buildings[arrayCounter] = new CornerTable(gp, 300, 516, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new CornerTable(gp, 732, 516, 3);
+			arrayCounter++;		
 			break;
 		}
 		buildingArrayCounter = arrayCounter;

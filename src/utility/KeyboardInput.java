@@ -11,7 +11,7 @@ public class KeyboardInput implements KeyListener {
     //HANDLES ALL THE KEYBOARD INPUTS
 
     //Store the basic booleans, to determine which keys are pressed
-    public boolean left, right, up, down, shiftPressed, ePressed, qPressed, showHitboxes, debugMode;
+    public boolean left, right, up, down, shiftPressed, ePressed, qPressed, plus, minus, showHitboxes, debugMode;
 
     GamePanel gp;
 
@@ -40,13 +40,19 @@ public class KeyboardInput implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) { //Sets each boolean to true if the corresponding key is pressed
         int num = e.getKeyCode();
+        if(num == KeyEvent.VK_MINUS) {
+        	minus = true;
+        }
+        if(num == KeyEvent.VK_EQUALS) {
+        	plus = true;
+        }
         if(gp.currentState == gp.playState) {
         	
         	if (num == KeyEvent.VK_4) {
-                gp.saveM.saveGame();
+                //gp.saveM.saveGame();
             }
         	if (num == KeyEvent.VK_5) {
-                gp.saveM.loadGame(gp.saveM.currentSave);
+                //gp.saveM.loadGame(gp.saveM.currentSave);
             }
             if(num == KeyEvent.VK_F) {
             	//gp.gui.startLevelUpScreen();
@@ -208,7 +214,12 @@ public class KeyboardInput implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) { //Sets each boolean to false if the corresponding key is released
         int num = e.getKeyCode();
-
+        if(num == KeyEvent.VK_MINUS) {
+        	minus = false;
+        }
+        if(num == KeyEvent.VK_EQUALS) {
+        	plus = false;
+        }
             if (num == KeyEvent.VK_A || num == KeyEvent.VK_LEFT) {
                 left = false;
             }

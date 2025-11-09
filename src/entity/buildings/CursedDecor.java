@@ -391,6 +391,46 @@ public class CursedDecor extends Building {
 			xDrawOffset = 24;
 			yDrawOffset = 24;
 			break;
+		case 32:
+			mustBePlacedOnFloor = true;
+			name = "Mess";
+			isSolid = false;
+			animations[0][0][0] = importImage("/food/food.png").getSubimage(0, 112, 16, 16);
+			hitbox.width = 16*3;
+			hitbox.height = 16*3;
+			drawWidth = 16*3;
+			drawHeight = 16*3;
+			break;
+		case 33:
+			mustBePlacedOnFloor = true;
+			name = "Mess";
+			isSolid = false;
+			animations[0][0][0] = importImage("/food/food.png").getSubimage(16, 112, 16, 16);
+			hitbox.width = 16*3;
+			hitbox.height = 16*3;
+			drawWidth = 16*3;
+			drawHeight = 16*3;
+			break;
+		case 34:
+			mustBePlacedOnFloor = true;
+			name = "Mess";
+			isSolid = false;
+			animations[0][0][0] = importImage("/food/food.png").getSubimage(32, 112, 16, 16);
+			hitbox.width = 16*3;
+			hitbox.height = 16*3;
+			drawWidth = 16*3;
+			drawHeight = 16*3;
+			break;
+		case 35:
+			mustBePlacedOnFloor = true;
+			name = "Mess";
+			isSolid = false;
+			animations[0][0][0] = importImage("/food/food.png").getSubimage(48, 112, 16, 16);
+			hitbox.width = 16*3;
+			hitbox.height = 16*3;
+			drawWidth = 16*3;
+			drawHeight = 16*3;
+			break;
 		}
 
 

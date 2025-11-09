@@ -85,7 +85,12 @@ public class CutsceneManager {
     	//FIRST ROOM ENTRY CUTSCENES
     	if(gp.player.currentRoomIndex == 7) {
     		if(!cutscenePlayed.contains("Enter Corridor")) {
-    			enterCorridor();
+    			//enterCorridor();
+    		}
+    	}
+    	if(gp.player.currentRoomIndex == 9) {
+    		if(!cutscenePlayed.contains("Enter Kitchen")) {
+    			enterKitchen();
     		}
     	}
     	
@@ -101,7 +106,7 @@ public class CutsceneManager {
     			played = true;
     		}
     		else if(!cutscenePlayed.contains("Ignis I") && cutscenePlayed.contains("Ghosts talking") && cutsceneName.equals("Ignis I")) {
-    			ignisI();
+    			//ignisI();
     			played = true;
     		} else if(!cutscenePlayed.contains("Ignis II") && cutscenePlayed.contains("Ignis I") && cutsceneName.equals("Ignis II")) {
     			ignisII();
@@ -123,7 +128,44 @@ public class CutsceneManager {
     public List<String> getCutscenesWatched() {
 		return cutscenePlayed;
 	}
-    
+    public void enterKitchen() {
+    	cutscenePlayed.add("Enter Kitchen");
+
+        gp.mapM.getRoom(9).setDestroyed();
+        List<CutsceneEvent> events = new ArrayList<>();
+        
+        events.add(new ActionEvent(() -> {
+        	gp.player.isInvisible = true;
+        }));
+        NPC playerNPC = new StoryCharacter(gp, gp.player.hitbox.x, gp.player.hitbox.y, 2);
+        events.add(new AddNPCEvent(gp, playerNPC));
+        //events.add(new WaitEvent(20));
+        
+        //events.add(new NPCMoveEvent(gp, playerNPC, 10, 11));
+        
+        events.add(new ActionEvent(() -> {
+        	playerNPC.setDirection("Up");
+        }));
+        
+        events.add(new WaitEvent(120)); 
+        
+        events.add(new DialogueEvent(gp, playerNPC, "This looks like the restaurant's old kitchen."));
+        events.add(new WaitEvent(20)); 
+        
+        events.add(new ActionEvent(() -> {
+        	gp.player.isInvisible = false;
+        	gp.player.hitbox.x = playerNPC.hitbox.x;
+        	gp.player.hitbox.y = playerNPC.hitbox.y;
+        	gp.player.setDirection(playerNPC.getDirection());
+        }));
+        events.add(new RemoveNPCEvent(gp, playerNPC));
+        
+        //events.add(new ResetZoomEvent(gp));
+        
+        events.add(new EndCutscene(gp));
+
+        startCutscene(events);
+    }
     public void enterCorridor() {
     	cutscenePlayed.add("Enter Corridor");
 
@@ -334,7 +376,7 @@ public class CutsceneManager {
         	door1.unlock();
         }));
         events.add(new WaitEvent(20)); 
-        events.add(new DialogueEvent(gp, ignis, "Did that door just unlock itself?!"));
+        events.add(new DialogueEvent(gp, playerNPC, "Did that door just unlock itself?!"));
         events.add(new WaitEvent(20)); 
         
         events.add(new ActionEvent(() -> {

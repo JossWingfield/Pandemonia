@@ -290,6 +290,7 @@ public class MapManager {
 	    		}
 	    	}
 	    	gp.buildingM.setDoorCooldowns();
+	    	gp.player.updateInteractHitbox();
 	    }
 	    public void changeRoom(int roomNum, Trapdoor trapdoor) {
 	    	switchRoom(roomNum);
@@ -305,6 +306,7 @@ public class MapManager {
 	    		}
 	    	}
 	    	gp.buildingM.setDoorCooldowns();
+	       	gp.player.updateInteractHitbox();
 	    }
 	    private void switchRoom(int roomNum) {
 	     	gp.lightingM.removeLight(gp.player.playerLight);

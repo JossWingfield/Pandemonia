@@ -53,8 +53,8 @@ public class Door extends Building {
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new Door(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + facing + ", " + preset + ");");
-		System.out.println("arrayCounter++;");	
+		//System.out.println("buildings[arrayCounter] = new Door(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + facing + ", " + preset + ");");
+		//System.out.println("arrayCounter++;");
 	}
 	public void setDoorNum(int num) {
 		roomNum = num;
@@ -107,6 +107,7 @@ public class Door extends Building {
         	animations[0][0][1] = importImage("/decor/door.png").getSubimage(32, 0, 32, 48);
         	animations[0][0][2] = importImage("/decor/Chefdoor.png").getSubimage(64, 0, 32, 48);
         	locked = true;
+    		locked = false;
 			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 25),Color.RED, 16);
 			break;
 		}
@@ -157,11 +158,11 @@ public class Door extends Building {
 			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		}
 		
-	   //g2.setColor(Color.YELLOW);
-	   //g2.drawRect((int)npcHitbox.x, (int)npcHitbox.y, (int)npcHitbox.width, (int)npcHitbox.height);
+	    //g2.setColor(Color.YELLOW);
+	    //g2.fillRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
 		
 		//g2.setColor(Color.YELLOW);
-      	//g2.drawRect((int)npcHitbox.x, (int)npcHitbox.y, (int)npcHitbox.width, (int)npcHitbox.height);
+      	//g2.drawRect((int)gp.player.interactHitbox.x, (int)gp.player.interactHitbox.y, (int)gp.player.interactHitbox.width, (int)gp.player.interactHitbox.height);
 		
 		if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
 			if(cooldown == 0) {
