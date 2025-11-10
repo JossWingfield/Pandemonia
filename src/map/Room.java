@@ -265,6 +265,11 @@ public class Room {
     	    	Lantern t = (Lantern)b;
     	    	t.turnOff();
     	    }
+			Oven oven = (Oven)gp.buildingM.findBuildingWithName("Oven");
+			oven.setDestroyed(true);
+			Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+			stove.setDestroyed(true);
+			
 			setBeam(5);
 			gp.buildingM.addBuilding(new CursedDecor(gp, 696, 456, 25));
 			gp.buildingM.addBuilding(new CursedDecor(gp, 492, 348, 24));
@@ -307,6 +312,10 @@ public class Room {
     	    	Lantern t = (Lantern)b;
     	    	t.turnOn();
     	    }
+    		Oven oven = (Oven)gp.buildingM.findBuildingWithName("Oven");
+			oven.setDestroyed(false);
+			Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+			stove.setDestroyed(false);
     	    List<Building> mess = gp.buildingM.findBuildingsWithName("Mess");
     	    for (Building b: mess) {
     	    	gp.buildingM.removeBuilding(b);
@@ -339,6 +348,10 @@ public class Room {
 			door.setDoorNum(7);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
+			Rubble barricade = new Rubble(gp, 732, 432+16, 3);
+			barricade.setBarricade();
+			buildings[arrayCounter] = barricade;
+			arrayCounter++;
 			buildings[arrayCounter] = new Chair(gp, 708+16- 48*2, 432, 3);
 			arrayCounter++;
 			buildings[arrayCounter] = new Chair(gp, 708, 276, 2);
@@ -347,39 +360,11 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Chair(gp, 372, 432, 3);
 			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 336, 156, 9);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 384, 156, 7);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 432, 156, 7);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 480, 156, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 336, 204, 12);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 336, 252, 12);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 204, 22);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 396, 144, 21);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 276, 23);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 336, 228, 13);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 336, 288, 13);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 240, 20);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 348, 156, 24);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 444, 144, 25);
-			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 384, 5);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 636, 312, 8);
 			arrayCounter++;
-			buildings[arrayCounter] = new Fridge(gp, 588, 204);
+			buildings[arrayCounter] = new StorageFridge(gp, 588, 204,true);
 			arrayCounter++;
 			buildings[arrayCounter] = new Stove(gp, 492, 252);
 			arrayCounter++;
@@ -425,11 +410,7 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new CornerTable(gp, 348, 384, 2);
 			arrayCounter++;
-			buildings[arrayCounter] = new Table2(gp, 708 - 48*2, 468);
-			arrayCounter++;
-			Rubble barricade = new Rubble(gp, 732, 432+16, 3);
-			barricade.setBarricade();
-			buildings[arrayCounter] = barricade;
+			buildings[arrayCounter] = new Table2(gp, 612, 468);
 			arrayCounter++;
 			break;
 		case 1:
@@ -493,7 +474,7 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 348, 17);
 			arrayCounter++;
-			buildings[arrayCounter] = new StorageFridge(gp, 564, 192);
+			buildings[arrayCounter] = new StorageFridge(gp, 564, 192, false);
 			arrayCounter++;
 			buildings[arrayCounter] = new FoodStore(gp, 444, 240, 1);
 			arrayCounter++;
@@ -2283,7 +2264,7 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FoodStore(gp, 504, 348, 8);
 			arrayCounter++;
-			buildings[arrayCounter] = new StorageFridge(gp, 564, 192);
+			buildings[arrayCounter] = new StorageFridge(gp, 564, 192, false);
 			arrayCounter++;
 			buildings[arrayCounter] = new FoodStore(gp, 444, 240, 1);
 			arrayCounter++;

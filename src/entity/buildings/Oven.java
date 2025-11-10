@@ -25,6 +25,8 @@ public class Oven extends Building {
 	private boolean cooking = false;
     private int cookCount = 0;
     private int maxCookCount = 1000;
+    
+	private boolean destroyed = false;
 	
 	public Oven(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -49,7 +51,7 @@ public class Oven extends Building {
 		System.out.println("arrayCounter++;");
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][5];
+		animations = new BufferedImage[1][1][6];
 		
 		name = "Oven";
     	animations[0][0][1] = importImage("/decor/kitchen props.png").getSubimage(48, 128, 32, 48);
@@ -57,11 +59,18 @@ public class Oven extends Building {
     	animations[0][0][2] = importImage("/decor/kitchen props.png").getSubimage(48, 128, 32, 48);
     	animations[0][0][3] = importImage("/decor/OvenHighlight.png").getSubimage(0, 0, 32, 48);
        	animations[0][0][4] = importImage("/decor/OvenHighlight.png").getSubimage(32, 0, 32, 48);
+       	animations[0][0][5] = importImage("/decor/OldKitchenProps.png").getSubimage(0, 0, 32, 48);
 	
        	ovenOn = importImage("/decor/OvenOn.png");
 	}
+	public void setDestroyed(boolean destroyed) {
+		this.destroyed = destroyed;
+	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
+		if(destroyed) {
+		    g2.drawImage(animations[0][0][5], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		}
 	    
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
 	    	if(currentItem == null) {

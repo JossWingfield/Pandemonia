@@ -112,6 +112,15 @@ public class CollisionMethods {
         int value = gp.mapM.currentRoom.mapGrid[1][(int)(x/gp.tileSize)][(int)(y/gp.tileSize)];
         return gp.mapM.tiles[value].solid;
     }
+    public static Building getBuildingAt(GamePanel gp, int worldX, int worldY, String name) {
+        for (Building b : gp.buildingM.getBuildings()) {
+        	if(b != null && b.getName().equals(name)) {
+        		if ((int)b.hitbox.x == worldX && (int)b.hitbox.y == worldY)
+        			return b;
+        	}
+        }
+        return null;
+    }
     public static boolean canLightPassThroughTile(int tx, int ty, GamePanel gp) {
         // bounds: if outside world, treat as solid (or treat as passable depending on your game)
         if (tx < 0 || ty < 0 || tx >= gp.mapM.currentMapWidth || ty >= gp.mapM.currentMapHeight) {
@@ -389,22 +398,82 @@ public class CollisionMethods {
 	}
 	public static boolean canPlaceBuilding(GamePanel gp, Building building, float x, float y, float width, float height) {
 	    if(building.isKitchenBuilding) {
-	    	if(!gp.mapM.isInRoom("Main")) {
+	    	if(!gp.mapM.isInRoom(RoomHelperMethods.KITCHEN)) {
 	    		return false;
 	    	}
 	    }
 	    if(building.isStoreBuilding) {
-	    	if(!gp.mapM.isInRoom("Stores")) {
+	    	if(!gp.mapM.isInRoom(RoomHelperMethods.STORES)) {
 	    		return false;
 	    	}
 	    }
 	    if(building.isBathroomBuilding) {
-	    	if(!gp.mapM.isInRoom("Toilets")) {
+	    	if(!gp.mapM.isInRoom(RoomHelperMethods.BATHROOM)) {
 	    		return false;
 	    	}
 	    }
-		
+
 		Rectangle2D.Float buildHitbox = new Rectangle2D.Float(x, y, width, height);
+	    
+	    if ("Shelf".equals(building.getName())) {
+	        int tileSize = gp.tileSize;
+	        int[][] grid = gp.mapM.currentRoom.mapGrid[1];
+
+	        int startX = (int)(x / tileSize) - 1;
+	        int startY = (int)(y / tileSize);
+	        int endX = (int)((x + width) / tileSize);
+	        int endY = (int)((y + height) / tileSize);
+
+	        // Clamp within bounds
+	        startX = Math.max(0, Math.min(startX, grid.length - 1));
+	        endX = Math.max(0, Math.min(endX, grid.length - 1));
+	        startY = Math.max(0, Math.min(startY, grid[0].length - 1));
+	        endY = Math.max(0, Math.min(endY, grid[0].length - 1));
+	        
+	        // ------------------- Detect left edge -------------------
+	        boolean leftEdge = true;
+	        for (int iy = startY; iy < endY; iy++) {
+	            if (grid[startX][iy] != 0) { // left void should be 0
+	                leftEdge = false;
+	                break;
+	            }
+	        }
+
+	        // ------------------- Detect right edge -------------------
+	        boolean rightEdge = true;
+	        for (int iy = startY; iy < endY; iy++) {
+	            if (grid[endX][iy] != 0) { // right void should be 0
+	                rightEdge = false;
+	                break;
+	            }
+	        }
+
+	        // ------------------- Check if placement is valid -------------------
+	        if (leftEdge || rightEdge) {
+	            int inwardX = leftEdge ? startX + 1 : endX - 1; // column that must be wall
+
+	            boolean innerWall = true;
+	            for (int iy = startY; iy < endY; iy++) {
+	                if (grid[inwardX][iy] == 0) { // must be wall
+	                    innerWall = false;
+	                    break;
+	                }
+	            }
+	            
+	            for (Building b : gp.buildingM.getBuildings()) {
+		            if (b != null && b.hitbox.intersects(buildHitbox)) {
+		            	if(b.getName().equals("Shelf")) {
+		            		return false;
+		            	}
+		            }
+		        }
+
+	            if (innerWall) {
+	                return true;
+	            }
+	        }
+	    }
+		
 
 	    // ---------------- Universal corner check (mapGrid == 0) ----------------
 	    int[][] grid = gp.mapM.currentRoom.mapGrid[1];
@@ -431,7 +500,6 @@ public class CollisionMethods {
 	            return false; // corner in void tile
 	        }
 	    }
-
 	    // ---------------- Floor-only placement ----------------
 	    if (building.mustBePlacedOnFloor) {
 	        for (Building b : gp.buildingM.getBuildings()) {

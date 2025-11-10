@@ -50,7 +50,7 @@ public class Rat extends NPC {
 		importPlayerSpriteSheet("/npcs/rat/Run", 4, 1, 0, 0, 0, 32, 32);
 	}
 	private void findFridge() {
-		fridge = (Fridge)findBuildingInRoom("Fridge", currentRoomNum);
+		fridge = (Fridge)findBuildingInRoom("Fridge", RoomHelperMethods.KITCHEN);
     }
 	public void update() {
 		if(!walking && inKitchen && !depositing) {
@@ -73,7 +73,7 @@ public class Rat extends NPC {
 				}
 			} else if(retrievingItem) {
 				if(!inKitchen) {
-					if(walkToDoorWithDoorNum(RoomHelperMethods.MAIN)) {
+					if(walkToDoorWithDoorNum(RoomHelperMethods.KITCHEN)) {
 						inKitchen = true;
 					}
 				} else {

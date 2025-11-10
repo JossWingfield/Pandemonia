@@ -18,6 +18,7 @@ import entity.items.Item;
 import entity.items.Penne;
 import entity.items.Spaghetti;
 import entity.items.Steak;
+import entity.items.Tomato;
 import main.GamePanel;
 import net.packets.Packet03PickupItem;
 
@@ -32,9 +33,11 @@ public class StorageFridge extends Building {
 	private BufferedImage ui1, ui2, ui3;
 	public List<Food> contents = new ArrayList<>();
 	private List<Rectangle2D.Float> itemHitboxes = new ArrayList<>();
+	public boolean starterFridge = false;
 	
-	public StorageFridge(GamePanel gp, float xPos, float yPos) {
+	public StorageFridge(GamePanel gp, float xPos, float yPos, boolean isStarterFridge) {
 		super(gp, xPos, yPos, 48, 96);
+		this.starterFridge = isStarterFridge;
 		
 		isSolid = true;
 		blueprint = false;
@@ -48,11 +51,11 @@ public class StorageFridge extends Building {
 		mustBePlacedOnFloor = true;
 	}
 	public Building clone() {
-		StorageFridge building = new StorageFridge(gp, hitbox.x, hitbox.y);
+		StorageFridge building = new StorageFridge(gp, hitbox.x, hitbox.y, starterFridge);
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new StorageFridge(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
+		System.out.println("buildings[arrayCounter] = new StorageFridge(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + "," +starterFridge+ ");");
 		System.out.println("arrayCounter++;");	
 	}
 	public void setContents(List<String> fridgeContents, List<Integer> fridgeContentsStates) {
@@ -73,6 +76,11 @@ public class StorageFridge extends Building {
 		contents.add(new Steak(gp, 0, 0));
 		contents.add(new Spaghetti(gp, 0, 0));
 		contents.add(new Penne(gp, 0, 0));
+		if(starterFridge) {
+			contents.add(new Tomato(gp, 0, 0));
+			contents.add(new Greens(gp, 0, 0));
+		}
+
 	}
 	public Food getRandomItem() {
 		return (Food)gp.itemRegistry.getItemFromName(contents.get(random.nextInt(contents.size())).getName(), 0);
@@ -83,6 +91,11 @@ public class StorageFridge extends Building {
 		name = "Storage Fridge";
 		animations[0][0][0] = importImage("/decor/StorageFridge.png").getSubimage(0, 8, 8*2, 8*4);
 		animations[0][0][1] = importImage("/decor/StorageFridge.png").getSubimage(16, 8, 8*2, 8*4);
+		
+		if(starterFridge) {
+			animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(112, 136, 8*2, 8*4);
+		    animations[0][0][1] = importImage("/decor/kitchen props.png").getSubimage(112+16, 136, 8*2, 8*4);
+		}
 		ui1 = importImage("/UI/fridge/2.png");
     	ui2 = importImage("/UI/fridge/5.png");
     	ui3 = importImage("/UI/fridge/Hover.png");

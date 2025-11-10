@@ -38,6 +38,8 @@ public class Stove extends Building {
 	private int clickCooldown = 0;
 	private boolean drawCooking = false;
 	
+	private boolean destroyed = false;
+	
 	private BufferedImage leftCooking, rightCooking;
 	
 	public Stove(GamePanel gp, float xPos, float yPos) {
@@ -68,10 +70,11 @@ public class Stove extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][1];
+		animations = new BufferedImage[1][1][2];
 		
 		name = "Stove";
     	animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(0, 128, 48, 48);
+    	animations[0][0][1] = importImage("/decor/OldKitchenProps.png").getSubimage(32, 0, 48, 48);
     	leftCooking = importImage("/decor/StoveOn.png").getSubimage(0, 0, 48, 48);
     	rightCooking = importImage("/decor/StoveOn.png").getSubimage(48, 0, 48, 48);
 	}
@@ -115,6 +118,9 @@ public class Stove extends Building {
 		gp.lightingM.removeLight(leftLight);
 		gp.lightingM.removeLight(rightLight);
 	}
+	public void setDestroyed(boolean destroyed) {
+		this.destroyed = destroyed;
+	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			firstUpdate = false;
@@ -147,8 +153,11 @@ public class Stove extends Building {
 		//g2.drawRect((int)leftHitbox.x, (int)leftHitbox.y, (int)leftHitbox.width, (int)leftHitbox.height);
 		//g2.drawRect((int)rightHitbox.x, (int)rightHitbox.y, (int)rightHitbox.width, (int)rightHitbox.height);
 		 
-		g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-      		 
+		if(destroyed) {
+			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		} else {
+			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		} 
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}

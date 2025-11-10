@@ -43,6 +43,7 @@ public class Building extends Entity {
 	public boolean canBePlacedOnShelf = false;
 	public boolean mustBePlacedOnTable = false;
 	public boolean canBuildingBePlacedOn = false;
+	public boolean tileGrid = false;
 	
 	public int cost = 0;
 	private int arrayCounter = 0;
@@ -161,9 +162,10 @@ public class Building extends Entity {
 			}
 			if(destructionUIOpen) {
 				if(gp.mouseI.rightClickPressed) {
-					gp.customiser.addToInventory(this);
 					destroy();
+					gp.customiser.addToInventory(this);
 					gp.buildingM.destroyBuilding(this);
+					gp.buildingM.checkBuildingConnections();
 				}
 			}
 		}
@@ -184,6 +186,8 @@ public class Building extends Entity {
 		return name;
 	}
 	
+	public void onPlaced() {
+	}
 	public void interact() {}
 
 	public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {}

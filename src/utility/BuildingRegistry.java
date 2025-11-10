@@ -28,6 +28,7 @@ import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
 import entity.buildings.Rubble;
+import entity.buildings.Shelf;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
 import entity.buildings.StorageFridge;
@@ -62,6 +63,7 @@ public class BuildingRegistry {
 		presetBuildingNames.add("Toilet 1");
 		presetBuildingNames.add("Toilet Door 1");
 		presetBuildingNames.add("Trapdoor 1");
+		presetBuildingNames.add("Shelf");
 	}
 	
 	public List<BuildingSaveData> saveBuildings(List<Building> buildings) {
@@ -86,6 +88,8 @@ public class BuildingRegistry {
 					} else if(b instanceof ToiletDoor c) {
 						data.preset = c.preset;
 					} else if(b instanceof Trapdoor c) {
+						data.preset = c.type;
+					} else if(b instanceof Shelf c) {
 						data.preset = c.type;
 					} else if(b instanceof FloorDecor_Building c) {
 						data.preset = c.type;
@@ -116,6 +120,9 @@ public class BuildingRegistry {
 					}
 				} else if(b instanceof StorageFridge d) {
 					data.fridgeType = 1;
+					if(d.starterFridge) {
+						data.attribute1 = 1;
+					}
 					for(Food f: d.contents) {
 						data.fridgeContents.add(f.getName());
 						data.fridgeContentStates.add(f.getState());
@@ -166,7 +173,11 @@ public class BuildingRegistry {
 					build.setContents(b.fridgeContents, b.fridgeContentStates);
 					buildings.add(build);
 				} else if(b.fridgeType == 1) {
-					StorageFridge build = new StorageFridge(gp, b.x, b.y);
+					boolean starterFridge = false;
+					if(b.attribute1 == 1) {
+						starterFridge = true;
+					}
+					StorageFridge build = new StorageFridge(gp, b.x, b.y, starterFridge);
 					build.setContents(b.fridgeContents, b.fridgeContentStates);
 					buildings.add(build);
 				}
@@ -229,6 +240,7 @@ public class BuildingRegistry {
 			case "Toilet 1" -> i = new Toilet(gp, x, y, preset);
 			case "Toilet Door 1" -> i = new ToiletDoor(gp, x, y, preset);
 			case "Trapdoor 1" -> i = new Trapdoor(gp, x, y, preset);
+			case "Shelf" -> i = new Shelf(gp, x, y, preset);
 		}
 
 		return i;

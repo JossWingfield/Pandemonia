@@ -150,7 +150,7 @@ public class CutsceneManager {
         events.add(new WaitEvent(120)); 
         
         events.add(new DialogueEvent(gp, playerNPC, "This looks like the restaurant's old kitchen."));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(20));
         
         events.add(new ActionEvent(() -> {
         	gp.player.isInvisible = false;
@@ -160,7 +160,7 @@ public class CutsceneManager {
         }));
         events.add(new RemoveNPCEvent(gp, playerNPC));
         
-        //events.add(new ResetZoomEvent(gp));
+        events.add(new ResetZoomEvent(gp));
         
         events.add(new EndCutscene(gp));
 

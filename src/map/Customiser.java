@@ -15,9 +15,11 @@ import entity.buildings.Building;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
 import entity.buildings.HerbBasket;
+import entity.buildings.Shelf;
 import entity.buildings.Sink;
 import entity.buildings.TipJar;
 import entity.buildings.Toilet;
+import entity.buildings.Torch;
 import entity.buildings.Turntable;
 import entity.buildings.WallDecor_Building;
 import main.GamePanel;
@@ -57,6 +59,8 @@ public class Customiser {
 	private List<TableSkin> tableSkinInventory = new ArrayList<TableSkin>();
 	public Building selectedBuilding;
 	
+	private int prevX, prevY;
+	
 	public Customiser(GamePanel gp) {
 		this.gp = gp;
 		yStart = gp.frameHeight-ySize+4;
@@ -85,6 +89,16 @@ public class Customiser {
 		tableTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 25, 34, 25);
 		
 		border = importImage("/UI/customise/WallBorder.png");
+		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new Shelf(gp, 0, 0));
 	}
 	public void clear() {
 		decorBuildingInventory.clear();
@@ -370,6 +384,7 @@ public class Customiser {
 								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
 			    			}
 							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
+
 
 			    			xStart+= 37*3;
 			    			counter++;
@@ -748,9 +763,24 @@ public class Customiser {
 		if(selectedBuilding != null) {
 			if(mouseY < gp.frameHeight-ySize || !showBuildings) {
 				int size = 4*3;
+				if(selectedBuilding.tileGrid) {
+					size = 16*3;
+				}
 				int xPos = (int)((mouseX+xDiff)/size) * size;
 				int yPos = (int)((mouseY+yDiff)/size) * size;
 				boolean canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, xPos, yPos, selectedBuilding.hitbox.width, selectedBuilding.hitbox.height);
+				if(selectedBuilding.getName().equals("Shelf")) {
+			        selectedBuilding.hitbox.x = xPos;
+			        selectedBuilding.hitbox.y = yPos;
+			        selectedBuilding.onPlaced();
+		    	    if(prevX != xPos || prevY != yPos) {
+				        List<Building> shelves = gp.buildingM.findBuildingsWithName("Shelf");
+			    	    for (Building b: shelves) {
+			    	    	Shelf t = (Shelf)b;
+			    	    	t.updateConnections();
+			    	    }
+		    	    }
+				}
 				BufferedImage img = selectedBuilding.animations[0][0][0];
 				if(canPlace) {
 					img = CollisionMethods.getMaskedImage(yesBuild, img);
@@ -758,10 +788,12 @@ public class Customiser {
 					img = CollisionMethods.getMaskedImage(noBuild, img);
 				}
 				g2.drawImage(img, xPos-xDiff - selectedBuilding.xDrawOffset, yPos-yDiff - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getWidth()*3, selectedBuilding.animations[0][0][0].getHeight()*3, null);
-
+				prevX = xPos;
+				prevY = yPos;
 				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 					if(canPlace) {
 						gp.buildingM.addBuilding((Building)selectedBuilding.clone(), xPos, yPos);
+						
 						clickCounter = 20;
 						if(decorBuildingInventory.contains(selectedBuilding)) {
 							decorBuildingInventory.remove(selectedBuilding);

@@ -117,7 +117,7 @@ public class MapBuilder {
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Table(gp, 0, 0);
 		totalBuildingCount++;
-		buildings[totalBuildingCount] = new StorageFridge(gp, 0, 0);
+		buildings[totalBuildingCount] = new StorageFridge(gp, 0, 0, false);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Stove(gp, 0, 0);
 		totalBuildingCount++;

@@ -87,7 +87,7 @@ public class Stocker extends Employee {
 				}
 			} else if(retrievingItem) {
 				if(!inKitchen) {
-					if(walkToDoorWithDoorNum(RoomHelperMethods.MAIN)) {
+					if(walkToDoorWithDoorNum(RoomHelperMethods.KITCHEN)) {
 						inKitchen = true;
 					}
 				} else {

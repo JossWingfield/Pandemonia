@@ -52,6 +52,7 @@ public class BuildingManager {
         buildings[arrayCounter].hitbox.y = yPos;
         b.setArrayCounter(arrayCounter);
         arrayCounter++;
+        b.onPlaced();
     }
     public void destroyBuilding(Building b) {
     	for(int i = 0; i < buildings.length; i++) {
@@ -78,6 +79,13 @@ public class BuildingManager {
     }
     public Building[] getBuildings() {
     	return buildings;
+    }
+    public void checkBuildingConnections() {
+    	List<Building> shelves = gp.buildingM.findBuildingsWithName("Shelf");
+	    for (Building b: shelves) {
+	    	Shelf t = (Shelf)b;
+	    	t.updateConnections();
+	    }
     }
     public Building[] getBuildingsToDraw() {
     	Building[] b = new Building[buildings.length];

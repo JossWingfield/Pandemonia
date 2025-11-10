@@ -9,6 +9,7 @@ import entity.buildings.Sink;
 import entity.buildings.TablePlate;
 import entity.items.Plate;
 import main.GamePanel;
+import utility.RoomHelperMethods;
 
 public class DishWasher extends Employee {
 
@@ -60,7 +61,7 @@ public class DishWasher extends Employee {
 		}
     }
 	private void findSink() {
-		sink = (Sink)findBuildingInRoom("Kitchen Sink 1", currentRoomNum);
+		sink = (Sink)findBuildingInRoom("Kitchen Sink 1", RoomHelperMethods.KITCHEN);
     }
     public void updateInteractHitbox() {
         float baseX = hitbox.x;

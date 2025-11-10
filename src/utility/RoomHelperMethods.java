@@ -11,6 +11,7 @@ import entity.npc.SpecialCustomer;
 public class RoomHelperMethods {
 	
 	public static int MAIN = 0;
+	public static int KITCHEN = 0;
 	public static int STORES = 1;
 	public static int OUTDOORS = 2;
 	public static int ELECTRICS = 3;
