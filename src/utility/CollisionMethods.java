@@ -523,68 +523,62 @@ public class CollisionMethods {
 	        }
 	        return true;
 	    }
-
-	    // ---------------- Table-only placement ----------------
-	    if (building.mustBePlacedOnTable) {
+	    
+	    // ---------------- Unified shelf / table logic ----------------
+	    if (building.mustBePlacedOnTable || building.canBePlacedOnShelf || building.canBePlacedOnTable) {
+	        boolean onShelf = false;
 	        boolean onTable = false;
+
 	        for (Building b : gp.buildingM.getBuildings()) {
 	            if (b == null) continue;
 
-	            boolean isTable = "Table Piece".equals(b.getName()) || "Table Corner 1".equals(b.getName()) || "Table 1".equals(b.getName()) || "Table 2".equals(b.getName());
+	            boolean isShelf = "Shelf".equals(b.getName());
+	            boolean isTable =
+	                "Table Piece".equals(b.getName()) ||
+	                "Table Corner 1".equals(b.getName()) ||
+	                "Table 1".equals(b.getName()) ||
+	                "Table 2".equals(b.getName());
 
 	            if (b.hitbox.intersects(buildHitbox)) {
-	                if (isTable) {
-	                    onTable = true;
-	                } else {
-	                    return false;
+	                if (isShelf) onShelf = true;
+	                else if (isTable) onTable = true;
+	                else return false; // overlaps something non-surface
+	            }
+	        }
+
+	        // --- mustBePlacedOnTable logic ---
+	        if (building.mustBePlacedOnTable) {
+	            if (building.canBePlacedOnShelf) {
+	                // allow either
+	                return (onTable || onShelf);
+	            } else {
+	                // table only
+	                return onTable;
+	            }
+	        }
+
+	        // --- Optional shelf/table logic ---
+	        if (onShelf && onTable) return false; // can't sit on both
+	        if (building.canBePlacedOnShelf && onShelf) return true;
+	        if (building.canBePlacedOnTable && onTable) return true;
+
+	        // Not on table or shelf -> allow floor, forbid walls
+	        int startX = (int) x / gp.tileSize;
+	        int startY = (int) y / gp.tileSize;
+	        int endX = (int) (x + width) / gp.tileSize;
+	        int endY = (int) (y + height) / gp.tileSize;
+
+	        for (int ix = startX; ix < endX; ix++) {
+	            for (int iy = startY; iy < endY; iy++) {
+	                if (gp.mapM.tiles[grid[ix][iy]].isWall) {
+	                    return false; // floor ok, wall not
 	                }
 	            }
 	        }
-	        return onTable;
+
+	        return true; // valid on floor only
 	    }
 
-	    // ---------------- Can be placed on table or floor ----------------
-	    if (building.canBePlacedOnTable) {
-	        boolean onTable = false;
-	        for (Building b : gp.buildingM.getBuildings()) {
-	            if (b == null) continue;
-
-	            boolean isTable = "Table Piece".equals(b.getName()) || "Table Corner 1".equals(b.getName()) || "Table 1".equals(b.getName()) || "Table 2".equals(b.getName());
-
-	            if (b.hitbox.intersects(buildHitbox)) {
-	                if (isTable) {
-	                    onTable = true;
-	                } else {
-	                    return false;
-	                }
-	            }
-	        }
-
-	        if (onTable) {
-	            return true;
-	        } else {
-	            // Floor case → must NOT overlap walls
-	            for (Building b : gp.buildingM.getBuildings()) {
-	                if (b != null && b.hitbox.intersects(buildHitbox)) {
-	                    return false;
-	                }
-	            }
-
-	            int startX = (int) x / tileSize;
-	            int startY = (int) y / tileSize;
-	            int endX = (int) (x + width) / tileSize;
-	            int endY = (int) (y + height) / tileSize;
-
-	            for (int ix = startX; ix < endX; ix++) {
-	                for (int iy = startY; iy < endY; iy++) {
-	                    if (gp.mapM.tiles[grid[ix][iy]].isWall) {
-	                        return false;
-	                    }
-	                }
-	            }
-	            return true;
-	        }
-	    }
 
 	    // ---------------- Wall-only placement ----------------
 	    if (building.mustBePlacedOnWall) {

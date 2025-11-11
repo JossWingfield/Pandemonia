@@ -270,6 +270,9 @@ public class MapManager {
 	    	currentMapHeight = currentRoom.mapHeight;
 	    	gp.lightingM.getRoomOcclusion();
 	    }
+	    public void saveCurrentBuildingsToRoom() {
+	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
+	    }
 	    public void changeRoom(int roomNum, Door previousDoor) {
 	    	switchRoom(roomNum);
 	    	

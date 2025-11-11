@@ -7,6 +7,8 @@ import main.GamePanel;
 
 public class Turntable extends Building {
 	
+	private boolean firstDraw = true;
+	
 	public Turntable(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
 		
@@ -18,9 +20,9 @@ public class Turntable extends Building {
 		drawHeight = 48*3;
 		yDrawOffset = 48+48 + 8;
 		xDrawOffset = 48 + 8;
-		animationSpeedFactor = 6;
+		animationSpeedFactor = 2;
 		mustBePlacedOnTable = true;
-		gp.progressM.turntablePresent = true;
+        canBePlacedOnShelf = true;
 		isDecor = true;
 		importImages();
 	}
@@ -41,6 +43,13 @@ public class Turntable extends Building {
 	}
 	public void destroy() {
 		gp.progressM.turntablePresent = false;
+	}
+	public void update() {
+		super.update();
+		if(firstDraw) {
+			gp.progressM.turntablePresent = true;
+			firstDraw = false;
+		}
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		

@@ -54,6 +54,7 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 32;
             drawHeight = 96;
             canBePlacedOnTable = true;
+            canBePlacedOnShelf = true;
             isDecor = true;
             cost = 10;
         	break;
@@ -273,6 +274,7 @@ public class FloorDecor_Building extends Building {
           	isFourthLayer = true;
             isDecor = true;
             mustBePlacedOnTable = true;
+            canBePlacedOnShelf = true;
         	break;
         case 19:
         	cost = 16;
@@ -294,6 +296,7 @@ public class FloorDecor_Building extends Building {
         	isFifthLayer = true;
         	isDecor = true;
         	mustBePlacedOnTable = true;
+            canBePlacedOnShelf = true;
         	break;
         case 21:
             name = "Jug 1";
@@ -302,6 +305,7 @@ public class FloorDecor_Building extends Building {
         	isFifthLayer = true;
         	isDecor = true;
         	mustBePlacedOnTable = true;
+            canBePlacedOnShelf = true;
         	break;
         case 22:
             name = "Teapot";
@@ -312,6 +316,7 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
         	canBePlacedOnShelf = true;
+            canBePlacedOnShelf = true;
         	break;
         case 23:
             name = "Bottle 1";
@@ -322,6 +327,7 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
           	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+            canBePlacedOnShelf = true;
         	break;
         case 24:
             name = "Plate Stack 1";
@@ -332,6 +338,7 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+            canBePlacedOnShelf = true;
         	break;
         case 25:
             name = "Small Plant 1";

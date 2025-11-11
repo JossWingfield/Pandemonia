@@ -138,6 +138,7 @@ public class SaveManager {
 
 	public void saveGame() {
 		saveSlots.put(currentSave, true); // mark slot as filled
+		gp.mapM.saveCurrentBuildingsToRoom();
 		saveMeta();
 		saveToFile("save/player"+Integer.toString(currentSave)+".json", gp.player.toSaveData());
 		saveToFile("save/settings"+Integer.toString(currentSave)+".json", gp.world.saveSettingsData());

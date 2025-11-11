@@ -26,6 +26,7 @@ public class Candle extends Building{
 		blueprint = false;
 		importImages();
 		canBePlacedOnTable = true;
+		canBePlacedOnShelf = true;
 	}
 	public Building clone() {
 		Candle building = new Candle(gp, hitbox.x, hitbox.y, type);

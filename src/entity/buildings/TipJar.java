@@ -8,6 +8,8 @@ import utility.DayPhase;
 
 public class TipJar extends Building {
 	
+	private boolean firstDraw = true;
+	
 	public TipJar(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
 		
@@ -20,7 +22,7 @@ public class TipJar extends Building {
 		xDrawOffset = 8;
 		yDrawOffset = 8;
 		mustBePlacedOnTable = true;
-		gp.progressM.tipJarPresent = true;
+        canBePlacedOnShelf = true;
 		isDecor = true;
 		importImages();
 	}
@@ -42,6 +44,13 @@ public class TipJar extends Building {
 	}
 	public void destroy() {
 		gp.progressM.tipJarPresent = false;
+	}
+	public void update() {
+		super.update();
+		if(firstDraw) {
+			gp.progressM.tipJarPresent = true;
+			firstDraw = false;
+		}
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		

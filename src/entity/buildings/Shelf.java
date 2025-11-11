@@ -59,8 +59,6 @@ public class Shelf extends Building {
 	
 	private void importImages() {
 		animations = new BufferedImage[1][1][1];
-		//xDrawOffset = 3*3;
-		//yDrawOffset = 2*3;
 		
 		switch(type) {
 		 case 0: //LEFT EDGE
@@ -142,14 +140,24 @@ public class Shelf extends Building {
 		    if ((int)(hitbox.x + gp.tileSize) == xPos && hitbox.y == yPos) rightShelf = true;
 		    if ((int)(hitbox.x) == xPos && (hitbox.y - gp.tileSize) == yPos) topShelf = true;
 		    if ((int)(hitbox.x) == xPos && (hitbox.y + gp.tileSize) == yPos) bottomShelf = true;
+		    
+		    boolean hasVerticalShelf = topShelf || bottomShelf;
 
+	        // --- Corners only if NOT vertically stacked ---
+	        if (!hasVerticalShelf) {
+	            if (onLeftWall && (int)(hitbox.x + gp.tileSize) == xPos && hitbox.y == yPos)
+	                rightShelf = true; // left wall corner
+	            if (onRightWall && (int)(hitbox.x - gp.tileSize) == xPos && hitbox.y == yPos)
+	                leftShelf = true;  // right wall corner
+	        }
+		    
 		    // Corners
-		    if (onLeftWall && (int)(hitbox.x + gp.tileSize) == xPos && hitbox.y == yPos) rightShelf = true; // left wall corner
-		    if (onRightWall && (int)(hitbox.x - gp.tileSize) == xPos && hitbox.y == yPos) leftShelf = true;  // right wall corner
+		    //if (onLeftWall && (int)(hitbox.x + gp.tileSize) == xPos && hitbox.y == yPos) rightShelf = true; // left wall corner
+		    //if (onRightWall && (int)(hitbox.x - gp.tileSize) == xPos && hitbox.y == yPos) leftShelf = true;  // right wall corner
 		}
         
         if (onLeftWall) {
-            if (leftShelf) type = 4; // left wall corner
+            if (leftShelf) type = 4; // left wall cornera
             else if (topShelf && bottomShelf) type = 9; // vertical middle
             else if (topShelf) type = 10;               // bottom end
             else if (bottomShelf) type = 8;             // top end

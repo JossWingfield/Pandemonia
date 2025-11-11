@@ -99,6 +99,14 @@ public class Customiser {
 		addToInventory(new Shelf(gp, 0, 0));
 		addToInventory(new Shelf(gp, 0, 0));
 		addToInventory(new Shelf(gp, 0, 0));
+		addToInventory(new TipJar(gp, 0, 0));
+		addToInventory(new Turntable(gp, 0, 0));
+		addToInventory(new WallDecor_Building(gp, 0, 0, 0));
+		addToInventory(new WallDecor_Building(gp, 0, 0, 1));
+		addToInventory(new WallDecor_Building(gp, 0, 0, 2));
+		addToInventory(new WallDecor_Building(gp, 0, 0, 3));
+		addToInventory(new WallDecor_Building(gp, 0, 0, 4));
+		addToInventory(new FloorDecor_Building(gp, 0, 0, 0));
 	}
 	public void clear() {
 		decorBuildingInventory.clear();
