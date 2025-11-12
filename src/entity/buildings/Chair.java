@@ -29,6 +29,10 @@ public class Chair extends Building {
 		isBottomLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*6);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*6);
 	}
 	public Building clone() {
 		Chair building = new Chair(gp, hitbox.x, hitbox.y, facing);

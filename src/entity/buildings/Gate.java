@@ -28,6 +28,9 @@ public class Gate extends Building {
 		mustBePlacedOnFloor = true;
 		canBePlaced = false;
 	}
+	public void onPlaced() {
+		buildHitbox = hitbox;
+	}
 	public Building clone() {
 		Gate building = new Gate(gp, hitbox.x, hitbox.y);
 		return building;

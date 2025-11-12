@@ -224,6 +224,7 @@ public class MapManager {
 	    }
 	    public void enterNewPhase() {
 	    	changingPhase = true;
+	    	/*
     		gp.customiser.clear();
 	    	for(Object o: gp.world.boughtItems) {
 	    		if(o instanceof FloorPaper f) {
@@ -247,6 +248,7 @@ public class MapManager {
 	    	gp.player.currentRoomIndex = 0;
 	    	gp.player.hitbox.x = 8*48;
 	    	gp.player.hitbox.y = 12*48;
+	    	*/
 	    	changingPhase = false;
 	    }
 	    public void setRoom(int roomNum) {

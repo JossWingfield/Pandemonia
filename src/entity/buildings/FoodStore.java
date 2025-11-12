@@ -36,6 +36,10 @@ public class FoodStore extends Building {
 		isStoreBuilding = true;
 		mustBePlacedOnFloor = true;
 		importImages();
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*1, hitbox.width-3*5, hitbox.height-3*3);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*1, hitbox.width-3*5, hitbox.height-3*3);
 	}
 	public Building clone() {
 		FoodStore building = new FoodStore(gp, hitbox.x, hitbox.y, foodType);

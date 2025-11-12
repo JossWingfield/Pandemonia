@@ -27,6 +27,9 @@ public class WallDecor_Building extends Building {
 		mustBePlacedOnWall = true;
 		cost = 10;
 	}
+	public void onPlaced() {
+		importImages();
+	}
 	public Building clone() {
 		WallDecor_Building building = new WallDecor_Building(gp, hitbox.x, hitbox.y, type);
 		return building;
@@ -38,6 +41,7 @@ public class WallDecor_Building extends Building {
 	
 	private void importImages() {
 		animations = new BufferedImage[1][1][1];
+		buildHitbox = hitbox;
 		
 		switch(type) {
 		 case 0:
@@ -46,6 +50,7 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	      	 cost = 30;
 	      	 description = "Artwork to be hung on the wall.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y, hitbox.width-3*4, hitbox.height-3*4);
 	         break;
 		 case 1:
 			 name = "Painting 2";
@@ -53,6 +58,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	      	 cost = 30;
 	      	 description = "Artwork to be hung on the wall.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y, hitbox.width-3*5, hitbox.height-3*4);
+
 	         break;
 		 case 2:
 			 name = "Painting 3";
@@ -60,6 +67,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	      	 cost = 30;
 	      	 description = "Artwork to be hung on the wall.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y, hitbox.width-3*4, hitbox.height-3*5);
+
 	         break;
 		 case 3:
 			 name = "Painting 4";
@@ -67,6 +76,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	      	 cost = 30;
 	      	 description = "Artwork to be hung on the wall.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y, hitbox.width-3*5, hitbox.height-3*5);
+
 	         break;
 		 case 4:
 			 name = "Hanging Plant 1";
@@ -76,6 +87,7 @@ public class WallDecor_Building extends Building {
 	         hitbox.height = 80;
 	         cost = 20;
 	    	 description = "Plants to be hung on the wall.";
+	 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
 	         break;
 		 case 5:
 			 name = "Hanging Plant 2";
@@ -85,6 +97,8 @@ public class WallDecor_Building extends Building {
 	         hitbox.height = 80;
 	         cost = 20;
 	    	 description = "Plants to be hung on the wall.";
+	 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
+
 	         break;
 		 case 6:
 			 name = "Shelf Piece";
@@ -162,6 +176,8 @@ public class WallDecor_Building extends Building {
 			 drawHeight = 32*3;
 			 xDrawOffset = 24;
 			 yDrawOffset = 24;
+			 buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, hitbox.width, hitbox.height-3*2);
+
 	         break;
 		 case 18:
 	         name = "Notice Board";
@@ -173,6 +189,8 @@ public class WallDecor_Building extends Building {
 			 drawHeight = 32*3;
 			 xDrawOffset = 24;
 			 yDrawOffset = 24;
+			 buildHitbox = new Rectangle2D.Float(hitbox.x-3*1, hitbox.y-3*2, hitbox.width+3*1, hitbox.height-3*2);
+
 	         break;
 		 case 19:
 	         name = "Piping 1";
@@ -182,7 +200,9 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	 		 drawWidth = 32*3;
 			 drawHeight = 32*3;
-				canBePlaced = false;
+			canBePlaced = false;
+			buildHitbox = new Rectangle2D.Float(0, 0, 1, 1);
+
 	         break;
 		 case 20:
 	         name = "Piping 2";
@@ -193,6 +213,7 @@ public class WallDecor_Building extends Building {
 	 		 drawWidth = 32*3;
 			 drawHeight = 32*3;
 			canBePlaced = false;
+			buildHitbox = new Rectangle2D.Float(0, 0, 1, 1);
 	         break;
 		 case 21:
 	         name = "Piping 3";
@@ -203,6 +224,7 @@ public class WallDecor_Building extends Building {
 	 		 drawWidth = 32*3;
 			 drawHeight = 32*3;
 			canBePlaced = false;
+			buildHitbox = new Rectangle2D.Float(0, 0, 1, 1);
 	         break;
 		 case 22:
 	         name = "Painting 5";
@@ -212,8 +234,11 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	 		 drawWidth = 32*3;
 	 		 xDrawOffset = 12;
+	 		 yDrawOffset = -12;
 	 	   	 cost = 40;
 	      	 description = "Artwork to be hung on the wall.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*4, hitbox.width, hitbox.height-3*5);
+
 	         break;
 		 case 23:
 			 name = "Hanging Plant 3";
@@ -222,6 +247,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	         hitbox.height = 80;
 	         cost = 12;
+	 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
+
 	         break;
 		 case 24:
 			 name = "Hanging Plant 4";
@@ -231,12 +258,16 @@ public class WallDecor_Building extends Building {
 	         hitbox.height = 80;
 	         cost = 20;
 	    	 description = "Plants to be hung on the wall.";
+	 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
+
 	         break;
 		 case 25:
 			 name = "Toilet Paper";
 			 isSolid = false;
 	         animations[0][0][0] = importImage("/decor/bathroom props.png").getSubimage(208, 160, 16, 16);
 	         isBathroomBuilding = true;
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*5, hitbox.width-3*3, hitbox.height-3*8);
+
 	         break;
 		 case 26:
 			 name = "Wolf Head";
@@ -248,6 +279,8 @@ public class WallDecor_Building extends Building {
 			 drawHeight = 32*3;
 			 xDrawOffset = 24;
 			 yDrawOffset = 24;
+			 buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, hitbox.width, hitbox.height-3*2);
+
 	         break;
 		 case 27:
 			 name = "Ram Skull";
@@ -259,6 +292,8 @@ public class WallDecor_Building extends Building {
 			 drawHeight = 32*3;
 			 xDrawOffset = 24;
 			 yDrawOffset = 24;
+			 buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, hitbox.width, hitbox.height-3*2);
+
 	         break;
 		 case 28:
 	         name = "Painting 6";
@@ -266,6 +301,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	         cost = 30;
 	      	 description = "Artwork to be hung on the wall.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y, hitbox.width-3*4, hitbox.height-3*5);
+
 	         break;
 		 case 29:
 	         name = "Painting 7";
@@ -273,6 +310,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	         cost = 30;
 	      	 description = "Artwork to be hung on the wall.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y, hitbox.width-3*4, hitbox.height-3*4);
+
 	         break;
 		 case 30:
 	         name = "Painting 8";
@@ -280,6 +319,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	         cost = 30;
 	      	 description = "Artwork to be hung on the wall.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y, hitbox.width-3*4, hitbox.height-3*5);
+
 	         break;
 		 case 31:
 	         name = "Painting 9";
@@ -287,6 +328,8 @@ public class WallDecor_Building extends Building {
 	         isDecor = true;
 	         cost = 30;
 	      	 description = "Artwork to be hung on the wall.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y, hitbox.width-3*3, hitbox.height-3*2);
+
 	         break;
         }
 		

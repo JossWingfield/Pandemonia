@@ -1,6 +1,7 @@
 package entity.buildings;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import main.GamePanel;
@@ -25,6 +26,10 @@ public class Turntable extends Building {
         canBePlacedOnShelf = true;
 		isDecor = true;
 		importImages();
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, 48-3*2, 48-3*3);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, 48-3*2, 48-3*3);
 	}
 	public Building clone() {
 		Turntable building = new Turntable(gp, hitbox.x, hitbox.y);

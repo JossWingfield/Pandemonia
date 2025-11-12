@@ -27,6 +27,10 @@ public class SoulLantern extends Building{
 		importImages();
 		mustBePlacedOnWall = true;
 		canBePlaced = false;
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
 	}
 	public Building clone() {
 		SoulLantern building = new SoulLantern(gp, hitbox.x, hitbox.y);

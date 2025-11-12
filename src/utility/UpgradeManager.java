@@ -46,9 +46,9 @@ public class UpgradeManager {
         		RewardType.BASIC,
         		24, 24));
         
-        registerUpgrade(new Upgrade(gp, "Coloured Walls",
-        		"Coloured Walls are added /nto the catalogue.",
-        		importImage("/UI/levels/decor/ColoredWallUI.png"),
+        registerUpgrade(new Upgrade(gp, "Shelves",
+        		"Shelves are added /nto the catalogue!",
+        		importImage("/decor/wall shelf.png").getSubimage(48, 16, 16, 16),
         		1,
         		RewardType.COSMETIC));
         registerUpgrade(new Upgrade(gp, "Small Plants",
@@ -99,6 +99,12 @@ public class UpgradeManager {
         
         
         //PHASE 2
+        registerUpgrade(new Upgrade(gp, "Coloured Walls",
+        		"Coloured Walls are added /nto the catalogue.",
+        		importImage("/UI/levels/decor/ColoredWallUI.png"),
+        		2,
+        		RewardType.COSMETIC));
+        
         registerUpgrade(new Upgrade(gp, "Fridge Upgrade II",
         		"Increases Fridge Space /nto 15!)",
         		importImage("/decor/kitchen props.png").getSubimage(112, 128, 16, 48),

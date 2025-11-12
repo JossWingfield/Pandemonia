@@ -25,6 +25,10 @@ public class ToiletDoor extends Building {
 		isThirdLayer = true;
 		canBePlaced = false;
 		importImages();
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*4, hitbox.width-3*5, hitbox.height-3*6);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*4, hitbox.width-3*5, hitbox.height-3*6);
 	}
 	public Building clone() {
 		ToiletDoor building = new ToiletDoor(gp, hitbox.x, hitbox.y, preset);

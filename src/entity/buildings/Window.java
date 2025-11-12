@@ -24,6 +24,10 @@ public class Window extends Building {
 		importImages();
 		isDecor = true;
 		mustBePlacedOnWall = true;
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, hitbox.width-3*2, hitbox.height-3*4);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, hitbox.width-3*2, hitbox.height-3*4);
 	}
 	public Building clone() {
 		Window calendar = new Window(gp, hitbox.x, hitbox.y);

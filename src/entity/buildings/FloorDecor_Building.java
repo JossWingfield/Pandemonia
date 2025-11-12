@@ -34,6 +34,9 @@ public class FloorDecor_Building extends Building {
 		cost = 8;
 		importImages();
 	}
+	public void onPlaced() {
+		importImages();
+	}
 	public Building clone() {
 		FloorDecor_Building building = new FloorDecor_Building(gp, hitbox.x, hitbox.y, type);
 		return building;
@@ -44,6 +47,7 @@ public class FloorDecor_Building extends Building {
 	}
 	private void importImages() {
 		animations = new BufferedImage[1][1][1];
+		buildHitbox = hitbox;
 		
         switch(type) {
         case 0:
@@ -57,6 +61,7 @@ public class FloorDecor_Building extends Building {
             canBePlacedOnShelf = true;
             isDecor = true;
             cost = 10;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
         case 1:
             name = "Plant 2";
@@ -68,6 +73,7 @@ public class FloorDecor_Building extends Building {
             canBePlacedOnTable = true;
             isDecor = true;
             cost = 10;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
         case 2:
             name = "Plant 3";
@@ -79,6 +85,7 @@ public class FloorDecor_Building extends Building {
             canBePlacedOnTable = true;
             isDecor = true;
             cost = 10;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
         case 3:
             name = "Plant 4";
@@ -90,6 +97,7 @@ public class FloorDecor_Building extends Building {
             canBePlacedOnTable = true;
             isDecor = true;
             cost = 10;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
         case 4:
             name = "Table Piece"; //EDGE
@@ -266,6 +274,7 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 24;
         	isDecor = true;
     		canBePlacedOnTable = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*3);
         	break;
         case 18:
             name = "Small Cup";
@@ -275,6 +284,7 @@ public class FloorDecor_Building extends Building {
             isDecor = true;
             mustBePlacedOnTable = true;
             canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*8);
         	break;
         case 19:
         	cost = 16;
@@ -288,6 +298,7 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnFloor = true;
         	canBuildingBePlacedOn = true;
         	xDrawOffset = 24;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*1, hitbox.width-3*3, hitbox.height-3*3);
         	break;
         case 20:
             name = "Bowl 1";
@@ -297,6 +308,7 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
             canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
         	break;
         case 21:
             name = "Jug 1";
@@ -306,6 +318,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
             canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
+
         	break;
         case 22:
             name = "Teapot";
@@ -317,6 +331,7 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnTable = true;
         	canBePlacedOnShelf = true;
             canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
         	break;
         case 23:
             name = "Bottle 1";
@@ -328,6 +343,8 @@ public class FloorDecor_Building extends Building {
           	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
             canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
+
         	break;
         case 24:
             name = "Plate Stack 1";
@@ -339,6 +356,8 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
             canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+
         	break;
         case 25:
             name = "Small Plant 1";
@@ -351,6 +370,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 26:
             name = "Flowers 1";
@@ -365,6 +386,8 @@ public class FloorDecor_Building extends Building {
           	canBePlacedOnShelf = true;
           	yDrawOffset = 48;
           	cost = 12;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*8);
+
         	break;
         case 27:
             name = "Kitchen Sink 1";
@@ -388,6 +411,8 @@ public class FloorDecor_Building extends Building {
           	canBePlacedOnShelf = true;
         	yDrawOffset = 48;
         	cost = 12;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*8);
+
         	break;
         case 29:
             name = "Packages 1";
@@ -400,6 +425,8 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnFloor = true;
         	xDrawOffset = 24;
         	yDrawOffset = 24;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*4, hitbox.width, hitbox.height);
+
         	break;
         case 30:
             name = "Packages 2";
@@ -412,6 +439,8 @@ public class FloorDecor_Building extends Building {
          	mustBePlacedOnFloor = true;
          	xDrawOffset = 24;
         	yDrawOffset = 24;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*4, hitbox.width, hitbox.height);
+
         	break;
         case 31:
             name = "Packages 3";
@@ -424,6 +453,8 @@ public class FloorDecor_Building extends Building {
          	mustBePlacedOnFloor = true;
          	xDrawOffset = 24;
         	yDrawOffset = 24;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*4, hitbox.width, hitbox.height);
+
         	break;
         case 32:
             name = "Packages 4";
@@ -436,6 +467,8 @@ public class FloorDecor_Building extends Building {
          	mustBePlacedOnFloor = true;
          	xDrawOffset = 24;
         	yDrawOffset = 24;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*4, hitbox.width, hitbox.height);
+
         	break;
         case 33:
             name = "Wooden Ship";
@@ -447,6 +480,8 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
           	yDrawOffset = 48;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+
         	break;
         case 34:
             name = "Boxes 1";
@@ -460,6 +495,8 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 48;
         	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y, hitbox.width-3*6, hitbox.height-3*3);
+
         	break;
         case 35:
             name = "Boxes 2";
@@ -473,6 +510,8 @@ public class FloorDecor_Building extends Building {
            	yDrawOffset = 48;
            	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y, hitbox.width-3*6, hitbox.height-3*3);
+
         	break;
         case 36:
             name = "Boxes 3";
@@ -486,6 +525,8 @@ public class FloorDecor_Building extends Building {
            	yDrawOffset = 48;
            	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y, hitbox.width-3*6, hitbox.height-3*3);
+
         	break;
         case 37:
             name = "Boxes 4";
@@ -499,6 +540,8 @@ public class FloorDecor_Building extends Building {
            	yDrawOffset = 48;
            	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y, hitbox.width-3*6, hitbox.height-3*3);
+
         	break;
         case 38:
             name = "Small Parcel 1";
@@ -506,6 +549,8 @@ public class FloorDecor_Building extends Building {
         	isSolid = true;
         	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+
         	break;
         case 39:
             name = "Small Parcel 2";
@@ -517,6 +562,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnFloor = true;
         	yDrawOffset = 8;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+
         	break;
         case 40:
             name = "Small Carpet 2";
@@ -528,6 +575,8 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnFloor = true;
         	canBuildingBePlacedOn = true;
         	xDrawOffset = 24;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*1, hitbox.width-3*3, hitbox.height-3*3);
+
         	break;
         case 41:
             name = "Floor Barrel";
@@ -536,6 +585,8 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 24;
         	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*3);
+
         	break;
         case 42:
         	 name = "Beer Barrel 1";
@@ -545,6 +596,8 @@ public class FloorDecor_Building extends Building {
         	isSolid = true;
         	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*3);
+
         	break;
         case 43:
 	       	name = "Beer Barrel 2";
@@ -554,6 +607,8 @@ public class FloorDecor_Building extends Building {
 	       	isSolid = true;
 	       	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*3);
+
 	       	break;
         case 44:
 	       	name = "Timber";
@@ -561,6 +616,8 @@ public class FloorDecor_Building extends Building {
 	       	isSolid = true;
 	       	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+
 	       	break;
         case 45:
 	       	name = "Sandbags";
@@ -585,6 +642,8 @@ public class FloorDecor_Building extends Building {
             drawHeight = 96;
             isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
+
 	       	break;
         case 47:
 	       	name = "Bathroom Sink";
@@ -612,6 +671,8 @@ public class FloorDecor_Building extends Building {
           	canBePlacedOnShelf = true;
         	yDrawOffset = 48;
         	cost = 12;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*8);
+
         	break;
         case 49:
             name = "Flowers 4";
@@ -627,6 +688,8 @@ public class FloorDecor_Building extends Building {
           	canBePlacedOnShelf = true;
         	yDrawOffset = 48;
         	cost = 12;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*8);
+
         	break;
         case 50:
             name = "Towels";
@@ -637,6 +700,8 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
           	yDrawOffset = 32;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+
         	break;
         case 51:
             name = "Bathroom Wall 1";
@@ -721,6 +786,9 @@ public class FloorDecor_Building extends Building {
         	animations[0][0][0] = importImage("/decor/cabinet.png").getSubimage(16, 32, 16, 16);
         	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+
         	break;
         case 58:
         	name = "Large Carpet 1";
@@ -738,6 +806,8 @@ public class FloorDecor_Building extends Building {
         	canBuildingBePlacedOn = true;
         	xDrawOffset = 24;
         	yDrawOffset = 24;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
+
         	break;
         case 59:
         	name = "Large Shelf";
@@ -749,6 +819,8 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 24;
         	isDecor = true;
         	mustBePlacedOnWall = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+
         	break;
         case 60:
         	name = "Circle Table";
@@ -760,6 +832,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnFloor = true;
         	yDrawOffset = 12;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+
         	break;
         case 61:
         	name = "Sofa 1";
@@ -771,6 +845,8 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 24;
         	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*2);
+
         	break;
         case 62:
         	name = "Large Corner Shelf 1";
@@ -783,6 +859,8 @@ public class FloorDecor_Building extends Building {
         	mustBePlacedOnFloor = true;
         	xDrawOffset = 12;
         	yDrawOffset = 24;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width+3*8, hitbox.height-3*8);
+
         	break;
         case 63:
         	name = "Clothes Rail 1";
@@ -794,6 +872,7 @@ public class FloorDecor_Building extends Building {
         	yDrawOffset = 24;
         	isDecor = true;
         	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
         	break;
         case 64:
             name = "Book 1";
@@ -848,6 +927,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 71:
             name = "Small Plant 3";
@@ -860,6 +941,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 72:
             name = "Small Plant 4";
@@ -872,6 +955,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 73:
             name = "Small Plant 5";
@@ -884,6 +969,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 74:
             name = "Small Plant 6";
@@ -896,6 +983,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 75:
             name = "Small Plant 7";
@@ -908,6 +997,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 76:
             name = "Small Plant 8";
@@ -920,6 +1011,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 77:
             name = "Small Plant 9";
@@ -932,6 +1025,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 78:
             name = "Small Plant 10";
@@ -944,6 +1039,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 79:
             name = "Small Plant 11";
@@ -956,6 +1053,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 80:
             name = "Small Plant 12";
@@ -968,6 +1067,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 81:
             name = "Small Plant 13";
@@ -980,6 +1081,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 82:
             name = "Small Plant 14";
@@ -992,6 +1095,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 83:
             name = "Small Plant 15";
@@ -1004,6 +1109,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 84:
             name = "Small Plant 16";
@@ -1016,6 +1123,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 85:
             name = "Small Plant 17";
@@ -1028,6 +1137,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 86:
             name = "Small Plant 18";
@@ -1040,6 +1151,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 87:
             name = "Small Plant 19";
@@ -1052,6 +1165,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 88:
             name = "Small Plant 20";
@@ -1064,6 +1179,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 89:
             name = "Small Plant 21";
@@ -1076,6 +1193,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 90:
             name = "Small Plant 22";
@@ -1088,6 +1207,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 91:
             name = "Small Plant 23";
@@ -1100,6 +1221,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 92:
             name = "Small Plant 24";
@@ -1112,6 +1235,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 93:
             name = "Small Plant 25";
@@ -1124,6 +1249,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 94:
             name = "Small Plant 26";
@@ -1136,6 +1263,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 95:
             name = "Small Plant 27";
@@ -1148,6 +1277,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 96:
             name = "Small Plant 28";
@@ -1160,6 +1291,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 97:
             name = "Small Plant 29";
@@ -1172,6 +1305,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 98:
             name = "Small Plant 30";
@@ -1184,6 +1319,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 99:
             name = "Small Plant 31";
@@ -1196,6 +1333,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 100:
             name = "Small Plant 32";
@@ -1208,6 +1347,8 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnTable = true;
           	canBePlacedOnShelf = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+
         	break;
         case 101:
             name = "Plant 5";
@@ -1219,6 +1360,7 @@ public class FloorDecor_Building extends Building {
             canBePlacedOnTable = true;
             isDecor = true;
             cost = 10;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
         case 102:
             name = "Plant 6";
@@ -1230,6 +1372,7 @@ public class FloorDecor_Building extends Building {
             canBePlacedOnTable = true;
             isDecor = true;
             cost = 10;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
         case 103:
             name = "Plant 7";
@@ -1241,6 +1384,7 @@ public class FloorDecor_Building extends Building {
             canBePlacedOnTable = true;
             isDecor = true;
             cost = 10;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
         case 104:
             name = "Plant 8";
@@ -1252,6 +1396,7 @@ public class FloorDecor_Building extends Building {
             canBePlacedOnTable = true;
             isDecor = true;
             cost = 10;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
         }
 		

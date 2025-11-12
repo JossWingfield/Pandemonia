@@ -47,6 +47,10 @@ public class Door extends Building {
 			xDrawOffset += 24;
 			npcHitbox = new Rectangle2D.Float(hitbox.x - 16-24, hitbox.y+64-48, 48, 64);
 		}
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y, hitbox.width-3*7, hitbox.height-3*9);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y, hitbox.width-3*7, hitbox.height-3*9);
 	}
 	public Building clone() {
 		Door building = new Door(gp, hitbox.x, hitbox.y, facing, preset);

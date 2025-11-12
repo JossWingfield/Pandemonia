@@ -30,6 +30,10 @@ public class Cauldron extends Building {
 		yDrawOffset = 24;
 		mustBePlacedOnFloor = true;
 		canBePlaced = false;
+		buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*2, hitbox.width, hitbox.height-3);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*2, hitbox.width, hitbox.height-3);
 	}
 	public Building clone() {
 		Cauldron building = new Cauldron(gp, hitbox.x, hitbox.y);

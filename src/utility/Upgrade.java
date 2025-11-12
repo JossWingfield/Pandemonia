@@ -3,6 +3,7 @@ package utility;
 import java.awt.image.BufferedImage;
 
 import entity.buildings.FloorDecor_Building;
+import entity.buildings.Shelf;
 import entity.buildings.TipJar;
 import entity.buildings.Turntable;
 import entity.buildings.WallDecor_Building;
@@ -97,6 +98,9 @@ public class Upgrade {
 			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 29));
 			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 30));
 			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 31));
+			break;
+		case "Shelves":
+			gp.catalogue.addToInventory(new Shelf(gp, 0, 0));
 			break;
 		case "Fridge Upgrade I":
 			gp.progressM.fridgeUpgradeI = true;

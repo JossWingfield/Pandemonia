@@ -30,6 +30,8 @@ public class Shelf extends Building {
         isDecor = true;
         isFourthLayer = true;
         tileGrid = true;
+        description = "Can be placed on walls, other items can be placed on the shelf.";
+        setBuildHitbox();
 	}
 	public Shelf(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -46,8 +48,18 @@ public class Shelf extends Building {
         animations = new BufferedImage[1][1][1];
         animations[0][0][0] = importImage("/decor/wall shelf.png").getSubimage(48, 16, 16, 16);
         tileGrid = true;
+        description = "Can be placed on walls, other items can be placed on the shelf.";
+        setBuildHitbox();
 	}
-	
+	public void setBuildHitbox() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*2, hitbox.width-3*7, hitbox.height-3*7);
+	}
+    public void onPlaced() {
+        updateConnections();
+        updateNeighbor(hitbox.x - gp.tileSize, hitbox.y);
+        updateNeighbor(hitbox.x + gp.tileSize, hitbox.y);
+        setBuildHitbox();
+    }
 	public Building clone() {
 		Shelf building = new Shelf(gp, hitbox.x, hitbox.y, type);
 		return building;
@@ -105,12 +117,6 @@ public class Shelf extends Building {
 	         break;
 		}
 	}
-    public void onPlaced() {
-        super.onPlaced();
-        updateConnections();
-        updateNeighbor(hitbox.x - gp.tileSize, hitbox.y);
-        updateNeighbor(hitbox.x + gp.tileSize, hitbox.y);
-    }
     public void updateConnections() {
         boolean leftShelf = CollisionMethods.getBuildingAt(gp, (int)(hitbox.x - gp.tileSize), (int)(hitbox.y),"Shelf") instanceof Shelf;
         boolean rightShelf = CollisionMethods.getBuildingAt(gp, (int)(hitbox.x + gp.tileSize), (int)(hitbox.y),"Shelf") instanceof Shelf;

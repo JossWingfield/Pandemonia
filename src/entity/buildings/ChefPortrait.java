@@ -1,6 +1,7 @@
 package entity.buildings;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import main.GamePanel;
@@ -15,12 +16,14 @@ public class ChefPortrait extends Building{
 		blueprint = false;
 		drawWidth = 32*3;
 		drawHeight = 32*3;
-		yDrawOffset = 24;
-		xDrawOffset = 24;
 		importImages();
 		canBePlaced = false;
 		isDecor = true;
 		mustBePlacedOnWall = true;
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*3);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*3);
 	}
 	public Building clone() {
 		ChefPortrait building = new ChefPortrait(gp, hitbox.x, hitbox.y);

@@ -53,12 +53,14 @@ public class Building extends Entity {
 	protected String description = "No Description"; 
 	
 	public Rectangle2D.Float npcHitbox;
+	public Rectangle2D.Float buildHitbox;
 
 	public Building(GamePanel gp, float xPos, float yPos, float width, float height) {
 		super(gp, xPos, yPos, width, height);
 		this.gp = gp;
 		destructionImage = importImage("/UI/DestructionImage.png");
 		npcHitbox = hitbox;
+		buildHitbox = hitbox;
 	}
 	
 	public Building(GamePanel gp) {
@@ -71,6 +73,10 @@ public class Building extends Entity {
 	}
 	public String getDescription() {
 		return description;
+	}
+	public void drawBuildHitbox(Graphics2D g, float xDiff, float yDiff) {
+	    //FOR COLLISION TESTING
+		g.drawRect((int)(buildHitbox.x - xDiff), (int)(buildHitbox.y - yDiff), (int)buildHitbox.width, (int)buildHitbox.height);
 	}
 	public Building clone() {
         try {

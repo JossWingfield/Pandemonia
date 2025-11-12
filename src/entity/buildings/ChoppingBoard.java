@@ -2,6 +2,7 @@ package entity.buildings;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,10 @@ public class ChoppingBoard extends Building {
 		mustBePlacedOnTable = true;
 		//isSecondLayer = true;
 		//isThirdLayer = true;
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*7);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*7);
 	}
 	public Building clone() {
 		ChoppingBoard building = new ChoppingBoard(gp, hitbox.x, hitbox.y);

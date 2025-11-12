@@ -100,6 +100,7 @@ public class Customiser {
 		addToInventory(new Shelf(gp, 0, 0));
 		addToInventory(new Shelf(gp, 0, 0));
 		addToInventory(new TipJar(gp, 0, 0));
+		addToInventory(new HerbBasket(gp, 0, 0));
 		addToInventory(new Turntable(gp, 0, 0));
 		addToInventory(new WallDecor_Building(gp, 0, 0, 0));
 		addToInventory(new WallDecor_Building(gp, 0, 0, 1));

@@ -32,6 +32,10 @@ public class Bin extends Building {
 		isSolid = false;
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3, hitbox.y+3, hitbox.width-6, hitbox.height-9);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3, hitbox.y+3, hitbox.width-6, hitbox.height-9);
 	}
 	public Building clone() {
 		Bin building = new Bin(gp, hitbox.x, hitbox.y);

@@ -59,7 +59,10 @@ public class Stove extends Building {
 		leftLight.setIntensity(0.2f);
 		rightLight = new LightSource((int)(hitbox.x + 33*3 - xDrawOffset), (int)(hitbox.y + 36*3 - yDrawOffset), Color.RED, 10);
 		rightLight.setIntensity(0.2f);
-
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*6);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*6);
 	}
 	public Building clone() {
 		Stove building = new Stove(gp, hitbox.x, hitbox.y);

@@ -21,6 +21,10 @@ public class EscapeHole extends Building {
 		importImages();
 		canBePlaced = false;
 		npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48, 48, 80);
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*8);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*8);
 	}
 	public Building clone() {
 		EscapeHole building = new EscapeHole(gp, hitbox.x, hitbox.y);

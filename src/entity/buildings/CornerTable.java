@@ -30,6 +30,9 @@ public class CornerTable extends Building {
 		mustBePlacedOnFloor = true;
 		canBePlaced = false;
 	}
+	public void onPlaced() {
+		buildHitbox = hitbox;
+	}
 	public Building clone() {
 		CornerTable building = new CornerTable(gp, hitbox.x, hitbox.y, presetNum);
 		return building;

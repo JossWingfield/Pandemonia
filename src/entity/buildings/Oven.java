@@ -42,6 +42,9 @@ public class Oven extends Building {
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
 	}
+	public void onPlaced() {
+		buildHitbox = hitbox;
+	}
 	public Building clone() {
 		Oven building = new Oven(gp, hitbox.x, hitbox.y);
 		return building;

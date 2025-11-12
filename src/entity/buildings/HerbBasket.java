@@ -24,6 +24,10 @@ public class HerbBasket extends Building {
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;
 		importImages();
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*4, hitbox.width-3*5, hitbox.height-3*6);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*4, hitbox.width-3*5, hitbox.height-3*6);
 	}
 	public Building clone() {
 		HerbBasket building = new HerbBasket(gp, hitbox.x, hitbox.y);

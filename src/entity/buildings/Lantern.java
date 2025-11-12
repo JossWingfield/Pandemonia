@@ -35,6 +35,10 @@ public class Lantern extends Building{
 		blueprint = false;
 		importImages();
 		mustBePlacedOnWall = true;
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
 	}
 	public Building clone() {
 		Lantern building = new Lantern(gp, hitbox.x, hitbox.y);

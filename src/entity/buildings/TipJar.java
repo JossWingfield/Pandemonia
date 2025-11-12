@@ -1,6 +1,7 @@
 package entity.buildings;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import main.GamePanel;
@@ -25,6 +26,10 @@ public class TipJar extends Building {
         canBePlacedOnShelf = true;
 		isDecor = true;
 		importImages();
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
 	}
 	public Building clone() {
 		TipJar building = new TipJar(gp, hitbox.x, hitbox.y);

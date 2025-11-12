@@ -30,7 +30,10 @@ public class Trapdoor extends Building {
 		canBePlaced = false;
 		importImages();
 		npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48 - 48, 48, 80);
-
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3, hitbox.y+3, hitbox.width-6, hitbox.height-9);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3, hitbox.y+3, hitbox.width-6, hitbox.height-9);
 	}
 	public Building clone() {
 		Trapdoor building = new Trapdoor(gp, hitbox.x, hitbox.y, type);

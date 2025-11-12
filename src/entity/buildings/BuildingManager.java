@@ -1,5 +1,6 @@
 package entity.buildings;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -38,6 +39,12 @@ public class BuildingManager {
         for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
                 i.drawHitbox(g, xDiff, yDiff);
+            }
+        }
+        g.setColor(Color.YELLOW);
+        for(Building i: buildings) { //Loops through the items on the current map
+            if(i != null) {
+                i.drawBuildHitbox(g, xDiff, yDiff);
             }
         }
     }

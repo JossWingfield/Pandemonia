@@ -41,6 +41,10 @@ public class Torch extends Building{
 		mustBePlacedOnWall = true;
 		turnedOn = false;
 		currentAnimation = 0;
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*4, hitbox.width-3*6, hitbox.height-3*4);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*4, hitbox.width-3*6, hitbox.height-3*4);
 	}
 	public Building clone() {
 		Torch building = new Torch(gp, hitbox.x, hitbox.y);

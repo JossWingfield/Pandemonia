@@ -61,7 +61,7 @@ public class KeyboardInput implements KeyListener {
             	//gp.progressM.moveToNextPhase();
             }
             if(num == KeyEvent.VK_H) {
-            	gp.cutsceneM.ignisII();
+            	//gp.cutsceneM.ignisII();
             }
             if(num == KeyEvent.VK_Q) {
             	//gp.player.soulsServed = gp.player.nextLevelAmount;

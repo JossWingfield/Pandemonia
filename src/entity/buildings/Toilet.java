@@ -33,6 +33,18 @@ public class Toilet extends Building {
 		}
 		isBathroomBuilding = true;
 		mustBePlacedOnFloor = true;
+		if(facing == 0) {
+			buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*5, hitbox.width-3*4, hitbox.height-3*5);
+		} else {
+			buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*5, hitbox.width-3*4, hitbox.height-3*5);
+		}
+	}
+	public void onPlaced() {
+		if(facing == 0) {
+			buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*5, hitbox.width-3*4, hitbox.height-3*5);
+		} else {
+			buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*5, hitbox.width-3*4, hitbox.height-3*5);
+		}
 	}
 	public Building clone() {
 		Toilet building = new Toilet(gp, hitbox.x, hitbox.y, facing);

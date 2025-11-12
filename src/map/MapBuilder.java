@@ -91,7 +91,7 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new CursedDecor(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
-		for(int i = 0; i < 28; i++) {
+		for(int i = 0; i < 32; i++) {
 			buildings[totalBuildingCount] = new WallDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}

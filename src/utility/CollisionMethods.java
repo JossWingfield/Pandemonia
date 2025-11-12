@@ -461,7 +461,7 @@ public class CollisionMethods {
 	            }
 	            
 	            for (Building b : gp.buildingM.getBuildings()) {
-		            if (b != null && b.hitbox.intersects(buildHitbox)) {
+		            if (b != null && b.buildHitbox.intersects(buildHitbox)) {
 		            	if(b.getName().equals("Shelf")) {
 		            		return false;
 		            	}
@@ -503,7 +503,7 @@ public class CollisionMethods {
 	    // ---------------- Floor-only placement ----------------
 	    if (building.mustBePlacedOnFloor) {
 	        for (Building b : gp.buildingM.getBuildings()) {
-	            if (b != null && b.hitbox.intersects(buildHitbox)) {
+	            if (b != null && b.buildHitbox.intersects(buildHitbox)) {
 	                return false;
 	            }
 	        }
@@ -539,7 +539,7 @@ public class CollisionMethods {
 	                "Table 1".equals(b.getName()) ||
 	                "Table 2".equals(b.getName());
 
-	            if (b.hitbox.intersects(buildHitbox)) {
+	            if (b.buildHitbox.intersects(buildHitbox)) {
 	                if (isShelf) onShelf = true;
 	                else if (isTable) onTable = true;
 	                else return false; // overlaps something non-surface

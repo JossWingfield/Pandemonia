@@ -61,7 +61,11 @@ public class MenuSign extends Building {
         importImages();
     	isKitchenBuilding = true;
     	mustBePlacedOnTable = true;
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*4);
     }
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*4);
+	}
     public Building clone() {
 		MenuSign building = new MenuSign(gp, hitbox.x, hitbox.y);
 		return building;

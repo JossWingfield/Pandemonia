@@ -22,11 +22,16 @@ public class Calendar extends Building {
 		importImages();
 		mustBePlacedOnWall = true;
 		yDrawOffset = 24;
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3, hitbox.y+3, hitbox.width-3*4, hitbox.height-3*4);
+
 	}
 	public Building clone() {
 		Calendar calendar = new Calendar(gp, hitbox.x, hitbox.y);
 		return calendar;
     }
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3, hitbox.y+3, hitbox.width-3*4, hitbox.height-3*4);
+	}
 	public void printOutput() {
 		System.out.println("buildings[arrayCounter] = new Calendar(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
 		System.out.println("arrayCounter++;");	

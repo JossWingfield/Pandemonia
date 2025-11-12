@@ -46,12 +46,14 @@ public class Fridge extends Building {
 		npcHitbox = new Rectangle2D.Float(hitbox.x-8, hitbox.y+hitbox.height, hitbox.width+16, 10);
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*4, hitbox.width-3*3, hitbox.height-3*6);
     }
-
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*4, hitbox.width-3*3, hitbox.height-3*6);
+	}
     public Building clone() {
         return new Fridge(gp, hitbox.x, hitbox.y);
     }
-
     public void printOutput() {
         System.out.println("buildings[arrayCounter] = new Fridge(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
         System.out.println("arrayCounter++;");

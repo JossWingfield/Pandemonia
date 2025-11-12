@@ -1,6 +1,7 @@
 package entity.buildings;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import main.GamePanel;
@@ -21,6 +22,10 @@ public class Table2 extends Building {
 		//isBottomLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*2);
+	}
+	public void onPlaced() {
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*2);
 	}
 	public Building clone() {
 		Table2 building = new Table2(gp, hitbox.x, hitbox.y);
