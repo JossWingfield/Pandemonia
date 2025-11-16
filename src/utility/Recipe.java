@@ -17,6 +17,17 @@ public class Recipe {
     public boolean seasoned = false;
     public int phase;
     private String seasoningName = null;
+    
+    // --- STAR SYSTEM ---
+    private int timesCooked = 0;   // how many times player cooked this
+    private int starLevel = 0;     // 0-3
+    private boolean mastered = false;
+
+    // thresholds (can be tweaked globally or per recipe)
+    private int star1Threshold = 1;
+    private int star2Threshold = 50;
+    private int star3Threshold = 100;
+    private int masteryThreshold = 500;
 
     public Recipe(String name, List<String> requiredIngredients, List<String> cookingStates, List<String> secondaryCookingStates, boolean orderMatters, BufferedImage finishedImage, BufferedImage dirtyImage, int cost, int phase) {
         this.name = name;
@@ -73,16 +84,18 @@ public class Recipe {
         return name;
     }
     public int getCost(boolean isSpecial) {
-        if (isSpecial) {
-            return (int)Math.ceil(baseCost * 1.2); 
-        }
-        return baseCost;
+        float value = baseCost;
+
+        // apply player star bonus
+        value *= getMoneyMultiplier();
+
+        // apply dish special flag
+        if (isSpecial) value *= 1.2f;
+
+        return (int)Math.ceil(value);
     }
     public int getCost(boolean isSpecial, float multiplier) {
-        if (isSpecial) {
-            return (int)Math.ceil(baseCost * 1.2 * multiplier); 
-        }
-        return (int)(baseCost * multiplier);
+        return (int)(getCost(isSpecial) * multiplier);
     }
     public void setSeasoned(String seasoningName) {
         if (seasoningName == null || seasoningName.isEmpty()) return;
@@ -96,7 +109,41 @@ public class Recipe {
             secondaryCookingStates.add(""); // same here
         }
     }
-    @Override
+    public int getTimesCooked() { return timesCooked; }
+    public int getStarLevel() { return starLevel; }
+    public boolean isMastered() { return mastered; }
+
+    private void updateStarLevel() {
+        if (starLevel == 0 && timesCooked >= star1Threshold) {
+            starLevel = 1;
+        }
+        if (starLevel == 1 && timesCooked >= star2Threshold) {
+            starLevel = 2;
+        }
+        if (starLevel == 2 && timesCooked >= star3Threshold) {
+            starLevel = 3;
+        }
+        if (!mastered && starLevel == 3 && timesCooked >= masteryThreshold) {
+            mastered = true;
+            // unlock statue/decor reward here if needed
+        }
+    }
+    public float getMoneyMultiplier() {
+        switch (starLevel) {
+            case 1: return 1.3f;
+            case 2: return 1.8f;
+            case 3: return 2.5f;
+            default: return 1.0f;
+        }
+    }
+    public void incrementCookCount() {
+        timesCooked++;
+        updateStarLevel();
+    }
+    public void setCookCount(int count) { this.timesCooked = count; }
+    public void setStarLevel(int level) { this.starLevel = level; }
+    public void setMastered(boolean value) { this.mastered = value; }
+    //@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Recipe)) return false;
@@ -104,7 +151,7 @@ public class Recipe {
         return this.name.equals(r.name);
     }
 
-    @Override
+    //@Override
     public int hashCode() {
         return name.hashCode();
     }

@@ -18,11 +18,11 @@ public class MouseInput implements MouseListener, MouseMotionListener {
         this.gp = gp;
     }
 
-    @Override
+    
     public void mouseClicked(MouseEvent e) {
 
     }
-    @Override
+    
     public void mousePressed(MouseEvent e) { //If the mouse is pressed, the boolean is set to true
         int code = e.getButton();
         if(code == MouseEvent.BUTTON1) {
@@ -44,7 +44,7 @@ public class MouseInput implements MouseListener, MouseMotionListener {
             }
         }
     }
-    @Override
+    
     public void mouseReleased(MouseEvent e) { //If the mouse is released, the boolean is set to false
         int code = e.getButton();
         if(code == MouseEvent.BUTTON1) {
@@ -54,13 +54,13 @@ public class MouseInput implements MouseListener, MouseMotionListener {
             rightClickPressed = false;
         }
     }
-    @Override
+    
     public void mouseEntered(MouseEvent e) {
     }
-    @Override
+    
     public void mouseExited(MouseEvent e) {
     }
-    @Override
+    
     public void mouseDragged(MouseEvent e) { //Updates the mouse position co-ordinates, when the mouse is dragged
     	  // Get the raw mouse position
         int rawMouseX = e.getX();
@@ -80,7 +80,7 @@ public class MouseInput implements MouseListener, MouseMotionListener {
             mouseY = rawMouseY;
         }
     }
-    @Override
+    
     public void mouseMoved(MouseEvent e) { //Updates the mouse position co-ordinates, when the mouse is moved
     	  // Get the raw mouse position
         int rawMouseX = e.getX();

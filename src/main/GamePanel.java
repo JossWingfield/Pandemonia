@@ -368,7 +368,7 @@ public class GamePanel extends JPanel implements Runnable {
         return importedImage;
     }
     //THE GAME LOOP
-    @Override
+    //@Override
     public void run() {
         //Initialising variables
         long previousUpdateTime = System.nanoTime();
@@ -675,9 +675,9 @@ public class GamePanel extends JPanel implements Runnable {
 	    		ArrayList<Entity> listCopy = new ArrayList<Entity>(entityList);
 
 	            Collections.sort(listCopy, new Comparator<Entity>() {
-	                @Override
+	                //@Override
 	                public int compare(Entity e1, Entity e2) {
-	
+	 
 	                    int result = Integer.compare((int)e1.hitbox.y, (int)e2.hitbox.y);
 	                    return result;
 	                }
@@ -699,9 +699,33 @@ public class GamePanel extends JPanel implements Runnable {
 	            Building[] thirdLayer = buildingM.getThirdLayer();
 		        for(int i = 0; i < thirdLayer.length-1; i++) {
 		        	if(thirdLayer[i] != null) {
-		        		thirdLayer[i].draw(gColor, xDiff, yDiff);
+		        		entityList.add(thirdLayer[i]);
 		        	}
 		        }
+		        
+			       listCopy = new ArrayList<Entity>(entityList);
+
+		            Collections.sort(listCopy, new Comparator<Entity>() {
+		                //@Override
+		                public int compare(Entity e1, Entity e2) {
+		
+		                    int result = Integer.compare((int)e1.hitbox.y, (int)e2.hitbox.y);
+		                    return result;
+		                }
+		            });
+		            
+		            entityList = listCopy;
+		            //DRAW ENTITIES
+		            for(int i = 0; i < entityList.size(); i++) {
+		            	Entity a = entityList.get(i);
+		            	if(a != null) {
+			            	if(a.isOnScreen(xDiff, yDiff, frameWidth, frameHeight)) {
+			            		a.draw(gColor, xDiff, yDiff);
+			            	}
+		            	}
+		            }
+		            //EMPTY ENTITY LIST
+		            entityList.clear();
 		        
 		        List<Item> items = new ArrayList<Item>(itemM.getItems());
 		        for(Item item: items) {
@@ -717,12 +741,38 @@ public class GamePanel extends JPanel implements Runnable {
 		        	}
 		        }
 		        
+		        
 		        Building[] fifthLayer = buildingM.getFifthLayer();
 		        for(int i = 0; i < fifthLayer.length-1; i++) {
 		        	if(fifthLayer[i] != null) {
-		        		fifthLayer[i].draw(gColor, xDiff, yDiff);
+		        		entityList.add(fifthLayer[i]);
 		        	}
 		        }
+		        
+		        
+		       listCopy = new ArrayList<Entity>(entityList);
+
+	            Collections.sort(listCopy, new Comparator<Entity>() {
+	                //@Override
+	                public int compare(Entity e1, Entity e2) {
+	
+	                    int result = Integer.compare((int)e1.hitbox.y, (int)e2.hitbox.y);
+	                    return result;
+	                }
+	            });
+	            
+	            entityList = listCopy;
+	            //DRAW ENTITIES
+	            for(int i = 0; i < entityList.size(); i++) {
+	            	Entity a = entityList.get(i);
+	            	if(a != null) {
+		            	if(a.isOnScreen(xDiff, yDiff, frameWidth, frameHeight)) {
+		            		a.draw(gColor, xDiff, yDiff);
+		            	}
+	            	}
+	            }
+	            //EMPTY ENTITY LIST
+	            entityList.clear();
 		        
 	            mapM.drawForeground(gColor, xDiff, yDiff);
 	            

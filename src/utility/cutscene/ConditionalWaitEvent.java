@@ -15,7 +15,7 @@ public class ConditionalWaitEvent extends CutsceneEvent {
         this.condition = condition;
     }
 
-    @Override
+    
     public void update() {
         gp.player.setControlEnabled(true);
         if(isFinished()) {
@@ -24,7 +24,7 @@ public class ConditionalWaitEvent extends CutsceneEvent {
         }
     }
 
-    @Override
+    
     public boolean isFinished() {
         // finished when condition returns true
         return condition.getAsBoolean();

@@ -392,6 +392,7 @@ public class RecipeManager {
         for (int i = 0; i < currentOrders.size(); i++) {
             Recipe order = currentOrders.get(i);
             if (order.matches(plateIngredients)) {
+                order.incrementCookCount();
                 currentOrders.remove(i);
                 return true;
             }
@@ -415,10 +416,21 @@ public class RecipeManager {
     public static RecipeSaveData saveRecipeData() {
     	RecipeSaveData data = new RecipeSaveData();
     	List<String> names = new ArrayList<String>();
+
+        List<Integer> stars = new ArrayList<>();
+        List<Integer> cookCounts = new ArrayList<>();
+        List<Boolean> mastered = new ArrayList<>();
+        
     	for(Recipe r: unlockedRecipes) {
     		names.add(r.getName());
+    	    stars.add(r.getStarLevel());
+    	    cookCounts.add(r.getTimesCooked());
+    	    mastered.add(r.isMastered());
     	}
     	data.unlockedRecipesNames = names;
+        data.starLevels = stars;
+        data.cookCounts = cookCounts;
+        data.masteredFlags = mastered;
     	return data;
     }
     public static Recipe getRecipeByName(String name) {
@@ -429,13 +441,16 @@ public class RecipeManager {
         }
         return null; // not found
     }
-    public static void applySaveData(List<String> unlockedNames) {
+    public static void applySaveData(RecipeSaveData data) {
         unlockedRecipes.clear();
-        for (String name : unlockedNames) {
-            for (Recipe r : allRecipes) {
-                if (r.getName().equals(name)) {
-                    unlockRecipe(r); // instead of unlockedRecipes.add(r)
-                }
+
+        for (int i = 0; i < data.unlockedRecipesNames.size(); i++) {
+            Recipe r = getRecipeByName(data.unlockedRecipesNames.get(i));
+            if (r != null) {
+                unlockRecipe(r);
+                r.setCookCount(data.cookCounts.get(i));
+                r.setStarLevel(data.starLevels.get(i));
+                r.setMastered(data.masteredFlags.get(i));
             }
         }
     }

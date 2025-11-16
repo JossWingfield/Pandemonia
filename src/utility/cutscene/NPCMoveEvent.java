@@ -44,7 +44,6 @@ public class NPCMoveEvent extends CutsceneEvent {
         npc.walking = true;
     }
 
-    @Override
     public void update() {
         if (npc == null) {
             finished = true;

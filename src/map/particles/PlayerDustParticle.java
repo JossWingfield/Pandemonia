@@ -28,7 +28,7 @@ public class PlayerDustParticle extends Particle {
         );
     }
 
-    @Override
+    //@Override
     public void update() {
         x += vx;
         y += vy;
@@ -38,7 +38,7 @@ public class PlayerDustParticle extends Particle {
         if (alpha < 0) alpha = 0;
     }
 
-    @Override
+    //@Override
     public void draw(Graphics2D g, int xDiff, int yDiff) {
         int screenX = (int)(x - xDiff);
         int screenY = (int)(y - yDiff);
@@ -49,7 +49,7 @@ public class PlayerDustParticle extends Particle {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 
-	@Override
+	//@Override
 	public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
 		// TODO Auto-generated method stub
 		

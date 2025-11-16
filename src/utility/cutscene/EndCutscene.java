@@ -17,7 +17,7 @@ public class EndCutscene extends CutsceneEvent {
 	        this.npc = npc;
 	    }
 
-	    @Override
+	    
 	    public void update() {
 	        gp.camera.follow(gp.player);
 	        gp.camera.resetToDefaultZoom();

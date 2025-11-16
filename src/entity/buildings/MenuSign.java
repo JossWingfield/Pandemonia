@@ -87,7 +87,7 @@ public class MenuSign extends Building {
 		coinImage = importImage("/UI/Coin.png");
     }
 
-    @Override
+    //@Override
     public void draw(Graphics2D g2, int xDiff, int yDiff) {
 
         if(firstUpdate) {
@@ -222,8 +222,11 @@ public class MenuSign extends Building {
 	        } else {
 	            g2.setColor(hoverColor);
 	        }
-
-	        g2.drawString(recipe.getName(), textX, textY);
+	        String text = recipe.getName();
+	        for (int a = 0; a < recipe.getStarLevel(); a++) {
+	            text += " *";
+	        }
+	        g2.drawString(text, textX, textY);
 	    }
 
 	    // Specials list – use cached data too
@@ -254,7 +257,11 @@ public class MenuSign extends Building {
 	            g2.setColor(specialColour);
 	        }
 
-	        g2.drawString(recipe.getName(), textX, textY);
+	        String text = recipe.getName();
+	        for (int a = 0; a < recipe.getStarLevel(); a++) {
+	            text += " *";
+	        }
+	        g2.drawString(text, textX, textY);
 	    }
 
 	    // Draw chosen menu slots with cached data
@@ -342,47 +349,6 @@ public class MenuSign extends Building {
 	    g2.setFont(timeFont);
 	    g2.drawString(data.cost, x + 56, y + 174);
 	}
-    private void drawRecipe(Graphics2D g2, Recipe recipe, int x, int y) {
-		// BASE
-		g2.drawImage(recipeBorder, x, y, 32 * 3, 48 * 3, null);
-
-		// INGREDIENT IMAGES
-		List<String> ingredients = recipe.getIngredients();
-		List<String> cookingState = recipe.getCookingStates();
-		List<String> secondaryCookingState = recipe.getSecondaryCookingStates();
-		for (int j = 0; j < ingredients.size(); j++) {
-			String ingredientName = ingredients.get(j);
-			BufferedImage ingredientImage = gp.itemRegistry.getImageFromName(ingredientName);
-			Food ingredient = (Food)gp.itemRegistry.getItemFromName(ingredientName, 0);
-			if(ingredient.notRawItem) {
-				ingredientImage = gp.itemRegistry.getRawIngredientImage(ingredientName);
-			}
-			if (ingredientImage != null) {
-				// Draw each ingredient image 32px apart above the order box
-				g2.drawImage(ingredientImage, x + j * (10*3) + 4, y + 4, 10*3, 10*3, null);
-				g2.drawImage(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3, null);
-				g2.drawImage(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3, null);
-			}
-		}
-		
-		// NAME
-		g2.setColor(orderTextColour);
-		g2.setFont(nameFont);
-		int counter = 0;
-		for(String line: recipe.getName().split(" ")) {
-            g2.drawString(line, x + (48 - getTextWidth(line, g2) / 2.0f), y + 84 + counter);
-            counter += 15;
-        }
-		// PLATE IMAGE
-		g2.drawImage(recipe.finishedPlate, x + 24, y + 94, 48, 48, null);
-		
-		g2.drawImage(coinImage, x, y + 94 + 48, 48, 48, null);
-		
-		g2.setColor(Color.WHITE);
-		g2.setFont(timeFont);
-		g2.drawString(Integer.toString(recipe.getCost(gp.world.isRecipeSpecial(recipe))), x + 48+8, y + 94 + 48+32);
-
-    }
     private int getTextWidth(String text, Graphics2D g2) {
         return (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
     }

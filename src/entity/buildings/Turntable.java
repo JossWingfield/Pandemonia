@@ -26,10 +26,10 @@ public class Turntable extends Building {
         canBePlacedOnShelf = true;
 		isDecor = true;
 		importImages();
-		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, 48-3*2, 48-3*3);
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, 48-3*6, 48-3*8);
 	}
 	public void onPlaced() {
-		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, 48-3*2, 48-3*3);
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, 48-3*6, 48-3*8);
 	}
 	public Building clone() {
 		Turntable building = new Turntable(gp, hitbox.x, hitbox.y);

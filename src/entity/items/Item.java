@@ -35,7 +35,7 @@ public abstract class Item extends Entity {
         this.gp = gp;
     }
     
-    @Override
+    //@Override
     public Item clone() {
         try {
             return (Item) super.clone(); // Shallow copy

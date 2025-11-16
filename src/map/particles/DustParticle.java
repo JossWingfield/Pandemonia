@@ -41,7 +41,7 @@ public class DustParticle extends Particle {
         return Math.max(0, Math.min(255, v));
     }
 
-    @Override
+    //@Override
     public void update() {
         x += vx;
         y += vy;
@@ -55,7 +55,7 @@ public class DustParticle extends Particle {
         if (alpha < 0) alpha = 0;
     }
 
-    @Override
+    //@Override
     public void draw(Graphics2D g, int xDiff, int yDiff) {
         int screenX = (int)(x - xDiff);
         int screenY = (int)(y - yDiff);
@@ -66,7 +66,7 @@ public class DustParticle extends Particle {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 
-	@Override
+	//@Override
 	public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
 		// TODO Auto-generated method stub
 		

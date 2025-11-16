@@ -57,14 +57,14 @@ public class FireflyParticle extends Particle {
         }
     }
 
-    @Override
+    //@Override
     public void draw(Graphics2D g, int camX, int camY) {
         float alpha = Math.max(0f, lifetime / maxLifetime);
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(alpha * 255)));
         g.fillRect((int)(x - camX), (int)(y - camY), (int)size, (int)size);
     }
 
-	@Override
+	//@Override
 	public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
 		// TODO Auto-generated method stub
 		

@@ -60,7 +60,7 @@ public class EmberParticle extends Particle {
         return new Color(r, g, b);
     }
     
-    @Override
+    //@Override
     public void update() {
         x += vx;
         y += vy;
@@ -84,7 +84,7 @@ public class EmberParticle extends Particle {
    
     }
     
-    @Override
+    //@Override
     public void draw(Graphics2D g, int xDiff, int yDiff) {
         // Convert world position to screen position
         float alpha = Math.max(0f, lifetime / maxLifetime);

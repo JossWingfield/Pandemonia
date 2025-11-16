@@ -22,7 +22,7 @@ public class AddNPCEvent extends CutsceneEvent {
 	        npc.setAbleToUpdate(false);
 	    }
 
-	    @Override
+	    
 	    public void update() {
 	    	npc.hitbox.x = gp.mapM.currentRoom.getSpawnX();
 	    	npc.hitbox.y = gp.mapM.currentRoom.getSpawnY();

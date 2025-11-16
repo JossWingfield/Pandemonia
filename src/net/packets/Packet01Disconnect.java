@@ -17,17 +17,17 @@ public class Packet01Disconnect extends Packet{
         this.username = username;
     }
 
-    @Override
+    
     public void writeData(GameClient client) {
         client.sendData(getData());
     }
 
-    @Override
+    
     public void writeData(GameServer server) {
         server.sendDataToAllClients(getData());
     }
 
-    @Override
+    
     public byte[] getData() {
         return ("01" + this.username).getBytes();
     }

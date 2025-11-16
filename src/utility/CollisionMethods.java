@@ -419,10 +419,12 @@ public class CollisionMethods {
 	        int tileSize = gp.tileSize;
 	        int[][] grid = gp.mapM.currentRoom.mapGrid[1];
 
-	        int startX = (int)(x / tileSize) - 1;
-	        int startY = (int)(y / tileSize);
-	        int endX = (int)((x + width) / tileSize);
-	        int endY = (int)((y + height) / tileSize);
+	        int startX = (int)(building.hitbox.x / tileSize) - 1;
+	        int startY = (int)(building.hitbox.y / tileSize);
+	        int endX = (int)((building.hitbox.x + building.hitbox.width) / tileSize);
+	        int endY = (int)((building.hitbox.y + building.hitbox.height) / tileSize);
+	        
+	        //System.out.println(startX + "  " + startY + " " + endX + "  " + endY);
 
 	        // Clamp within bounds
 	        startX = Math.max(0, Math.min(startX, grid.length - 1));
@@ -472,6 +474,10 @@ public class CollisionMethods {
 	                return true;
 	            }
 	        }
+	        x = building.hitbox.x;
+	        y = building.hitbox.y;
+	        width = tileSize;
+	        height = tileSize;
 	    }
 		
 
@@ -504,7 +510,9 @@ public class CollisionMethods {
 	    if (building.mustBePlacedOnFloor) {
 	        for (Building b : gp.buildingM.getBuildings()) {
 	            if (b != null && b.buildHitbox.intersects(buildHitbox)) {
-	                return false;
+	            	if(!b.getName().equals("Shelf")) {
+	            		return false;
+	            	}
 	            }
 	        }
 
@@ -540,9 +548,22 @@ public class CollisionMethods {
 	                "Table 2".equals(b.getName());
 
 	            if (b.buildHitbox.intersects(buildHitbox)) {
-	                if (isShelf) onShelf = true;
-	                else if (isTable) onTable = true;
-	                else return false; // overlaps something non-surface
+	                if (isShelf) {
+	                    onShelf = true;
+	                } else if (isTable) {
+	                    onTable = true;
+	                } 
+	                // 🧠 Only block if it’s anot her solid building in the same layer context
+	                else {
+	                    // Allow overlap if the building is BELOW the shelf
+	                    // (i.e., something sitting on the floor or table underneath)
+	                    boolean bIsUnderShelf = b.mustBePlacedOnFloor || b.canBePlacedOnTable || b.mustBePlacedOnTable;
+	                    boolean placingOnShelf = building.canBePlacedOnShelf || (building.mustBePlacedOnTable && building.canBePlacedOnShelf);
+
+	                    if (!(placingOnShelf && bIsUnderShelf)) {
+	                        return false; // invalid overlap unless it’s below the shelf
+	                    }
+	                }
 	            }
 	        }
 
@@ -558,7 +579,6 @@ public class CollisionMethods {
 	        }
 
 	        // --- Optional shelf/table logic ---
-	        if (onShelf && onTable) return false; // can't sit on both
 	        if (building.canBePlacedOnShelf && onShelf) return true;
 	        if (building.canBePlacedOnTable && onTable) return true;
 

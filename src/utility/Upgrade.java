@@ -148,7 +148,7 @@ public class Upgrade {
 	    return name.equals(other.name);
 	}
 
-	@Override
+	
 	public int hashCode() {
 	    return name.hashCode();
 	}

@@ -16,7 +16,6 @@ public class CameraFollowEvent extends CutsceneEvent {
 	        this.zoomTarget = zoomTarget;
 	    }
 
-	    @Override
 	    public void update() {
 	        // Camera will automatically lerp to target position and zoom
 	        gp.camera.follow(target);

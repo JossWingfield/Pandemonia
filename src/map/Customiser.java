@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,25 +90,6 @@ public class Customiser {
 		tableTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 25, 34, 25);
 		
 		border = importImage("/UI/customise/WallBorder.png");
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new Shelf(gp, 0, 0));
-		addToInventory(new TipJar(gp, 0, 0));
-		addToInventory(new HerbBasket(gp, 0, 0));
-		addToInventory(new Turntable(gp, 0, 0));
-		addToInventory(new WallDecor_Building(gp, 0, 0, 0));
-		addToInventory(new WallDecor_Building(gp, 0, 0, 1));
-		addToInventory(new WallDecor_Building(gp, 0, 0, 2));
-		addToInventory(new WallDecor_Building(gp, 0, 0, 3));
-		addToInventory(new WallDecor_Building(gp, 0, 0, 4));
-		addToInventory(new FloorDecor_Building(gp, 0, 0, 0));
 	}
 	public void clear() {
 		decorBuildingInventory.clear();
@@ -777,7 +759,16 @@ public class Customiser {
 				}
 				int xPos = (int)((mouseX+xDiff)/size) * size;
 				int yPos = (int)((mouseY+yDiff)/size) * size;
-				boolean canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, xPos, yPos, selectedBuilding.hitbox.width, selectedBuilding.hitbox.height);
+			    if(prevX != xPos || prevY != yPos) {
+			    	selectedBuilding.hitbox.x = xPos;
+					selectedBuilding.hitbox.y = yPos;
+					selectedBuilding.onPlaced();
+			    }
+			    //TODO only works with hitbox for shelves
+				Rectangle2D.Float buildHitbox = selectedBuilding.buildHitbox;
+				//boolean canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, xPos, yPos, selectedBuilding.hitbox.width, selectedBuilding.hitbox.height);
+				boolean canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, buildHitbox.x, buildHitbox.y, buildHitbox.width, buildHitbox.height);
+
 				if(selectedBuilding.getName().equals("Shelf")) {
 			        selectedBuilding.hitbox.x = xPos;
 			        selectedBuilding.hitbox.y = yPos;
@@ -801,7 +792,43 @@ public class Customiser {
 				prevY = yPos;
 				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 					if(canPlace) {
-						gp.buildingM.addBuilding((Building)selectedBuilding.clone(), xPos, yPos);
+						
+						boolean onShelf = false;
+						boolean onTable = false;
+
+						for (Building b : gp.buildingM.getBuildings()) {
+						    if (b == null) continue;
+
+						    String name = b.getName();
+
+						    if ("Shelf".equals(name) && b.buildHitbox.intersects(buildHitbox)) {
+						        onShelf = true;
+						    } else if (
+						        ("Table Piece".equals(name) ||
+						        "Table Corner 1".equals(name) ||
+						        "Table 1".equals(name) ||
+						        "Table 2".equals(name)) &&
+						        b.buildHitbox.intersects(buildHitbox)
+						    ) {
+						        onTable = true;
+						    }
+						}
+
+					        // --- Clone and set layer flag ---
+					        Building placed = (Building) selectedBuilding.clone();
+					        if (onShelf && selectedBuilding.canBePlacedOnShelf) {
+					            placed.isFifthLayer = true;  // 🟣 Item on shelf
+					            //placed.isThirdLayer = false;
+					        } else if (onTable && selectedBuilding.canBePlacedOnTable) {
+					            placed.isThirdLayer = true;  // 🟢 Item on table
+					            //placed.isFifthLayer = false;
+					        } else {
+					            // Floor or other placement
+					            //placed.isThirdLayer = false;
+					            //placed.isFifthLayer = false;
+					        }
+						
+						gp.buildingM.addBuilding(placed, xPos, yPos);
 						
 						clickCounter = 20;
 						if(decorBuildingInventory.contains(selectedBuilding)) {

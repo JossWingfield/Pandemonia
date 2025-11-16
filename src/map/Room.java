@@ -336,9 +336,9 @@ public class Room {
 			door.setDoorNum(8);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
-			//Door door = new Door(gp, 456, 504+48, 1, 0);
-			//door.setDoorNum(2);
-			//buildings[arrayCounter] = door;
+			door = new Door(gp, 456, 504+48, 1, 0);
+			door.setDoorNum(2);
+			buildings[arrayCounter] = door;
 			arrayCounter++;
 			door = new Door(gp, 336, 344+48, 2, 0);
 			door.setDoorNum(4);

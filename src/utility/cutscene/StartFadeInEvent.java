@@ -12,7 +12,6 @@ public class StartFadeInEvent extends CutsceneEvent {
     	this.gp = gp;
     }
 
-    @Override
     public void update() {
     	if(!started) {
     		gp.world.startFadeIn();
