@@ -116,6 +116,27 @@ public class Door extends Building {
 			break;
 		}
 	}
+	public void update(double dt) {
+		super.update(dt);
+		
+		if (cooldown > 0) {
+		    cooldown -= dt;
+		    if (cooldown < 0) {
+		        cooldown = 0;
+		    }
+		}
+		
+		if(entryHitbox != null) {
+			if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
+				if(cooldown == 0) {
+					if(roomNum != 2) {
+						gp.mapM.changeRoom(roomNum, this);
+					}
+				}
+			}
+		}
+		
+	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			firstUpdate = false;
@@ -135,10 +156,6 @@ public class Door extends Building {
 			}
 			importImages();
 		}  
-		
-		if(cooldown > 0) {
-			cooldown--;
-		}
 		
         //g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
@@ -167,14 +184,6 @@ public class Door extends Building {
 		
 		//g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)gp.player.interactHitbox.x, (int)gp.player.interactHitbox.y, (int)gp.player.interactHitbox.width, (int)gp.player.interactHitbox.height);
-		
-		if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
-			if(cooldown == 0) {
-				if(roomNum != 2) {
-					gp.mapM.changeRoom(roomNum, this);
-				}
-			}
-		}
 		
 		if(drawLight && animations[0][0][2] != null) {
 			g2.drawImage(animations[0][0][2], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		

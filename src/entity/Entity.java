@@ -136,7 +136,7 @@ public abstract class Entity implements Cloneable {
     public int getDirection() {
     	return direction;
     }
-    public void update() {}
+    public void update(double dt) {}
     public boolean isInSimulationChunks(int simulationDistance) {
     	if(gp == null) {
     		return false;

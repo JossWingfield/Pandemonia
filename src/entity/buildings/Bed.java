@@ -46,38 +46,22 @@ public class Bed extends Building{
 		name = "Bed";
     	animations[0][0][0] = importImage("/decor/bed.png").getSubimage(160, 96, 32, 48);
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-		
-		if(cooldown > 0) {
-			cooldown--;
+	public void update(double dt) {
+		super.update(dt);
+		if (cooldown > 0) {
+		    cooldown -= dt;        // subtract elapsed time in seconds
+		    if (cooldown < 0) {
+		        cooldown = 0;      // clamp to zero
+		    }
 		}
-		 	
-		/*
-		if(normalImage != null) {
-			 if(litImage == null) {
-				 litImage = gp.lightingM.getLitImage(animations[0][0][0], normalImage, (int)hitbox.x, (int)hitbox.y);
-			 }
-		     g2.drawImage(litImage, (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		 } else {
-		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - gp.player.xDiff, (int) (hitbox.y - gp.player.yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		 }
-		 */
-	     g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-
-		
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
 	    	if(gp.world.getCurrentPhase() == DayPhase.AFTER_HOURS) {
 	    		if(gp.keyI.ePressed && cooldown == 0) {
 	    			gp.world.sleep();
-	    			cooldown = 60;
+	    			cooldown = 1;
 	    		}
 	    	}
 	    }
-	    
-		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
-		}
-	    
 	}
 	
 	

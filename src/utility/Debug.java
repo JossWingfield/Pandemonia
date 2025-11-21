@@ -20,7 +20,7 @@ public class Debug {
 		this.gp = gp;
 	}
 	
-	public void update() {
+	public void update(double dt) {
 		handleDebugInput();
 	}
 	public void draw(Graphics2D g2) {

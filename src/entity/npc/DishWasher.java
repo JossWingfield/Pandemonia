@@ -108,26 +108,26 @@ public class DishWasher extends Employee {
                 break;
         }
     }
-	protected void walkToSink() {
+	protected void walkToSink(double dt) {
 		if(sink == null) {
 			findSink();
 		}
 		
-		if(walkToBuildingWithInteractHitbox(sink, sink.npcHitbox)) {
+		if(walkToBuildingWithInteractHitbox(dt, sink, sink.npcHitbox)) {
 	    	walking = false;
 	    	washingPlates = true;
 	    	sink.addPlate(plate);
 	    	plate = null;
 		}
     }
-	public void update() {
+	public void update(double dt) {
 		updateInteractHitbox();
 		
 		if(table == null) {
 			findTable();
 		} else {
 			if(collectingPlates) {
-				if(walkToBuilding(table)) {
+				if(walkToBuilding(dt, table)) {
 					collectingPlates = false;
 					table.showDirtyPlate = false;
 					plate = table.plate;
@@ -139,11 +139,11 @@ public class DishWasher extends Employee {
 					washingPlates = false;
 					table = null;
 				} else {
-					sink.washPlates();
+					sink.washPlates(dt);
 					walking = false;
 				}
 			} else {
-				walkToSink();
+				walkToSink(dt);
 			}
 		}
 		

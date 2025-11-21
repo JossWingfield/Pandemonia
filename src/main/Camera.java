@@ -37,9 +37,11 @@ public class Camera {
     	targetY = gp.frameHeight/2;
     }
 
-    public void update() {
+    public void update(double dt) {
         // Smooth zoom
-        zoom += (targetZoom - zoom) * lerpSpeed;
+        //zoom += (targetZoom - zoom) * lerpSpeed;
+        double zoomLerp = 1.0 - Math.exp(-lerpSpeed * dt);
+    	zoom += (targetZoom - zoom) * zoomLerp;
         
         float epsilon = 0.01f; // threshold
         if (Math.abs(zoom - targetZoom) < epsilon) {
@@ -53,10 +55,15 @@ public class Camera {
         	}
 
             // lerp speed in world units, scaled by zoom so it feels consistent
-            float worldLerp = lerpSpeed;
+            //float worldLerp = lerpSpeed;
 
-            x += (targetX - x) * worldLerp;
-            y += (targetY - y) * worldLerp;
+            //x += (targetX - x) * worldLerp;
+            //y += (targetY - y) * worldLerp;
+        	
+        	double cameraLerp = 1.0 - Math.exp(-lerpSpeed * dt);
+
+            x += (targetX - x) * cameraLerp;
+            y += (targetY - y) * cameraLerp;
         } else {
             // optional: center on room if no target
             x = gp.mapM.currentRoom.mapWidth * gp.tileSize / 2f;

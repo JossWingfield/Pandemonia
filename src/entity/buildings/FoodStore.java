@@ -98,15 +98,10 @@ public class FoodStore extends Building {
 		}
 		yDrawOffset = 48;
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-		if(firstUpdate) {
-			firstUpdate = false;
-			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
-			importImages();
-		}
-				
+	public void update(double dt) {
+		super.update(dt);
+		
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			if(gp.keyI.ePressed) {
 				if (gp.player.currentItem == null) {
 				    String itemName = null;
@@ -138,14 +133,22 @@ public class FoodStore extends Building {
 				    }
 				}
 			}
+		}
+		
+	}
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+		if(firstUpdate) {
+			firstUpdate = false;
+			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
+			importImages();
+		}
+				
+		if(gp.player.interactHitbox.intersects(interactHitbox)) {
+			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		} else {
 		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		}
 		
-		//g2.setColor(Color.YELLOW);
-      	//g2.drawRect((int)interactHitbox.x, (int)interactHitbox.y, (int)interactHitbox.width, (int)interactHitbox.height);
-      		
-	    
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}

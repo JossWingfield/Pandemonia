@@ -11,8 +11,7 @@ public class Seasoning extends Food {
 		foodLayer = 5;
 	}
 	
-	public void update() {
-		
+	public void update(double dt) {
             // Check for nearby table or plate
             var table = gp.buildingM.findTable(
                 gp.player.interactHitbox.x, 
@@ -27,7 +26,7 @@ public class Seasoning extends Food {
                     miniGameStarted = true;
                     gp.minigameM.startSeasoningMiniGame(plate, this);
                     gp.player.currentItem = null;
-                    gp.player.clickCounter = 8;
+                    gp.player.clickCounter = 0.1;
                 }
             }
         }

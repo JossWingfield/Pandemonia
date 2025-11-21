@@ -28,7 +28,7 @@ public class Fridge extends Building {
 
     private Rectangle2D.Float fridgeHitbox;
     private boolean firstUpdate = true;
-    private int clickCooldown = 0;
+    private double clickCooldown = 0;
     private boolean uiOpen = false;
     private BufferedImage ui1, ui2, ui3;
     public List<Food> contents = new ArrayList<>();
@@ -92,6 +92,15 @@ public class Fridge extends Building {
     public List<Food> getContents() {
         return contents;
     }
+    public void update(double dt) {
+    	super.update(dt);
+    	if (clickCooldown > 0) {
+    		clickCooldown -= dt;        // subtract elapsed time in seconds
+		    if (clickCooldown < 0) {
+		    	clickCooldown = 0;      // clamp to zero
+		    }
+		}
+    }
     public void draw(Graphics2D g2, int xDiff, int yDiff) {
         if(firstUpdate) {
             firstUpdate = false;
@@ -119,7 +128,7 @@ public class Fridge extends Building {
                     if (contents.size() < MAX_CAPACITY) {
                         contents.add((Food) f.clone());
                         gp.player.currentItem = null;
-                        clickCooldown = 20; 
+                        clickCooldown = 0.333; 
                         if(gp.multiplayer) {
 			    			Packet17AddItemToFridge packet = new Packet17AddItemToFridge(gp.player.getUsername(), getArrayCounter(), f.getName(), f.getState());
 			    			packet.writeData(gp.socketClient); 
@@ -128,19 +137,18 @@ public class Fridge extends Building {
 			    		}
                         uiOpen = false; // keep fridge closed
                     } else {
-                        clickCooldown = 10;
+                    	clickCooldown = 0.1; 
                     }
                 } else {
                     // Otherwise toggle fridge UI
                     uiOpen = !uiOpen;
-                    clickCooldown = 10;
+                   	clickCooldown = 0.1; 
                 }
             }
         } else {
             uiOpen = false;
         }
 
-        if(clickCooldown > 0) clickCooldown--;
 
         if(destructionUIOpen) {
             g2.drawImage(destructionImage, 
@@ -196,7 +204,7 @@ public class Fridge extends Building {
                             // TAKE OUT ITEM
                             Food food = contents.remove(i);
                             gp.player.currentItem = (Food) gp.itemRegistry.getItemFromName(food.getName(), food.getState());
-                            clickCooldown = 8;
+                            clickCooldown = 0.1;
                             uiOpen = false;
                         	gp.player.resetAnimation(4);
 
@@ -218,7 +226,7 @@ public class Fridge extends Building {
                                 if (contents.size() < MAX_CAPACITY) {
                                     contents.add(f);
                                     gp.player.currentItem = null;
-                                    clickCooldown = 8; 
+                                    clickCooldown = 0.1;
                                     uiOpen = false;
                                     if(gp.multiplayer) {
     					    			Packet17AddItemToFridge packet = new Packet17AddItemToFridge(gp.player.getUsername(), getArrayCounter(), f.getName(), f.getState());
@@ -227,7 +235,7 @@ public class Fridge extends Building {
     					    			packet2.writeData(gp.socketClient); 
     					    		}
                                 } else {
-                                	clickCooldown = 8;
+                                    clickCooldown = 0.1;
                                 }
                             }
                         }

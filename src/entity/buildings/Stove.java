@@ -87,7 +87,8 @@ public class Stove extends Building {
 	public void stopFlame() {
 		drawCooking = false;
 	}
-	public void update() {
+	public void update(double dt) {
+		super.update(dt);
 		if(gp.world.isPowerOn()) {
 			if (leftSlot instanceof SmallPan pan) {
 			    pan.updateCooking();

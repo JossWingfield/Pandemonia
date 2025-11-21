@@ -12,7 +12,7 @@ public class StartFadeInEvent extends CutsceneEvent {
     	this.gp = gp;
     }
 
-    public void update() {
+    public void update(double dt) {
     	if(!started) {
     		gp.world.startFadeIn();
     		started = true;

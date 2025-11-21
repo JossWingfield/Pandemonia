@@ -41,7 +41,6 @@ public class StoryCharacter extends NPC {
 		
 		importImages();
 	}
-	
 	private void importImages() {
 		animations = new BufferedImage[5][10][10];
 		animations[0][0][0] = importImage("/npcs/mannequin.png").getSubimage(16, 0, 16, 32);
@@ -101,14 +100,14 @@ public class StoryCharacter extends NPC {
 		}
 		ghostLight = null;
 	}
-	protected void leave() {
-		super.leave();
+	protected void leave(double dt) {
+		super.leave(dt);
 	}
-	public void update() {
+	public void update(double dt) {
 		talkHitbox.x = hitbox.x - 16;
 	    talkHitbox.y = hitbox.y - 16;
 	    if(npcToFollow != null) {
-			followNPC(npcToFollow);
+			followNPC(dt, npcToFollow);
 		}
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {

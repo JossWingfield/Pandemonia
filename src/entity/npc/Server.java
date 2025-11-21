@@ -54,10 +54,10 @@ public class Server extends Employee {
 			walking = true;
 		}
     }
-	protected void walkToBase() {
+	protected void walkToBase(double dt) {
 		int goalCol = (int)(9);
 	    int goalRow = (int)(9);  
-	    searchPath(goalCol, goalRow);
+	    searchPath(dt, goalCol, goalRow);
 	    
 	    if(startHitbox.intersects(hitbox)) {
 	    	walking = false;
@@ -65,13 +65,13 @@ public class Server extends Employee {
 	    	customer = null;
 	    }
     }
-	public void update() {
+	public void update(double dt) {
 		
 		if(customer == null) {
 			findCustomer();
 		} else {
 			if(serving && !takingOrder) {
-				if(walkToNPC(customer)) {
+				if(walkToNPC(dt, customer)) {
 					takingOrder = true;
 					walking = false;
 				}
@@ -81,10 +81,10 @@ public class Server extends Employee {
 					walking = true;
 					serving = false;
 				} else {
-					customer.takeOrder();
+					customer.takeOrder(dt);
 				}
 			} else {
-				walkToBase();
+				walkToBase(dt);
 			}
 		}
 		

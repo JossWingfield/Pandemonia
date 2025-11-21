@@ -238,7 +238,6 @@ public class WallDecor_Building extends Building {
 	 	   	 cost = 40;
 	      	 description = "Artwork to be hung on the wall.";
 	    	 buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*4, hitbox.width, hitbox.height-3*5);
-
 	         break;
 		 case 23:
 			 name = "Hanging Plant 3";
@@ -248,7 +247,6 @@ public class WallDecor_Building extends Building {
 	         hitbox.height = 80;
 	         cost = 12;
 	 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
-
 	         break;
 		 case 24:
 			 name = "Hanging Plant 4";

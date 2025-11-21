@@ -10,7 +10,8 @@ public class HerbBasket extends Building {
 	
 	private Rectangle2D.Float interactHitbox;
 	private boolean firstUpdate = true;
-	public int foodType, clickCooldown;
+	public int foodType;
+	public double clickCooldown;
 	private boolean openUI;
 	private BufferedImage itemBorder, itemBorder2;
 	
@@ -49,15 +50,20 @@ public class HerbBasket extends Building {
 
 		yDrawOffset = 48;
 	}
+	public void update(double dt) {
+		super.update(dt);
+		if (clickCooldown > 0) {
+	    	clickCooldown -= dt;        // subtract elapsed time in seconds
+			if (clickCooldown < 0) {
+				clickCooldown = 0;      // clamp to zero
+			}
+		}
+	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
 			importImages();
-		}
-		
-		if(clickCooldown > 0) {
-			clickCooldown--;
 		}
 				
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
@@ -65,7 +71,7 @@ public class HerbBasket extends Building {
 			if(gp.keyI.ePressed && clickCooldown == 0) {
 				if(gp.player.currentItem == null) {
 					openUI = !openUI;
-					clickCooldown = 6;
+					clickCooldown = 0.06;
 				}
 			}
 		} else {

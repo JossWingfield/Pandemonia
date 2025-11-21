@@ -20,8 +20,8 @@ public class MiniGameManager {
         miniGameActive = true;
     }
 
-    public void update() {
-        seasoningMiniGame.update();
+    public void update(double dt) {
+        seasoningMiniGame.update(dt);
         // other UI updates...
     }
 

@@ -44,7 +44,7 @@ public class ParticleSystem {
         this.dustActive = active;
     }
     
-    public void update() {
+    public void update(double dt) {
         Iterator<Particle> it = particles.iterator();
         while(it.hasNext()) {
             Particle p = it.next();

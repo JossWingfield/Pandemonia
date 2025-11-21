@@ -51,7 +51,7 @@ public abstract class Item extends Entity {
         hitbox = new Rectangle2D.Float(xPos, yPos, width, height);
     }
 
-    public void update() {}
+    public void update(double dt) {}
 
     public void draw(Graphics2D g, int xDiff, int yDiff) {
         g.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);

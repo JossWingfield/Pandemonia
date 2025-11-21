@@ -54,7 +54,7 @@ public class ItemManager {
     	return items;
     }
 
-    public void update() {
+    public void update(double dt) {
 
     }
 

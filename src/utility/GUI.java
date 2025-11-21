@@ -64,7 +64,7 @@ public class GUI {
 	
 	//COUNTERS
 	private int timeAnimationCounter, timeAnimationSpeed, currentTimeAnimation;
-	private int clickCooldown = 0;
+	private double clickCooldown = 0;
 	private int titleAnimationCounter, titleAnimationSpeed, currentTitleAnimation, titleAnimationSpeedFactor;
 	private int titlePageNum = -1;
 	private int computerAnimationCounter, computerAnimationSpeed;
@@ -307,7 +307,7 @@ public class GUI {
 				if(gp.mouseI.leftClickPressed) {
 					if(clickCooldown == 0) {
 						gp.currentState = gp.startGameSettingsState;
-						clickCooldown = 60;
+						clickCooldown = 0.5;
 						currentTitleAnimation = 1;
 						titleAnimationCounter = 0;
 						titleAnimationSpeed = 0;
@@ -331,7 +331,7 @@ public class GUI {
 					if(clickCooldown == 0) {
 						//ENTER SETTINGS
 						//gp.currentState = gp.settingsState;
-						clickCooldown = 20;
+						clickCooldown = 0.33;
 					}
 				}
 				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
@@ -413,7 +413,7 @@ public class GUI {
 					hostSelected = true;
 					usernameActive = true;
 					gp.currentState = gp.writeUsernameState;
-					clickCooldown = 10;
+					clickCooldown = 0.16;
 				}
 			}
 			g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
@@ -436,7 +436,7 @@ public class GUI {
 					if(clickCooldown == 0) {
 					    gp.currentState = gp.lanJoinMenuState;
 					    gp.startDiscovery();
-						clickCooldown = 10;
+						clickCooldown = 0.16;
 					}
 				}
 				g2.fillRect(x, y+ 14, getTextWidth(text, g2), 6);
@@ -458,7 +458,7 @@ public class GUI {
 					//QUIT GAME
 					if(clickCooldown == 0) {
 						gp.currentState = gp.startGameSettingsState;
-						clickCooldown = 20;
+						clickCooldown = 0.33;
 						currentTitleAnimation = 2;
 						titleAnimationCounter = 0;
 						titleAnimationSpeed = 0;
@@ -525,7 +525,7 @@ public class GUI {
 	                        gp.currentState = gp.writeUsernameState;
 	                        usernameActive = true;
 	                        joinSelected = true;
-	                        clickCooldown = 15;
+	                        clickCooldown = 0.25;
 	                    }
 	                    g2.fillRect(x, y+14, getTextWidth(text, g2), 6);
 	                }
@@ -546,7 +546,7 @@ public class GUI {
 	            g2.setColor(titleColour2);
 	            if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	                gp.currentState = gp.multiplayerSettingsState;
-	                clickCooldown = 20;
+	                clickCooldown = 0.33;
 	                currentTitleAnimation = 2;
 	                titleAnimationCounter = 0;
 	                titleAnimationSpeed = 0;
@@ -599,7 +599,7 @@ public class GUI {
 				g2.setColor(titleColour2);
 				if(gp.mouseI.leftClickPressed) {
 					if(clickCooldown == 0) {
-						clickCooldown = 20;
+						clickCooldown = 0.33;
 						currentTitleAnimation = 1;
 						titleAnimationCounter = 0;
 						titleAnimationSpeed = 0;
@@ -625,7 +625,7 @@ public class GUI {
 					if(gp.mouseI.leftClickPressed) {
 						//ENTER MULTIPLAYER
 						gp.currentState = gp.multiplayerSettingsState;
-						clickCooldown = 20;
+						clickCooldown = 0.33;
 						currentTitleAnimation = 1;
 						titleAnimationCounter = 0;
 						titleAnimationSpeed = 0;
@@ -649,7 +649,7 @@ public class GUI {
 						//QUIT GAME
 						if(clickCooldown == 0) {
 							gp.currentState = gp.titleState;
-							clickCooldown = 20;
+							clickCooldown = 0.33;
 							currentTitleAnimation = 2;
 							titleAnimationCounter = 0;
 							titleAnimationSpeed = 0;
@@ -731,7 +731,7 @@ public class GUI {
 					//QUIT GAME
 					if(clickCooldown == 0) {
 						gp.currentState = gp.startGameSettingsState;
-						clickCooldown = 20;
+						clickCooldown = 0.33;
 						currentTitleAnimation = 2;
 						titleAnimationCounter = 0;
 						titleAnimationSpeed = 0;
@@ -758,7 +758,7 @@ public class GUI {
 					g2.setColor(titleColour2);
 					if(gp.mouseI.leftClickPressed) {
 						if(clickCooldown == 0) {
-							clickCooldown = 20;
+							clickCooldown = 0.33;
 							gp.saveM.clearSaveSlot(destroySaveNum);
 							destroySaveNum = 0;
 							doDestroySave = false;
@@ -778,7 +778,7 @@ public class GUI {
 					g2.setColor(titleColour2);
 					if(gp.mouseI.leftClickPressed) {
 						if(clickCooldown == 0) {
-							clickCooldown = 20;
+							clickCooldown = 0.33;
 							destroySaveNum = 0;
 							doDestroySave = false;
 						}
@@ -831,7 +831,7 @@ public class GUI {
 			if(isHovering(x + 130*3, y+84, 16*3, 18*3)) {
 				if(gp.mouseI.leftClickPressed) {
 					if(clickCooldown == 0) {
-						clickCooldown = 20;
+						clickCooldown = 0.33;
 						doDestroySave = true;
 						destroySaveNum = saveSlot;
 					}
@@ -919,7 +919,7 @@ public class GUI {
 	        if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	        	drawLoadingScreen = true;
 	        	startLoading = true; 
-	            clickCooldown = 20;
+	            clickCooldown = 0.33;
 	        }
 	        g2.fillRect(x, y+14, getTextWidth(text, g2), 6);
 	    }
@@ -937,7 +937,7 @@ public class GUI {
 				//QUIT GAME
 				if(clickCooldown == 0) {
 					gp.currentState = gp.multiplayerSettingsState;
-					clickCooldown = 20;
+					clickCooldown = 0.33;
 					currentTitleAnimation = 2;
 					titleAnimationCounter = 0;
 					titleAnimationSpeed = 0;
@@ -1106,7 +1106,7 @@ public class GUI {
 		    g2.drawString(data.cost, x + 36, y + 174);
 
 		    // PATIENCE
-		    drawPatienceBar(g2, x, y + 208, data.customer.getPatienceCounter(), data.customer.getMaxPatienceTime());
+		    drawPatienceBar(g2, x, y + 208, (int)data.customer.getPatienceCounter(), (int)data.customer.getMaxPatienceTime());
 
 		    i++;
 		}
@@ -1326,7 +1326,7 @@ public class GUI {
 					//SETTINGS
 					gp.currentState = gp.settingsState;
 					settingsState = 0;
-					clickCooldown = 20;
+					clickCooldown = 0.33;
 				}
 			}
 		}else {
@@ -1383,7 +1383,7 @@ public class GUI {
             g2.setColor(titleColour2);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
                 settingsState = generalState;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
     		g2.drawImage(underline, x-60, y-16, 80*3, 16*3, null);
         }
@@ -1396,7 +1396,7 @@ public class GUI {
             g2.setColor(titleColour2);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
                 settingsState = videoState;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
     		g2.drawImage(underline, x-60, y-16, 80*3, 16*3, null);
         }
@@ -1409,7 +1409,7 @@ public class GUI {
             g2.setColor(titleColour2);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
                 settingsState = audioState;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
     		g2.drawImage(underline, x-60, y-16, 80*3, 16*3, null);
         }
@@ -1423,7 +1423,7 @@ public class GUI {
 	            g2.setColor(titleColour2);
 	            if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	                settingsState = multiplayerState;
-	                clickCooldown = 20;
+	                clickCooldown = 0.33;
 	            }
 	    		g2.drawImage(underline, x-60, y-16, 80*3, 16*3, null);
 	        }
@@ -1438,7 +1438,7 @@ public class GUI {
             g2.setColor(titleColour2);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
                 gp.currentState = gp.pauseState;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
     		g2.drawImage(underline, 512-60, y-16, 80*3, 16*3, null);
         }
@@ -1470,7 +1470,7 @@ public class GUI {
             g2.setColor(titleColour2);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
                 settingsState = baseSettings;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
     		g2.drawImage(underline, 512-60, y-16, 80*3, 16*3, null);
         }
@@ -1509,7 +1509,7 @@ public class GUI {
             	} else {
             		gp.stopFullScreen();
             	}
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
         }
 		y += 20;
@@ -1528,7 +1528,7 @@ public class GUI {
 			drawCheckBoxHover(g2, x+boxOffset, y, 9*3, 9*3);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
             	Settings.fancyLighting = !Settings.fancyLighting;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
         }
 		y += 20;
@@ -1547,7 +1547,7 @@ public class GUI {
 			drawCheckBoxHover(g2, x+boxOffset, y, 9*3, 9*3);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
             	Settings.bloomEnabled = !Settings.bloomEnabled;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
         }
 		y += 20;
@@ -1566,7 +1566,7 @@ public class GUI {
 			drawCheckBoxHover(g2, x+boxOffset, y, 9*3, 9*3);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
             	Settings.lightOcclusionEnabled = !Settings.lightOcclusionEnabled;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
         }
 		y += 20;
@@ -1579,7 +1579,7 @@ public class GUI {
             g2.setColor(titleColour2);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
                 settingsState = baseSettings;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
     		g2.drawImage(underline, 512-60, y-16, 80*3, 16*3, null);
         }
@@ -1610,7 +1610,7 @@ public class GUI {
             g2.setColor(titleColour2);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
                 settingsState = baseSettings;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
     		g2.drawImage(underline, 512-60, y-16, 80*3, 16*3, null);
         }
@@ -1645,7 +1645,7 @@ public class GUI {
 			drawCheckBoxHover(g2, x+boxOffset, y, 9*3, 9*3);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
             	Settings.showUsernames = !Settings.showUsernames;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
         }
 		y += 20;
@@ -1658,7 +1658,7 @@ public class GUI {
             g2.setColor(titleColour2);
             if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
                 settingsState = baseSettings;
-                clickCooldown = 20;
+                clickCooldown = 0.33;
             }
     		g2.drawImage(underline, 512-60, y-16, 80*3, 16*3, null);
         }
@@ -1680,10 +1680,6 @@ public class GUI {
 		}
 		g2.drawImage(computerAnimations[computerAnimationCounter], 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 		
-		if(clickCooldown > 0) {
-			clickCooldown--;
-		}
-		
 		if(computerAnimationCounter >= 9) {
 			if(!gp.catalogue.checkingOut) {
 				g2.drawImage(shoppingUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
@@ -1692,21 +1688,21 @@ public class GUI {
 				g2.drawImage(leftArrow, (int)(81*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5), null);
 				if(isHovering((int)(81*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5))) {
 					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
-						clickCooldown = 30;
+						clickCooldown = 0.5;
 						gp.catalogue.leftPage();
 					}
 				}
 				g2.drawImage(rightArrow, (int)((81+11)*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5), null);
 				if(isHovering((int)((81+11)*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5))) {
 					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
-						clickCooldown = 30;
+						clickCooldown = 0.5;
 						gp.catalogue.rightPage();
 					}
 				}
 				
 				if(isHovering((int)(170*4.5), (int)(96*4.5), (int)(16*4.5), (int)(16*4.5))) {
 					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
-						clickCooldown = 30;
+						clickCooldown = 0.5;
 						gp.catalogue.checkingOut = true;
 						gp.catalogue.layer = 0;
 					}
@@ -1718,7 +1714,7 @@ public class GUI {
 				//CHECKOUT
 				if(isHovering((int)(146*4.5), (int)(96*4.5), (int)(42*4.5), (int)(16*4.5))) {
 					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
-						clickCooldown = 30;
+						clickCooldown = 0.5;
 						gp.catalogue.tryPay();
 					}
 				}
@@ -1764,7 +1760,7 @@ public class GUI {
 		if(levelUp) {
 			if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 				levelUp = false;
-				clickCooldown = 20;
+				clickCooldown = 0.33;
 				gp.player.level++;
 				gp.progressM.handleLevelUp(gp.player.level);
 			}
@@ -1914,7 +1910,7 @@ public class GUI {
 	    if(isHovering(x, y, 130*3, 48*3)) {
 	    	if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	    		UpgradeManager.unlockUpgrade(upgradeChoices[0]);
-	    		clickCooldown = 20;
+	    		clickCooldown = 0.33;
 	    		gp.currentState = gp.chooseRecipeState;
 	    	}
 	    }
@@ -1924,7 +1920,7 @@ public class GUI {
 	    if(isHovering(x, y, 130*3, 48*3)) {
 	    	if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	    		UpgradeManager.unlockUpgrade(upgradeChoices[1]);
-	    		clickCooldown = 20;
+	    		clickCooldown = 0.33;
 	    		gp.currentState = gp.chooseRecipeState;
 	    	}
 	    }
@@ -2013,11 +2009,15 @@ public class GUI {
 	public void addMessage(String text, int lifetime, Color color) {
 	    messages.add(new GUIMessage(text, lifetime, color));
 	}
-	public void update() {
-
-		if(clickCooldown > 0) {
-			clickCooldown--;
+	public void update(double dt) {
+		
+		if (clickCooldown > 0) {
+			clickCooldown -= dt;        // subtract elapsed time in seconds
+		    if (clickCooldown <= 0) {
+		    	clickCooldown = 0;      // clamp to zero
+		    }
 		}
+		
 	}
 	public List<String> wrapText(String text, Graphics2D g2, int maxWidth) {
 	    List<String> lines = new ArrayList<>();

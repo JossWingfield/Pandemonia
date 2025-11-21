@@ -230,7 +230,7 @@ public class Customiser {
 	public void addToInventory(TableSkin b) {
 		tableSkinInventory.add(b);
 	}
-	public void update() {
+	public void update(double dt) {
 		
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {

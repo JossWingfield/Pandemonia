@@ -1009,7 +1009,7 @@ public class LightingManager {
         }
     }
 
-    public void update() {
+    public void update(double dt) {
         if (firstUpdate) {
             firstUpdate = false;
             startLights();

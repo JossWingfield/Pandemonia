@@ -50,8 +50,8 @@ public class TipJar extends Building {
 	public void destroy() {
 		gp.progressM.tipJarPresent = false;
 	}
-	public void update() {
-		super.update();
+	public void update(double dt) {
+		super.update(dt);
 		if(firstDraw) {
 			gp.progressM.tipJarPresent = true;
 			firstDraw = false;

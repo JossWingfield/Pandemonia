@@ -46,7 +46,7 @@ public abstract class NPC extends Entity {
     protected boolean followingPlayer;
     protected float speed;
     protected int animationUpdateSpeed = 1;
-    protected int idleCounter = 0;
+    protected double idleCounter = 0;
     
     //PATHFINDING
     protected String pathDirection = "";
@@ -59,7 +59,7 @@ public abstract class NPC extends Entity {
     
     protected int drawWidth, drawHeight, xOffset, yOffset;
     
-    private int cooldownCounter = 0;
+    private double cooldownCounter = 0;
     private Integer pfGoalCol = null, pfGoalRow = null;
     
     
@@ -70,7 +70,7 @@ public abstract class NPC extends Entity {
     public boolean walking;
 
 	protected boolean fleeing;
-	protected int fleeCooldown = 0; 
+	protected double fleeCooldown = 0; 
 	protected final int ALERT_DISTANCE = 2 * 48; 
     protected final int SAFE_DISTANCE = 4 * 48;
 
@@ -98,29 +98,32 @@ public abstract class NPC extends Entity {
 	public void setAbleToUpdate(boolean isAble) {
 		ableToUpdate = isAble;
 	}
-	public void update() {
+	public void update(double dt) {
 		
 		if(CollisionMethods.getDistance(hitbox.x, hitbox.y, gp.player.hitbox.x, gp.player.hitbox.y) > gp.player.talkDistance) {
 			talking = false;
 		}
 		
-		if(cooldownCounter > 0) {
-			cooldownCounter--;
+		if (cooldownCounter > 0) {
+			cooldownCounter -= dt;
+		    if (cooldownCounter < 0) {
+		    	cooldownCounter = 0;
+		    }
 		}
 		
 		if(talking) {
 			if(gp.keyI.qPressed && cooldownCounter == 0) {
 				gp.keyI.qPressed = false;
 		        nextDialogueLine();
-		        cooldownCounter = 4;
+		        cooldownCounter = 0.05;
 			}
 		}
 		
 		if(npcToFollow != null) {
-			followNPC(npcToFollow);
+			followNPC(dt, npcToFollow);
 		}
 	}
-	protected void fleeFromPlayer() {
+	protected void fleeFromPlayer(double dt) {
         float playerX = gp.player.hitbox.x + gp.player.hitbox.width / 2f;
         float playerY = gp.player.hitbox.y + gp.player.hitbox.height / 2f;
         float duckX = hitbox.x + hitbox.width / 2f;
@@ -130,24 +133,29 @@ public abstract class NPC extends Entity {
         float dy = duckY - playerY;
         float distSq = dx * dx + dy * dy;
 
-        if (fleeCooldown > 0) fleeCooldown--;
+        if (fleeCooldown > 0) {
+        	fleeCooldown -= dt;
+		    if (fleeCooldown < 0) {
+		    	fleeCooldown = 0;
+		    }
+		}
 
         if (!fleeing && distSq < ALERT_DISTANCE * ALERT_DISTANCE) {
-            startFleeing();
+            startFleeing(dt);
         }
 
         if (fleeing) {
             // Recalculate if the player gets close again while fleeing
             if (distSq < ALERT_DISTANCE * ALERT_DISTANCE && fleeCooldown == 0) {
-                fleeCooldown = 30; // short delay before next recalculation
-                fleeHelperMethod();
+                fleeCooldown = 0.5; // short delay before next recalculation
+                fleeHelperMethod(dt);
             }
 
             // Continue following or find a new path if finished
             if (pathF.pathList.isEmpty()) {
-            	fleeHelperMethod();
+            	fleeHelperMethod(dt);
             } else {
-                followPath();
+                followPath(dt);
             }
 
             // Stop fleeing when safe again
@@ -156,7 +164,7 @@ public abstract class NPC extends Entity {
             }
         }
 	}
-    private void fleeHelperMethod() {
+    private void fleeHelperMethod(double dt) {
         float playerX = gp.player.hitbox.x + gp.player.hitbox.width / 2f;
         float playerY = gp.player.hitbox.y + gp.player.hitbox.height / 2f;
         float duckX = hitbox.x + hitbox.width / 2f;
@@ -191,16 +199,16 @@ public abstract class NPC extends Entity {
             );
 
             if (pathF.search(currentRoom)) {
-                searchPath(goalCol, goalRow);
+                searchPath(dt, goalCol, goalRow);
             }
         }
     }
 
-    protected void startFleeing() {
+    protected void startFleeing(double dt) {
         fleeing = true;
         walking = true;
-        fleeCooldown = 60;
-        fleeFromPlayer();
+        fleeCooldown = 1;
+        fleeFromPlayer(dt);
     }
 
     protected void stopFleeing() {
@@ -208,7 +216,7 @@ public abstract class NPC extends Entity {
         walking = false;
         pathF.pathList.clear();
     }
-    public void followPath() {
+    public void followPath(double dt) {
         if (pathF.pathList.isEmpty()) return;
 
         Node node = pathF.pathList.get(0);
@@ -216,7 +224,7 @@ public abstract class NPC extends Entity {
         float targetX = node.col * cell + cell * 0.5f;
         float targetY = node.row * cell + cell * 0.5f;
 
-        flyTowardsPoint(targetX, targetY);
+        flyTowardsPoint(dt, targetX, targetY);
 
         float cx = hitbox.x + hitbox.width * 0.5f;
         float cy = hitbox.y + hitbox.height * 0.5f;
@@ -228,7 +236,7 @@ public abstract class NPC extends Entity {
             pathF.pathList.remove(0);
         }
     }
-	public void searchFullPath(int goalCol, int goalRow) {
+	public void searchFullPath(double dt, int goalCol, int goalRow) {
 	    Room currentRoom = gp.mapM.getCurrentRoom(this);
 
 	    // If no path exists, create one
@@ -246,7 +254,7 @@ public abstract class NPC extends Entity {
 	    float targetX = node.col * cell + cell * 0.5f;
 	    float targetY = node.row * cell + cell * 0.5f;
 
-	    flyTowardsPoint(targetX, targetY);
+	    flyTowardsPoint(dt, targetX, targetY);
 
 	    float cx = hitbox.x + hitbox.width * 0.5f;
 	    float cy = hitbox.y + hitbox.height * 0.5f;
@@ -297,7 +305,7 @@ public abstract class NPC extends Entity {
     public void stopTalking() {
     	talking = false;
     }
-    protected void moveTowardsPlayer() {
+    protected void moveTowardsPlayer(double dt) {
 
     	onPath = true;
         if(onPath) {
@@ -305,11 +313,11 @@ public abstract class NPC extends Entity {
             int goalCol = (int)((gp.player.hitbox.x + gp.player.hitbox.width/2)/gp.tileSize);
             int goalRow = (int)((gp.player.hitbox.y + gp.player.hitbox.height/2 - 1)/gp.tileSize);
             
-            searchPath(goalCol, goalRow);
+            searchPath(dt, goalCol, goalRow);
         }
 
     }
-    public void searchPath(int goalCol, int goalRow) {
+    public void searchPath(double dt, int goalCol, int goalRow) {
 
         Room currentRoom = gp.mapM.getRooms()[currentRoomNum];
 
@@ -348,7 +356,7 @@ public abstract class NPC extends Entity {
         float targetY = node.row * cell + cell * 0.5f;
 
         // Move towards this sub-node
-        flyTowardsPoint(targetX, targetY);
+        flyTowardsPoint(dt, targetX, targetY);
 
         // If close enough to this sub-node, consume it
         float cx = hitbox.x + hitbox.width  * 0.5f;
@@ -364,24 +372,24 @@ public abstract class NPC extends Entity {
             pathF.pathList.remove(0);
         }
     }
-    protected void flyTowardsPoint(float xPos, float yPos) {
+    protected void flyTowardsPoint(double dt, float xPos, float yPos) {
 
         float enemyX = (int)((hitbox.x + hitbox.width/2));
         float enemyY = (int)((hitbox.y + hitbox.height/2));
         if (enemyX < xPos) {
-        	hitbox.x += speed; 
+        	hitbox.x += speed*dt; 
         	direction = "Right";
         }
         if (enemyX > xPos) {
-        	hitbox.x -= speed;
+        	hitbox.x -= speed*dt;
       		direction = "Left";
         }
         if (enemyY < yPos) {
-        	hitbox.y += speed;
+        	hitbox.y += speed*dt;
         	direction = "Down";
         }
         if (enemyY > yPos) {
-        	hitbox.y -= speed;
+        	hitbox.y -= speed*dt;
            	direction = "Up";
         }
         
@@ -404,7 +412,7 @@ public abstract class NPC extends Entity {
             }
         }
     }
-    public boolean walkToBuilding(Building building) {
+    public boolean walkToBuilding(double dt, Building building) {
     	if(building == null) {
     		return false;
     	}
@@ -415,26 +423,26 @@ public abstract class NPC extends Entity {
 	    	walking = true;
 			int goalCol = (int)((building.npcHitbox.x + building.npcHitbox.width/2)/gp.tileSize);
 	        int goalRow = (int)((building.npcHitbox.y + building.npcHitbox.height/2 - 1)/gp.tileSize);  
-	        searchPath(goalCol, goalRow);
+	        searchPath(dt, goalCol, goalRow);
 	        if(building.npcHitbox.intersects(hitbox)) {
 	        	return true;
 	        }
 		}
 		return false;
     }
-    protected boolean walkToBuildingWithInteractHitbox(Building building, Rectangle2D.Float stopHitbox) {
+    protected boolean walkToBuildingWithInteractHitbox(double dt, Building building, Rectangle2D.Float stopHitbox) {
 		if(building != null) {
 	    	walking = true;
 			int goalCol = (int)((stopHitbox.x + stopHitbox.width/2)/gp.tileSize);
 	        int goalRow = (int)((stopHitbox.y + stopHitbox.height/2 - 1)/gp.tileSize);  
-	        searchPath(goalCol, goalRow);
+	        searchPath(dt, goalCol, goalRow);
 	        if(stopHitbox.intersects(interactHitbox)) {
 	        	return true;
 	        }
 		}
 		return false;
     }
-    protected boolean walkToBuildingWithName(String name) {
+    protected boolean walkToBuildingWithName(double dt, String name) {
     	Building building = findBuildingInRoom(name, currentRoomNum);
     	walking = true;
 		if(building != null) {
@@ -442,14 +450,14 @@ public abstract class NPC extends Entity {
 			stopHitbox = building.npcHitbox;
 			int goalCol = (int)((stopHitbox.x + stopHitbox.width/2)/gp.tileSize);
 	        int goalRow = (int)((stopHitbox.y + stopHitbox.height/2 - 1)/gp.tileSize);  
-	        searchPath(goalCol, goalRow);
+	        searchPath(dt, goalCol, goalRow);
 	        if(stopHitbox.intersects(hitbox)) {
 	        	return true;
 	        }
 		}
 		return false;
     }
-    protected boolean walkToDoorWithDoorNum(int doorRoomNum) {
+    protected boolean walkToDoorWithDoorNum(double dt, int doorRoomNum) {
     	Door door;
     	if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
 			door = gp.buildingM.findDoor(doorRoomNum);
@@ -462,7 +470,7 @@ public abstract class NPC extends Entity {
     	
 		int goalCol = (int)((door.npcHitbox.x + door.npcHitbox.width/2)/gp.tileSize);
         int goalRow = (int)((door.npcHitbox.y + door.npcHitbox.height/2 - 1)/gp.tileSize);  
-        searchPath(goalCol, goalRow);
+        searchPath(dt, goalCol, goalRow);
     	
     	walking = true;
     	if(door.npcHitbox != null) {
@@ -481,8 +489,8 @@ public abstract class NPC extends Entity {
 			gp.mapM.getRoom(currentRoomNum).removeNPC(this);
 		}
     }
-    public void walkToPoint(int x, int y) {
-    	searchPath(x, y);
+    public void walkToPoint(double dt, int x, int y) {
+    	searchPath(dt, x, y);
     	walking = true;
     }
     protected Building findBuildingInRoom(String buildingName, int roomNum) {
@@ -515,10 +523,10 @@ public abstract class NPC extends Entity {
 		gp.mapM.removeNPCFromRoom(this, currentRoomNum);
 		currentRoomNum = newRoomNum;
     }
-    protected boolean walkToNPC(NPC npc) {
+    protected boolean walkToNPC(double dt, NPC npc) {
 		int goalCol = (int)((npc.hitbox.x + npc.hitbox.width/2)/gp.tileSize)-1;
         int goalRow = (int)((npc.hitbox.y + npc.hitbox.height)/gp.tileSize)-1;  
-		walkToPoint(goalCol, goalRow);
+		walkToPoint(dt, goalCol, goalRow);
 		if(npc.talkHitbox != null) {
 			if(npc.talkHitbox.intersects(hitbox)) {
 				return true;
@@ -526,14 +534,14 @@ public abstract class NPC extends Entity {
 		}
 		return false;
     }
-    public boolean walkToBuildingInRoom(String name, int roomNum) {
+    public boolean walkToBuildingInRoom(double dt, String name, int roomNum) {
         // Step 1: find target building
         Building building = findBuildingInRoom(name, roomNum); // Search all rooms by name
         if (building == null) return false;
 
         // Step 2: if already in same room, just walk there
         if (roomNum == currentRoomNum) {
-            return walkToBuildingWithName(name);
+            return walkToBuildingWithName(dt, name);
         }
         // Step 4: find path of rooms using BFS
         List<Integer> roomPath = findRoomPath(currentRoomNum, roomNum, RoomHelperMethods.roomGraph);
@@ -544,7 +552,7 @@ public abstract class NPC extends Entity {
             int nextRoom = roomPath.get(i);
 
             // Walk to door that leads to nextRoom
-            boolean reachedDoor = walkToDoorWithDoorNum(nextRoom);
+            boolean reachedDoor = walkToDoorWithDoorNum(dt, nextRoom);
             if (!reachedDoor) return false;
 
             // The door handling will internally call changeRoom()
@@ -552,14 +560,14 @@ public abstract class NPC extends Entity {
         }
 
         // Step 6: now we’re in the destination room
-        return walkToBuildingWithName(name);
+        return walkToBuildingWithName(dt, name);
     }
-    public boolean walkToBuildingInRoom(Building building, int roomNum) {
+    public boolean walkToBuildingInRoom(double dt, Building building, int roomNum) {
         if (building == null) return false;
 
         // Step 2: if already in same room, just walk there
         if (roomNum == currentRoomNum) {
-            return walkToBuildingWithName(name);
+            return walkToBuildingWithName(dt, name);
         }
         // Step 4: find path of rooms using BFS
         List<Integer> roomPath = findRoomPath(currentRoomNum, roomNum, RoomHelperMethods.roomGraph);
@@ -570,7 +578,7 @@ public abstract class NPC extends Entity {
             int nextRoom = roomPath.get(i);
 
             // Walk to door that leads to nextRoom
-            boolean reachedDoor = walkToDoorWithDoorNum(nextRoom);
+            boolean reachedDoor = walkToDoorWithDoorNum(dt, nextRoom);
             if (!reachedDoor) return false;
 
             // The door handling will internally call changeRoom()
@@ -578,7 +586,7 @@ public abstract class NPC extends Entity {
         }
 
         // Step 6: now we’re in the destination room
-        return walkToBuildingWithName(name);
+        return walkToBuildingWithName(dt, name);
     }
     private List<Integer> findRoomPath(int start, int target, Map<Integer, int[]> graph) {
         Queue<List<Integer>> queue = new LinkedList<>();
@@ -603,7 +611,7 @@ public abstract class NPC extends Entity {
         }
         return null;
     }
-    public boolean followNPC(NPC target) {
+    public boolean followNPC(double dt, NPC target) {
         if (target == null) return false;
 
         // --- Step 1: Check if they’re in the same room ---
@@ -615,7 +623,7 @@ public abstract class NPC extends Entity {
             // Go through each connecting door until we reach the target’s room
             for (int i = 1; i < roomPath.size(); i++) {
                 int nextRoom = roomPath.get(i);
-                boolean reachedDoor = walkToDoorWithDoorNum(nextRoom);
+                boolean reachedDoor = walkToDoorWithDoorNum(dt, nextRoom);
                 if (!reachedDoor) return false;
             }
 
@@ -639,13 +647,13 @@ public abstract class NPC extends Entity {
         if (distSq > TOO_FAR || pathF.pathList.isEmpty()) {
             int goalCol = (int)((target.hitbox.x + target.hitbox.width / 2f) / gp.tileSize);
             int goalRow = (int)((target.hitbox.y + target.hitbox.height / 2f - 1) / gp.tileSize);
-            searchPath(goalCol, goalRow);
+            searchPath(dt, goalCol, goalRow);
             walking = true;
         }
 
         // --- Step 5: Follow the path (per-frame movement) ---
         if (!pathF.pathList.isEmpty()) {
-            followPath();
+            followPath(dt);
         }
 
         return false; // Still following
@@ -654,7 +662,7 @@ public abstract class NPC extends Entity {
 		this.direction = direction;
 	}
     public void removeLights() {}
-	protected void leave() {
+	protected void leave(double dt) {
 		
 		Door door;
     	if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
@@ -665,7 +673,7 @@ public abstract class NPC extends Entity {
     	
 		int goalCol = (int)((door.npcHitbox.x + door.npcHitbox.width/2)/gp.tileSize);
         int goalRow = (int)((door.npcHitbox.y + door.npcHitbox.height/2 - 1)/gp.tileSize);  
-        searchPath(goalCol, goalRow);
+        searchPath(dt, goalCol, goalRow);
     	
     	walking = true;
     	if(door.npcHitbox != null) {

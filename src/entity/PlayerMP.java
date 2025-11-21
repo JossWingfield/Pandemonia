@@ -24,8 +24,8 @@ public class PlayerMP extends Player {
     }
 
     //@Override
-    public void update() {
-        super.update();
+    public void update(double dt) {
+        super.update(dt);
     }
 
 }

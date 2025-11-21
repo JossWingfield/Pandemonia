@@ -11,7 +11,6 @@ public class ToiletDoor extends Building {
 	private Rectangle2D.Float doorHitbox, npcVisualHitbox;
 	private boolean firstUpdate = true;
 	public int preset = 0;
-	public int cooldown = 0;
 	
 	public ToiletDoor(GamePanel gp, float xPos, float yPos, int presetNum) {
 		super(gp, xPos, yPos, 48*2, 48*2);
@@ -56,10 +55,6 @@ public class ToiletDoor extends Building {
 			npcVisualHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48+28, 48, 80);
 			importImages();
 		}  
-		
-		if(cooldown > 0) {
-			cooldown--;
-		}
 		
 		if(!gp.player.interactHitbox.intersects(doorHitbox) && gp.npcM.entityCheck(npcVisualHitbox)) {
 			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);

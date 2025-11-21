@@ -129,6 +129,9 @@ public class TablePlate extends Building {
 			break;
 		}
 	}
+	public void update(double dt) {
+		super.update(dt);
+	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			initInteractHitbox();

@@ -37,9 +37,9 @@ public class Duck extends NPC {
 		importFromSpriteSheet("/npcs/duck/Duck.png", 2, 1, 0, 0, 0, 32, 16, 0);
 		importFromSpriteSheet("/npcs/duck/Duck.png", 5, 1, 1, 0, 16, 32, 16, 0);
 	}    
-	public void update() {
+	public void update(double dt) {
 		if(!leaving) {
-			fleeFromPlayer();
+			fleeFromPlayer(dt);
 			if(hitbox.intersects(gp.player.hitbox)) {
 				if(gp.keyI.ePressed) {
 					timesPetted++;
@@ -52,12 +52,12 @@ public class Duck extends NPC {
 			}
 		} else {
 			walking = true;
-			leave();
+			leave(dt);
 		}
     }
 	
-	protected void leave() {
-		super.leave();
+	protected void leave(double dt) {
+		super.leave(dt);
 		gp.gui.addMessage("The duck is leaving now", Color.GREEN);
     }
 	   

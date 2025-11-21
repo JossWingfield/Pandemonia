@@ -16,7 +16,7 @@ public class ConditionalWaitEvent extends CutsceneEvent {
     }
 
     
-    public void update() {
+    public void update(double dt) {
         gp.player.setControlEnabled(true);
         if(isFinished()) {
             gp.player.setControlEnabled(false);

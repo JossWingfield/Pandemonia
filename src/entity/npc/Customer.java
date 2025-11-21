@@ -30,18 +30,18 @@ public class Customer extends NPC {
 	private Chair currentChair = null;
 	private Toilet toilet = null;
 	public Recipe foodOrder = null;
-	private int eatTime = 60*5;
+	private double eatTime = 5;
 	private int eatCounter = 0;
 	protected BufferedImage orderSign, warningOrderSign;
-	private int orderTime = 0;
-	private int maxOrderTime = 210;
+	private double orderTime = 0;
+	private double maxOrderTime = 3.6;
 	private int toiletTime = 0;
-	private int maxToiletTime = 60*9;
+	private int maxToiletTime = 9;
 	
 	protected int patienceCounter = 0;
-	protected int baseMaxPatienceTime = 60*120; // 2mins
+	protected int baseMaxPatienceTime = 120; // 2mins
 	protected int maxPatienceTime = baseMaxPatienceTime;
-	protected int extendedMaxPatienceTime = 60*240; //4mins
+	protected int extendedMaxPatienceTime = 240; //4mins
 	protected int patienceFactor = 1;
 	private boolean unhappy = false;
 	private int flickerCounter = 0;
@@ -257,48 +257,48 @@ public class Customer extends NPC {
 	public boolean isEating() {
 		return eating;
 	}
-	public void takeOrder() {
-		orderTime++;
+	public void takeOrder(double dt) {
+		orderTime+=dt;
 	    if (orderTime >= maxOrderTime) {
 	    	makeOrder();
 	        orderTime = 0;
 	        waitingToOrder = false;
 	    }
 	}
-	protected void leave() {
-		super.leave();
+	protected void leave(double dt) {
+		super.leave(dt);
 		if(pet != null) {
 			removeOtherNPC(pet);
 		}
 	}
-	public void update() {
+	public void update(double dt) {
 		if(gp.progressM.fasterCustomers) {
 			speed = 2;
 		}
 	    if(!atTable) {
 	        if(leaving) {
 	        	if(inToilet) {
-	        		if(walkToDoorWithDoorNum(RoomHelperMethods.MAIN)) {
+	        		if(walkToDoorWithDoorNum(dt, RoomHelperMethods.MAIN)) {
 				    	inToilet = false;
 	        		}
 	        	} else {
-	        		leave();
+	        		leave(dt);
 	        	}
 	        } else if(goingToToilet && !inToilet) {
-	        	if(walkToDoorWithDoorNum(RoomHelperMethods.BATHROOM)) {
+	        	if(walkToDoorWithDoorNum(dt, RoomHelperMethods.BATHROOM)) {
 	            	inToilet = true;
 	        	}
 	        } else if(inToilet && !onToilet) {
 	        	if(toilet == null) {
 	        		findToilet();
 	        	}
-	        	if(walkToBuilding(toilet)) {
+	        	if(walkToBuilding(dt, toilet)) {
 	        		onToilet = true;
 			    	hitbox.x = toilet.hitbox.x;
 			    	hitbox.y = toilet.hitbox.y;
 	        	}
 	        } else if(onToilet) {
-	        	  toiletTime++;
+	        	  toiletTime+=dt;
 		            if(toiletTime >= maxToiletTime) {
 		            	toiletTime = 0;
 		                onToilet = false;
@@ -309,7 +309,7 @@ public class Customer extends NPC {
 	            if(!walking) {
 	                findTable();
 	            } else {
-	            	if(walkToBuilding(currentChair)) {
+	            	if(walkToBuilding(dt, currentChair)) {
 	            		 walking = false;
 		                 atTable = true;
 		                 hitbox.x = currentChair.hitbox.x+16;
@@ -326,7 +326,7 @@ public class Customer extends NPC {
 	            } else {
 	                if(hitbox.intersects(gp.player.interactHitbox)) {
 	                    if(gp.keyI.ePressed) {
-	                        takeOrder();
+	                        takeOrder(dt);
 	                    }
 	                }
 	            }
@@ -338,11 +338,11 @@ public class Customer extends NPC {
 	            if(gp.progressM.turntablePresent) {
 	                patienceIncrement *= 0.8f; // 20% slower patience decrease
 	            }
-	            patienceCounter += patienceIncrement;
+	            patienceCounter += patienceIncrement * dt;
 	        }
 
 	        if(eating) {
-	            eatCounter++;
+	            eatCounter+=dt;
 	            if(eatCounter >= eatTime) {
 	                eatCounter = 0;
 	                atTable = false;
@@ -357,13 +357,13 @@ public class Customer extends NPC {
 	    // Global patience timeout check
 	    if(!eating && patienceCounter >= maxPatienceTime) {
 	        // ran out of patience before getting food
-	        leave();
+	        leave(dt);
 	        RecipeManager.removeOrder(foodOrder);
 	        currentChair.available = true;
 	        unhappy = true;
 	        waitingToOrder = false;
 	    }
-	    flickerCounter++;
+	    flickerCounter+=dt;
 	    if (flickerCounter >= flickerSpeed) {
 	        flickerCounter = 0;
 	    }
@@ -380,10 +380,10 @@ public class Customer extends NPC {
 			patienceCounter = (int)(fraction * maxPatienceTime);
 		}
 	}
-	public int getPatienceCounter() {
+	public double getPatienceCounter() {
 		return patienceCounter;
 	}
-	public int getMaxPatienceTime() {
+	public double getMaxPatienceTime() {
 		return maxPatienceTime;
 	}
 	private void drawOrderBar(Graphics2D g2, float worldX, float worldY, int orderTime, int maxOrderTime, int xDiff, int yDiff) {
@@ -455,7 +455,7 @@ public class Customer extends NPC {
 	      }
 	      
 	      if(orderTime > 0) {
-	    	  drawOrderBar(g2, hitbox.x, hitbox.y+8, orderTime, maxOrderTime, xDiff, yDiff);
+	    	  drawOrderBar(g2, hitbox.x, hitbox.y+8, (int)orderTime, (int)maxOrderTime, xDiff, yDiff);
 	      }
   	      float patienceRatio = patienceCounter / (float) maxPatienceTime;
 	      if(patienceRatio >= 0.5f) {

@@ -13,7 +13,7 @@ public class RemoveNPCEvent extends CutsceneEvent {
 	      this.npc = npc;
 	  }
 
-	  public void update() {
+	  public void update(double dt) {
 		  npc.removeLights();
 		  gp.npcM.removeNPC(npc);
 	      finished = true;

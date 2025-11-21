@@ -58,6 +58,36 @@ public class Bin extends Building {
     	xDrawOffset = 24;
     	yDrawOffset = 24;
 	}
+	public void update(double dt) {
+		super.update(dt);
+		if(binHitbox != null) {
+			if(binHitbox.intersects(gp.player.interactHitbox)) {
+				if(gp.keyI.ePressed) {
+					if(gp.player.currentItem != null) {
+						if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {
+							gp.player.currentItem = null;
+							if(gp.multiplayer) {
+					            Packet06BinItem packet = new Packet06BinItem(gp.player.getUsername());
+					            packet.writeData(gp.socketClient);
+				            }
+						} else if(gp.player.currentItem instanceof Plate plate) {
+							if(!plate.isDirty()) {
+								plate.clearIngredients();
+								if(gp.multiplayer) {
+							        Packet03PickupItem packet = new Packet03PickupItem(
+							        new Plate(gp, 0, 0).getName(),
+							        gp.player.getUsername(),
+							        0
+							        );
+							        packet.writeData(gp.socketClient);
+					            }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(firstUpdate) {
@@ -69,29 +99,6 @@ public class Bin extends Building {
 		     g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		} else {
 			g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-			if(clickCooldown == 0 && gp.keyI.ePressed) {
-				if(gp.player.currentItem != null) {
-					if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {
-						gp.player.currentItem = null;
-						if(gp.multiplayer) {
-				            Packet06BinItem packet = new Packet06BinItem(gp.player.getUsername());
-				            packet.writeData(gp.socketClient);
-			            }
-					} else if(gp.player.currentItem instanceof Plate plate) {
-						if(!plate.isDirty()) {
-							plate.clearIngredients();
-							if(gp.multiplayer) {
-						        Packet03PickupItem packet = new Packet03PickupItem(
-						        new Plate(gp, 0, 0).getName(),
-						        gp.player.getUsername(),
-						        0
-						        );
-						        packet.writeData(gp.socketClient);
-				            }
-						}
-					}
-				}
-			}
 		}
 		
 		if(gp.multiplayer) {
@@ -104,14 +111,6 @@ public class Bin extends Building {
 					}
 				}
 			}
-		}
-		
-	    //g2.setColor(Color.YELLOW);
-      	//g2.drawRect((int)binHitbox.x, (int)binHitbox.y, (int)binHitbox.width, (int)binHitbox.height);
-        
-		
-		if(clickCooldown > 0) {
-			clickCooldown--;
 		}
 	    
 		if(destructionUIOpen) {

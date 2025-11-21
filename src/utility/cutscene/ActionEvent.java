@@ -7,7 +7,7 @@ public class ActionEvent extends CutsceneEvent {
         this.action = action;
     }
 
-    public void update() {
+    public void update(double dt) {
         action.run();
     	finished = true;
     }

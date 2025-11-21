@@ -32,7 +32,7 @@ public class MenuSign extends Building {
 
     private Rectangle2D.Float interactHitbox;
     private boolean firstUpdate = true;
-    private int clickCooldown = 0;
+    private double clickCooldown = 0;
     private boolean uiOpen = false;
     private BufferedImage ui1, ui2, ui3;
     private BufferedImage recipeBorder, coinImage;
@@ -86,7 +86,15 @@ public class MenuSign extends Building {
 		recipeBorder = importImage("/UI/recipe/orderBorder.png");
 		coinImage = importImage("/UI/Coin.png");
     }
-
+	public void update(double dt) {
+		super.update(dt);
+		if (clickCooldown > 0) {
+	    	clickCooldown -= dt;        // subtract elapsed time in seconds
+			if (clickCooldown < 0) {
+				clickCooldown = 0;      // clamp to zero
+			}
+		}
+	}
     //@Override
     public void draw(Graphics2D g2, int xDiff, int yDiff) {
 
@@ -106,7 +114,7 @@ public class MenuSign extends Building {
             // Open UI on key press
             if(gp.keyI.ePressed && clickCooldown == 0 && !gp.cutsceneM.cutsceneActive) {
                 uiOpen = !uiOpen;
-                clickCooldown = 10;
+                clickCooldown = 0.1;
                 if(uiOpen) {
                     //gp.pauseTime(); // freeze world time while selecting menu
                 } else {
@@ -119,7 +127,6 @@ public class MenuSign extends Building {
         	uiOpen = false;
         }
 
-        if(clickCooldown>0) clickCooldown--;
     }
 	public void addOrder(Recipe recipe, Graphics2D g2) {
 	    RecipeRenderData data = buildRenderData(recipe, nameFont, g2);
@@ -279,7 +286,7 @@ public class MenuSign extends Building {
 	                if (border.contains(gp.mouseI.mouseX, gp.mouseI.mouseY) &&
 	                    gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	                    gp.world.removeRecipeFromMenu(recipe);
-	                    clickCooldown = 16;
+	                    clickCooldown = 0.1;
 	                }
 	            }
 	            case 3 -> {
@@ -289,7 +296,7 @@ public class MenuSign extends Building {
 	                if (border.contains(gp.mouseI.mouseX, gp.mouseI.mouseY) &&
 	                    gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	                    gp.world.removeRecipeFromMenu(recipe);
-	                    clickCooldown = 16;
+	                    clickCooldown = 0.1;
 	                }
 	            }
 	            case 4 -> {
@@ -299,7 +306,7 @@ public class MenuSign extends Building {
 	                if (border.contains(gp.mouseI.mouseX, gp.mouseI.mouseY) &&
 	                    gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	                    gp.world.removeRecipeFromMenu(recipe);
-	                    clickCooldown = 16;
+	                    clickCooldown = 0.1;
 	                }
 	            }
 	        }
@@ -317,7 +324,7 @@ public class MenuSign extends Building {
 	        g2.setColor(specialColour);
 	        if (gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	            uiOpen = false;
-	            clickCooldown = 16;
+	            clickCooldown = 0.1;
 	        }
 	    }
 	    g2.drawString(text, textX, textY);

@@ -44,13 +44,12 @@ public class Turntable extends Building {
 		
 		name = "Turntable";
 		importFromSpriteSheet("/decor/turntable.png", 8, 1, 0, 0, 0, 48, 48, 0);
-
 	}
 	public void destroy() {
 		gp.progressM.turntablePresent = false;
 	}
-	public void update() {
-		super.update();
+	public void update(double dt) {
+		super.update(dt);
 		if(firstDraw) {
 			gp.progressM.turntablePresent = true;
 			firstDraw = false;

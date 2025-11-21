@@ -472,10 +472,10 @@ public class BuildingManager {
 	public Building getBuilding(int index) {
 		return buildings[index];
 	}
-    public void update() {
+    public void update(double dt) {
     	for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
-            	i.update(); //Draws the item
+            	i.update(dt); //Draws the item
             }
         }
     }

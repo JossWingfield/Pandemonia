@@ -18,7 +18,7 @@ public class EndCutscene extends CutsceneEvent {
 	    }
 
 	    
-	    public void update() {
+	    public void update(double dt) {
 	        gp.camera.follow(gp.player);
 	        gp.camera.resetToDefaultZoom();
 	        finished = true;

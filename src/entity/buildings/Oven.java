@@ -21,10 +21,10 @@ public class Oven extends Building {
 	public Rectangle2D.Float ovenHitbox;
 	
 	private BufferedImage ovenOn;
-	private int clickCooldown = 0;
+	private double clickCooldown = 0;
 	private boolean cooking = false;
-    private int cookCount = 0;
-    private int maxCookCount = 1000;
+    private double cookCount = 0;
+    private double maxCookCount = 20;
     
 	private boolean destroyed = false;
 	
@@ -69,6 +69,51 @@ public class Oven extends Building {
 	public void setDestroyed(boolean destroyed) {
 		this.destroyed = destroyed;
 	}
+	public void update(double dt) {
+		super.update(dt);
+		if (clickCooldown > 0) {
+	    	clickCooldown -= dt;        // subtract elapsed time in seconds
+			if (clickCooldown < 0) {
+				clickCooldown = 0;      // clamp to zero
+			}
+		}
+		 if(hitbox.intersects(gp.player.interactHitbox)) {
+			    if(gp.keyI.ePressed) {
+			    	if(clickCooldown == 0) {
+				    	if(gp.player.currentItem != null) {
+				    		if(currentItem == null) { //IF EMTPY
+					    		if(canCook(gp.player.currentItem.getName())) {
+					    			Food f = (Food)gp.player.currentItem;
+					    			if(f.foodState == FoodState.RAW) {
+							    		currentItem = (Food)gp.player.currentItem;
+							    		cooking = true;
+							    		gp.player.currentItem = null;
+							    		clickCooldown = 0.1;
+					    			}
+					    		}
+				    		} else {
+				    			if(gp.player.currentItem.getName().equals("Plate")) {
+				    				if(currentItem.foodState == FoodState.COOKED) {
+				    					currentItem.foodState = FoodState.PLATED;
+										Plate p = (Plate)gp.player.currentItem;
+										p.addIngredient(currentItem);
+										currentItem = null;
+						    		}
+				    		    }
+				    		}
+				    	}
+			    	}
+			    }
+		    }
+			if(gp.progressM.ovenUpgradeI) {
+				maxCookCount = 16;
+			}
+		    if(cooking) {
+		    	if(gp.world.isPowerOn()) {
+		    		updateCooking(dt);
+		    	}
+		    }
+	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(destroyed) {
@@ -81,32 +126,6 @@ public class Oven extends Building {
 			} else {
 			    g2.drawImage(animations[0][0][3], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			}
-		    if(gp.keyI.ePressed) {
-		    	if(clickCooldown == 0) {
-			    	if(gp.player.currentItem != null) {
-			    		if(currentItem == null) { //IF EMTPY
-				    		if(canCook(gp.player.currentItem.getName())) {
-				    			Food f = (Food)gp.player.currentItem;
-				    			if(f.foodState == FoodState.RAW) {
-						    		currentItem = (Food)gp.player.currentItem;
-						    		cooking = true;
-						    		gp.player.currentItem = null;
-						    		clickCooldown = 7;
-				    			}
-				    		}
-			    		} else {
-			    			if(gp.player.currentItem.getName().equals("Plate")) {
-			    				if(currentItem.foodState == FoodState.COOKED) {
-			    					currentItem.foodState = FoodState.PLATED;
-									Plate p = (Plate)gp.player.currentItem;
-									p.addIngredient(currentItem);
-									currentItem = null;
-					    		}
-			    		    }
-			    		}
-			    	}
-		    	}
-		    }
 	    } else {
 			if(currentItem == null) {
 			    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
@@ -115,9 +134,6 @@ public class Oven extends Building {
 			}
 	    }
 	    
-	    if(clickCooldown > 0) {
-	    	clickCooldown--;
-	    }
 	    
 	    if(cooking) {
 		    g2.drawImage(ovenOn, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
@@ -128,23 +144,13 @@ public class Oven extends Building {
 		}
 		if(currentItem != null) {
 			if(currentItem.foodState == FoodState.RAW) {
-				drawCookingBar(g2, (int) hitbox.x - xDiff + 24, (int) (hitbox.y - yDiff) + 24+48, cookCount, maxCookCount, xDiff, yDiff);
+				drawCookingBar(g2, (int) hitbox.x - xDiff + 24, (int) (hitbox.y - yDiff) + 24+48, (int)cookCount, (int)maxCookCount, xDiff, yDiff);
 			}
 		}
 	}
-	public void update() {
-		if(gp.progressM.ovenUpgradeI) {
-			maxCookCount = 800;
-		}
-	    if(cooking) {
-	    	if(gp.world.isPowerOn()) {
-	    		updateCooking();
-	    	}
-	    }
-	}
-	private void updateCooking() {
+	private void updateCooking(double dt) {
 		if(currentItem.foodState == FoodState.RAW) {
-			cookCount++;
+			cookCount+=dt;
 			if(cookCount >= maxCookCount) {
 				cookCount = 0;
 				currentItem.foodState = FoodState.COOKED;

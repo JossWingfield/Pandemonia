@@ -9,8 +9,8 @@ import main.GamePanel;
 
 public class Rubble extends Building {
 	
-	private int spillCount = 0;
-	private int maxSpillTime = 60*1;
+	private double spillCount = 0;
+	private int maxSpillTime = 8;
 	private Rectangle2D.Float effectArea;
 	private boolean removedSpill = false;
 	
@@ -90,12 +90,11 @@ public class Rubble extends Building {
 		    fadeAlpha = 255;
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-	    
-	    if(hitbox.intersects(gp.player.interactHitbox)) {
-		    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		    if(gp.keyI.ePressed && !barricade) {
-		    	spillCount++;
+	public void update(double dt) {
+		super.update(dt);
+		if(hitbox.intersects(gp.player.interactHitbox)) {
+		    if(gp.keyI.ePressed) {
+		    	spillCount+=dt;
 		    	if(spillCount >= maxSpillTime) {
 		    		spillCount = 0;
 		    		gp.player.setNormalSpeed();
@@ -103,6 +102,12 @@ public class Rubble extends Building {
 		    		gp.buildingM.removeBuilding(this);
 		    	}
 		    }
+		}
+	}
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	    
+	    if(hitbox.intersects(gp.player.interactHitbox)) {
+		    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    } else {
 	    	if(currentAnimation == 1) {
 	    		// Fade-out effect for barricade rubble
@@ -128,17 +133,8 @@ public class Rubble extends Building {
 	    	}
 		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 	    }
-	    if(effectArea.intersects(gp.player.hitbox)) {
-		    //gp.player.slowSpeed();
-	    } else {
-	    	//gp.player.setNormalSpeed();
-	    }
-	    if(removedSpill) {
-	    	//gp.player.setNormalSpeed();
-	    }
-	    
 	    if(spillCount > 0) {
-	    	drawChoppingBar(g2, hitbox.x+24, hitbox.y+24, spillCount, maxSpillTime, xDiff, yDiff);
+	    	drawChoppingBar(g2, hitbox.x+24, hitbox.y+24, (int)spillCount, (int)maxSpillTime, xDiff, yDiff);
 	    }
 	    
 	}

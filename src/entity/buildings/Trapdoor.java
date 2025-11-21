@@ -67,6 +67,22 @@ public class Trapdoor extends Building {
     		roomNum = 3;
 		}
 	}
+	public void update(double dt) {
+		if (cooldown > 0) {
+		    cooldown -= dt;        // subtract elapsed time in seconds
+		    if (cooldown < 0) {
+		        cooldown = 0;      // clamp to zero
+		    }
+		}
+		if(gp.player.hitbox.intersects(entryHitbox)) {
+			if(cooldown == 0) {
+				if(gp.keyI.ePressed) {
+					gp.keyI.ePressed = false;
+					gp.mapM.changeRoom(roomNum, this);
+				}
+			}
+		}
+	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		if(firstUpdate) {
 			firstUpdate = false;
@@ -81,10 +97,6 @@ public class Trapdoor extends Building {
 		}  
 		if(RecipeManager.areHauntedRecipesPresent() || type == 1) {
 			
-			if(cooldown > 0) {
-				cooldown--;
-			}
-			
 	        //g2.setColor(Color.YELLOW);
 	      	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
 			 
@@ -96,15 +108,6 @@ public class Trapdoor extends Building {
 			
 		   //g2.setColor(Color.YELLOW);
 		   //g2.drawRect((int)npcHitbox.x, (int)npcHitbox.y, (int)npcHitbox.width, (int)npcHitbox.height);
-			
-			if(gp.player.hitbox.intersects(entryHitbox)) {
-				if(cooldown == 0) {
-					if(gp.keyI.ePressed) {
-						gp.keyI.ePressed = false;
-						gp.mapM.changeRoom(roomNum, this);
-					}
-				}
-			}
 			
 			if(destructionUIOpen) {
 			    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);

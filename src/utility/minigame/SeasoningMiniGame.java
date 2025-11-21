@@ -33,8 +33,8 @@ public class SeasoningMiniGame {
     private final Random random = new Random();
 
     // Beat timing
-    private int beatSpawnTimer = 0;
-    private int burstTimer = 0;       // Time between bursts
+    private double beatSpawnTimer = 0;
+    private double burstTimer = 0;       // Time between bursts
     private int beatsInBurst = 0;     // Remaining beats in this burst
     private float beatSpeed = 0.013f; // Movement speed
 
@@ -44,8 +44,8 @@ public class SeasoningMiniGame {
 
     // Feedback
     private String resultText = "";
-    private int resultTimer = 0;
-    private int clickCooldown = 0;
+    private double resultTimer = 0;
+    private double clickCooldown = 0;
 
     // Progress
     private float totalScore = 0f; 
@@ -90,12 +90,12 @@ public class SeasoningMiniGame {
         beats.clear();
         resultText = "";
         resultTimer = 0;
-        clickCooldown = 2;
+        clickCooldown = 0.01;
         beatsHit = 0;
         totalBeats = 0;
 
-        beatSpawnTimer = 40;
-        burstTimer = 60;
+        beatSpawnTimer = 0.66;
+        burstTimer = 1;
         beatsInBurst = 0;
     }
 
@@ -103,25 +103,25 @@ public class SeasoningMiniGame {
         return active;
     }
 
-    public void update() {
+    public void update(double dt) {
         if (!active) return;
 
         // Handle bursts
         if (beatsInBurst > 0) {
-            beatSpawnTimer--;
+            beatSpawnTimer-=dt;
             if (beatSpawnTimer <= 0) {
                 spawnBeat();
                 beatsInBurst--;
-                beatSpawnTimer = fastPattern ? 10 + random.nextInt(8) : 30 + random.nextInt(15);
+                beatSpawnTimer = fastPattern ? 0.1 + random.nextDouble(0.08) : 0.5 + random.nextDouble(0.25);
             }
         } else {
-            burstTimer--;
+            burstTimer-=dt;
             if (burstTimer <= 0 && totalBeats / 4 < maxBursts) {
                 currentBurstLength = 3 + random.nextInt(3);
                 beatsInBurst = currentBurstLength;
                 fastPattern = random.nextFloat() < 0.5f;
                 beatSpawnTimer = 0;
-                burstTimer = 100 + random.nextInt(60);
+                burstTimer = 1.4 + random.nextDouble(1.00);
             }
         }
 
@@ -129,11 +129,11 @@ public class SeasoningMiniGame {
         Iterator<Beat> it = beats.iterator();
         while (it.hasNext()) {
             Beat beat = it.next();
-            beat.x -= beatSpeed;
+            beat.x -= beatSpeed*dt;
 
             if (beat.x < -0.1f && !beat.hit) {
                 resultText = "MISS!";
-                resultTimer = 25;
+                resultTimer = 0.45;
                 beat.scoreWeight = 0f; // miss
                 totalScore += beat.scoreWeight;
                 it.remove();
@@ -142,11 +142,15 @@ public class SeasoningMiniGame {
             }
         }
 
-        if (clickCooldown > 0) clickCooldown--;
-
+    	if (clickCooldown > 0) {
+			clickCooldown -= dt;        // subtract elapsed time in seconds
+		    if (clickCooldown < 0) {
+		    	clickCooldown = 0;      // clamp to zero
+		    }
+		}
         // Handle input
         if (gp.keyI.ePressed && clickCooldown == 0) {
-            clickCooldown = 8;
+            clickCooldown = 0.1;
             Beat closest = null;
             float closestDist = Float.MAX_VALUE;
 
@@ -169,15 +173,20 @@ public class SeasoningMiniGame {
                 closest.hit = true;
                 totalScore += closest.scoreWeight;
                 beats.remove(closest);
-                resultTimer = 25;
+                resultTimer = 0.45;
             } else {
                 resultText = "MISS!";
-                resultTimer = 25;
+                resultTimer = 0.45;
                 totalScore += 0f; // miss
             }
         }
 
-        if (resultTimer > 0) resultTimer--;
+    	if (resultTimer > 0) {
+    		resultTimer -= dt;        // subtract elapsed time in seconds
+		    if (resultTimer < 0) {
+		    	resultTimer = 0;      // clamp to zero
+		    }
+		}
 
         // End game
         if ((totalBeats / 4 >= maxBursts) && beats.isEmpty() && beatsInBurst == 0) {

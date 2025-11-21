@@ -21,8 +21,8 @@ public class Rat extends NPC {
 	
 	private boolean fetchingItem, retrievingItem, stocking, depositing;
 	private boolean inKitchen = false;
-	private int stockTimer = 0;
-	private int maxStockTime = 100;
+	private double stockTimer = 0;
+	private double maxStockTime = 1.4;
 
 	public Rat(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -52,18 +52,18 @@ public class Rat extends NPC {
 	private void findFridge() {
 		fridge = (Fridge)findBuildingInRoom("Fridge", RoomHelperMethods.KITCHEN);
     }
-	public void update() {
+	public void update(double dt) {
 		if(!walking && inKitchen && !depositing) {
 			walking = true;
 		} else {
 			if(fetchingItem) {
 				if(inKitchen) {
-					if(walkToBuildingInRoom("Escape Hole", RoomHelperMethods.STORES)) {
+					if(walkToBuildingInRoom(dt, "Escape Hole", RoomHelperMethods.STORES)) {
 						removeNPCFromRoom();
 					}
 				}
 			} else if(stocking) {
-				stockTimer++;
+				stockTimer+=dt;
 				if(stockTimer >= maxStockTime) {
 					stockTimer = 0;
 					stocking = false;
@@ -73,7 +73,7 @@ public class Rat extends NPC {
 				}
 			} else if(retrievingItem) {
 				if(!inKitchen) {
-					if(walkToDoorWithDoorNum(RoomHelperMethods.KITCHEN)) {
+					if(walkToDoorWithDoorNum(dt, RoomHelperMethods.KITCHEN)) {
 						inKitchen = true;
 					}
 				} else {
@@ -81,13 +81,13 @@ public class Rat extends NPC {
 						if(fridge == null) {
 							findFridge();
 						} else {
-							if(walkToBuilding(fridge)) {
+							if(walkToBuilding(dt, fridge)) {
 								depositing = true;
 								walking = false;
 							}
 						}
 					} else {
-						stockTimer++;
+						stockTimer+=dt;
 						if(stockTimer >= maxStockTime) {
 							stockTimer = 0;
 							depositing = false;

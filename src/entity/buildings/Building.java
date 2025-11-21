@@ -153,7 +153,7 @@ public class Building extends Entity {
 		return presetNum;
 	}
 	
-	public void update() {
+	public void update(double dt) {
 		int xDiff = gp.camera.getXDiff();
 		int yDiff = gp.camera.getYDiff();
 		if(canBePlaced) {

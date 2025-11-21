@@ -16,7 +16,7 @@ public class DialogueEvent extends CutsceneEvent {
     }
 
     
-    public void update() {
+    public void update(double dt) {
     	gp.gui.setDialogue(message, npc);
         finished = true;
     }

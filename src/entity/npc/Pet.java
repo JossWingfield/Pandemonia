@@ -80,8 +80,8 @@ public class Pet extends NPC{
 		}
 
 	}    
-	public void update() {
-		followNPC(owner);
+	public void update(double dt) {
+		followNPC(dt, owner);
     }
 	   
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {

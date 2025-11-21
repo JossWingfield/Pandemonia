@@ -23,7 +23,7 @@ public class AddNPCEvent extends CutsceneEvent {
 	    }
 
 	    
-	    public void update() {
+	    public void update(double dt) {
 	    	npc.hitbox.x = gp.mapM.currentRoom.getSpawnX();
 	    	npc.hitbox.y = gp.mapM.currentRoom.getSpawnY();
 	    	if(spawnX != -1) {

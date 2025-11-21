@@ -322,7 +322,7 @@ public class MapBuilder {
 		}
 	}
 	
-	public void update(int xDiff, int yDiff) {
+	public void update(double dt, int xDiff, int yDiff) {
 		
 		int mouseX = gp.mouseI.mouseX;
 		int mouseY = gp.mouseI.mouseY;

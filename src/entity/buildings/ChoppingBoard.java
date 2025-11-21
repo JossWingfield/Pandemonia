@@ -24,7 +24,7 @@ public class ChoppingBoard extends Building {
     private List<String> choppedResults;
 	
 	private Food currentItem = null;
-	private int clickCooldown = 0;
+	private double clickCooldown = 0;
 	private boolean chopping = false;
     private int chopCount = 0;
     private int maxChopCount = 12;
@@ -68,72 +68,86 @@ public class ChoppingBoard extends Building {
 	    this.currentItem = item;
 	    this.chopCount = 0;
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void update(double dt) {
+		super.update(dt);
 		
 		if(gp.progressM.choppingBoardUpgradeI) {
 			maxChopCount = 8;
 		}
+		
+		   if(hitbox.intersects(gp.player.hitbox)) {
+			    if(gp.keyI.ePressed) {
+			    	if(clickCooldown == 0) {
+				    	if(gp.player.currentItem != null) {
+				    		if(canChop(gp.player.currentItem.getName())) {
+				    			Food f = (Food)gp.player.currentItem;
+				    			if(f.foodState == FoodState.RAW) {
+						    		currentItem = (Food)gp.player.currentItem;
+						    		gp.player.currentItem = null;
+						    		clickCooldown = 0.08;
+						    		if(gp.multiplayer) {
+						    			Food foodItem = (Food)currentItem;
+						    			Packet12AddItemToChoppingBoard packet = new Packet12AddItemToChoppingBoard(currentItem.getName(),getArrayCounter(), foodItem.getState());
+						    			packet.writeData(gp.socketClient); 
+						    			Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
+						    			packet2.writeData(gp.socketClient); 
+						    		}
+				    			}
+				    		}
+				    	} else {
+				    		if(currentItem != null) {
+					    		if(currentItem.foodState == FoodState.RAW && canChop(currentItem.getName())) {
+						    		clickCooldown = 0.08;
+						    		chopCount++;
+						    		if(gp.multiplayer) {
+						    			Packet14UpdateChoppingProgress packet = new Packet14UpdateChoppingProgress(gp.player.getUsername(), getArrayCounter(), (int)chopCount);
+						    			packet.writeData(gp.socketClient); 
+						    		}
+						    		if(chopCount == maxChopCount) {
+						    			chopCount = 0;
+						    			currentItem.foodState = FoodState.CHOPPED;
+						    			if(currentItem.cutIntoNewItem) {
+						    				Food newItem = (Food)gp.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);
+						    				currentItem = newItem;
+						    			}
+						    		}
+					    		} else {
+					    			gp.player.currentItem = currentItem;
+					    			gp.player.resetAnimation(4);
+						    		currentItem = null;
+						    		clickCooldown = 0.33;
+						    		if(gp.multiplayer) {
+						    			Packet15RemoveItemFromChoppingBoard packet = new Packet15RemoveItemFromChoppingBoard(getArrayCounter());
+						    			packet.writeData(gp.socketClient); 
+						    			Food foodItem = (Food)gp.player.currentItem;
+						    			Packet03PickupItem packet2 = new Packet03PickupItem(gp.player.currentItem.getName(), gp.player.getUsername(), foodItem.getState());
+						    			packet2.writeData(gp.socketClient); 
+						    		}
+					    		}
+				    		} else {
+					    		gp.player.currentItem = currentItem;
+					    		currentItem = null;
+					    		clickCooldown = 0.333;
+				    		}
+				    	}
+			    	}
+			    }
+		    }
+		
+		   if (clickCooldown > 0) {
+			   	clickCooldown -= dt;        // subtract elapsed time in seconds
+			    if (clickCooldown < 0) {
+			    	clickCooldown = 0;      // clamp to zero
+			    }
+			}
+	}
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+		
 		 
 		g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
       		 
 	    if(hitbox.intersects(gp.player.hitbox)) {
 		    g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		    if(gp.keyI.ePressed) {
-		    	if(clickCooldown == 0) {
-			    	if(gp.player.currentItem != null) {
-			    		if(canChop(gp.player.currentItem.getName())) {
-			    			Food f = (Food)gp.player.currentItem;
-			    			if(f.foodState == FoodState.RAW) {
-					    		currentItem = (Food)gp.player.currentItem;
-					    		gp.player.currentItem = null;
-					    		clickCooldown = 7;
-					    		if(gp.multiplayer) {
-					    			Food foodItem = (Food)currentItem;
-					    			Packet12AddItemToChoppingBoard packet = new Packet12AddItemToChoppingBoard(currentItem.getName(),getArrayCounter(), foodItem.getState());
-					    			packet.writeData(gp.socketClient); 
-					    			Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
-					    			packet2.writeData(gp.socketClient); 
-					    		}
-			    			}
-			    		}
-			    	} else {
-			    		if(currentItem != null) {
-				    		if(currentItem.foodState == FoodState.RAW && canChop(currentItem.getName())) {
-					    		clickCooldown = 7;
-					    		chopCount++;
-					    		if(gp.multiplayer) {
-					    			Packet14UpdateChoppingProgress packet = new Packet14UpdateChoppingProgress(gp.player.getUsername(), getArrayCounter(), chopCount);
-					    			packet.writeData(gp.socketClient); 
-					    		}
-					    		if(chopCount == maxChopCount) {
-					    			chopCount = 0;
-					    			currentItem.foodState = FoodState.CHOPPED;
-					    			if(currentItem.cutIntoNewItem) {
-					    				Food newItem = (Food)gp.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);
-					    				currentItem = newItem;
-					    			}
-					    		}
-				    		} else {
-				    			gp.player.currentItem = currentItem;
-				    			gp.player.resetAnimation(4);
-					    		currentItem = null;
-					    		clickCooldown = 20;
-					    		if(gp.multiplayer) {
-					    			Packet15RemoveItemFromChoppingBoard packet = new Packet15RemoveItemFromChoppingBoard(getArrayCounter());
-					    			packet.writeData(gp.socketClient); 
-					    			Food foodItem = (Food)gp.player.currentItem;
-					    			Packet03PickupItem packet2 = new Packet03PickupItem(gp.player.currentItem.getName(), gp.player.getUsername(), foodItem.getState());
-					    			packet2.writeData(gp.socketClient); 
-					    		}
-				    		}
-			    		} else {
-				    		gp.player.currentItem = currentItem;
-				    		currentItem = null;
-				    		clickCooldown = 20;
-			    		}
-			    	}
-		    	}
-		    }
 	    }
 	    
 	    if(currentItem != null) {
@@ -145,9 +159,6 @@ public class ChoppingBoard extends Building {
 		    }
 	    }
 	    
-	    if(clickCooldown > 0) {
-	    	clickCooldown--;
-	    }
 	    
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
@@ -178,7 +189,7 @@ public class ChoppingBoard extends Building {
 		}
 	}
 
-	private void drawChoppingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {
+	private void drawChoppingBar(Graphics2D g2, float worldX, float worldY, double cookTime, double maxCookTime, int xDiff, int yDiff) {
 	    float screenX = worldX - xDrawOffset - xDiff;
 	    float screenY = worldY - yDrawOffset - yDiff;
 
@@ -187,7 +198,7 @@ public class ChoppingBoard extends Building {
 	    int xOffset = 0;
 	    int yOffset = -10; // raise the bar above the pan
 
-	    float progress = Math.min(1.0f, cookTime / (float) maxCookTime);
+	    float progress = Math.min(1.0f, (float)(cookTime / maxCookTime));
 
 	    // Interpolate from red to green
 	    int r = (int) ((1 - progress) * 255);

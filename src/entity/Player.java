@@ -64,7 +64,7 @@ public class Player extends Entity{
     public float buildRange;
     public boolean facingLeft = false;
     public Item currentItem = null;
-    public int clickCounter = 0;
+    public double clickCounter = 0;
     public Rectangle2D.Float interactHitbox;
     
     //ATTRIBUTES
@@ -76,7 +76,7 @@ public class Player extends Entity{
     public boolean alive = true;
     public int maxHealth = 3;
     public int currentHealth = maxHealth;
-    private int invincibilityCounter = 0;
+    private double invincibilityCounter = 0;
 
     //SCREEN SCROLL SETTINGS
     private boolean controlEnabled = true;
@@ -85,7 +85,7 @@ public class Player extends Entity{
     
     public LightSource playerLight;
     public boolean isInvisible = false;
-    private int dustCooldown = 0;
+    private double dustCooldown = 0;
     
     //INVENTORY
     //public Headgear currentHeadgear = null;
@@ -102,7 +102,7 @@ public class Player extends Entity{
         usernameFont = new Font("monogram", Font.PLAIN, 30);
         usernameColor = new Color(213, 213, 213);
 
-        initialSpeed = 5;
+        initialSpeed = 300;
         speed = initialSpeed;
         currentSpeed = speed;
         
@@ -183,7 +183,7 @@ public class Player extends Entity{
     	return animationCounter;
     }
     public void slowSpeed() {
-    	this.speed = 1;
+    	this.speed = 60;
     }
     public void setNormalSpeed() {
     	this.speed = initialSpeed;
@@ -271,7 +271,7 @@ public class Player extends Entity{
     	}
     }
 
-    private void handleMovement() {
+    private void handleMovement(double dt) {
 
     		if (!(keyI.left || keyI.right || keyI.up || keyI.down) && currentAnimation != 4) {
                 currentAnimation = 0;
@@ -279,20 +279,22 @@ public class Player extends Entity{
                 	currentAnimation = 2;
                 }
             }
+    		
 
             if (keyI.left) { //Moving left
             	direction = 1;
             	facingLeft = true;
             	normaliseSpeed();
-                if(CollisionMethods.tileCheck(hitbox.x-currentSpeed, hitbox.y, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x-currentSpeed, hitbox.y, hitbox.width, hitbox.height)) {
-                    hitbox.x -= currentSpeed;
+            	float moveAmount = (float) (currentSpeed * dt);
+                if(CollisionMethods.tileCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
+                    hitbox.x -= moveAmount;
                     if(currentAnimation != 4) {
 	                    currentAnimation = 1;
 	                    if(currentItem != null) {
 	                    	currentAnimation = 3;
 	                    }
                     }
-                } else if(!gp.buildingM.entityCheck(hitbox.x-currentSpeed, hitbox.y, hitbox.width, hitbox.height)) {
+                } else if(!gp.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
 
                 } else {
                 	hitbox.x = CollisionMethods.getWallPos(hitbox.x, gp);
@@ -301,15 +303,16 @@ public class Player extends Entity{
                 direction = 0;
                 facingLeft = false;
                 normaliseSpeed();
-                if(CollisionMethods.tileCheck(hitbox.x+currentSpeed, hitbox.y, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x+currentSpeed, hitbox.y, hitbox.width, hitbox.height)) {
-                    hitbox.x += currentSpeed;
+             	float moveAmount = (float) (currentSpeed * dt);
+                if(CollisionMethods.tileCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
+                    hitbox.x += moveAmount;
                     if(currentAnimation != 4) {
 	                    currentAnimation = 1;
 	                    if(currentItem != null) {
 	                    	currentAnimation = 3;
 	                    }
                     }
-                } else if(!gp.buildingM.entityCheck(hitbox.x+currentSpeed, hitbox.y, hitbox.width, hitbox.height)) {
+                } else if(!gp.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
                 	
                 } else {
                     hitbox.x = CollisionMethods.getWallPos(hitbox.x + hitbox.width - 1, gp) - (hitbox.width- gp.tileSize);
@@ -318,15 +321,16 @@ public class Player extends Entity{
             if (keyI.up) {
             	direction = 3;
             	normaliseSpeed();
-                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y-currentSpeed, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x, hitbox.y-currentSpeed, hitbox.width, hitbox.height)) {
-                    hitbox.y -= currentSpeed;
+             	float moveAmount = (float) (currentSpeed * dt);
+                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
+                    hitbox.y -= moveAmount;
                     if(currentAnimation != 4) {
 	                    currentAnimation = 1;
 	                    if(currentItem != null) {
 	                    	currentAnimation = 3;
 	                    }
                     }
-                } else if(!gp.buildingM.entityCheck(hitbox.x, hitbox.y-currentSpeed, hitbox.width, hitbox.height)) {
+                } else if(!gp.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
 
                 } else {
                     hitbox.y = CollisionMethods.getFloorPos(hitbox.y, gp);
@@ -334,15 +338,16 @@ public class Player extends Entity{
             } else if (keyI.down) {
             	direction = 2;
             	normaliseSpeed();
-                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y + currentSpeed, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x, hitbox.y + currentSpeed, hitbox.width, hitbox.height)) {
-                    hitbox.y += currentSpeed;
+            	float moveAmount = (float) (currentSpeed * dt);
+                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height)) {
+                    hitbox.y += moveAmount;
                     if(currentAnimation != 4) {
 	                    currentAnimation = 1;
 	                    if(currentItem != null) {
 	                    	currentAnimation = 3;
 	                    }
                     }
-                } else if(!gp.buildingM.entityCheck(hitbox.x, hitbox.y+currentSpeed, hitbox.width, hitbox.height)) {
+                } else if(!gp.buildingM.entityCheck(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height)) {
                 	
                 } else {
                     hitbox.y = CollisionMethods.getFloorPos(hitbox.y + hitbox.height - 1, gp) - (hitbox.height- gp.tileSize);
@@ -384,12 +389,14 @@ public class Player extends Entity{
         gp.currentState = gp.gameOverState;
         alive = false;
     }
-    private void updateCounters() {
-        if(invincibilityCounter>0) {
-        	invincibilityCounter--;
+    private void updateCounters(double dt) {
+        if (invincibilityCounter > 0) {
+            invincibilityCounter -= dt;  // subtract elapsed time
+            if (invincibilityCounter < 0) invincibilityCounter = 0; // clamp to 0
         }
-        if(clickCounter>0) {
-        	clickCounter--;
+        if (clickCounter > 0) {
+            clickCounter -= dt;
+            if (clickCounter < 0) clickCounter = 0;
         }
     }
     public void leftClick(int x, int y) {
@@ -399,9 +406,9 @@ public class Player extends Entity{
     	
     }
   
-    private void handleItems() {
+    private void handleItems(double dt) {
     	if(currentItem != null) {
-    		currentItem.update();
+    		currentItem.update(dt);
 	    	if(gp.keyI.ePressed && clickCounter == 0) {
 	    		FloorDecor_Building b = gp.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {
@@ -423,7 +430,7 @@ public class Player extends Entity{
 		    				}
 				    		table.currentItem = currentItem;
 				    		currentItem = null;
-					    	clickCounter = 8;
+					    	clickCounter = 0.1;
 					    	return;
 		    			} else {
 		    				if(currentItem.getName().equals("Plate")) {
@@ -434,7 +441,7 @@ public class Player extends Entity{
 			    						plate.addIngredient(food);
 					    				table.currentItem = null;
 					    				currentItem = plate;
-					    				clickCounter = 8;
+					    				clickCounter = 0.1;
 					    				int num = table.getArrayCounter();
 					    				if(gp.multiplayer) {
 					    	                Packet19AddFoodToPlateInHand packet = new Packet19AddFoodToPlateInHand(getUsername(),food.getName(),food.getState(), num);
@@ -449,7 +456,7 @@ public class Player extends Entity{
 			    						plate.addIngredient(food);
 					    				currentItem = null;
 					    				table.currentItem = plate;
-					    				clickCounter = 8;
+					    				clickCounter = 0.1;
 					    				if(gp.multiplayer) {
 					    	                Packet20AddFoodToPlateOnTable packet = new Packet20AddFoodToPlateOnTable(
 						    	                	getUsername(),
@@ -463,7 +470,7 @@ public class Player extends Entity{
 		    						if(cookingItem.canCook(gp.player.currentItem.getName()) && cookingItem.cookingItem == null) {
 		    							cookingItem.setCooking(gp.player.currentItem);
 		    							gp.player.currentItem = null;
-		    							clickCounter = 8;
+		    							clickCounter = 0.1;
 		    						}
 		    					}
 		    				}
@@ -483,18 +490,18 @@ public class Player extends Entity{
 					    			Plate p = new Plate(gp, 0, 0);
 					    			p.setCurrentStackCount(1);
 					    			currentItem = p;
-					    			clickCounter = 8;
+					    			clickCounter = 0.1;
 					    			resetAnimation(4);
 				    			} else {
 				    				currentItem = b.currentItem;
-						    		clickCounter = 8;
+						    		clickCounter = 0.1;
 						    		resetAnimation(4);
 						    		sendPickupPacket(b);
 						    		b.currentItem = null;
 				    			}
 			    			} else {
 			    				currentItem = b.currentItem;
-					    		clickCounter = 8;
+					    		clickCounter = 0.1;
 					    		resetAnimation(4);
 					    		sendPickupPacket(b);
 					    		b.currentItem = null;
@@ -569,22 +576,22 @@ public class Player extends Entity{
     public void setControlEnabled(boolean isEnabled) {
     	controlEnabled = isEnabled;
     }
-    public void update() {
+    public void update(double dt) {
 
     	if(!gp.minigameM.miniGameActive && controlEnabled) {
-    		handleMovement();
-    		updateCounters();
+    		handleMovement(dt);
+    		updateCounters(dt);
     		updateInteractHitbox();
-    		handleItems();
+    		handleItems(dt);
     		
-    		if(gp.mapM.currentRoom.darkerRoom) {
-    			if (currentAnimation == 1) {
-    				dustCooldown--;
-    				if (dustCooldown <= 0) {
-    					dustCooldown = 2; // spawn every few frames
-    					spawnTrailDust();
-    				}
-    			}
+    		if (gp.mapM.currentRoom.darkerRoom) {
+    		    if (currentAnimation == 1) {
+    		        dustCooldown -= dt; // subtract elapsed time
+    		        if (dustCooldown <= 0) {
+    		            spawnTrailDust();
+    		            dustCooldown = 0.033; // reset cooldown to ~2 frames at 60FPS
+    		        }
+    		    }
     		}
     	}
     }

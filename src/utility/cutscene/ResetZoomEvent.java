@@ -12,7 +12,7 @@ public class ResetZoomEvent extends CutsceneEvent {
 	    }
 
 	    
-	    public void update() {
+	    public void update(double dt) {
 	        // Camera will automatically lerp to target position and zoom
 	        gp.camera.follow(gp.player);
 	        gp.camera.resetToDefaultZoom();

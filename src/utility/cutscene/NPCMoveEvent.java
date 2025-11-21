@@ -44,7 +44,7 @@ public class NPCMoveEvent extends CutsceneEvent {
         npc.walking = true;
     }
 
-    public void update() {
+    public void update(double dt) {
         if (npc == null) {
             finished = true;
             return;
@@ -56,7 +56,7 @@ public class NPCMoveEvent extends CutsceneEvent {
         	if(npc.currentRoomNum != gp.player.currentRoomIndex) {
         		gp.mapM.changeRoom(npc.currentRoomNum, gp.buildingM.findDoor(npc.currentRoomNum));
         	}
-	        if(npc.walkToBuildingInRoom(targetBuilding.getName(), roomNum)) {
+	        if(npc.walkToBuildingInRoom(dt, targetBuilding.getName(), roomNum)) {
 	            finished = true;
 	            npc.hitbox.x = targetBuilding.hitbox.x;
 	            npc.hitbox.y = targetBuilding.hitbox.y;
@@ -66,14 +66,14 @@ public class NPCMoveEvent extends CutsceneEvent {
         	if(npc.currentRoomNum != gp.player.currentRoomIndex) {
         		gp.mapM.changeRoom(npc.currentRoomNum, gp.buildingM.findDoor(npc.currentRoomNum));
         	}
-        	if(npc.walkToBuildingInRoom(targetBuildingName, roomNum)) {
+        	if(npc.walkToBuildingInRoom(dt, targetBuildingName, roomNum)) {
 	            finished = true;
 	            npc.walking = false; // stop moving
 	        };
         }
         
         if(targetX != 0) {
-        	npc.walkToPoint(targetX, targetY);
+        	npc.walkToPoint(dt, targetX, targetY);
             npc.walking = true; 
         	if(npc.hitbox.intersects(targetHitbox)) {
 	            finished = true;

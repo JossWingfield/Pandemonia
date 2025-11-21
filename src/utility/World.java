@@ -30,8 +30,6 @@ public class World {
     Random random;
 
     private float time;
-    private int frameCounter;
-    private int framesPerGameMinute = 20;
     private boolean paused = false;
 
     public Season currentSeason = Season.SPRING;
@@ -40,7 +38,7 @@ public class World {
     private int dayStart = 6, openingTime = 6, closingTime = 19;
 
     private int spawnTimer = 0;
-    private int customerSpawnTimer = 60 * 24;
+    private int customerSpawnTimer = 24;
     public int previousSoulsCollected = 0;
     private boolean waitingForLevelUp = false;
 
@@ -55,9 +53,9 @@ public class World {
     private boolean eventsOn = true;
     private int eventTimer = 0;
     private int nextEventTime; // in frames
-    private int minEventInterval = 60 * 45;  // 10 in-game minutes
-    private int maxEventInterval = 60 * 60*3;  // 3 in-game hour
-    private int serviceEventGracePeriod = 60 * 60; 
+    private int minEventInterval = 45;  // 10 in-game minutes
+    private int maxEventInterval = 60*3;  // 3 in-game hour
+    private int serviceEventGracePeriod = 60; 
     private DayPhase lastPhase = DayPhase.AFTER_HOURS;
     
     // === Weather system ===
@@ -65,8 +63,8 @@ public class World {
     public Weather currentWeather = Weather.SUNNY;
     private int weatherTimer = 0;        // frames until weather changes
     private int nextWeatherTime;        // random tick to trigger next weather change
-    private int minWeatherDuration = 60 * 60 * 1;
-    private int maxWeatherDuration = 60 * 60 * 3;
+    private int minWeatherDuration = 60 * 1;
+    private int maxWeatherDuration = 60 * 3;
     private boolean lightningSpawned = false;
     private int lightningCounter = 0;
     private int lightningTime = 5;
@@ -252,25 +250,21 @@ public class World {
         }
     }
     // === Game loop ===
-    public void update() {
+    public void update(double dt) {
         if(gp.cutsceneM.cutsceneActive) {
-            updateCutsceneEffects();
+            updateCutsceneEffects(dt);
         	return;
         }
         
         if (paused) return;
 
-        updateSleep();
+        updateSleep(dt);
         
-        frameCounter++;
-        if (frameCounter >= framesPerGameMinute) {
-            frameCounter = 0;
-            time += 1.0f / 60.0f;
+        time += dt/3.0;
 
-            if (time >= 24.0f) {
-                time -= 24.0f;
-                advanceDay();
-            }
+        if (time >= 24.0f) {
+        	time -= 24.0f;
+            advanceDay();
         }
 
         DayPhase currentPhase = getCurrentPhase();
@@ -282,7 +276,7 @@ public class World {
         }
         
         if(gp.progressM.moreCustomers) {
-        	customerSpawnTimer = 60*12;
+        	customerSpawnTimer = 12;
         }
 
         // Customer spawning only during service, and only if menu chosen
@@ -290,7 +284,7 @@ public class World {
 
         	if(!gp.mapM.isInRoom(0)) {
 	            if (gp.mapM.getRoom(0).isFreeChair() != null) {
-	                spawnTimer++;
+	                spawnTimer+=dt;
 	                if (spawnTimer >= customerSpawnTimer) {
 	                    spawnTimer = 0;
 	                    if(queueSpecialCustomer) {
@@ -304,7 +298,7 @@ public class World {
 	            }
 	        } else {
 	        	if (gp.buildingM.isFreeChair() != null) {
-	                spawnTimer++;
+	                spawnTimer+=dt;
 	                if (spawnTimer >= customerSpawnTimer) {
 	                    spawnTimer = 0;
 	                    if(queueSpecialCustomer) {
@@ -325,7 +319,7 @@ public class World {
                     eventTimer = -serviceEventGracePeriod; // start below zero so timer "waits" to reach 0
                 }
 
-                eventTimer++;
+                eventTimer+=dt;
                 if (eventTimer >= nextEventTime) {
                     triggerRandomEvent();
                     resetEventTimer();
@@ -333,7 +327,7 @@ public class World {
             }
 	          
 	        if(spawnRats) {
-	        	ratSpawnTimer++;
+	        	ratSpawnTimer+=dt;
 	        	if(ratSpawnTimer >= maxRatSpawnTime) {
 		        	gp.npcM.addRat();
 		        	ratsSpawned++;
@@ -350,7 +344,7 @@ public class World {
 	        
         }
         
-     updateWeather();
+     updateWeather(dt);
         
      currentPhase = getCurrentPhase();
 
@@ -442,11 +436,6 @@ public class World {
     public float getRawTime() {
         return time;
     }
-
-    public void setFramesPerMinute(int frames) {
-        this.framesPerGameMinute = frames;
-    }
-
     public void pauseTime() {
         this.paused = true;
     }
@@ -500,11 +489,11 @@ public class World {
         fadingOut = true;
         fadeAlpha = 0f;
     }
-    public void updateSleep() {
+    public void updateSleep(double dt) {
         if (!sleeping) return;
 
         if (fadingOut) {
-            fadeAlpha += fadeSpeed;
+            fadeAlpha += fadeSpeed*dt;
             if (fadeAlpha >= 1f) {
                 fadeAlpha = 1f;
                 fadingOut = false;
@@ -512,11 +501,10 @@ public class World {
                 // Switch the day here, once it's fully black
                 advanceDay();
                 this.time = dayStart;
-                this.frameCounter = 0;
                 gp.gui.addMessage("A new day begins!", Color.YELLOW);
             }
         } else {
-            fadeAlpha -= fadeSpeed;
+            fadeAlpha -= fadeSpeed*dt;
             if (fadeAlpha <= 0f) {
                 fadeAlpha = 0f;
                 sleeping = false; // done fading
@@ -529,27 +517,27 @@ public class World {
     public void startFadeIn() {
         fadingIn = true;
     }
-    private void updateCutsceneEffects() {
+    private void updateCutsceneEffects(double dt) {
     	if (fadingOut) {
-            fadeAlpha += fadeSpeed;
+            fadeAlpha += fadeSpeed*dt;
             if (fadeAlpha >= 1f) {
                 fadeAlpha = 1f;
                 fadingOut = false;
             }
         }
     	if(fadingIn) {
-    		fadeAlpha -= fadeSpeed;
+    		fadeAlpha -= fadeSpeed*dt;
             if (fadeAlpha <= 0f) {
                 fadeAlpha = 0f;
                 fadingIn = false;
             }
     	}
     }
-    private void updateWeather() {
+    private void updateWeather(double dt) {
         if (!weatherOn) return; // optional if you only want weather during events
 
         Weather oldWeather = currentWeather;
-        weatherTimer++;
+        weatherTimer+=dt;
         if (weatherTimer >= nextWeatherTime) {
             // pick new weather avoiding repetition
             Weather newWeather;

@@ -15,8 +15,8 @@ public class Cauldron extends Building {
 	
 	private LightSource light;
 	private boolean isActive = false;
-	private int activeCounter = 0;
-	private int activeTime = 120;
+	private double activeCounter = 0;
+	private double activeTime = 2.0;
 	
 	public Cauldron(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -50,8 +50,8 @@ public class Cauldron extends Building {
     	animations[0][0][0] = importImage("/decor/Cauldron.png").getSubimage(0, 0, 32, 32);
     	animations[0][0][1] = importImage("/decor/Cauldron.png").getSubimage(32, 0, 32, 32);
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-
+	public void update(double dt) {
+		super.update(dt);
 		if(!isActive) {
 			if(gp.player.interactHitbox.intersects(hitbox)) {
 				if(gp.keyI.ePressed) {
@@ -62,10 +62,8 @@ public class Cauldron extends Building {
 					gp.lightingM.addLight(light);
 				}
 			}
-		}
-		
-		if(isActive) {
-			activeCounter++;
+		} else {
+			activeCounter+=dt;
 			if(activeCounter >= activeTime) {
 				activeCounter = 0;
 				isActive = false;
@@ -73,6 +71,12 @@ public class Cauldron extends Building {
 				gp.player.currentItem = item;
 				gp.lightingM.removeLight(light);
 			}
+		}
+		
+	}
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+
+		if(isActive) {
 			g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		} else {
 			g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);

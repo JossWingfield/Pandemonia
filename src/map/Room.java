@@ -2848,21 +2848,21 @@ public class Room {
 		}
 		return null;
 	}
-    public void update() {
+    public void update(double dt) {
     	for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
-            	i.update(); //Draws the item
+            	i.update(dt); //Draws the item
             }
         }
     	for(Item i: items) { //Loops through the items on the current map
             if(i != null) {
-            	i.update(); //Draws the item
+            	i.update(dt); //Draws the item
             }
         }
     	
     	for (NPC i : new ArrayList<>(npcs)) {
     	    if (i != null) {
-    	        i.update();
+    	        i.update(dt);
     	    }
     	}
     }

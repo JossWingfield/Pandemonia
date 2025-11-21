@@ -184,13 +184,13 @@ public class MapManager {
 	        }
 	        return importedImage;
 	    }
-	    public void update() {
+	    public void update(double dt) {
 	    		    	
 	    	for(Room room: rooms) {
 	    		if(room != null) {
 	    			if(currentRoom != room) {
 	    				if(room.containsAnyNPC() || room.getRoomType().equals("Main")) {
-	    					room.update();
+	    					room.update(dt);
 	    				}
 	    			}
 	    		}

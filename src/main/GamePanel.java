@@ -370,29 +370,31 @@ public class GamePanel extends JPanel implements Runnable {
     //THE GAME LOOP
     //@Override
     public void run() {
-        //Initialising variables
-        long previousUpdateTime = System.nanoTime();
-        long interval = 0;
-        double delta = 0;
+        final double TICK_RATE = 1.0 / 60.0;   // 60 updates per second
+        double accumulator = 0.0;
 
-        //CHECKS IF THREAD IS ACTIVE
-        while(thread != null) {
-            long current = System.nanoTime();
-            long updateTime = current - previousUpdateTime;
-            delta += updateTime / optimalLoopTime;
-            interval += updateTime;
-            previousUpdateTime = current;
+        long previousTime = System.nanoTime();
 
-            if(delta >= 1) {
-                update();
-                repaint();
-                delta = 0;
+        while (thread != null) {
+
+            long currentTime = System.nanoTime();
+            double frameTime = (currentTime - previousTime) / 1_000_000_000.0; // seconds
+            previousTime = currentTime;
+
+            // Avoid spiral of death (very long frames)
+            if (frameTime > 0.25)
+                frameTime = 0.25;
+
+            accumulator += frameTime;
+
+            // Run update() fixed number of times
+            while (accumulator >= TICK_RATE) {
+                update(TICK_RATE); 
+                accumulator -= TICK_RATE;
             }
-            //Resetting variables
-            if(interval >= 1000000000) {
-                interval = 0;
-            }
 
+            // Render once per loop
+            repaint();
         }
     }
     public synchronized ArrayList<PlayerMP> getPlayerList() {
@@ -475,7 +477,7 @@ public class GamePanel extends JPanel implements Runnable {
         Main.window.setLocation(xOffset, yOffset);
     }
     //UPDATES THE GAME
-    public void update() {    	
+    public void update(double dt) {
     	
     	float viewWidthWorld  = frameWidth  / camera.zoom;
     	float viewHeightWorld = frameHeight / camera.zoom;
@@ -522,28 +524,28 @@ public class GamePanel extends JPanel implements Runnable {
 		    		}
 		    	}
 		    		
-		    	player.update();
-		    	mapM.update();
-		    	buildingM.update();
-		    	npcM.update();
-		    	itemM.update();
-		    	world.update();
-    			camera.update();
-    			cutsceneM.update();
-		    	lightingM.update();
-		    	minigameM.update();
+		    	player.update(dt);
+		    	mapM.update(dt);
+		    	buildingM.update(dt);
+		    	npcM.update(dt);
+		    	itemM.update(dt);
+		    	world.update(dt);
+    			camera.update(dt);
+    			cutsceneM.update(dt);
+		    	lightingM.update(dt);
+		    	minigameM.update(dt);
 		        if(keyI.debugMode) {
-		        	debug.update();
+		        	debug.update(dt);
 		        }
 		    	if(currentState == customiseRestaurantState) {
-		    		customiser.update();
+		    		customiser.update(dt);
 		    	}
 	    	} else if(currentState == mapBuildState) {
-	    		mapB.update(xDiff, yDiff);
-	    		buildingM.update();
+	    		mapB.update(dt, xDiff, yDiff);
+	    		buildingM.update(dt);
 	    	}
-    		gui.update();
-	    	particleM.update();
+    		gui.update(dt);
+	    	particleM.update(dt);
     	} else {
     		freezeCounter--;
     		if(freezeCounter<= 0) {

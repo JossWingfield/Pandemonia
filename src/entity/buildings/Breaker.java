@@ -61,7 +61,8 @@ public class Breaker extends Building{
 	public boolean isPowerOff() {
 		return !powerOn;
 	}
-	public void update() {
+	public void update(double dt) {
+		super.update(dt);
 		if(firstUpdate) {
 			firstUpdate = false;
 			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.GREEN, 100);
@@ -76,7 +77,7 @@ public class Breaker extends Building{
 			    g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 		    }
 		} else {
-			  gp.lightingM.updateLightColor(3, light, Color.RED);
+			gp.lightingM.updateLightColor(3, light, Color.RED);
 			if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			    g2.drawImage(animations[0][0][3], (int)(hitbox.x - xDrawOffset - xDiff), (int)(hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
 			    if(gp.keyI.ePressed) {

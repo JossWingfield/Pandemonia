@@ -28,8 +28,8 @@ public class Stocker extends Employee {
 	
 	private boolean fetchingItem, retrievingItem, stocking, depositing;
 	private boolean inKitchen = true;
-	private int stockTimer = 0;
-	private int maxStockTime = 100;
+	private double stockTimer = 0;
+	private double maxStockTime = 1.4;
 	
 	public Stocker(GamePanel gp, int xPos, int yPos) {
 		super(gp, xPos, yPos);
@@ -62,20 +62,20 @@ public class Stocker extends Employee {
 	private void findFridge() {
 		fridge = (Fridge)findBuildingInRoom("Fridge", currentRoomNum);
     }
-	public void update() {
+	public void update(double dt) {
 		if(!walking && inKitchen && !depositing) {
 			walking = true;
 			fetchingItem = true;
 		} else {
 			if(fetchingItem) {
-				if(walkToBuildingInRoom("Storage Fridge", RoomHelperMethods.STORES)) {
+				if(walkToBuildingInRoom(dt, "Storage Fridge", RoomHelperMethods.STORES)) {
 					stocking = true;
 					walking = false;
 					fetchingItem = false;
 					inKitchen = false;
 				}
 			} else if(stocking) {
-				stockTimer++;
+				stockTimer+=dt;
 				if(stockTimer >= maxStockTime) {
 					stockTimer = 0;
 					stocking = false;
@@ -87,7 +87,7 @@ public class Stocker extends Employee {
 				}
 			} else if(retrievingItem) {
 				if(!inKitchen) {
-					if(walkToDoorWithDoorNum(RoomHelperMethods.KITCHEN)) {
+					if(walkToDoorWithDoorNum(dt, RoomHelperMethods.KITCHEN)) {
 						inKitchen = true;
 					}
 				} else {
@@ -95,13 +95,13 @@ public class Stocker extends Employee {
 						if(fridge == null) {
 							findFridge();
 						} else {
-							if(walkToBuilding(fridge)) {
+							if(walkToBuilding(dt, fridge)) {
 								depositing = true;
 								walking = false;
 							}
 						}
 					} else {
-						stockTimer++;
+						stockTimer+=dt;
 						if(stockTimer >= maxStockTime) {
 							stockTimer = 0;
 							depositing = false;

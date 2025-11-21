@@ -185,11 +185,11 @@ public class NPCManager {
 		}
 		return null;
 	}
-    public void update() {
+    public void update(double dt) {
     	for (NPC i : new ArrayList<>(npcs)) {
     	    if (i != null) {
     	    	if(i.ableToUpdate) {
-    	    		i.update();
+    	    		i.update(dt);
     	    	}
     	    }
     	}

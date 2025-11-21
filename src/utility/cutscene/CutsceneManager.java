@@ -54,12 +54,12 @@ public class CutsceneManager {
         gp.world.pauseTime();
     }
 
-    public void update() {
+    public void update(double dt) {
         if (!cutsceneActive) return;
 
         if (currentEventIndex < events.size()) {
             CutsceneEvent current = events.get(currentEventIndex);
-            current.update();
+            current.update(dt);
 
             if (current.isFinished()) {
                 currentEventIndex++;
@@ -147,10 +147,10 @@ public class CutsceneManager {
         	playerNPC.setDirection("Up");
         }));
         
-        events.add(new WaitEvent(120)); 
+        events.add(new WaitEvent(2)); 
         
         events.add(new DialogueEvent(gp, playerNPC, "This looks like the restaurant's old kitchen."));
-        events.add(new WaitEvent(20));
+        events.add(new WaitEvent(0.33));
         
         events.add(new ActionEvent(() -> {
         	gp.player.isInvisible = false;
@@ -177,14 +177,14 @@ public class CutsceneManager {
         }));
         NPC playerNPC = new StoryCharacter(gp, gp.player.hitbox.x, gp.player.hitbox.y, 2);
         events.add(new AddNPCEvent(gp, playerNPC));
-        events.add(new WaitEvent(20));
+        events.add(new WaitEvent(0.33));
         
         events.add(new NPCMoveEvent(gp, playerNPC, 12, 9));
         
-        events.add(new WaitEvent(120)); 
+        events.add(new WaitEvent(2)); 
         
         events.add(new DialogueEvent(gp, playerNPC, "This place feels... wrong."));
-        events.add(new WaitEvent(60)); 
+        events.add(new WaitEvent(1)); 
         
 
     	events.add(new ActionEvent(() -> {
@@ -194,14 +194,14 @@ public class CutsceneManager {
     	    	t.turnOn();
     	    }
     	}));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         events.add(new ActionEvent(() -> {
     		gp.world.addLightning();
     	}));
         
         events.add(new DialogueEvent(gp, playerNPC, "Did those lights just turn themselves on?"));
 
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         
         
         events.add(new ActionEvent(() -> {
@@ -209,7 +209,7 @@ public class CutsceneManager {
     	}));
         
         events.add(new DialogueEvent(gp, playerNPC, "It looks as if they left everything behind. I wonder why this place closed down all those years ago."));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         
     	events.add(new ActionEvent(() -> {
     		List<Building> torches = gp.buildingM.findBuildingsWithName("Torch");
@@ -219,7 +219,7 @@ public class CutsceneManager {
     	    }
     	}));
     	
-        events.add(new WaitEvent(40)); 
+        events.add(new WaitEvent(0.66)); 
         events.add(new DialogueEvent(gp, playerNPC, "Maybe it was just a mind trick. I should get some rest."));
 
         
@@ -271,12 +271,12 @@ public class CutsceneManager {
           	lantern.turnOff();
         }));
         
-        events.add(new WaitEvent(60));
+        events.add(new WaitEvent(1));
         events.add(new CameraFollowEvent(gp, ignis, 1.6f));
         
-        events.add(new WaitEvent(20));
+        events.add(new WaitEvent(0.33));
         events.add(new DialogueEvent(gp, ignis, "...I told them... the heat must never go out..."));
-        events.add(new WaitEvent(20));
+        events.add(new WaitEvent(0.33));
         events.add(new DialogueEvent(gp, ignis, "We must fix that damned breaker."));
         
         events.add(new ActionEvent(() -> {
@@ -304,7 +304,7 @@ public class CutsceneManager {
         }));
         
         events.add(new DialogueEvent(gp, player, "It seems that rubble in front of the door has cleared."));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         
         events.add(new EndCutscene(gp));
 
@@ -314,7 +314,7 @@ public class CutsceneManager {
 
     	cutscenePlayed.add("Ignis II");
     	
-        events.add(new WaitEvent(40)); 
+        events.add(new WaitEvent(0.66)); 
         
         Door door = gp.buildingM.findDoor(7);
         
@@ -341,17 +341,17 @@ public class CutsceneManager {
         }));
         NPC playerNPC = new StoryCharacter(gp, gp.player.hitbox.x, gp.player.hitbox.y, 2);
         events.add(new AddNPCEvent(gp, playerNPC));
-        events.add(new WaitEvent(20));
+        events.add(new WaitEvent(0.33));
         
         events.add(new NPCMoveEvent(gp, playerNPC, 11, 8));
         events.add(new ActionEvent(() -> {
         	playerNPC.setDirection("Left");
         }));
         
-        events.add(new WaitEvent(80)); 
+        events.add(new WaitEvent(1.33)); 
         
         events.add(new DialogueEvent(gp, playerNPC, "What is that?"));
-        events.add(new WaitEvent(20));
+        events.add(new WaitEvent(0.33));
         events.add(new DialogueEvent(gp, playerNPC, "It seems to be leading in there..."));
         events.add(new NPCMoveEvent(gp, playerNPC, 7, 8));
         
@@ -363,11 +363,11 @@ public class CutsceneManager {
          	gp.particleM.setRandomShaking(true);
         }));
         
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         NPC ignis = new StoryCharacter(gp, 0, 0, 5);
         
         events.add(new DialogueEvent(gp, ignis, "You dare tell me to lower the heat? You’ll burn with mediocrity!"));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         
         events.add(new ActionEvent(() -> {
         	Door door1 = gp.buildingM.findDoor(9);
@@ -375,9 +375,9 @@ public class CutsceneManager {
          	gp.particleM.setRandomShaking(false);
         	door1.unlock();
         }));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         events.add(new DialogueEvent(gp, playerNPC, "Did that door just unlock itself?!"));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         
         events.add(new ActionEvent(() -> {
         	gp.player.isInvisible = false;
@@ -386,7 +386,7 @@ public class CutsceneManager {
         	gp.player.setDirection(playerNPC.getDirection());
         }));
         events.add(new RemoveNPCEvent(gp, playerNPC));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         
         events.add(new EndCutscene(gp));
 
@@ -412,13 +412,13 @@ public class CutsceneManager {
         events.add(new AddNPCEvent(gp, ghost1, 15, 9));
         events.add(new AddNPCEvent(gp, ghost2, 14, 9));
 
-        events.add(new WaitEvent(120));
+        events.add(new WaitEvent(2));
         
         events.add(new DialogueEvent(gp, ghost1, "...have you got your invitation to the banquet? I've heard its going to be the best night of the year!"));
-        events.add(new WaitEvent(60));
+        events.add(new WaitEvent(1));
         events.add(new DialogueEvent(gp, ghost2, "Yes I've just got mine last week, I better prepare my dress."));
         
-        events.add(new WaitEvent(60));
+        events.add(new WaitEvent(1));
         
         events.add(new ActionEvent(() -> {
             ghost1.setDirection("Up");
@@ -437,7 +437,7 @@ public class CutsceneManager {
         	lantern.setFlicker(false);
         }));
         
-        events.add(new WaitEvent(60));
+        events.add(new WaitEvent(1));
         events.add(new EndCutscene(gp));
 
         startCutscene(events);
@@ -461,16 +461,16 @@ public class CutsceneManager {
         events.add(new DialogueEvent(gp, deliveryMan, "Hi, I'm your local delivery driver for pascal deliveries. You can order furniture and cooking equipment and I'll deliver it straight to your door."));
 
         // 5. Pause for a moment (can be a WaitEvent)
-        events.add(new WaitEvent(20)); // wait 1 second
+        events.add(new WaitEvent(0.33)); // wait 1 second
         
         events.add(new DialogueEvent(gp, deliveryMan, "To start, use the computer in your room to shop on the online catalogue. Once you make an order it'll be delivered the next day."));
-        events.add(new WaitEvent(20)); // wait 1 second
+        events.add(new WaitEvent(0.33)); // wait 1 second
 
         events.add(new DialogueEvent(gp, deliveryMan, "Then press C to customise the restaurant, although this can only be done when it's not open to customers."));        
-        events.add(new WaitEvent(20)); // wait 1 second
+        events.add(new WaitEvent(0.33)); // wait 1 second
 
         events.add(new DialogueEvent(gp, deliveryMan, "Here's our complementary house plant, why don't you place it down in here."));
-        events.add(new WaitEvent(20)); // wait 1 second
+        events.add(new WaitEvent(0.33)); // wait 1 second
         
         events.add(new ActionEvent(() -> {
         	gp.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 0));
@@ -499,10 +499,10 @@ public class CutsceneManager {
 
         // 8. After boxes are moved, show dialogue
         events.add(new DialogueEvent(gp, deliveryMan, "Nice one, you can also press shift and click it to pick it up, if you feel like moving it."));
-        events.add(new WaitEvent(20)); // wait 1 second
+        events.add(new WaitEvent(0.33)); // wait 1 second
 
         events.add(new DialogueEvent(gp, deliveryMan, "Anyway, I'll leave you to it."));
-        events.add(new WaitEvent(20)); // wait 1 second
+        events.add(new WaitEvent(0.33)); // wait 1 second
         
         events.add(new NPCMoveEvent(gp, deliveryMan, 9, 11));
         
@@ -535,7 +535,7 @@ public class CutsceneManager {
         events.add(new DialogueEvent(gp, owner, "This place is a dump. Lets first clear some of this mess up."));
 
         // 5. Pause for a moment (can be a WaitEvent)
-        events.add(new WaitEvent(40)); // wait 1 second
+        events.add(new WaitEvent(0.66)); // wait 1 second
         
         events.add(new ResetZoomEvent(gp)); // wait 1 second
         
@@ -561,7 +561,7 @@ public class CutsceneManager {
         
         events.add(new StartFadeOutEvent(gp));
         events.add(new ActionEvent(() -> gp.mapM.currentRoom.setRestored()));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         events.add(new RemoveNPCEvent(gp, builder1));
         events.add(new RemoveNPCEvent(gp, builder2));
         events.add(new ActionEvent(() -> gp.mapM.currentRoom.setRestored()));
@@ -570,7 +570,7 @@ public class CutsceneManager {
         }));
         NPC playerNPC = new StoryCharacter(gp, 0, 0, 2);
         events.add(new AddNPCEvent(gp, playerNPC));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         events.add(new StartFadeInEvent(gp));
         
         events.add(new DialogueEvent(gp, owner, "Good as new! Let me show you around your new restaurant."));
@@ -582,7 +582,7 @@ public class CutsceneManager {
         
         events.add(new NPCMoveEvent(gp, owner, 15, 8));
         events.add(new DialogueEvent(gp, owner, "Here in the dining room, customers will enter and you'll need to serve them. You also need to choose your menu for each day."));
-        events.add(new WaitEvent(20)); 
+        events.add(new WaitEvent(0.33)); 
         events.add(new DialogueEvent(gp, owner, "Behind this door leads to some older parts of the restaurant, its a bit creepy back there, but don't worry! We've blocked it up for you."));
 
         

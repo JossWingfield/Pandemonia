@@ -33,15 +33,6 @@ public class Employee extends NPC {
 		}
     }
     */
-	protected void leave() {
-		int goalCol = (int)(9);
-	    int goalRow = (int)(11);  
-	    searchPath(goalCol, goalRow);
-	    
-	    if(doorHitbox.intersects(hitbox)) {
-	    	gp.npcM.removeNPC(this);
-	    }
-    }
 	public void update() {
 		
 	}

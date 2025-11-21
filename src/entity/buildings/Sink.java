@@ -16,9 +16,9 @@ public class Sink extends Building {
 	private Rectangle2D.Float sinkHitbox;
 	private boolean firstUpdate = true;
 	private Plate currentPlate = null;
-	private int clickCooldown = 0;
-	private int chopCount = 0;
-	private  int maxWashCount = 60*8;
+	private double clickCooldown = 0;
+	private double chopCount = 0;
+	private double maxWashCount = 8;
 	private int cleanedPlateCount = 3;
 	private Rectangle2D.Float cleanedPlateHitbox;
 	
@@ -86,8 +86,8 @@ public class Sink extends Building {
 	public boolean hasDirtyPlates() {
 		return currentPlate != null;
 	}
-	public void washPlates() {
-		chopCount++;
+	public void washPlates(double dt) {
+		chopCount+=dt;
     	if(chopCount == maxWashCount) {
     		chopCount = 0;
     		cleanedPlateCount++;
@@ -126,11 +126,83 @@ public class Sink extends Building {
 	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight);
 
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void update(double dt) {
+		super.update(dt);
+		if (clickCooldown > 0) {
+	    	clickCooldown -= dt;        // subtract elapsed time in seconds
+			if (clickCooldown < 0) {
+				clickCooldown = 0;      // clamp to zero
+			}
+		}
 		
 		if(gp.progressM.sinkUpgradeI) {
-			maxWashCount = 60*6;
+			maxWashCount = 6;
 		}
+		
+		if(sinkHitbox != null) {
+			if(gp.player.currentItem != null) {
+				if(gp.player.currentItem instanceof Plate plate) {
+					if(plate.isDirty()) {
+						if(sinkHitbox.intersects(gp.player.hitbox)) {
+						    if(gp.keyI.ePressed && clickCooldown == 0) {
+						    	if(currentPlate == null) {
+							    	clickCooldown = 0.1;
+							    	currentPlate = (Plate)gp.player.currentItem;
+							    	gp.player.currentItem = null;
+						    	} else {
+						    		clickCooldown = 0.1;
+							    	currentPlate.increasePlateStack();
+							    	gp.player.currentItem = null;
+						    	}
+						    }
+						}
+					}
+				}
+			} else if(currentPlate != null) {
+				if(sinkHitbox.intersects(gp.player.hitbox)) {
+				    if(gp.keyI.ePressed) {
+				    	chopCount+=dt;
+				    	if(chopCount >= maxWashCount) {
+				    		chopCount = 0;
+				    		cleanedPlateCount++;
+				    		if(currentPlate.getCurrentStackCount() > 1) {
+				    			currentPlate.decreasePlateStack();
+				    		} else {
+				    			currentPlate = null;
+				    		}
+				    	}
+				    }
+				}
+			}
+		}
+		if(cleanedPlateHitbox != null) {
+			if(cleanedPlateHitbox.intersects(gp.player.hitbox) && !sinkHitbox.intersects(gp.player.hitbox)) {
+				if(gp.keyI.ePressed && clickCooldown == 0) {
+					if(cleanedPlateCount > 0 && gp.player.currentItem == null) {
+						cleanedPlateCount--;
+						Plate plate = new Plate(gp, 0, 0);
+						plate.setClean();
+						plate.setCurrentStackCount(1);
+						gp.player.currentItem = plate;
+						clickCooldown = 0.1;
+						gp.player.resetAnimation(4);
+						 if (gp.multiplayer) {
+							 int state = gp.player.currentItem instanceof Food f ? f.getState() : 0;
+					         Packet03PickupItem packet = new Packet03PickupItem(
+					                gp.player.currentItem.getName(),
+					                gp.player.getUsername(),
+					                state
+					            );
+					         packet.writeData(gp.socketClient);
+					         Packet10RemoveSinkPlate packet2 = new Packet10RemoveSinkPlate(gp.player.getUsername(), getArrayCounter());
+						     packet2.writeData(gp.socketClient);
+						 }
+					}
+				}
+			}
+		}
+	}
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(firstUpdate) {
 			firstUpdate = false;
@@ -152,42 +224,16 @@ public class Sink extends Building {
 					if(plate.isDirty()) {
 						if(sinkHitbox.intersects(gp.player.hitbox)) {
 						    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-						    if(gp.keyI.ePressed && clickCooldown == 0) {
-						    	if(currentPlate == null) {
-							    	clickCooldown = 8;
-							    	currentPlate = (Plate)gp.player.currentItem;
-							    	gp.player.currentItem = null;
-						    	} else {
-						    		clickCooldown = 8;
-							    	currentPlate.increasePlateStack();
-							    	gp.player.currentItem = null;
-						    	}
-						    }
 						}
 					}
 				}
 			} else if(currentPlate != null) {
 				if(sinkHitbox.intersects(gp.player.hitbox)) {
 				    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-				    if(gp.keyI.ePressed) {
-				    	chopCount++;
-				    	if(chopCount == maxWashCount) {
-				    		chopCount = 0;
-				    		cleanedPlateCount++;
-				    		if(currentPlate.getCurrentStackCount() > 1) {
-				    			currentPlate.decreasePlateStack();
-				    		} else {
-				    			currentPlate = null;
-				    		}
-				    	}
-				    }
 				}
 			}
 		}
 		
-		if(clickCooldown > 0) {
-			clickCooldown--;
-		}
 		
 		if(currentPlate != null) {
 			BufferedImage img = animations[0][0][2];
@@ -209,30 +255,6 @@ public class Sink extends Building {
 		    }
 		}
 		
-		if(cleanedPlateHitbox.intersects(gp.player.hitbox) && !sinkHitbox.intersects(gp.player.hitbox)) {
-			if(gp.keyI.ePressed && clickCooldown == 0) {
-				if(cleanedPlateCount > 0 && gp.player.currentItem == null) {
-					cleanedPlateCount--;
-					Plate plate = new Plate(gp, 0, 0);
-					plate.setClean();
-					plate.setCurrentStackCount(1);
-					gp.player.currentItem = plate;
-					clickCooldown = 8;
-					gp.player.resetAnimation(4);
-					 if (gp.multiplayer) {
-						 int state = gp.player.currentItem instanceof Food f ? f.getState() : 0;
-				         Packet03PickupItem packet = new Packet03PickupItem(
-				                gp.player.currentItem.getName(),
-				                gp.player.getUsername(),
-				                state
-				            );
-				         packet.writeData(gp.socketClient);
-				         Packet10RemoveSinkPlate packet2 = new Packet10RemoveSinkPlate(gp.player.getUsername(), getArrayCounter());
-					     packet2.writeData(gp.socketClient);
-					 }
-				}
-			}
-		}
 	    
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
@@ -240,7 +262,7 @@ public class Sink extends Building {
 	}
 	public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {
 		if(currentPlate != null) {
-			drawWashingBar(g2, hitbox.x+30, hitbox.y+32, chopCount, maxWashCount, xDiff, yDiff);
+			drawWashingBar(g2, hitbox.x+30, hitbox.y+32, (int)chopCount, (int)maxWashCount, xDiff, yDiff);
 		}
 	}
 }
