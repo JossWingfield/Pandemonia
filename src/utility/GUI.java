@@ -3,6 +3,7 @@ package utility;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
@@ -31,7 +32,7 @@ public class GUI {
 	GamePanel gp;
 	
 	//IMAGES
-    private BufferedImage recipeBorder, timeBorder, timeHeader, timeFrame, coinImage, mysteryOrder, cursedRecipeBorder;
+    private BufferedImage recipeBorder, timeBorder, timeHeader, timeFrame, coinImage, mysteryOrder, cursedRecipeBorder, starLevel;
     private BufferedImage[][] timeAnimations;
     private BufferedImage[][] titleBookAnimations;
     private BufferedImage titleBackground;
@@ -42,6 +43,7 @@ public class GUI {
     private BufferedImage leftProgress1, leftProgress2, middleProgress1, middleProgress2, rightProgress1, rightProgress2;
     private BufferedImage saveBorder, deleteSave;
     private BufferedImage dialogueFrame;
+	private BufferedImage bookIcons[], bookOpen, bookClosed, recipeBookBorder, lockedRecipeBorder;
     
 	//COLOURS
 	private Color darkened;
@@ -58,6 +60,7 @@ public class GUI {
 	private Font saveFont2 = new Font("monogram", Font.BOLD, 32);
 	private Font fancyTitleFont = new Font("monogram", Font.ITALIC, 100);
     private Font nameFont = new Font("monogram", Font.ITALIC, 20);
+    private Font recipeNameFont = new Font("monogram", Font.ITALIC, 16);
     private Font timeFont = new Font("monogram", Font.PLAIN, 40);
     private Font settingsFont = new Font("monogram", Font.PLAIN, 32);
     private Font nameFont2 = new Font("monogram", Font.PLAIN, 50);
@@ -67,7 +70,8 @@ public class GUI {
 	private double clickCooldown = 0;
 	private int titleAnimationCounter, titleAnimationSpeed, currentTitleAnimation, titleAnimationSpeedFactor;
 	private int titlePageNum = -1;
-	private int computerAnimationCounter, computerAnimationSpeed;
+	private int computerAnimationCounter;
+	private double computerAnimationSpeed;
 	
 	//MESSAGES
 	private List<GUIMessage> messages = new ArrayList<>();
@@ -116,6 +120,8 @@ public class GUI {
 	//SAVE
 	private boolean doDestroySave;
 	private int destroySaveNum;
+	
+	int currentPage = 0;  
 
 
 	public GUI(GamePanel gp) {
@@ -127,7 +133,8 @@ public class GUI {
 	    titleColour2 = new Color(87, 87, 87);
         orderTextColour = new Color(145, 102, 91);
         
-        titleAnimationSpeedFactor = 4;
+        //titleAnimationSpeedFactor = 4;
+        titleAnimationSpeedFactor = 30;
 		
 		importImages();
 	}
@@ -202,10 +209,20 @@ public class GUI {
 		rightProgress2 = importImage("/UI/levels/RightProgress.png").getSubimage(12, 0, 12, 20);	
 
 		cursedRecipeBorder = importImage("/UI/recipe/HauntedOrderBorder.png");
+		starLevel = importImage("/UI/recipe/Star.png");
 		saveBorder = importImage("/UI/saves/SaveUI.png");
 		deleteSave = importImage("/UI/saves/DeleteSave.png");
 		
 		dialogueFrame = importImage("/UI/customise/CustomiseFrame.png");
+		bookIcons = new BufferedImage[4];
+		bookIcons[0] = importImage("/UI/BookIcons.png").getSubimage(0, 0, 16, 16);
+		bookIcons[1] = importImage("/UI/BookIcons.png").getSubimage(16, 0, 16, 16);
+		bookIcons[2] = importImage("/UI/BookIcons.png").getSubimage(0, 16, 16, 16);
+		bookIcons[3] = importImage("/UI/BookIcons.png").getSubimage(16, 16, 16, 16);
+		bookOpen = importImage("/UI/Book_Open.png");
+		bookClosed = importImage("/UI/Book_Closed.png");
+		recipeBookBorder = importImage("/UI/recipe/RecipeBookBorder.png").getSubimage(0, 0, 16, 16);
+		lockedRecipeBorder = importImage("/UI/recipe/RecipeBookBorder.png").getSubimage(16, 0, 16, 16);
 	}
 	protected BufferedImage[] importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height) {
 		BufferedImage animations[] = new BufferedImage[20];
@@ -359,8 +376,170 @@ public class GUI {
 			
 			g2.drawString(text, x, y);
 		}
+		
 	}
-	
+	private void drawRecipesScreen(Graphics2D g2) {
+		
+		g2.setColor(darkened);
+		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
+		
+		BufferedImage img = bookOpen;
+		g2.drawImage(img, gp.frameWidth/2-img.getWidth()/2*6, gp.frameHeight/2-img.getHeight()/2*6, img.getWidth()*6, img.getHeight()*6, null);
+		
+		
+		int mouseX = gp.mouseI.mouseX;
+		int mouseY = gp.mouseI.mouseY;
+		
+		int x = gp.frameWidth - 74;
+		int y = 20;
+		int i = 0;
+		if(gp.currentState == gp.recipeState) {
+			i = 1;
+		}
+		
+		if(mouseX > x && mouseX < x+64 && mouseY > y && mouseY < y+64) {
+			if(gp.currentState == gp.recipeState) {
+				i = 3;
+			} else {
+				i = 2;
+			}
+			if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+				if(gp.currentState == gp.recipeState) {
+					gp.currentState = gp.pauseState;
+				} else {
+					gp.currentState = gp.recipeState;
+				}
+				clickCooldown = 0.33;
+			}
+		}
+		
+		g2.drawImage(bookIcons[i], x, y, 64, 64, null);
+		
+		int recipesPerSide = 16;  // 4 rows * 4 columns
+		int recipesPerPage = 32;  // left + right page
+
+		int startIndex = currentPage * recipesPerPage;
+		int endIndex = startIndex + recipesPerPage;
+
+		int leftX = 180;
+		int rightX = 665;
+		int startY = 180;
+
+		int spacing = 32;
+		int borderSize = 48;
+		int starSpacing = 16;
+		int rowHeight = borderSize + 60;
+
+
+		List<Recipe> all = RecipeManager.getAllRecipes();
+		List<Recipe> unlocked = RecipeManager.getUnlockedRecipes();
+		List<Recipe> ordered = new ArrayList<>();
+
+		// Add unlocked first
+		for (Recipe r : all) {
+		    if (unlocked.contains(r))
+		        ordered.add(r);
+		}
+
+		// Add locked (only those NOT unlocked)
+		for (Recipe r : all) {
+		    if (!unlocked.contains(r))
+		        ordered.add(r);
+		}
+
+		// ------------------------------------
+		// PAGE CALCULATION
+		// ------------------------------------
+		int maxPage = (ordered.size() - 1) / recipesPerPage;
+		if (currentPage > maxPage) currentPage = maxPage;
+		if (currentPage < 0) currentPage = 0;
+
+		startIndex = currentPage * recipesPerPage;
+		endIndex = startIndex + recipesPerPage;
+
+		// ------------------------------------
+		// DRAW CURRENT SPREAD
+		// ------------------------------------
+		x = leftX;
+		y = startY;
+
+		int printed = 0;  // how many drawn on this page
+
+		for (int j = startIndex; j < ordered.size(); j++) {
+
+		    // Stop when page is full
+		    if (j >= endIndex) break;
+
+		    Recipe recipe = ordered.get(j);
+		    boolean isUnlocked = unlocked.contains(recipe);
+
+		    // ------------------------------------
+		    // DRAW RECIPE NAME
+		    // ------------------------------------
+		    if(isUnlocked) {
+			    String name = recipe.getName();
+			    g2.setColor(titleColour1);
+			    g2.setFont(recipeNameFont);
+			    FontMetrics fm = g2.getFontMetrics();
+			    int textWidth = fm.stringWidth(name);
+			    int textX = x + (borderSize - textWidth) / 2;
+			    int textY = y - 6;
+			    g2.drawString(name, textX, textY);
+		    }
+
+		    // ------------------------------------
+		    // BORDER
+		    // ------------------------------------
+		    if (isUnlocked)
+		        g2.drawImage(recipeBookBorder, x, y, borderSize, borderSize, null);
+		    else
+		        g2.drawImage(lockedRecipeBorder, x, y, borderSize, borderSize, null);
+
+		    // ------------------------------------
+		    // PLATED IMAGE
+		    // ------------------------------------
+		    if (isUnlocked && recipe.finishedPlate != null) {
+		        BufferedImage plate = recipe.finishedPlate;
+		        int plateX = x + (borderSize - plate.getWidth()) / 2;
+		        int plateY = y + (borderSize - plate.getHeight()) / 2;
+		        g2.drawImage(plate, plateX - 16, plateY - 14, 48, 48, null);
+		    }
+
+		    // ------------------------------------
+		    // STARS
+		    // ------------------------------------
+		    if (isUnlocked) {
+		        int stars = recipe.getStarLevel();
+		        int starsY = y + borderSize + 4;
+
+		        for (int k = 0; k < stars; k++) {
+		            int starX = x + k * starSpacing;
+		            g2.drawImage(starLevel, starX, starsY, 16, 16, null);
+		        }
+		    }
+
+		    // ------------------------------------
+		    // MOVE TO NEXT SLOT
+		    // ------------------------------------
+		    printed++;
+		    x += borderSize + spacing;
+
+		    // After 4 columns → new row
+		    if (printed % 4 == 0) {
+		        y += rowHeight;
+
+		        // After 4 rows → switch to right page
+		        if (printed == recipesPerSide) {
+		            x = rightX;   // RIGHT PAGE START
+		            y = startY;
+		        } else {
+		            // Reset X to correct side depending on count
+		            x = (printed < recipesPerSide ? leftX : rightX);
+		        }
+		    }
+		}
+		
+	}
 	public void drawMultiplayerGameSettings(Graphics2D g2) {
 		
 		g2.drawImage(titleBackground, (gp.frameWidth/2) - (int)((768*1.5) / 2), (gp.frameHeight/2) - (int)((560*1.5)/2), (int)(768*1.5), (int)(560*1.5), null);
@@ -902,8 +1081,8 @@ public class GUI {
 
 	    // Blinking caret
 	    caretBlinkCounter++;
-	    if(caretBlinkCounter > 30) caretBlinkCounter = 0;
-	    if(caretBlinkCounter < 15 && usernameActive) {
+	    if(caretBlinkCounter > 120) caretBlinkCounter = 0;
+	    if(caretBlinkCounter < 60 && usernameActive) {
 	        int caretX = boxX + 10 + getTextWidth(username, g2);
 	        g2.fillRect(caretX, boxY + 10, 2, 30);
 	    }
@@ -977,7 +1156,12 @@ public class GUI {
 		}
 	    
 	}
-	
+	private void drawAchievementsScreen(Graphics2D g2) {
+		g2.setColor(darkened);
+		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
+		
+		
+	}
 	public void draw(Graphics2D g2) {
 		
 		switch(gp.currentState) {
@@ -1039,6 +1223,12 @@ public class GUI {
 		case 16:
 			drawDialogueState(g2);
 			break;
+		case 17:
+			drawAchievementsScreen(g2);
+			break;
+		case 18:
+			drawRecipesScreen(g2);
+			break;
 		}
 		
 		if(firstDraw) {
@@ -1092,6 +1282,9 @@ public class GUI {
 		            g2.drawString(line, x + offset, y + 84 + counter);
 		            counter += 15;
 		        }
+		        for (int j = 0; j < data.starLevel; j++) {
+			        g2.drawImage(starLevel, x +10 + j * 36, y + 50, 8*3, 8*3, null);
+			    }
 
 		        g2.drawImage(data.plateImage, x + 24, y + 94, 48, 48, null);
 		    }
@@ -1192,6 +1385,7 @@ public class GUI {
 	    } else {
 		    data.borderImage = recipeBorder;
 	    }
+	    data.starLevel = recipe.getStarLevel();
 	    data.mysteryOrderImage = mysteryOrder;
 	    data.coinImage = coinImage;
 	    data.plateImage = recipe.finishedPlate;
@@ -1334,32 +1528,77 @@ public class GUI {
 		}
 		g2.drawString(text, getXforCenteredText(text, g2), 500);
 		
-		text = "QUIT";
+		text = "Achievements";
 		x =getXforCenteredText(text, g2);
 		if(isHovering(text, x, 550, g2)) {
 			g2.setColor(craftColour1);
 			if(gp.mouseI.leftClickPressed) {
 				if(clickCooldown == 0) {
-					//QUIT
-					gp.currentState = gp.titleState;
+					gp.currentState = gp.achievementState;
 					currentTitleAnimation = 0;
-					if(gp.multiplayer) {
-						gp.discovery.shutdown();
-						Packet01Disconnect loginPacket = new Packet01Disconnect(gp.player.getUsername());
-				        if(gp.socketServer != null) {
-				            gp.socketServer.removeConnection(loginPacket);
-				        }
-				        if(gp.serverHost) {
-				        	gp.stopHosting();
-				        }
-				        loginPacket.writeData(gp.socketClient);
-					}
 				}
 			}
+		} else {
+			g2.setColor(Color.WHITE);
+		}
+			g2.drawString(text, getXforCenteredText(text, g2), 600);
+			
+			text = "QUIT";
+			x =getXforCenteredText(text, g2);
+			if(isHovering(text, x, 650, g2)) {
+				g2.setColor(craftColour1);
+				if(gp.mouseI.leftClickPressed) {
+					if(clickCooldown == 0) {
+						//QUIT
+						gp.currentState = gp.titleState;
+						currentTitleAnimation = 0;
+						if(gp.multiplayer) {
+							gp.discovery.shutdown();
+							Packet01Disconnect loginPacket = new Packet01Disconnect(gp.player.getUsername());
+					        if(gp.socketServer != null) {
+					            gp.socketServer.removeConnection(loginPacket);
+					        }
+					        if(gp.serverHost) {
+					        	gp.stopHosting();
+					        }
+					        loginPacket.writeData(gp.socketClient);
+						}
+					}
+				}
 		}else {
 			g2.setColor(Color.WHITE);
 		}
-		g2.drawString(text, getXforCenteredText(text, g2), 600);
+		g2.drawString(text, getXforCenteredText(text, g2), 700);
+		
+		
+		int mouseX = gp.mouseI.mouseX;
+		int mouseY = gp.mouseI.mouseY;
+		
+		x = gp.frameWidth - 74;
+		int y = 20;
+		int i = 0;
+		if(gp.currentState == gp.recipeState) {
+			i = 1;
+		}
+		
+		if(mouseX > x && mouseX < x+64 && mouseY > y && mouseY < y+64) {
+			if(gp.currentState == gp.recipeState) {
+				i = 3;
+			} else {
+				i = 2;
+			}
+			if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+				if(gp.currentState == gp.recipeState) {
+					gp.currentState = gp.pauseState;
+				} else {
+					gp.currentState = gp.recipeState;
+				}
+				clickCooldown = 0.33;
+			}
+		}
+		
+		g2.drawImage(bookIcons[i], x, y, 64, 64, null);
+		
 		
 	}	
 	private void drawBaseSettingsScreen(Graphics2D g2) {
@@ -1669,15 +1908,6 @@ public class GUI {
 		g2.setColor(darkened);
 		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
 		
-		computerAnimationSpeed++;
-		if(computerAnimationSpeed >= 5) {
-			computerAnimationSpeed = 0;
-			computerAnimationCounter++;
-		}
-		
-		if(computerAnimations[computerAnimationCounter] == null) {
-			computerAnimationCounter--;
-		}
 		g2.drawImage(computerAnimations[computerAnimationCounter], 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 		
 		if(computerAnimationCounter >= 9) {
@@ -2016,6 +2246,32 @@ public class GUI {
 		    if (clickCooldown <= 0) {
 		    	clickCooldown = 0;      // clamp to zero
 		    }
+		}
+		
+		if(gp.currentState == gp.catalogueState) {
+			computerAnimationSpeed+=dt;
+			if(computerAnimationSpeed >= 0.1) {
+				computerAnimationSpeed = 0;
+				computerAnimationCounter++;
+			}
+			
+			if(computerAnimations[computerAnimationCounter] == null) {
+				computerAnimationCounter--;
+			}
+		} else if(gp.currentState == gp.recipeState) {
+			if (gp.keyI.right) {
+			    currentPage++;
+			    gp.keyI.right = false;   // prevent holding key
+			}
+
+			if (gp.keyI.left) {
+			    currentPage--;
+			    gp.keyI.left = false;
+			}
+
+			// Clamp page
+			if (currentPage < 0) currentPage = 0;
+			if (currentPage > 1) currentPage = 1;
 		}
 		
 	}

@@ -31,17 +31,17 @@ public class Customer extends NPC {
 	private Toilet toilet = null;
 	public Recipe foodOrder = null;
 	private double eatTime = 5;
-	private int eatCounter = 0;
+	private double eatCounter = 0;
 	protected BufferedImage orderSign, warningOrderSign;
 	private double orderTime = 0;
 	private double maxOrderTime = 3.6;
-	private int toiletTime = 0;
-	private int maxToiletTime = 9;
+	private double toiletTime = 0;
+	private double maxToiletTime = 9;
 	
-	protected int patienceCounter = 0;
-	protected int baseMaxPatienceTime = 120; // 2mins
-	protected int maxPatienceTime = baseMaxPatienceTime;
-	protected int extendedMaxPatienceTime = 240; //4mins
+	protected double patienceCounter = 0;
+	protected double baseMaxPatienceTime = 120; // 2mins
+	protected double maxPatienceTime = baseMaxPatienceTime;
+	protected double extendedMaxPatienceTime = 240; //4mins
 	protected int patienceFactor = 1;
 	private boolean unhappy = false;
 	private int flickerCounter = 0;
@@ -62,13 +62,13 @@ public class Customer extends NPC {
 
 	public Customer(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
-		animationSpeedFactor = 5;
+		animationSpeedFactor = 0.1;
 		drawScale = 3;
 		drawWidth = 80*drawScale;
 	    drawHeight = 80*drawScale;
         xDrawOffset = 34*drawScale;
         yDrawOffset = 36*drawScale;
-		speed = 1;
+		speed = 60;
 		npcType = "Customer";
 		
 		type = r.nextInt(7);
@@ -207,7 +207,7 @@ public class Customer extends NPC {
 	    gp.player.wealth += baseCost;
 
 	    // tip logic based on patience
-	    float progress = patienceCounter / (float) maxPatienceTime;
+	    float progress = (float)(patienceCounter / maxPatienceTime);
 	    int tip = 0;
 
 	    if(progress <= 0.33f) { // green zone
@@ -369,13 +369,30 @@ public class Customer extends NPC {
 	    }
 	      talkHitbox.x = hitbox.x - 16;
 	      talkHitbox.y = hitbox.y - 16;
+	      
+		    if(walking && !atTable) {
+		    	currentAnimation = 1;
+		    } else {
+		    	currentAnimation = 0;
+		    }
+	      
+		  animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
+	      if(animationSpeed >= animationSpeedFactor) {
+	    	  animationSpeed = 0;
+	          animationCounter++;
+	      }
+	      if(animations != null) {
+	    	  if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
+	    		  animationCounter = 0; //Loops the animation
+	    	  }
+	      }
 	}
 	public void setCelebrityPresent(boolean isPresent) {
 		celebrityPresent = isPresent;
 		if(celebrityPresent) {
 			maxPatienceTime = extendedMaxPatienceTime;
 		} else {
-			float fraction = (patienceCounter / maxPatienceTime);
+			float fraction = (float)(patienceCounter / maxPatienceTime);
 			maxPatienceTime = baseMaxPatienceTime;
 			patienceCounter = (int)(fraction * maxPatienceTime);
 		}
@@ -411,23 +428,8 @@ public class Customer extends NPC {
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		this.g2 = g2;
-		
-	    if(walking && !atTable) {
-	    	currentAnimation = 1;
-	    } else {
-	    	currentAnimation = 0;
-	    }
-	    
-		  animationSpeed+=animationUpdateSpeed; //Update the animation frame
-	      if(animationSpeed == animationSpeedFactor) {
-	    	  animationSpeed = 0;
-	          animationCounter++;
-	      }
 	      
 	      if(animations != null) {
-	    	  if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
-	    		  animationCounter = 0; //Loops the animation
-	    	  }
 	    	  BufferedImage img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {
@@ -457,7 +459,7 @@ public class Customer extends NPC {
 	      if(orderTime > 0) {
 	    	  drawOrderBar(g2, hitbox.x, hitbox.y+8, (int)orderTime, (int)maxOrderTime, xDiff, yDiff);
 	      }
-  	      float patienceRatio = patienceCounter / (float) maxPatienceTime;
+  	      float patienceRatio = (float)(patienceCounter / maxPatienceTime);
 	      if(patienceRatio >= 0.5f) {
 	    	  hideOrder = false;
 	      }

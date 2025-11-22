@@ -16,12 +16,12 @@ public class Duck extends NPC {
 
 	public Duck(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
-		animationSpeedFactor = 2;
+		animationSpeedFactor = 0.06;
 		drawScale = 3;
 		drawWidth = 32*drawScale;
 	    drawHeight = 16*drawScale;
 	    xDrawOffset = 24;
-		speed = 4;
+		speed = 4*60;
 		npcType = "Duck";
 		r = new Random();
 		gp.world.animalPresent = true;
@@ -54,15 +54,7 @@ public class Duck extends NPC {
 			walking = true;
 			leave(dt);
 		}
-    }
-	
-	protected void leave(double dt) {
-		super.leave(dt);
-		gp.gui.addMessage("The duck is leaving now", Color.GREEN);
-    }
-	   
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-        animationSpeed+=animationUpdateSpeed; //Update the animation frame
+		animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
         if(walking) {
         	currentAnimation = 1;
     		animationSpeedFactor = 2;
@@ -78,7 +70,14 @@ public class Duck extends NPC {
             if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
                 animationCounter = 0; //Loops the animation
             }
-            
+        }
+    }
+	protected void leave(double dt) {
+		super.leave(dt);
+		gp.gui.addMessage("The duck is leaving now", Color.GREEN);
+    }
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+        if(animations != null) {
             BufferedImage img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {

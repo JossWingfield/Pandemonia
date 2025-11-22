@@ -28,7 +28,7 @@ public class StorageFridge extends Building {
 	
 	private Rectangle2D.Float fridgeHitbox;
 	private boolean firstUpdate = true;
-	private int clickCooldown = 0;
+	private double clickCooldown = 0;
 	private boolean uiOpen = false;
 	private BufferedImage ui1, ui2, ui3;
 	public List<Food> contents = new ArrayList<>();
@@ -104,6 +104,28 @@ public class StorageFridge extends Building {
     	ui2 = importImage("/UI/fridge/5.png");
     	ui3 = importImage("/UI/fridge/Hover.png");
 	}
+	public void update(double dt) {
+    	super.update(dt);
+    	if (clickCooldown > 0) {
+    		clickCooldown -= dt;        // subtract elapsed time in seconds
+		    if (clickCooldown < 0) {
+		    	clickCooldown = 0;      // clamp to zero
+		    }
+		}
+    	if(fridgeHitbox != null) {
+	    	if(fridgeHitbox.intersects(gp.player.hitbox)) {
+			    if(gp.keyI.ePressed && clickCooldown == 0) {
+			    	uiOpen = !uiOpen;
+			    	if(gp.player.currentItem != null) {
+			    		uiOpen = false;
+			    	}
+			    	clickCooldown = 0.16;
+			    }
+			} else {
+				uiOpen = false;
+			}
+    	}
+    }
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
 		if(firstUpdate) {
@@ -115,24 +137,8 @@ public class StorageFridge extends Building {
    		 
 		if(fridgeHitbox.intersects(gp.player.hitbox)) {
 		    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-		    if(gp.keyI.ePressed && clickCooldown == 0) {
-		    	uiOpen = !uiOpen;
-		    	if(gp.player.currentItem != null) {
-		    		uiOpen = false;
-		    	}
-		    	clickCooldown = 10;
-		    }
-		} else {
-			uiOpen = false;
 		}
 		
-		//g2.setColor(Color.YELLOW);
-		//g2.drawRect((int)fridgeHitbox.x, (int)fridgeHitbox.y, (int)fridgeHitbox.width, (int)fridgeHitbox.height);
-		
-		if(clickCooldown>0) {
-			clickCooldown--;
-		}
-	    
 		if(destructionUIOpen) {
 		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
 		}
@@ -188,7 +194,7 @@ public class StorageFridge extends Building {
 	                	if(gp.player.currentItem == null) {
 	                		Food food = contents.get(i);
 	                		gp.player.currentItem = gp.itemRegistry.getItemFromName(food.getName(), (food instanceof Food f) ? f.getState() : 0);
-	    			    	clickCooldown = 20;
+	    			    	clickCooldown = 0.3;
 	    			    	uiOpen = false;
 	    			    	gp.player.resetAnimation(4);
 	    			    	if(gp.multiplayer) {

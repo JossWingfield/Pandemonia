@@ -25,7 +25,7 @@ public class DishWasher extends Employee {
 		super(gp, xPos, yPos);
 		drawWidth = 48;
 		drawHeight = 48*2;
-		speed = 2;
+		speed = 120;
 		direction = "Left";
 				
 		npcType = "Dish Washer";
@@ -146,7 +146,35 @@ public class DishWasher extends Employee {
 				walkToSink(dt);
 			}
 		}
-		
+        animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
+        if(animationSpeed >= 0.1) {
+            animationSpeed = 0;
+            animationCounter++;
+        }
+        
+        if(plate == null) {
+        	if(walking) {
+        		currentAnimation = 1;
+        	} else {
+        		currentAnimation = 0;
+        	}
+        } else {
+        	if(currentAnimation != 4) {
+            	if(walking) {
+            		currentAnimation = 3;
+            	} else {
+            		currentAnimation = 2;
+            	}
+        	}
+        }
+        if(animations != null) {
+            if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
+                animationCounter = 0; //Loops the animation
+                if(currentAnimation == 4) {
+                	currentAnimation = 2;
+                }
+            }
+        }
 	}	
 	public void drawCurrentItem(Graphics2D g2, int xDiff, int yDiff) {
 	    	if(plate == null) {
@@ -179,34 +207,7 @@ public class DishWasher extends Employee {
         if(direction == "Up") {
         	drawCurrentItem(g2, xDiff, yDiff);
         }
-        animationSpeed+=animationUpdateSpeed; //Update the animation frame
-        if(animationSpeed == 5) {
-            animationSpeed = 0;
-            animationCounter++;
-        }
-        
-        if(plate == null) {
-        	if(walking) {
-        		currentAnimation = 1;
-        	} else {
-        		currentAnimation = 0;
-        	}
-        } else {
-        	if(currentAnimation != 4) {
-            	if(walking) {
-            		currentAnimation = 3;
-            	} else {
-            		currentAnimation = 2;
-            	}
-        	}
-        }
         if(animations != null) {
-            if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
-                animationCounter = 0; //Loops the animation
-                if(currentAnimation == 4) {
-                	currentAnimation = 2;
-                }
-            }
             
             BufferedImage img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;

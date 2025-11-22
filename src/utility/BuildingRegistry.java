@@ -13,6 +13,7 @@ import entity.buildings.Cauldron;
 import entity.buildings.Chair;
 import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
+import entity.buildings.Computer;
 import entity.buildings.CornerTable;
 import entity.buildings.CursedDecor;
 import entity.buildings.Door;
@@ -227,6 +228,7 @@ public class BuildingRegistry {
 			case "Room Spawn" -> i = new RoomSpawn(gp, x, y);
 			case "Chef Portrait" -> i = new ChefPortrait(gp, x, y);
 			case "Torch" -> i = new Torch(gp, x, y);
+			case "Computer" -> i = new Computer(gp, x, y);
 		}
 
 		return i;

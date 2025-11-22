@@ -108,7 +108,7 @@ public class SpecialCustomer extends Customer {
 	    gp.player.wealth += (foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder), moneyMultiplier));
 
 	    // tip logic based on patience
-	    float progress = patienceCounter / (float) maxPatienceTime;
+	    float progress = (float)(patienceCounter / maxPatienceTime);
 	    int tip = 0;
 
 	    if(progress <= 0.33f) { // green zone

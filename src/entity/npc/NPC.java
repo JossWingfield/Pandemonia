@@ -702,21 +702,5 @@ public abstract class NPC extends Entity {
 			gp.mapM.getRoom(npcToRemove.currentRoomNum).removeNPC(npcToRemove);
 		}
 	}
-    public void draw(Graphics2D g2, int xDiff, int yDiff) {
-        animationSpeed+=animationUpdateSpeed; //Update the animation frame
-        if(animationSpeed == 12) {
-            animationSpeed = 0;
-            animationCounter++;
-        }
-        if(animations != null) {
-            if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
-                animationCounter = 0; //Loops the animation
-            }
-            g2.drawImage(animations[0][currentAnimation][animationCounter], (int)(hitbox.x - xOffset - xDiff), (int) (hitbox.y - yOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
-        }
-        if(talking) {
-        	//gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- gp.player.xDiff, (int)hitbox.y - 48*3- gp.player.yDiff, dialogues[dialogueIndex], this);
-        }
-    }
     
 }

@@ -21,7 +21,9 @@ public class Server extends Employee {
 		super(gp, xPos, yPos);
 		drawWidth = 48;
 		drawHeight = 48*2;
-		speed = 2;
+		speed = 2*60;
+		
+		animationSpeedFactor = 0.1;
 		
 		startHitbox = new Rectangle2D.Float(9*48, 9*48, 48, 48);
 		
@@ -87,12 +89,8 @@ public class Server extends Employee {
 				walkToBase(dt);
 			}
 		}
-		
-	}	
-    public void draw(Graphics2D g2, int xDiff, int yDiff) {
-    	
-        animationSpeed+=animationUpdateSpeed; //Update the animation frame
-        if(animationSpeed == 5) {
+        animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
+        if(animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;
             animationCounter++;
         }
@@ -108,8 +106,10 @@ public class Server extends Employee {
                 	currentAnimation = 2;
                 }
             }
-            
-            
+        }
+	}	
+    public void draw(Graphics2D g2, int xDiff, int yDiff) {
+        if(animations != null) {
             BufferedImage img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {

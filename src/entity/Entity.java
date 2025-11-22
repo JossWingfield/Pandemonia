@@ -21,8 +21,8 @@ public abstract class Entity implements Cloneable {
     public BufferedImage[][][] animations; //The array which stores all animation images
     public int currentAnimation; //The index for the current animation
     protected int animationCounter = 0; //The index for the current frame of the animation
-    protected int animationSpeed; //The counter which counts down to the next frame
-    protected int animationSpeedFactor = 6;
+    protected double animationSpeed; //The counter which counts down to the next frame
+    protected double animationSpeedFactor = 6;
     public int xDrawOffset, yDrawOffset, drawWidth, drawHeight;
     protected int drawScale = 3;
 

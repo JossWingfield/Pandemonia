@@ -15,7 +15,7 @@ public class Door extends Building {
 	public int roomNum = 1;
 	public int facing;
 	public int preset = 0;
-	public int cooldown = 0;
+	public double doorCooldown = 0;
 	private boolean open = false;
 	private boolean locked = false;
 	private boolean drawLight = false;
@@ -119,16 +119,10 @@ public class Door extends Building {
 	public void update(double dt) {
 		super.update(dt);
 		
-		if (cooldown > 0) {
-		    cooldown -= dt;
-		    if (cooldown < 0) {
-		        cooldown = 0;
-		    }
-		}
 		
 		if(entryHitbox != null) {
 			if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
-				if(cooldown == 0) {
+				if(doorCooldown == 0) {
 					if(roomNum != 2) {
 						gp.mapM.changeRoom(roomNum, this);
 					}
@@ -138,6 +132,12 @@ public class Door extends Building {
 		
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+		if (doorCooldown > 0) {
+			doorCooldown -= 0.05;
+		    if (doorCooldown < 0) {
+		    	doorCooldown = 0;
+		    }
+		}
 		if(firstUpdate) {
 			firstUpdate = false;
 			doorHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48+28-48, 48, 32);

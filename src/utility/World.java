@@ -36,6 +36,7 @@ public class World {
     public int day = 1;
     private static final int MAX_DAYS_PER_SEASON = 28;
     private int dayStart = 6, openingTime = 6, closingTime = 19;
+    private double timeSpeed = 30.0;
 
     private int spawnTimer = 0;
     private int customerSpawnTimer = 24;
@@ -50,7 +51,7 @@ public class World {
     private int lastTimePeriod = 0;
     
     // === Event system ===
-    private boolean eventsOn = true;
+    private boolean eventsOn = false;
     private int eventTimer = 0;
     private int nextEventTime; // in frames
     private int minEventInterval = 45;  // 10 in-game minutes
@@ -260,7 +261,7 @@ public class World {
 
         updateSleep(dt);
         
-        time += dt/3.0;
+        time += dt/timeSpeed;
 
         if (time >= 24.0f) {
         	time -= 24.0f;

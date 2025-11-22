@@ -117,7 +117,8 @@ public class Player extends Entity{
         //hitbox.x = (float) spawnPoint.getX();
         //hitbox.y = (float) spawnPoint.getY();
         
-        animationSpeedFactor = 2;
+        //animationSpeedFactor = 2;
+    	animationSpeedFactor = 0.1;
         
         reachDistance = (3*gp.tileSize);
         talkDistance = (5*gp.tileSize);
@@ -594,6 +595,22 @@ public class Player extends Entity{
     		    }
     		}
     	}
+    	
+    	animationSpeed+=dt; //Updating animation frame
+        if (animationSpeed >= animationSpeedFactor) {
+        	animationSpeed = 0;
+            animationCounter++;
+            litHandImage = null;
+            litHeadgearImage = null;
+            litChestplateImage = null;
+            litTrouserImage = null;
+        }
+        if (animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
+            animationCounter = 0;
+            if(currentAnimation == 4) {
+            	currentAnimation = 2;
+            }
+        }
     }
     private void spawnTrailDust() {
         float spawnX = hitbox.x + hitbox.width / 2f;
@@ -669,9 +686,10 @@ public class Player extends Entity{
     	if(direction == 3) {
     		drawCurrentItem(g2, xDiff, yDiff);
     	}
-
+    	
+    	/*
         animationSpeed++; //Updating animation frame
-        if (animationSpeed == animationSpeedFactor) {
+        if (animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;
             animationCounter++;
             litHandImage = null;
@@ -679,13 +697,14 @@ public class Player extends Entity{
             litChestplateImage = null;
             litTrouserImage = null;
         }
-
         if (animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
             animationCounter = 0;
             if(currentAnimation == 4) {
             	currentAnimation = 2;
             }
         }
+        */
+
         //The image is flipped
         BufferedImage img = animations[direction][currentAnimation][animationCounter];
         //BufferedImage handImg = handImages[direction][currentAnimation][animationCounter];

@@ -14,7 +14,7 @@ public class Trapdoor extends Building {
 	public Rectangle2D.Float npcHitbox;
 	private boolean firstUpdate = true;
 	public int roomNum = 6;
-	public int cooldown = 0;
+	public double cooldown = 0;
 	public int type;
 	
 	public Trapdoor(GamePanel gp, float xPos, float yPos, int type) {

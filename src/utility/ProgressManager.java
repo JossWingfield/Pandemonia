@@ -2,6 +2,7 @@ package utility;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -79,9 +80,14 @@ public class ProgressManager {
     
     //KITCHEN UNLOCKS
     public boolean seasoningUnlocked = false;
+    
+    //ACHIEVEMENTS
+    public Map<String, Achievement> achievements = new HashMap<>();
 
     public ProgressManager(GamePanel gp) {
         this.gp = gp;
+        
+        setupAchievements();
         
         basicReward = importImage("/UI/levels/BasicReward.png").getSubimage(0, 0, 24, 20);
         kitchenReward = importImage("/UI/levels/KitchenReward.png").getSubimage(0, 0, 24, 20);
@@ -124,6 +130,22 @@ public class ProgressManager {
                 }
             }
         }
+    }
+    private void setupAchievements() {
+    	BufferedImage img = importImage("/UI/achievements/FirstSteps.png");
+
+    	Achievement a = new Achievement(
+    	    "first_steps",
+    	    "First Steps",
+    	    "Reach level 1",
+    	    img
+    	);
+
+    	a.setOnUnlock(() -> {
+    	    // Give cosmetic / XP / whatever
+    	});
+
+    	achievements.put(a.getId(), a);
     }
 
     public void handleLevelUp(int newLevel) {
@@ -200,6 +222,11 @@ public class ProgressManager {
     	data.phase = currentPhase;
     	data.seasoningUnlocked = seasoningUnlocked;
     	data.cutscenesWatched = gp.cutsceneM.getCutscenesWatched();
+    	for (Achievement a : achievements.values()) {
+    	    if (a.isUnlocked()) {
+    	        data.unlockedAchievements.add(a.getId());
+    	    }
+    	}
     	return data;
     }
     public void applySaveData(ProgressSaveData data) {
@@ -214,6 +241,12 @@ public class ProgressManager {
     	moreCustomers = data.moreCustomers;
     	seasoningUnlocked = data.seasoningUnlocked;
     	gp.cutsceneM.setCutscenesWatched(data.cutscenesWatched);
+    	for (String id : data.unlockedAchievements) {
+    		Achievement a = achievements.get(id);
+    	    if (a != null) {
+    	    	a.unlock();
+    	    }
+    	}
     }
     public void moveToNextPhase() {
     	currentPhase++;

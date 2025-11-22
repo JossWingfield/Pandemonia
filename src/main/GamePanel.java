@@ -138,6 +138,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int chooseSaveState = 14;
     public final int chooseUpgradeState = 15;
     public final int dialogueState = 16;
+    public final int achievementState = 17;
+    public final int recipeState = 18;
 
     // AESTHETICS
     private Color backgroundColour = new Color(51, 60, 58);
@@ -544,6 +546,7 @@ public class GamePanel extends JPanel implements Runnable {
 	    		mapB.update(dt, xDiff, yDiff);
 	    		buildingM.update(dt);
 	    	}
+    		catalogue.update(dt);
     		gui.update(dt);
 	    	particleM.update(dt);
     	} else {
@@ -604,7 +607,7 @@ public class GamePanel extends JPanel implements Runnable {
          yDiff = Math.round(yDiff / scale) * scale;
     	
         
-        if(currentState == playState || currentState == pauseState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
+        if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
         	
         	gColor = colorBuffer.createGraphics();
         	gColor.setComposite(AlphaComposite.SrcOver);

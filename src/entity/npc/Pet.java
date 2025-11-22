@@ -19,12 +19,12 @@ public class Pet extends NPC{
 		super(gp, xPos, yPos, 48, 48);
 		this.owner = npc;
 		this.petType = petType;
-		animationSpeedFactor = 4;
+		animationSpeedFactor = 0.1;
 		drawScale = 3;
 		drawWidth = 32*drawScale;
 	    drawHeight = 16*drawScale;
 	    xDrawOffset = 24;
-		speed = 1;
+		speed = 1*60;
 		npcType = "Pet";
 		r = new Random();
 		
@@ -82,26 +82,25 @@ public class Pet extends NPC{
 	}    
 	public void update(double dt) {
 		followNPC(dt, owner);
+	       animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
+	        if(walking) {
+	        	currentAnimation = 1;
+	        } else {
+	          	currentAnimation = 0;
+	        }
+	        if(animationSpeed >= animationSpeedFactor) {
+	            animationSpeed = 0;
+	            animationCounter++;
+	        }
+	        if(animations != null) {
+	            if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
+	                animationCounter = 0; //Loops the animation
+	            }
+	        }
     }
 	   
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-        animationSpeed+=animationUpdateSpeed; //Update the animation frame
-        if(walking) {
-        	currentAnimation = 1;
-    		animationSpeedFactor = 3;
-        } else {
-          	currentAnimation = 0;
-    		animationSpeedFactor = 6;
-        }
-        if(animationSpeed >= animationSpeedFactor) {
-            animationSpeed = 0;
-            animationCounter++;
-        }
         if(animations != null) {
-            if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
-                animationCounter = 0; //Loops the animation
-            }
-            
             BufferedImage img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {

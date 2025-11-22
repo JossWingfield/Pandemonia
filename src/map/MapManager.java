@@ -276,6 +276,7 @@ public class MapManager {
 	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
 	    }
 	    public void changeRoom(int roomNum, Door previousDoor) {
+	    	gp.buildingM.setDoorCooldowns();
 	    	switchRoom(roomNum);
 	    	
 	    	Door door = (Door)gp.buildingM.findCorrectDoor(previousDoor.facing);

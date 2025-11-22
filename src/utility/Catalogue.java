@@ -33,7 +33,7 @@ public class Catalogue {
 	public int pageNum = 1;
 	private boolean showDescription = false;
 	private int yStart;
-	private int clickCounter;
+	private double clickCounter;
 	public int layer = 0;
 	public int basketCost = 0;
 	private boolean canPay = false;
@@ -362,7 +362,7 @@ public class Catalogue {
 		    						selectedRow = 0;
 		    					}
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
-			    					clickCounter = 10;
+			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			}
@@ -404,7 +404,7 @@ public class Catalogue {
 		    						selectedRow = 0;
 		    					}
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
-			    					clickCounter = 10;
+			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
@@ -450,7 +450,7 @@ public class Catalogue {
 		    						selectedRow = 0;
 		    					}
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
-			    					clickCounter = 10;
+			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
@@ -496,7 +496,7 @@ public class Catalogue {
 		    						selectedRow = 0;
 		    					}
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
-			    					clickCounter = 10;
+			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
@@ -542,7 +542,7 @@ public class Catalogue {
 		    						selectedRow = 0;
 		    					}
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
-			    					clickCounter = 10;
+			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
@@ -588,7 +588,7 @@ public class Catalogue {
 		    						selectedRow = 0;
 		    					}
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
-			    					clickCounter = 10;
+			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
@@ -633,7 +633,7 @@ public class Catalogue {
 		    						selectedRow = 0;
 		    					}
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
-			    					clickCounter = 10;
+			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			}
@@ -676,7 +676,7 @@ public class Catalogue {
 		    						selectedRow = 0;
 		    					}
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
-			    					clickCounter = 10;
+			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			}
@@ -719,7 +719,7 @@ public class Catalogue {
 		    						selectedRow = 0;
 		    					}
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
-			    					clickCounter = 10;
+			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			}
@@ -757,10 +757,6 @@ public class Catalogue {
 		
 		if(showDescription) {
 			drawBuildingDescription(g2, selectedItem, xStart);
-		}
-			
-		if(clickCounter > 0) {
-			clickCounter--;
 		}
 	
 	}
@@ -916,7 +912,7 @@ public class Catalogue {
     						selectedRow = 0;
     					}
 	    				if(gp.mouseI.rightClickPressed && clickCounter == 0) {
-	    					clickCounter = 10;
+	    					clickCounter = 0.17;
 	    					removeFromBasket(b, cost);
 	    				}
 	    			}
@@ -955,8 +951,13 @@ public class Catalogue {
 			drawBuildingDescription(g2, selectedItem, xStart);
 		}
 			
-		if(clickCounter > 0) {
-			clickCounter--;
+	}
+	public void update(double dt) {
+		if (clickCounter > 0) {
+			clickCounter -= dt;        // subtract elapsed time in seconds
+		    if (clickCounter < 0) {
+		    	clickCounter = 0;      // clamp to zero
+		    }
 		}
 	}
 	public void tryPay() {

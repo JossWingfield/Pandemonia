@@ -13,7 +13,7 @@ public class Employee extends NPC {
 		super(gp, xPos, yPos, 48, 48);
 		drawWidth = 48;
 		drawHeight = 48*2;
-		speed = 2;
+		speed = 2*60;
 		
 		doorHitbox = new Rectangle2D.Float(9*48, 11*48, 48, 48);
 		

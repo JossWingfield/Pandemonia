@@ -21,7 +21,7 @@ public class Turntable extends Building {
 		drawHeight = 48*3;
 		yDrawOffset = 48+48 + 8;
 		xDrawOffset = 48 + 8;
-		animationSpeedFactor = 2;
+		animationSpeedFactor = 0.04;
 		mustBePlacedOnTable = true;
         canBePlacedOnShelf = true;
 		isDecor = true;
@@ -54,18 +54,18 @@ public class Turntable extends Building {
 			gp.progressM.turntablePresent = true;
 			firstDraw = false;
 		}
-	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
-		animationSpeed++; //Updating animation frame
-        if (animationSpeed == animationSpeedFactor) {
+		animationSpeed+=dt; //Updating animation frame
+        if (animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;
             animationCounter++;
         }
 
         if (animations[direction][currentAnimation][animationCounter] == null) {
             animationCounter = 0;
-        }		
+        }	
+	}
+	public void draw(Graphics2D g2, int xDiff, int yDiff) {	
         
 	    g2.drawImage(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
         

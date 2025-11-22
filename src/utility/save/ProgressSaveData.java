@@ -20,6 +20,7 @@ public class ProgressSaveData extends SaveData {
 	
 	public int phase;
 	public List<String> cutscenesWatched;
+	public java.util.Set<String> unlockedAchievements = new java.util.HashSet<>();
 	
 	public void applySaveData(GamePanel gp) {
 		gp.progressM.applySaveData(this);

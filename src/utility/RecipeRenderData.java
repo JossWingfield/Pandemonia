@@ -18,6 +18,8 @@ public class RecipeRenderData {
     public List<BufferedImage> ingredientImages = new ArrayList<>();
     public List<BufferedImage> cookingStateIcons = new ArrayList<>();
     public List<BufferedImage> secondaryCookingStateIcons = new ArrayList<>();
+    
+    public int starLevel;
 
     // Other cached images
     public BufferedImage plateImage;

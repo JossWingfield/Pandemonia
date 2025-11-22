@@ -33,7 +33,7 @@ public class StoryCharacter extends NPC {
 	    drawHeight = 80*drawScale;
         xDrawOffset = 34*drawScale;
         yDrawOffset = 36*drawScale;
-		speed = 1;
+		speed = 1*60;
 		npcType = "Story Character";
 		this.type = type;
 		
@@ -109,6 +109,23 @@ public class StoryCharacter extends NPC {
 	    if(npcToFollow != null) {
 			followNPC(dt, npcToFollow);
 		}
+	    if(walking) {
+	    	currentAnimation = 1;
+	    } else {
+	    	currentAnimation = 0;
+	    }
+		
+		  animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
+	      if(animationSpeed >= animationSpeedFactor) {
+	    	  animationSpeed = 0;
+	          animationCounter++;
+	      }
+	      
+	      if(animations != null) {
+	    	  if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
+	    		  animationCounter = 0; //Loops the animation
+	    	  }
+	      }
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		this.g2 = g2;
@@ -124,23 +141,8 @@ public class StoryCharacter extends NPC {
 			ghostLight.x = (int)(hitbox.x + hitbox.width / 2) - 8;
 	    	ghostLight.y = (int)(hitbox.y + hitbox.height / 2) - 8;
 		}
-	    
-	    if(walking) {
-	    	currentAnimation = 1;
-	    } else {
-	    	currentAnimation = 0;
-	    }
-		
-		  animationSpeed+=animationUpdateSpeed; //Update the animation frame
-	      if(animationSpeed == animationSpeedFactor) {
-	    	  animationSpeed = 0;
-	          animationCounter++;
-	      }
 	      
 	      if(animations != null) {
-	    	  if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
-	    		  animationCounter = 0; //Loops the animation
-	    	  }
 	    	  BufferedImage img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {

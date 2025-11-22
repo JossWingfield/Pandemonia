@@ -20,7 +20,7 @@ public class Recipe {
     
     // --- STAR SYSTEM ---
     private int timesCooked = 0;   // how many times player cooked this
-    private int starLevel = 0;     // 0-3
+    private int starLevel = 1;     // 0-3
     private boolean mastered = false;
 
     // thresholds (can be tweaked globally or per recipe)
@@ -130,8 +130,8 @@ public class Recipe {
     }
     public float getMoneyMultiplier() {
         switch (starLevel) {
-            case 1: return 1.3f;
-            case 2: return 1.8f;
+            case 1: return 1.0f;
+            case 2: return 1.5f;
             case 3: return 2.5f;
             default: return 1.0f;
         }

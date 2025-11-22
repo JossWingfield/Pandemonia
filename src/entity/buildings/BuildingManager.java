@@ -325,10 +325,10 @@ public class BuildingManager {
 			if(b != null) {
 				if(b.getName().equals("Door 1")) {
 					Door door = (Door)b;
-					door.cooldown = 10;
+					door.doorCooldown = 0.3;
 				} else if(b.getName().equals("Trapdoor 1")) {
 					Trapdoor door = (Trapdoor)b;
-					door.cooldown = 10;
+					door.cooldown = 0.3;
 				}
 			}
 		}

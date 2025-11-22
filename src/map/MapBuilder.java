@@ -23,6 +23,7 @@ import entity.buildings.Cauldron;
 import entity.buildings.Chair;
 import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
+import entity.buildings.Computer;
 import entity.buildings.CornerTable;
 import entity.buildings.CursedDecor;
 import entity.buildings.Door;
@@ -99,6 +100,8 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new FloorDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
+		buildings[totalBuildingCount] = new Computer(gp, 0, 0);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new ChefPortrait(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Torch(gp, 0, 0);

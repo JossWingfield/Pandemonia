@@ -26,13 +26,13 @@ public class Rat extends NPC {
 
 	public Rat(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
-		animationSpeedFactor = 5;
+		animationSpeedFactor = 0.1;
 		drawScale = 3;
 		drawWidth = 32*drawScale;
 	    drawHeight = 32*drawScale;
 	    xDrawOffset = 24;
 	    yDrawOffset = 24;
-		speed = 3;
+		speed = 3*60;
 		npcType = "Rat";
 		r = new Random();
 		
@@ -101,7 +101,16 @@ public class Rat extends NPC {
 				}
 			}
 		}
-		
+        animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
+        if(animationSpeed >= animationSpeedFactor) {
+            animationSpeed = 0;
+            animationCounter++;
+        }
+        if(animations != null) {
+            if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
+                animationCounter = 0; //Loops the animation
+            }
+        }
 	}	
 	  public void drawCurrentItem(Graphics2D g2, int xDiff, int yDiff) {
 	    	if(currentItem == null) {
@@ -147,15 +156,7 @@ public class Rat extends NPC {
         	//drawCurrentItem(g2);
         }
         drawCurrentItem(g2, xDiff, yDiff);
-        animationSpeed+=animationUpdateSpeed; //Update the animation frame
-        if(animationSpeed == 5) {
-            animationSpeed = 0;
-            animationCounter++;
-        }
         if(animations != null) {
-            if (animations[0][currentAnimation][animationCounter] == null) { //If the next frame is empty
-                animationCounter = 0; //Loops the animation
-            }
             
             BufferedImage img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;

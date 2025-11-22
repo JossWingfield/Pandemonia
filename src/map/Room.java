@@ -16,6 +16,7 @@ import entity.buildings.Cauldron;
 import entity.buildings.Chair;
 import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
+import entity.buildings.Computer;
 import entity.buildings.CornerTable;
 import entity.buildings.CursedDecor;
 import entity.buildings.Door;
@@ -1834,6 +1835,8 @@ public class Room {
 			buildings[arrayCounter] = new Lantern(gp, 480, 132);
 			arrayCounter++;
 			buildings[arrayCounter] = new Lantern(gp, 624, 132);
+			arrayCounter++;
+			buildings[arrayCounter] = new Computer(gp, 480, 312);
 			arrayCounter++;
 			break;
 		case 6:

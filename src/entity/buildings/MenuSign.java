@@ -35,7 +35,7 @@ public class MenuSign extends Building {
     private double clickCooldown = 0;
     private boolean uiOpen = false;
     private BufferedImage ui1, ui2, ui3;
-    private BufferedImage recipeBorder, coinImage;
+    private BufferedImage recipeBorder, coinImage, starLevel;
 
     private Map<Recipe, RecipeRenderData> renderCache = new HashMap<>();
     private List<Recipe> selectedRecipes = new ArrayList<>();
@@ -46,7 +46,6 @@ public class MenuSign extends Building {
     private Color orderTextColour = new Color(145, 102, 91);
     private Color specialColour = new Color(137, 163, 80);
     private Color specialHover = new Color(169, 187, 102);
-    
     
     private Font timeFont = new Font("monogram", Font.PLAIN, 32);
 
@@ -85,6 +84,7 @@ public class MenuSign extends Building {
         ui3 = importImage("/UI/fridge/Hover.png");
 		recipeBorder = importImage("/UI/recipe/orderBorder.png");
 		coinImage = importImage("/UI/Coin.png");
+		starLevel = importImage("/UI/recipe/Star.png");
     }
 	public void update(double dt) {
 		super.update(dt);
@@ -138,6 +138,7 @@ public class MenuSign extends Building {
 
 	    // Cache base images
 	    data.borderImage = recipeBorder;
+	    data.starLevel = recipe.getStarLevel();
 
 	    data.coinImage = coinImage;
 	    data.plateImage = recipe.finishedPlate;
@@ -339,12 +340,16 @@ public class MenuSign extends Building {
 	        g2.drawImage(data.cookingStateIcons.get(j), x + j*(10*3) + 4, y + 20, 10*3, 10*3, null);
 	        g2.drawImage(data.secondaryCookingStateIcons.get(j), x + j*(10*3) + 4, y + 44, 10*3, 10*3, null);
 	    }
-
+	    
 	    // Name
 	    g2.setColor(orderTextColour);
 	    g2.setFont(nameFont);
 	    for (int i = 0; i < data.nameLines.size(); i++) {
 	        g2.drawString(data.nameLines.get(i), x + data.nameLineOffsets.get(i), y + 84 + i*15);
+	    }
+	    
+	    for (int i = 0; i < data.starLevel; i++) {
+	        g2.drawImage(starLevel, x +10 + i * 36, y + 50, 8*3, 8*3, null);
 	    }
 
 	    // Plate

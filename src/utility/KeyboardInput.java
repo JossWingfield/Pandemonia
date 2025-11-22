@@ -20,7 +20,6 @@ public class KeyboardInput implements KeyListener {
     public KeyboardInput(GamePanel gp) {
         this.gp = gp;
     }
-
     
     public void keyTyped(KeyEvent e) {
         if(gp.gui.usernameActive) {
@@ -87,10 +86,6 @@ public class KeyboardInput implements KeyListener {
             }
             if (num == KeyEvent.VK_C) {
             	gp.currentState = gp.customiseRestaurantState;
-            }
-            if (num == KeyEvent.VK_P) {
-            	gp.currentState = gp.catalogueState;
-            	gp.gui.resetComputerAnimations();
             }
             
             if(num == KeyEvent.VK_SHIFT) {
@@ -183,7 +178,7 @@ public class KeyboardInput implements KeyListener {
             	}
         	}
         } else if(gp.currentState == gp.catalogueState) {
-        	if(num == KeyEvent.VK_P) {
+        	if(num == KeyEvent.VK_E) {
         		gp.currentState = gp.playState;
         		gp.catalogue.basket.clear();
         		gp.catalogue.layer = 0;
@@ -209,6 +204,23 @@ public class KeyboardInput implements KeyListener {
         	if(num == KeyEvent.VK_W || num == KeyEvent.VK_UP) {
             	gp.catalogue.upLayer();
             }
+        } else if(gp.currentState == gp.recipeState) {
+        	 if (num == KeyEvent.VK_A || num == KeyEvent.VK_LEFT) {
+                 left = true;
+             }
+             if (num == KeyEvent.VK_D || num == KeyEvent.VK_RIGHT) {
+                 right = true;
+             }
+             if (num == KeyEvent.VK_W || num == KeyEvent.VK_UP) {
+                 up = true;
+             }
+             if (num == KeyEvent.VK_S || num == KeyEvent.VK_DOWN) {
+                 down = true;
+             }
+        }  else if(gp.currentState == gp.achievementState) {
+        	if(num == KeyEvent.VK_ESCAPE) {
+        		gp.currentState = gp.pauseState;
+        	}
         }
 
     }
