@@ -56,7 +56,7 @@ public class KeyboardInput implements KeyListener {
                 //gp.saveM.loadGame(gp.saveM.currentSave);
             }
             if(num == KeyEvent.VK_F) {
-            	//gp.gui.startLevelUpScreen();
+            	gp.gui.startLevelUpScreen();
             }
             if(num == KeyEvent.VK_G) {
             	//gp.progressM.moveToNextPhase();
@@ -65,8 +65,9 @@ public class KeyboardInput implements KeyListener {
             	//gp.cutsceneM.ignisII();
             }
             if(num == KeyEvent.VK_Q) {
-            	//gp.player.soulsServed = gp.player.nextLevelAmount;
+            	gp.player.soulsServed = gp.player.nextLevelAmount;
             }
+            
         	
             //MAIN INPUTS
             if (num == KeyEvent.VK_A || num == KeyEvent.VK_LEFT) {
@@ -204,7 +205,7 @@ public class KeyboardInput implements KeyListener {
         	if(num == KeyEvent.VK_W || num == KeyEvent.VK_UP) {
             	gp.catalogue.upLayer();
             }
-        } else if(gp.currentState == gp.recipeState) {
+        } else if(gp.currentState == gp.recipeState || gp.currentState == gp.achievementState) {
         	 if (num == KeyEvent.VK_A || num == KeyEvent.VK_LEFT) {
                  left = true;
              }

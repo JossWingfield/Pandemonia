@@ -15,6 +15,7 @@ import utility.Recipe;
 import utility.RecipeManager;
 import utility.RoomHelperMethods;
 import utility.RoomHelperMethods.*;
+import utility.Statistics;
 
 public class Customer extends NPC {
 	
@@ -206,6 +207,7 @@ public class Customer extends NPC {
 	    // base payment
 	    gp.player.wealth += baseCost;
 
+	    int additionalCost = 0;
 	    // tip logic based on patience
 	    float progress = (float)(patienceCounter / maxPatienceTime);
 	    int tip = 0;
@@ -233,20 +235,39 @@ public class Customer extends NPC {
     	}
 	    
 	    if(addTip && (gp.progressM.tipJarPresent || gp.progressM.bigTipsPresent)) {
+    		gp.progressM.achievements.get("free_tip").unlock();
 	    	if(gp.progressM.bigTipsPresent) {
 		    	gp.player.wealth += tip;
+	    		additionalCost += (tip);
 	    	} else {
 	    		gp.player.wealth += (tip*0.5);
+	    		additionalCost += (tip*0.5);
 	    	}
 	    }
 	    
 	    if (p.seasoningQuality != -1) {
 	    	if(addTip) {
 	    		gp.player.wealth += baseCost * 0.50f * p.seasoningQuality;
+	     		additionalCost += (baseCost * 0.50f * p.seasoningQuality);
 	    	}
 	    }
 	    
+	    if(additionalCost >= baseCost*2) {
+    		gp.progressM.achievements.get("sweet_talk").unlock();
+	    }
+	    
 	    gp.player.soulsServed++;
+	    
+	    Statistics.servedCustomers++;
+	    if(Statistics.servedCustomers == 50) {
+    		gp.progressM.achievements.get("50_served").unlock();
+	    } else if(Statistics.servedCustomers == 100) {
+    		gp.progressM.achievements.get("100_served").unlock();
+	    } else if(Statistics.servedCustomers == 500) {
+    		gp.progressM.achievements.get("500_served").unlock();
+	    } else if(Statistics.servedCustomers == 1000) {
+    		gp.progressM.achievements.get("1000_served").unlock();
+	    }
 
 	    // clean up
 	    RecipeManager.removeOrder(foodOrder);

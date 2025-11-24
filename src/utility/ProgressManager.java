@@ -1,15 +1,19 @@
 package utility;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import entity.buildings.WallDecor_Building;
 import main.GamePanel;
 import utility.save.ProgressSaveData;
+import utility.save.StatisticsSaveData;
 
 public class ProgressManager {
 	
@@ -82,12 +86,10 @@ public class ProgressManager {
     public boolean seasoningUnlocked = false;
     
     //ACHIEVEMENTS
-    public Map<String, Achievement> achievements = new HashMap<>();
-
+    public Map<String, Achievement> achievements = new LinkedHashMap<>();
+    
     public ProgressManager(GamePanel gp) {
         this.gp = gp;
-        
-        setupAchievements();
         
         basicReward = importImage("/UI/levels/BasicReward.png").getSubimage(0, 0, 24, 20);
         kitchenReward = importImage("/UI/levels/KitchenReward.png").getSubimage(0, 0, 24, 20);
@@ -130,25 +132,325 @@ public class ProgressManager {
                 }
             }
         }
+        setupAchievements();
     }
     private void setupAchievements() {
-    	BufferedImage img = importImage("/UI/achievements/FirstSteps.png");
 
-    	Achievement a = new Achievement(
+    	Achievement a = new Achievement(gp,
     	    "first_steps",
     	    "First Steps",
     	    "Reach level 1",
-    	    img
+    	    basicReward
     	);
 
     	a.setOnUnlock(() -> {
-    	    // Give cosmetic / XP / whatever
+    		gp.player.wealth +=5;
+    		gp.gui.addMessage("Earned +5 coins!", Color.yellow);
     	});
-
     	achievements.put(a.getId(), a);
+    	
+    	a = new Achievement(gp,
+        	    "steady_pace",
+        	    "Steady Pace",
+        	    "Reach level 5",
+        	    basicReward
+        	);
+
+        	a.setOnUnlock(() -> {
+        		gp.player.wealth +=10;
+        		gp.gui.addMessage("Earned +10 coins!", Color.yellow);
+        	});
+        	
+        	achievements.put(a.getId(), a);
+        	a = new Achievement(gp,
+            	    "veteran_chef",
+            	    "Veteran Chef",
+            	    "Reach level 20",
+            	    basicReward
+            	);
+
+            	a.setOnUnlock(() -> {
+            		gp.player.wealth +=20;
+            		gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+            	});
+            	achievements.put(a.getId(), a);
+    	
+        a = new Achievement(gp,
+    		   "experienced_chef",
+    		   "Experienced Chef",
+    		   "Reach level 50",
+    		   basicReward
+    		   );
+        a.setOnUnlock(() -> {
+    	   gp.player.wealth +=30;
+    	   gp.gui.addMessage("Earned +30 coins!", Color.yellow);
+    	   });
+        achievements.put(a.getId(), a);    	
+        
+        a = new Achievement(gp,
+     		   "head_chef",
+     		   "Head Chef",
+     		   "Reach level 75",
+     		   basicReward
+     		   );
+         a.setOnUnlock(() -> {
+     	   gp.player.wealth +=40;
+     	   gp.gui.addMessage("Earned +40 coins!", Color.yellow);
+     	   });
+         achievements.put(a.getId(), a);  
+         
+         a = new Achievement(gp,
+       		   "kitchen_legend",
+       		   "Kitchen Legend",
+       		   "Reach level 100",
+       		   basicReward
+       		   );
+           a.setOnUnlock(() -> {
+       	   gp.player.wealth +=50;
+       	   gp.gui.addMessage("Earned +50 coins!", Color.yellow);
+       	   });
+           achievements.put(a.getId(), a);  
+       
+       //RECIPES
+   		a = new Achievement(gp,
+    	    "10_recipes",
+    	    "Collector",
+    	    "Collect 10 Recipes",
+    	    emptyReward
+    	);
+   		
+    	a.setOnUnlock(() -> {
+    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+    	});
+    	achievements.put(a.getId(), a);
+   		a = new Achievement(gp,
+   	    	    "20_recipes",
+   	    	    "Cook Book",
+   	    	    "Collect 20 Recipes",
+   	    	    emptyReward
+   	    	);
+   	   		
+   	    	a.setOnUnlock(() -> {
+   	    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+   	    	});
+   	    	achievements.put(a.getId(), a);
+   	  		a = new Achievement(gp,
+   	   	    	    "50_recipes",
+   	   	    	    "Versatile Chef",
+   	   	    	    "Collect 50 Recipes",
+   	   	    	    emptyReward
+   	   	    	);
+   	   	    	a.setOnUnlock(() -> {
+   	   	    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+   	   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+   	   	    	});
+   	   	    achievements.put(a.getId(), a);
+   	  		a = new Achievement(gp,
+   	   	    	    "75_recipes",
+   	   	    	    "Recipe Archive",
+   	   	    	    "Collect 75 Recipes",
+   	   	    	    emptyReward
+   	   	    	);
+   	   	    	a.setOnUnlock(() -> {
+   	   	    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+   	   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+   	   	    	});
+   	   	    achievements.put(a.getId(), a);
+   	   	    
+   	  		a = new Achievement(gp,
+   	   	    	    "100_recipes",
+   	   	    	    "Culinary Wizard",
+   	   	    	    "Collect 100 Recipes",
+   	   	    	    emptyReward
+   	   	    	);
+   	   	    	a.setOnUnlock(() -> {
+   	   	    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+   	   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+   	   	    	});
+   	   	    achievements.put(a.getId(), a);
+   	   	    
+   	    	a = new Achievement(gp,
+   	        	    "cat_lover",
+   	        	    "Cat Lover",
+   	        	    "Have 2 cats in the restaurant at one time!",
+   	        	    importImage("/npcs/pet/Cat1.png").getSubimage(0, 0, 48, 48)
+   	        	);
+
+   	        	a.setOnUnlock(() -> {
+   	        		gp.gui.addMessage("Cat paintings added to catalogue!", Color.yellow);
+   	    			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 0));
+   	    			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 1));
+   	        	});
+
+   	       achievements.put(a.getId(), a);
+  	    	a = new Achievement(gp,
+   	        	    "cat_cafe",
+   	        	    "Cat cafe",
+   	        	    "Have 3 cats in the restaurant at one time!",
+   	        	    importImage("/npcs/pet/Cat1.png").getSubimage(0, 0, 48, 48)
+   	        	);
+
+   	        	a.setOnUnlock(() -> {
+   	        		gp.gui.addMessage("Cat hat unlocked!", Color.yellow);
+   	    			//TODO add some sort of cat thing(possibly a hat)
+   	        	});
+   	       achievements.put(a.getId(), a);
+   	       
+   	       a = new Achievement(gp,
+   	   	    	    "100_chopped",
+   	   	    	    "Knife Skills",
+   	   	    	    "Cut 100 ingredients",
+   	   	    	    kitchenReward
+   	   	    );
+   	   	   a.setOnUnlock(() -> {
+   	   		   gp.player.wealth +=5;
+   	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+   	       	   //TODO change this reward
+   	   	    });
+   	   	   achievements.put(a.getId(), a);
+   	   	   
+   	       a = new Achievement(gp,
+  	   	    	    "50_served",
+  	   	    	    "Small Business",
+  	   	    	    "Serve 50 customers",
+  	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(0, 0, 32, 32)
+  	   	    );
+  	   	   a.setOnUnlock(() -> {
+  	   		   gp.player.wealth +=5;
+  	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+  	       	   //TODO change this reward
+  	   	    });
+  	   	   achievements.put(a.getId(), a);
+  	   	   
+   	       a = new Achievement(gp,
+ 	   	    	    "100_served",
+ 	   	    	    "Popular Local",
+ 	   	    	    "Serve 100 customers",
+ 	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(32, 0, 32, 32)
+ 	   	    );
+ 	   	   a.setOnUnlock(() -> {
+ 	   		   gp.player.wealth +=5;
+ 	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+ 	       	   //TODO change this reward
+ 	   	    });
+ 	   	   achievements.put(a.getId(), a);
+ 	   	   
+   	       a = new Achievement(gp,
+	   	    	    "500_served",
+	   	    	    "Hot Spot",
+	   	    	    "Serve 500 customers",
+	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(64, 0, 32, 32)
+	   	    );
+	   	   a.setOnUnlock(() -> {
+	   		   gp.player.wealth +=5;
+	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+	       	   //TODO change this reward
+	   	    });
+	   	   achievements.put(a.getId(), a);
+	   	   
+   	       a = new Achievement(gp,
+	   	    	    "1000_served",
+	   	    	    "Critically Acclaimed",
+	   	    	    "Serve 1000 customers",
+	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(96, 0, 32, 32)
+	   	    );
+	   	   a.setOnUnlock(() -> {
+	   		   gp.player.wealth +=5;
+	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+	       	   //TODO change this reward
+	   	    });
+	   	   achievements.put(a.getId(), a);
+	   	   
+   	       a = new Achievement(gp,
+	   	    	    "free_tip",
+	   	    	    "Free Tip!",
+	   	    	    "Claim your first tip!",
+	   	 		    importImage("/decor/kitchen props.png").getSubimage(0, 0, 16, 16)
+	   	    );
+	   	   a.setOnUnlock(() -> {
+	   		   gp.player.wealth +=10;
+	       	   gp.gui.addMessage("Earned +10 coins!", Color.yellow);
+	   	    });
+	   	   achievements.put(a.getId(), a);
+	   	   
+   	       a = new Achievement(gp,
+	   	    	    "sweet_talk",
+	   	    	    "Sweet Talk",
+	   	    	    "Earn 200% more than the base value for an order.",
+	   	 		    importImage("/UI/coin.png")
+	   	    );
+	   	   a.setOnUnlock(() -> {
+	   		   gp.player.wealth +=20;
+	       	   gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	   	    });
+	   	   achievements.put(a.getId(), a);
+	   	   
+   	       a = new Achievement(gp,
+	   	    	    "music_to_my_ears",
+	   	    	    "Music to my ears",
+	   	    	    "Place a turntable.",
+	   	 		    importImage("/decor/turntable.png").getSubimage(0, 0, 48, 48)
+	   	    );
+	   	   a.setOnUnlock(() -> {
+	       	   //gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	   		   //TODO change this reward
+	   	    });
+	   	   achievements.put(a.getId(), a);
+	   	   
+   	       a = new Achievement(gp,
+	   	    	    "about_time",
+	   	    	    "About Time",
+	   	    	    "Upgrade a kitchen station.",
+	   	 		    kitchenReward
+	   	    );
+	   	   a.setOnUnlock(() -> {
+	       	   //gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	   		   //TODO change this reward
+	   	    });
+	   	   achievements.put(a.getId(), a);
+	   	   
+   	       a = new Achievement(gp,
+	   	    	    "reinforced_workplace",
+	   	    	    "Reinforced Workplace",
+	   	    	    "Upgrade 5 kitchen stations.",
+	   	 		    kitchenReward
+	   	    );
+	   	   a.setOnUnlock(() -> {
+	       	   //gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	   		   //TODO change this reward
+	   	    });
+	   	   achievements.put(a.getId(), a);
+	   	   
+   	       a = new Achievement(gp,
+	   	    	    "interior_designer",
+	   	    	    "Interior Designer",
+	   	    	    "Place 20 decorations",
+	   	    	 importImage("/decor/plants.png").getSubimage(16, 64, 16, 32)
+	   	    );
+	   	   a.setOnUnlock(() -> {
+	       	   //gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	   		   //TODO change this reward
+	   	    });
+	   	   achievements.put(a.getId(), a);
     }
 
     public void handleLevelUp(int newLevel) {
+    	if(newLevel-1 == 1) {
+    		achievements.get("first_steps").unlock();
+    	} else if(newLevel-1 == 5) {
+    		achievements.get("steady_pace").unlock();
+    	} else if(newLevel-1 == 20) {
+    		achievements.get("veteran_chef").unlock();
+    	} else if(newLevel-1 == 50) {
+    		achievements.get("experienced_chef").unlock();
+    	} else if(newLevel-1 == 75) {
+    		achievements.get("head_chef").unlock();
+    	} else if(newLevel-1 == 100) {
+    		achievements.get("kitchen_legend").unlock();
+    	}
+    	
         // Always give recipe choices
         recipeChoices = RecipeManager.getTwoRandomLocked(gp);
 
@@ -190,7 +492,36 @@ public class ProgressManager {
                 break;
         }
     }
-
+    public void checkRecipeCollect() {
+    	int num = gp.recipeM.getUnlockedRecipes().size();
+    	if(num == 10) {
+    		achievements.get("10_recipes").unlock();
+    	} else if(num == 20){
+      		achievements.get("20_recipes").unlock();
+    	} else if(num == 50){
+      		achievements.get("50_recipes").unlock();
+    	} else if(num == 75){
+      		achievements.get("75_recipes").unlock();
+    	} else if(num == 100){
+      		achievements.get("100_recipes").unlock();
+    	}
+    }
+    public void checkKitchenUpgrade() {
+		
+		Statistics.kitchenUpgradeCount++;
+		
+		if(Statistics.kitchenUpgradeCount == 1) {
+			achievements.get("about_time").unlock();
+		} else if(Statistics.kitchenUpgradeCount == 5) {
+			achievements.get("reinforced_workplace").unlock();
+		}
+		
+    }
+    public void checkDecorationsPlaced() {
+    	if(Statistics.decorationsPlaced == 20) {
+			achievements.get("interior_designer").unlock();
+    	}
+    }
     public Recipe[] getRecipeChoices() {
         return recipeChoices;
     }
@@ -198,8 +529,6 @@ public class ProgressManager {
     public Upgrade[] getUpgradeChoices() {
         return upgradeChoices;
     }
-
-
     protected BufferedImage importImage(String filePath) { //Imports and stores the image
         BufferedImage importedImage = null;
         try {
@@ -244,9 +573,23 @@ public class ProgressManager {
     	for (String id : data.unlockedAchievements) {
     		Achievement a = achievements.get(id);
     	    if (a != null) {
-    	    	a.unlock();
+    	    	a.unlockNoReward();
     	    }
     	}
+    }
+    public StatisticsSaveData saveStatisticsData() {
+    	StatisticsSaveData data = new StatisticsSaveData();
+    	data.ingredientsChopped = Statistics.ingredientsChopped;
+    	data.servedCustomers = Statistics.servedCustomers;
+    	data.kitchenUpgradeCount = Statistics.kitchenUpgradeCount;
+    	data.decorationsPlaced = Statistics.decorationsPlaced;
+    	return data;
+    }
+    public void applySaveStatisticsData(StatisticsSaveData data) {
+    	Statistics.ingredientsChopped = data.ingredientsChopped;
+    	Statistics.servedCustomers = data.servedCustomers;
+    	Statistics.kitchenUpgradeCount = data.kitchenUpgradeCount;
+     	Statistics.decorationsPlaced = data.decorationsPlaced;
     }
     public void moveToNextPhase() {
     	currentPhase++;

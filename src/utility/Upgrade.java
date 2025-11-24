@@ -89,8 +89,6 @@ public class Upgrade {
 			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 24));
 			break;
 		case "Paintings":
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 0));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 1));
 			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 2));
 			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 3));
 			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 22));

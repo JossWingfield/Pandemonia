@@ -156,6 +156,7 @@ public class SaveManager {
 		saveToFile("save/order"+Integer.toString(currentSave)+".json", gp.world.saveOrderData());
 		saveToFile("save/customiser"+Integer.toString(currentSave)+".json", gp.customiser.saveCustomiserData());
 		saveToFile("save/progress"+Integer.toString(currentSave)+".json", gp.progressM.saveData());
+		saveToFile("save/statistics"+Integer.toString(currentSave)+".json", gp.progressM.saveStatisticsData());
 
 		
 		savePreview(currentSave);
@@ -187,6 +188,7 @@ public class SaveManager {
 	    loadFromFile("save/order" + save + ".json", OrderSaveData.class);
 	    loadFromFile("save/customiser" + save + ".json", CustomiserSaveData.class);
 	    loadFromFile("save/progress" + save + ".json", ProgressSaveData.class);
+	    loadFromFile("save/statistics" + save + ".json", StatisticsSaveData.class);
 	}
 	public void startGame() {
 		gp.startGame();

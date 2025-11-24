@@ -1,10 +1,14 @@
 package utility;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+
+import main.GamePanel;
 
 public class Achievement {
 
-    private final String id;              // unique identifier for saving
+	GamePanel gp;
+    private final String id;    // unique identifier for saving
     private final String name;            // display name
     private final String description;     // description shown to player
     private final BufferedImage icon;     // image to display
@@ -12,8 +16,9 @@ public class Achievement {
     private boolean unlocked;             // unlocked state
     private Runnable onUnlock;            // optional callback
 
-    public Achievement(String id, String name, String description, BufferedImage icon) {
-        this.id = id;
+    public Achievement(GamePanel gp, String id, String name, String description, BufferedImage icon) {
+        this.gp = gp;
+    	this.id = id;
         this.name = name;
         this.description = description;
         this.icon = icon;
@@ -49,7 +54,16 @@ public class Achievement {
             unlocked = true;
             if (onUnlock != null) {
                 onUnlock.run(); // trigger reward, cosmetic, etc.
+                if (gp.progressM != null) {
+                    gp.gui.showAchievementNotification(this);
+                    gp.gui.addMessage("New Achievement Unlocked!", Color.YELLOW);
+                }
             }
+        }
+    }
+    public void unlockNoReward() {
+        if (!unlocked) {
+            unlocked = true;
         }
     }
 

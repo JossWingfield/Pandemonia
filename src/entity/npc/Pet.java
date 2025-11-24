@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.GamePanel;
+import utility.RoomHelperMethods;
 
 public class Pet extends NPC{
 	
@@ -14,6 +15,7 @@ public class Pet extends NPC{
 	private int timesPetted = 0;
 	private Customer owner;
 	private int petType;
+	public boolean isCat;
 
 	public Pet(GamePanel gp, float xPos, float yPos, Customer npc, int petType) {
 		super(gp, xPos, yPos, 48, 48);
@@ -27,6 +29,7 @@ public class Pet extends NPC{
 		speed = 1*60;
 		npcType = "Pet";
 		r = new Random();
+		
 		
 		gp.world.animalPresent = true;
 	
@@ -49,6 +52,7 @@ public class Pet extends NPC{
 			name = "Catherine";
 			importFromSpriteSheet("/npcs/pet/Cat1.png", 6, 1, 0, 0, 0, 48, 48, 0);
 			importFromSpriteSheet("/npcs/pet/Cat1.png", 8, 1, 1, 0, 96, 48, 48, 0);
+			isCat = true;
 			break;
 		case 2:
 			drawWidth = 48*3;
@@ -58,6 +62,7 @@ public class Pet extends NPC{
 			name = "Snorf";
 			importFromSpriteSheet("/npcs/pet/Cat2.png", 6, 1, 0, 0, 0, 48, 48, 0);
 			importFromSpriteSheet("/npcs/pet/Cat2.png", 8, 1, 1, 0, 96, 48, 48, 0);
+			isCat = true;
 			break;
 		case 3:
 			drawWidth = 48*3;
@@ -67,6 +72,7 @@ public class Pet extends NPC{
 			name = "Olive";
 			importFromSpriteSheet("/npcs/pet/Cat3.png", 6, 1, 0, 0, 0, 48, 48, 0);
 			importFromSpriteSheet("/npcs/pet/Cat3.png", 8, 1, 1, 0, 96, 48, 48, 0);
+			isCat = true;
 			break;
 		case 4:
 			drawWidth = 48*3;
@@ -76,9 +82,21 @@ public class Pet extends NPC{
 			name = "Ginger";
 			importFromSpriteSheet("/npcs/pet/Cat4.png", 6, 1, 0, 0, 0, 48, 48, 0);
 			importFromSpriteSheet("/npcs/pet/Cat4.png", 8, 1, 1, 0, 96, 48, 48, 0);
+			isCat = true;
 			break;
 		}
-
+		int catNum;
+		if(gp.player.currentRoomIndex == RoomHelperMethods.MAIN) {
+			catNum = gp.npcM.getCatNum();
+		} else {
+			catNum = gp.mapM.getRoom(RoomHelperMethods.MAIN).getCatNum();
+		}
+		
+		if(catNum == 2) {
+    		gp.progressM.achievements.get("cat_lover").unlock();
+		} else if(catNum == 3) {
+    		gp.progressM.achievements.get("cat_cafe").unlock();
+		}
 	}    
 	public void update(double dt) {
 		followNPC(dt, owner);

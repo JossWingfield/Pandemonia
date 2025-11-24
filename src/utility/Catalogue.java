@@ -38,10 +38,12 @@ public class Catalogue {
 	public int basketCost = 0;
 	private boolean canPay = false;
 	public Object selectedItem;
+	private int mysteryCrateCost = 100;
 	
 	private int selectedRow = 0;
 	public boolean checkingOut = false;
-	private BufferedImage border, buildFrame, descriptionFrame, overlay, overlay2, coinImage;
+	public boolean onMysteryScreen = false;
+	private BufferedImage border, buildFrame, descriptionFrame, overlay, overlay2, coinImage, mysteryIcon;
 	private Font nameFont = new Font("pix M 8pt", Font.PLAIN, 20);
 	private Font costFont = new Font("pix M 8pt", Font.PLAIN, 32);
 	private Font descriptionFont = new Font("pix M 8pt", Font.PLAIN, 14);
@@ -57,6 +59,7 @@ public class Catalogue {
 	private List<Building> bathroomBuildingInventory = new ArrayList<Building>();
 	
 	public List<Object> basket = new ArrayList<Object>();
+	
 
 	public Catalogue(GamePanel gp) {
 		this.gp = gp;
@@ -65,6 +68,7 @@ public class Catalogue {
 		descriptionFrame = importImage("/UI/catalogue/Description.png");
 		overlay = importImage("/UI/catalogue/OverLay.png");
 		overlay2 = importImage("/UI/catalogue/Overlay2.png");
+		mysteryIcon = importImage("/UI/catalogue/MysteryCrateUI.png");
 		coinImage = importImage("/UI/Coin.png");
 
 		addBuildings();
@@ -952,12 +956,23 @@ public class Catalogue {
 		}
 			
 	}
+	public void drawMysteryScreen(Graphics2D g2) {
+		g2.setFont(costFont);
+		g2.drawString(Integer.toString(mysteryCrateCost), (int)(173*4.5), 484);
+	}
 	public void update(double dt) {
 		if (clickCounter > 0) {
 			clickCounter -= dt;        // subtract elapsed time in seconds
 		    if (clickCounter < 0) {
 		    	clickCounter = 0;      // clamp to zero
 		    }
+		}
+	}
+	public void buyMysteryCrate() {
+		boolean hasMoney = gp.player.wealth >= mysteryCrateCost;
+		if(hasMoney) {
+			gp.currentState = gp.playState;
+			orderCrate();
 		}
 	}
 	public void tryPay() {
@@ -971,6 +986,12 @@ public class Catalogue {
 	private void orderItems() {
 		gp.world.orderItems(new ArrayList<>(basket));
 		gp.player.wealth -= basketCost;
+		basketCost = 0;
+		basket.clear();
+	}
+	private void orderCrate() {
+		gp.world.orderCrate();
+		gp.player.wealth -= mysteryCrateCost;
 		basketCost = 0;
 		basket.clear();
 	}

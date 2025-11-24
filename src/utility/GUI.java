@@ -26,6 +26,7 @@ import net.DiscoveryManager;
 import net.DiscoveryManager.DiscoveredServer;
 import net.packets.Packet00Login;
 import net.packets.Packet01Disconnect;
+import utility.ProgressManager.RewardType;
 
 public class GUI {
 	
@@ -44,6 +45,7 @@ public class GUI {
     private BufferedImage saveBorder, deleteSave;
     private BufferedImage dialogueFrame;
 	private BufferedImage bookIcons[], bookOpen, bookClosed, recipeBookBorder, lockedRecipeBorder;
+	private BufferedImage achievementBorder, achievement, lockedAchievement, mysteryIcon, mysteryCrateUI;
     
 	//COLOURS
 	private Color darkened;
@@ -121,8 +123,12 @@ public class GUI {
 	private boolean doDestroySave;
 	private int destroySaveNum;
 	
-	int currentPage = 0;  
-
+	private int currentPage = 0;  
+	private int achievementStartIndex = 0; // which achievement is currently at the top
+	private Achievement notificationAchievement = null;
+	private float notificationTimer = 0f; // seconds
+	private final float notificationDuration = 7f; // how long to show (3 seconds)
+	private int notificationX, notificationY; // position to draw
 
 	public GUI(GamePanel gp) {
 		this.gp = gp;
@@ -223,6 +229,12 @@ public class GUI {
 		bookClosed = importImage("/UI/Book_Closed.png");
 		recipeBookBorder = importImage("/UI/recipe/RecipeBookBorder.png").getSubimage(0, 0, 16, 16);
 		lockedRecipeBorder = importImage("/UI/recipe/RecipeBookBorder.png").getSubimage(16, 0, 16, 16);
+		
+		achievementBorder = importImage("/UI/achievement/AchievementBorder.png");
+		achievement = importImage("/UI/achievement/AchievementUI.png");
+		lockedAchievement = importImage("/UI/achievement/LockedAchievement.png");
+		mysteryIcon = importImage("/UI/catalogue/MysteryCrate.png");
+		mysteryCrateUI = importImage("/UI/catalogue/MysteryCrateUI.png");
 	}
 	protected BufferedImage[] importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height) {
 		BufferedImage animations[] = new BufferedImage[20];
@@ -1160,7 +1172,122 @@ public class GUI {
 		g2.setColor(darkened);
 		g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
 		
+		BufferedImage img = achievementBorder;
+		int x = gp.frameWidth/2-img.getWidth()/2*6;
+		int y = gp.frameHeight/2-img.getHeight()/2*6;
+		g2.drawImage(img, x, y, img.getWidth()*6, img.getHeight()*6, null);
 		
+		g2.setColor(titleColour1);
+		g2.setFont(pauseFont);
+		g2.drawString("Achievements", x+36, y+68);
+		
+		g2.setFont(pauseFont);
+		String text = "BACK";
+		x =getXforCenteredText(text, g2);
+		if(isHovering(text, x, 650, g2)) {
+			g2.setColor(craftColour1);
+			if(gp.mouseI.leftClickPressed) {
+				if(clickCooldown == 0) {
+					//QUIT
+					gp.currentState = gp.pauseState;
+					clickCooldown = 0.16;
+				}
+			}
+		}else {
+			g2.setColor(Color.WHITE);
+		}
+		g2.drawString(text, getXforCenteredText(text, g2), 700);
+		
+		List<Achievement> achievementList =
+		        new ArrayList<>(gp.progressM.achievements.values());
+
+		// Sort so unlocked ones appear first, locked ones after
+		achievementList.sort((a, b) -> {
+		    if (a.isUnlocked() == b.isUnlocked()) return 0;
+		    return a.isUnlocked() ? -1 : 1;  // unlocked = top
+		});	    
+		int startX = x-86;
+		int startY = y+90;
+	    int ySpacing = 27*6+20; // vertical space per achievement
+	    int iconOffsetX = 92; // distance from left border to icon
+	    int textOffsetX = 50; // distance from left border to text
+	    
+	    int maxVisibleAchievements = 2;
+	   
+	    for (int i = 0; i < maxVisibleAchievements; i++) {
+	        int index = achievementStartIndex + i;
+	        if (index >= achievementList.size()) break; // no more achievements
+
+	        Achievement a = achievementList.get(index);
+
+	        int yPos = startY + i * ySpacing;
+
+	        // Draw border first
+	        g2.drawImage(achievement, startX, yPos, 44*6, 27*6, null);
+	        // Optional: gray out if not unlocked
+	        if (!a.isUnlocked()) {
+		        g2.drawImage(lockedAchievement, startX, yPos, 44*6, 27*6, null);
+	        }
+
+	        // Draw achievement icon
+	        if (a.getIcon() != null) {
+	        	BufferedImage icon = a.getIcon();
+	        	if(!a.isUnlocked()) {
+	        		icon = CollisionMethods.getMaskedImage(Color.BLACK, icon);
+	        	}
+	            g2.drawImage(icon, startX + iconOffsetX+ 80, yPos + 80, icon.getWidth()*3, icon.getHeight()*3, null);
+	        }
+
+	        // Draw text: name (bold) and description
+	        g2.setColor(titleColour1);
+	        g2.setFont(saveFont);
+	        g2.drawString(a.getName(), startX + textOffsetX-28, yPos + 45);
+
+	        g2.setFont(saveFont2);
+	        
+	    	text = a.getDescription();
+			for(String line: gp.gui.wrapText(text, g2, 49*5)) {
+				g2.drawString(line, startX + textOffsetX-28, yPos + 70);
+				yPos += 30;
+			}
+	    }
+		
+	}
+	public void showAchievementNotification(Achievement a) {
+	    notificationAchievement = a;
+	    notificationTimer = notificationDuration;
+
+	    // Example position: top-right of screen
+	    notificationX = gp.frameWidth - 200;
+	    notificationY = 50;
+	}
+	public void drawAchievementNotification(Graphics2D g2) {
+	    if (notificationAchievement == null) return;
+
+	    int popupScale = 6;
+	    BufferedImage img = achievement; // same as menu
+	    int x = gp.frameWidth - img.getWidth() * popupScale - 20;
+	    int y = gp.frameHeight - img.getHeight() * popupScale - 20; // top of screen (or wherever you like)
+	    
+	    // Draw border
+	    g2.drawImage(img, x, y, img.getWidth() * popupScale, img.getHeight() * popupScale, null);
+	    
+	    // Draw icon
+	    BufferedImage icon = notificationAchievement.getIcon();
+	    if (icon != null) {
+	        int iconX = x + 92;
+	        int iconY = y + 80;
+	        g2.drawImage(icon, iconX+80, iconY, icon.getWidth() * 3, icon.getHeight() * 3, null);
+	    }
+	    
+	    // Draw name
+	    g2.setColor(titleColour1);
+	    g2.setFont(saveFont);
+	    g2.drawString(notificationAchievement.getName(), x + 50-15, y + 45);
+
+	    // Draw description
+	    g2.setFont(saveFont2);
+	    g2.drawString(notificationAchievement.getDescription(), x + 22, y + 70);
 	}
 	public void draw(Graphics2D g2) {
 		
@@ -1230,6 +1357,8 @@ public class GUI {
 			drawRecipesScreen(g2);
 			break;
 		}
+		
+		drawAchievementNotification(g2);
 		
 		if(firstDraw) {
 			g2.setFont(numberFont);
@@ -1535,6 +1664,7 @@ public class GUI {
 			if(gp.mouseI.leftClickPressed) {
 				if(clickCooldown == 0) {
 					gp.currentState = gp.achievementState;
+					clickCooldown = 0.33;
 					currentTitleAnimation = 0;
 				}
 			}
@@ -1911,7 +2041,7 @@ public class GUI {
 		g2.drawImage(computerAnimations[computerAnimationCounter], 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 		
 		if(computerAnimationCounter >= 9) {
-			if(!gp.catalogue.checkingOut) {
+			if(!gp.catalogue.checkingOut && !gp.catalogue.onMysteryScreen) {
 				g2.drawImage(shoppingUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 				g2.drawImage(shoppingButtonUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 				
@@ -1937,6 +2067,35 @@ public class GUI {
 						gp.catalogue.layer = 0;
 					}
 				}
+				
+				g2.drawImage(mysteryIcon, (int)((171)*4.5), (int)(29*4.5), (int)(16*4.5), (int)(16*4.5), null);
+				if(isHovering((int)((171)*4.5), (int)(29*4.5), (int)(16*4.5), (int)(16*4.5))) {
+					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+						clickCooldown = 0.5;
+						gp.catalogue.onMysteryScreen = true;
+						gp.catalogue.layer = 0;
+					}
+				}
+				
+			} else if(gp.catalogue.onMysteryScreen) {
+				g2.drawImage(mysteryCrateUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
+				
+				if(isHovering((int)(87*4.5), (int)(108*4.5), (int)(61*4.5), (int)(11*4.5))) {
+					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+						clickCooldown = 0.5;
+						gp.catalogue.buyMysteryCrate();
+						gp.catalogue.layer = 0;
+					}
+				}
+				
+				g2.drawImage(mysteryIcon, (int)((171)*4.5), (int)(29*4.5), (int)(16*4.5), (int)(16*4.5), null);
+				if(isHovering((int)((171)*4.5), (int)(29*4.5), (int)(16*4.5), (int)(16*4.5))) {
+					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+						clickCooldown = 0.5;
+						gp.catalogue.onMysteryScreen = false;
+						gp.catalogue.layer = 0;
+					}
+				}
 			} else {
 				g2.drawImage(basketUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 				g2.drawImage(basketButtons, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
@@ -1950,8 +2109,10 @@ public class GUI {
 				}
 			}
 			
-			if(!gp.catalogue.checkingOut) {
+			if(!gp.catalogue.checkingOut && !gp.catalogue.onMysteryScreen) {
 				gp.catalogue.drawCatalogue(g2);
+			} else if(gp.catalogue.onMysteryScreen) {
+				gp.catalogue.drawMysteryScreen(g2);
 			} else {
 				gp.catalogue.drawCheckout(g2);
 			}
@@ -2099,6 +2260,7 @@ public class GUI {
 	    	if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	    		RecipeManager.unlockRecipe(recipeChoices[0]);
 	    		gp.currentState = gp.playState;
+	    		gp.progressM.checkRecipeCollect();
 	    	}
 	    }
 	    drawRecipe(g2, recipeChoices[0], x, y);
@@ -2108,6 +2270,7 @@ public class GUI {
 	    	if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	       		RecipeManager.unlockRecipe(recipeChoices[1]);
 	    		gp.currentState = gp.playState;
+	    		gp.progressM.checkRecipeCollect();
 	    	}
 	    }
 	    drawRecipe(g2, recipeChoices[1], x, y);
@@ -2140,6 +2303,9 @@ public class GUI {
 	    if(isHovering(x, y, 130*3, 48*3)) {
 	    	if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	    		UpgradeManager.unlockUpgrade(upgradeChoices[0]);
+	    		if(upgradeChoices[0].getCategory() == RewardType.KITCHEN) {
+	    			gp.progressM.checkKitchenUpgrade();
+	    		}
 	    		clickCooldown = 0.33;
 	    		gp.currentState = gp.chooseRecipeState;
 	    	}
@@ -2151,6 +2317,9 @@ public class GUI {
 	    	if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
 	    		UpgradeManager.unlockUpgrade(upgradeChoices[1]);
 	    		clickCooldown = 0.33;
+	    		if(upgradeChoices[1].getCategory() == RewardType.KITCHEN) {
+	    			gp.progressM.checkKitchenUpgrade();
+	    		}
 	    		gp.currentState = gp.chooseRecipeState;
 	    	}
 	    }
@@ -2272,7 +2441,27 @@ public class GUI {
 			// Clamp page
 			if (currentPage < 0) currentPage = 0;
 			if (currentPage > 1) currentPage = 1;
+		} else if(gp.currentState == gp.achievementState) {
+		    // --- Handle scrolling ---
+		    if (gp.keyI.down && clickCooldown == 0) {
+		        if (achievementStartIndex + 2 < gp.progressM.achievements.size()) {
+		            achievementStartIndex++;
+		            clickCooldown = 0.1;
+		        }
+		    }
+		    if (gp.keyI.up && clickCooldown == 0) {
+		        if (achievementStartIndex > 0) {
+		            achievementStartIndex--;
+		            clickCooldown = 0.1;
+		        }
+		    }
 		}
+		   if (notificationAchievement != null) {
+		        notificationTimer -= dt;
+		        if (notificationTimer <= 0) {
+		            notificationAchievement = null; // hide notification
+		        }
+		    }
 		
 	}
 	public List<String> wrapText(String text, Graphics2D g2, int maxWidth) {

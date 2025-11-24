@@ -10,6 +10,8 @@ public class WorldSaveData extends SaveData{
 	
 	  public int day;
 	  public int previousSoulsCollected;
+	  public boolean crateOrdered;
+	  public int crateNum;
 	
 	  public Season currentSeason;
 	  

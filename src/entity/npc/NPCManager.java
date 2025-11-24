@@ -123,6 +123,19 @@ public class NPCManager {
 		}
 		return true;
 	}
+    public int getCatNum() {
+    	int catNum = 0;
+    	for(NPC b: npcs) {
+			if(b != null) {
+				if(b instanceof Pet pet) {
+					if(pet.isCat) {
+						catNum++;
+					}
+				}
+			}
+		}
+    	return catNum;
+    }
     public boolean entityCheck(Rectangle2D.Float hitbox) {
 		for(NPC b: npcs) {
 			if(b != null) {

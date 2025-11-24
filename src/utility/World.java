@@ -85,6 +85,9 @@ public class World {
     //ORDERS
     private List<Object> orderList;
     public List<Object> boughtItems;
+    private boolean crateOrdered = false;
+    private int crateNum;
+    private int totalCrateNum;
     
     // Sleep
     private boolean sleeping = false;
@@ -403,6 +406,9 @@ public class World {
         if (orderList != null && !orderList.isEmpty()) {
         	addParcel();
         }
+        if(crateOrdered) {
+        	addCrate();
+        }
         
         if(day == 2) {
         	gp.cutsceneM.cutsceneQueued = true;
@@ -482,6 +488,10 @@ public class World {
     }
     public void orderItems(List<Object> order) {
     	orderList = order;
+    }
+    public void orderCrate() {
+    	crateOrdered = true;
+    	crateNum = random.nextInt(totalCrateNum);
     }
     public void sleep() {
         // Advance the calendar to the next day
@@ -618,12 +628,6 @@ public class World {
     	Settings.fullScreen = data.fullScreen;
     	Settings.bloomEnabled = data.bloomEnabled;
     }
-    public void setSaveData(WorldSaveData data) {
-    	time = dayStart;
-    	day = data.day;
-    	previousSoulsCollected = data.previousSoulsCollected;
-    	currentSeason = data.currentSeason;
-    }
     private void addParcel() {
 		Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));
         gp.buildingM.addBuilding(parcel);
@@ -632,6 +636,14 @@ public class World {
         boughtItems.addAll(orderList);
     	
         orderList.clear();
+    }
+    private void addCrate() {
+		Parcel parcel = new Parcel(gp, 9*48, 9*48, 0);
+        gp.buildingM.addBuilding(parcel);
+        gp.gui.addMessage("A Mystery Crate has arrived!", Color.MAGENTA);
+        
+        crateOrdered = false;
+        crateNum = -1;
     }
     public void setOrderData(OrderSaveData data) {
     	if(!data.orderEmpty) {
@@ -726,8 +738,21 @@ public class World {
     	data.day = day;
     	data.previousSoulsCollected = previousSoulsCollected;
     	data.currentSeason = currentSeason;
+    	data.crateOrdered = crateOrdered;
+    	data.crateNum = crateNum;
   
     	return data;
+    }
+    public void setSaveData(WorldSaveData data) {
+    	time = dayStart;
+    	day = data.day;
+    	previousSoulsCollected = data.previousSoulsCollected;
+    	currentSeason = data.currentSeason;
+    	crateNum = data.crateNum;
+    	crateOrdered = data.crateOrdered;
+    	if(crateOrdered) {
+            addCrate();
+    	}
     }
     public void drawFilters(Graphics2D g2) {
     	if(breaker != null) {

@@ -11,9 +11,22 @@ public class Parcel extends Building {
 	
 	private List<Object> order;
 	
+	private int crateNum;
+	
 	public Parcel(GamePanel gp, float xPos, float yPos, List<Object> order) {
 		super(gp, xPos, yPos, 48, 48);
 		this.order = order;
+		
+		isSolid = false;
+		blueprint = false;
+		drawWidth = 16*3;
+		drawHeight = 16*3;
+		canBePlaced = false;
+		importImages();
+	}
+	public Parcel(GamePanel gp, float xPos, float yPos, int crateNum) {
+		super(gp, xPos, yPos, 48, 48);
+		this.crateNum = crateNum;
 		
 		isSolid = false;
 		blueprint = false;

@@ -303,6 +303,20 @@ public class RecipeManager {
 
         return new Recipe[] { r1, r2 };
     }
+    public static Recipe getRandomLocked(GamePanel gp) {
+        int currentPhase = gp.progressM.currentPhase;
+
+        // Filter locked recipes by phase
+        List<Recipe> locked = getLockedRecipes().stream()
+                .filter(r -> r.phase <= currentPhase)
+                .toList();
+
+        if (locked.size() < 1) return null; // not enough locked recipes
+
+        Recipe r1 = locked.get(random.nextInt(locked.size()));
+
+        return r1;
+    }
     public static List<Recipe> getLockedRecipes() {
         List<Recipe> locked = new ArrayList<>(allRecipes);
         locked.removeAll(unlockedRecipes);

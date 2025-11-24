@@ -51,6 +51,7 @@ import entity.buildings.outdoor.SeasonalDecoration;
 import entity.items.Item;
 import entity.npc.Customer;
 import entity.npc.NPC;
+import entity.npc.Pet;
 import entity.npc.SpecialCustomer;
 import main.GamePanel;
 import utility.Recipe;
@@ -2838,6 +2839,19 @@ public class Room {
 	public float getSpawnY() {
 		return roomSpawn.hitbox.y + roomSpawn.hitbox.height/2;
 	}
+    public int getCatNum() {
+    	int catNum = 0;
+    	for(NPC b: npcs) {
+			if(b != null) {
+				if(b instanceof Pet pet) {
+					if(pet.isCat) {
+						catNum++;
+					}
+				}
+			}
+		}
+    	return catNum;
+    }
 	public TablePlate findDirtyPlate() {
 		for(Building b: buildings) {
 			if(b != null) {

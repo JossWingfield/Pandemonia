@@ -17,6 +17,7 @@ import net.packets.Packet12AddItemToChoppingBoard;
 import net.packets.Packet13ClearPlayerHand;
 import net.packets.Packet14UpdateChoppingProgress;
 import net.packets.Packet15RemoveItemFromChoppingBoard;
+import utility.Statistics;
 
 public class ChoppingBoard extends Building {
 	
@@ -105,6 +106,10 @@ public class ChoppingBoard extends Building {
 						    		}
 						    		if(chopCount == maxChopCount) {
 						    			chopCount = 0;
+						    			Statistics.ingredientsChopped++;
+						    			if(Statistics.ingredientsChopped == 100) {
+						    	    		gp.progressM.achievements.get("100_chopped").unlock();
+						    			}
 						    			currentItem.foodState = FoodState.CHOPPED;
 						    			if(currentItem.cutIntoNewItem) {
 						    				Food newItem = (Food)gp.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);

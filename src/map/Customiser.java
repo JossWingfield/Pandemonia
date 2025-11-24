@@ -25,6 +25,7 @@ import entity.buildings.Turntable;
 import entity.buildings.WallDecor_Building;
 import main.GamePanel;
 import utility.CollisionMethods;
+import utility.Statistics;
 import utility.save.CatalogueSaveData;
 import utility.save.CustomiserSaveData;
 
@@ -42,7 +43,7 @@ public class Customiser {
 	
 	private int ySize = 126*3;
 	int yStart;
-	private int clickCounter = 0;
+	private double clickCounter = 0;
 	public boolean showBuildings = true;
 	
 	private Color noBuild = new Color(239, 4, 4, 150);
@@ -231,7 +232,12 @@ public class Customiser {
 		tableSkinInventory.add(b);
 	}
 	public void update(double dt) {
-		
+		if (clickCounter > 0) {
+			clickCounter -= dt;        // subtract elapsed time in seconds
+		    if (clickCounter < 0) {
+		    	clickCounter = 0;      // clamp to zero
+		    }
+		}
 	}
 	public void draw(Graphics2D g2, int xDiff, int yDiff) {
 		
@@ -368,7 +374,7 @@ public class Customiser {
 								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
 			    				if(gp.mouseI.leftClickPressed) {
 			    					selectedBuilding = b;
-			    					clickCounter = 10;
+			    					clickCounter = 0.33;
 			    					showBuildings = false;
 			    				}
 			    			} else {
@@ -413,7 +419,7 @@ public class Customiser {
 								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
 			    				if(gp.mouseI.leftClickPressed) {
 			    					selectedBuilding = b;
-			    					clickCounter = 10;
+			    					clickCounter = 0.33;
 			    					showBuildings = false;
 			    				}
 			    			} else {
@@ -459,7 +465,7 @@ public class Customiser {
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setFloorpaper(b);
 			    					floorpaperInventory.remove(b);
-			    					clickCounter = 10;
+			    					clickCounter = 0.33;
 			    				}
 			    			} else {
 								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
@@ -504,7 +510,7 @@ public class Customiser {
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setWallpaper(b);
 			    					wallpaperInventory.remove(b);
-			    					clickCounter = 10;
+			    					clickCounter = 0.33;
 			    				}
 			    			} else {
 								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
@@ -549,7 +555,7 @@ public class Customiser {
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setBeam(b);
 			    					beamInventory.remove(b);
-			    					clickCounter = 10;
+			    					clickCounter = 0.33;
 			    				}
 			    			} else {
 								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
@@ -594,7 +600,7 @@ public class Customiser {
 								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
 			    				if(gp.mouseI.leftClickPressed) {
 			    					selectedBuilding = b;
-			    					clickCounter = 10;
+			    					clickCounter = 0.33;
 			    					showBuildings = false;
 			    				}
 			    			} else {
@@ -638,7 +644,7 @@ public class Customiser {
 								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
 			    				if(gp.mouseI.leftClickPressed) {
 			    					selectedBuilding = b;
-			    					clickCounter = 10;
+			    					clickCounter = 0.33;
 			    					showBuildings = false;
 			    				}
 			    			} else {
@@ -682,7 +688,7 @@ public class Customiser {
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setChairSkin(b);
 			    					chairSkinInventory.remove(b);
-			    					clickCounter = 10;
+			    					clickCounter = 0.33;
 			    					gp.buildingM.refreshBuildings();
 			    				}
 			    			} else {
@@ -726,7 +732,7 @@ public class Customiser {
 			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setTableSkin(b);
 			    					tableSkinInventory.remove(b);
-			    					clickCounter = 10;
+			    					clickCounter = 0.33;
 			    					gp.buildingM.refreshBuildings();
 			    				}
 			    			} else {
@@ -830,7 +836,10 @@ public class Customiser {
 						
 						gp.buildingM.addBuilding(placed, xPos, yPos);
 						
-						clickCounter = 20;
+						Statistics.decorationsPlaced++;
+						gp.progressM.checkDecorationsPlaced();
+						
+						clickCounter = 0.66;
 						if(decorBuildingInventory.contains(selectedBuilding)) {
 							decorBuildingInventory.remove(selectedBuilding);
 						}
@@ -848,10 +857,6 @@ public class Customiser {
 					}
 				}
 			}
-		}
-		
-		if(clickCounter > 0) {
-			clickCounter--;
 		}
 		
 	
