@@ -6,7 +6,13 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -29,6 +35,7 @@ import utility.save.CatalogueSaveData;
 public class Catalogue {
 	
 	GamePanel gp;
+	Random r;
 	
 	public int pageNum = 1;
 	private boolean showDescription = false;
@@ -43,6 +50,7 @@ public class Catalogue {
 	private int selectedRow = 0;
 	public boolean checkingOut = false;
 	public boolean onMysteryScreen = false;
+	public boolean onCatalogueScreen = false;
 	private BufferedImage border, buildFrame, descriptionFrame, overlay, overlay2, coinImage, mysteryIcon;
 	private Font nameFont = new Font("pix M 8pt", Font.PLAIN, 20);
 	private Font costFont = new Font("pix M 8pt", Font.PLAIN, 32);
@@ -60,9 +68,13 @@ public class Catalogue {
 	
 	public List<Object> basket = new ArrayList<Object>();
 	
+	//CATALOGUES
+    public final List<ShopCatalogue> allCatalogues = new ArrayList<>();
+    private final Set<Integer> unlockedIds = new HashSet<>();
 
 	public Catalogue(GamePanel gp) {
 		this.gp = gp;
+		r = new Random();
 		border = importImage("/UI/customise/WallBorder.png");
 		buildFrame = importImage("/UI/catalogue/ShopFrame.png");
 		descriptionFrame = importImage("/UI/catalogue/Description.png");
@@ -70,9 +82,66 @@ public class Catalogue {
 		overlay2 = importImage("/UI/catalogue/Overlay2.png");
 		mysteryIcon = importImage("/UI/catalogue/MysteryCrateUI.png");
 		coinImage = importImage("/UI/Coin.png");
+		
+		ShopCatalogue catalogue = new ShopCatalogue(0, "Cabin");
+		List<Object> contents = new ArrayList<Object>();
+		contents.add(new WallDecor_Building(gp, 0, 0, 17));
+		catalogue.setContents(contents);
+		addCatalogue(catalogue);
+		
 
 		addBuildings();
 	}
+    public int getRandomCatalogue() {
+
+        // Get all locked catalogue IDs
+        List<ShopCatalogue> locked = new ArrayList<>();
+        for (ShopCatalogue c : allCatalogues) {
+            if (!unlockedIds.contains(c.getId())) {
+                locked.add(c);
+            }
+        }
+
+        // None left to unlock
+        if (locked.isEmpty()) {
+            return -1;
+        }
+
+        // Pick a random locked catalogue
+        ShopCatalogue chosen = locked.get(r.nextInt(locked.size()));
+        return chosen.getId();
+    }
+    public ShopCatalogue getUnlockedByIndex(int index) {
+        List<Integer> list = new ArrayList<>(unlockedIds);
+        Collections.sort(list);
+
+        System.out.println(index);
+        if (index < 0 || index >= list.size()) {
+            return null;
+        }
+
+        int id = list.get(index);
+
+        // Catalogue IDs match their index positions in allCatalogues
+        if (id < 0 || id >= allCatalogues.size()) {
+            return null;
+        }
+
+        return allCatalogues.get(id);
+    }
+    public ShopCatalogue getCatalogueByID(int id) {
+        if (id < 0 || id >= allCatalogues.size()) return null;
+        return allCatalogues.get(id);
+    }
+    public void addCatalogue(ShopCatalogue catalogue) {
+        allCatalogues.add(catalogue);
+    }
+    public void unlockById(int id) {
+        unlockedIds.add(id);
+    }
+    public boolean isUnlocked(int id) {
+        return unlockedIds.contains(id);
+    }
 	
 	public CatalogueSaveData saveCatalogueData() {
 		CatalogueSaveData data = new CatalogueSaveData();
@@ -764,6 +833,116 @@ public class Catalogue {
 		}
 	
 	}
+	public void drawShopCatalogueScreen(Graphics2D g2) {
+		
+		int xStart = (int)(83*4.5);
+		yStart = (int)(47*4.5);
+
+		selectedItem = null;
+		showDescription = false;
+			int counter = 0;
+			int originalXStart = xStart;
+			int yPos = yStart - 37*3 *layer;
+			
+			int startDraw = 0;
+			
+			ShopCatalogue cat = getUnlockedByIndex(pageNum-1);
+			
+			if(cat != null) {
+			int index = 0;
+			for(Object o: cat.getContents()) {
+				if(index >= startDraw) {
+					if(o != null) {
+						BufferedImage img = null;
+						int cost = 0;
+						int drawWidth = 0;
+						int drawHeight = 0;
+						int xDrawOffset = 0;
+						int yDrawOffset = 0;
+						if(o instanceof Building build) {
+							img = build.animations[0][0][0];
+							cost = build.cost;
+							drawWidth = build.drawWidth;
+							drawHeight = build.drawHeight;
+							yDrawOffset = build.yDrawOffset;
+						} else if(o instanceof WallPaper wall) {
+							img = wall.getBaseImage();
+							cost = wall.cost;
+							xDrawOffset = 24;
+						} else if(o instanceof FloorPaper wall) {
+							img = wall.getBaseImage();
+							cost = wall.cost;
+							xDrawOffset = 24;
+						} else if(o instanceof Beam wall) {
+							img = wall.getBaseImage();
+							cost = wall.cost;
+							xDrawOffset = 24;
+						} else if(o instanceof ChairSkin wall) {
+							img = wall.getImage();
+							cost = wall.cost;
+							//xDrawOffset = 24;
+						} else if(o instanceof TableSkin wall) {
+							img = wall.getImage();
+							cost = wall.cost;
+							//xDrawOffset = 24;
+						}
+						if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
+		    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
+							//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+		    				showDescription = true;
+		    				selectedItem = o;
+		  					if(yPos >= yStart +37*3) {
+	    						selectedRow = 1;
+	    					} else {
+	    						selectedRow = 0;
+	    					}
+		    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+		    					clickCounter = 0.17;
+		    					addToBasket(o, cost);
+		    				}
+		    			}
+						g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+
+						g2.drawImage(img, xStart+(55) - drawWidth/2 - xDrawOffset, yPos+30 - yDrawOffset, drawWidth, drawHeight, null);
+						}
+						xStart+= 40*3;
+		    			if(counter >= 3) {
+		    				xStart = originalXStart;
+		    				yPos += 37*3;
+		    				counter = -1;
+		    			}
+					}
+				} else {
+					counter = 0;
+				}
+    			counter++;
+    			index++;
+			}
+			g2.setFont(costFont);
+			g2.setColor(Color.WHITE);
+			String text = cat.getName();
+			int x =getXforCenteredText(text, g2);
+			g2.drawString(text, x, (int)(38*4.5));
+		} 
+		
+		g2.drawImage(overlay, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
+		
+		canPay = gp.player.wealth >= basketCost;
+		if(canPay) {
+			g2.setColor(Color.GREEN);
+		} else {
+			g2.setColor(Color.RED);
+		}
+		g2.setFont(costFont);
+		g2.drawString(Integer.toString(basketCost), (int)(153*4.5), 484);
+		//g2.drawImage(coinImage,  (int)(153*4.5) + 28, 450, 32, 32, null);
+		
+		
+		if(showDescription) {
+			drawBuildingDescription(g2, selectedItem, xStart);
+		}
+	
+	}
 	public void drawBuildingDescription(Graphics2D g2, Object b, int xStart) {
 		BufferedImage img;
 		String name = "";
@@ -958,7 +1137,8 @@ public class Catalogue {
 	}
 	public void drawMysteryScreen(Graphics2D g2) {
 		g2.setFont(costFont);
-		g2.drawString(Integer.toString(mysteryCrateCost), (int)(173*4.5), 484);
+		g2.setColor(Color.black);
+		g2.drawString(Integer.toString(mysteryCrateCost), (int)(173*4.5), (int)(117*4.5));
 	}
 	public void update(double dt) {
 		if (clickCounter > 0) {

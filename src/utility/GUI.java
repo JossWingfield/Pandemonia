@@ -45,7 +45,7 @@ public class GUI {
     private BufferedImage saveBorder, deleteSave;
     private BufferedImage dialogueFrame;
 	private BufferedImage bookIcons[], bookOpen, bookClosed, recipeBookBorder, lockedRecipeBorder;
-	private BufferedImage achievementBorder, achievement, lockedAchievement, mysteryIcon, mysteryCrateUI;
+	private BufferedImage achievementBorder, achievement, lockedAchievement, mysteryIcon, mysteryCrateUI, catalogueButton, catalogueMenu;
     
 	//COLOURS
 	private Color darkened;
@@ -235,6 +235,8 @@ public class GUI {
 		lockedAchievement = importImage("/UI/achievement/LockedAchievement.png");
 		mysteryIcon = importImage("/UI/catalogue/MysteryCrate.png");
 		mysteryCrateUI = importImage("/UI/catalogue/MysteryCrateUI.png");
+		catalogueButton = importImage("/UI/catalogue/CatalogueButton.png");
+		catalogueMenu = importImage("/UI/catalogue/CatalogueMenu.png");
 	}
 	protected BufferedImage[] importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height) {
 		BufferedImage animations[] = new BufferedImage[20];
@@ -2041,7 +2043,7 @@ public class GUI {
 		g2.drawImage(computerAnimations[computerAnimationCounter], 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 		
 		if(computerAnimationCounter >= 9) {
-			if(!gp.catalogue.checkingOut && !gp.catalogue.onMysteryScreen) {
+			if(!gp.catalogue.checkingOut && !gp.catalogue.onMysteryScreen && !gp.catalogue.onCatalogueScreen) {
 				g2.drawImage(shoppingUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 				g2.drawImage(shoppingButtonUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 				
@@ -2077,6 +2079,15 @@ public class GUI {
 					}
 				}
 				
+				g2.drawImage(catalogueButton, (int)((82)*4.5), (int)(30*4.5), (int)(16*4.5), (int)(16*4.5), null);
+				if(isHovering((int)((82)*4.5), (int)(30*4.5), (int)(16*4.5), (int)(16*4.5))) {
+					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+						clickCooldown = 0.5;
+						gp.catalogue.onCatalogueScreen = true;
+						gp.catalogue.layer = 0;
+					}
+				}
+				
 			} else if(gp.catalogue.onMysteryScreen) {
 				g2.drawImage(mysteryCrateUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 				
@@ -2096,6 +2107,43 @@ public class GUI {
 						gp.catalogue.layer = 0;
 					}
 				}
+			} else if(gp.catalogue.onCatalogueScreen) {
+				
+				g2.drawImage(catalogueMenu, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
+				g2.drawImage(shoppingButtonUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
+				
+				g2.drawImage(leftArrow, (int)(81*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5), null);
+				if(isHovering((int)(81*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5))) {
+					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+						clickCooldown = 0.5;
+						gp.catalogue.leftPage();
+					}
+				}
+				g2.drawImage(rightArrow, (int)((81+11)*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5), null);
+				if(isHovering((int)((81+11)*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5))) {
+					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+						clickCooldown = 0.5;
+						gp.catalogue.rightPage();
+					}
+				}
+				
+				if(isHovering((int)(170*4.5), (int)(96*4.5), (int)(16*4.5), (int)(16*4.5))) {
+					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+						clickCooldown = 0.5;
+						gp.catalogue.checkingOut = true;
+						gp.catalogue.layer = 0;
+					}
+				}
+				
+				g2.drawImage(catalogueButton, (int)((82)*4.5), (int)(30*4.5), (int)(16*4.5), (int)(16*4.5), null);
+				if(isHovering((int)((82)*4.5), (int)(30*4.5), (int)(16*4.5), (int)(16*4.5))) {
+					if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+						clickCooldown = 0.5;
+						gp.catalogue.onCatalogueScreen = false;
+						gp.catalogue.layer = 0;
+					}
+				}
+				
 			} else {
 				g2.drawImage(basketUI, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
 				g2.drawImage(basketButtons, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
@@ -2109,10 +2157,12 @@ public class GUI {
 				}
 			}
 			
-			if(!gp.catalogue.checkingOut && !gp.catalogue.onMysteryScreen) {
+			if(!gp.catalogue.checkingOut && !gp.catalogue.onMysteryScreen && !gp.catalogue.onCatalogueScreen) {
 				gp.catalogue.drawCatalogue(g2);
 			} else if(gp.catalogue.onMysteryScreen) {
 				gp.catalogue.drawMysteryScreen(g2);
+			} else if(gp.catalogue.onCatalogueScreen) {
+				gp.catalogue.drawShopCatalogueScreen(g2);
 			} else {
 				gp.catalogue.drawCheckout(g2);
 			}

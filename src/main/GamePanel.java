@@ -100,13 +100,13 @@ public class GamePanel extends JPanel implements Runnable {
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ItemRegistry itemRegistry = new ItemRegistry(this);
     public BuildingRegistry buildingRegistry = new BuildingRegistry(this);
+    public Catalogue catalogue = new Catalogue(this);
     public World world = new World(this);
     public Camera camera = new Camera(this);
     public LightingManager lightingM = new LightingManager(this, camera);
     public ParticleSystem particleM = new ParticleSystem(this);
     public Customiser customiser = new Customiser(this);
     public PathFinder pathF = new PathFinder(this);
-    public Catalogue catalogue = new Catalogue(this);
     public RecipeManager recipeM = new RecipeManager();
     public UpgradeManager upgradeM = new UpgradeManager(this);
     public ProgressManager progressM = new ProgressManager(this);

@@ -177,7 +177,8 @@ public class WallDecor_Building extends Building {
 			 xDrawOffset = 24;
 			 yDrawOffset = 24;
 			 buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, hitbox.width, hitbox.height-3*2);
-
+			 cost = 32;
+			 description = "A nice trophy for the wall.";
 	         break;
 		 case 18:
 	         name = "Notice Board";

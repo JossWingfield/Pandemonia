@@ -142,7 +142,6 @@ public class SaveManager {
 		saveMeta();
 		saveToFile("save/player"+Integer.toString(currentSave)+".json", gp.player.toSaveData());
 		saveToFile("save/settings"+Integer.toString(currentSave)+".json", gp.world.saveSettingsData());
-		saveToFile("save/world"+Integer.toString(currentSave)+".json", gp.world.saveWorldData());
 		saveToFile("save/recipes"+Integer.toString(currentSave)+".json", RecipeManager.saveRecipeData());
 		saveToFile("save/upgrades"+Integer.toString(currentSave)+".json", UpgradeManager.saveUpgradeData());
 		saveToFile("save/catalogue"+Integer.toString(currentSave)+".json", gp.catalogue.saveCatalogueData());
@@ -153,6 +152,7 @@ public class SaveManager {
 			}
 			counter++;
 		}
+		saveToFile("save/world"+Integer.toString(currentSave)+".json", gp.world.saveWorldData());
 		saveToFile("save/order"+Integer.toString(currentSave)+".json", gp.world.saveOrderData());
 		saveToFile("save/customiser"+Integer.toString(currentSave)+".json", gp.customiser.saveCustomiserData());
 		saveToFile("save/progress"+Integer.toString(currentSave)+".json", gp.progressM.saveData());
@@ -172,7 +172,6 @@ public class SaveManager {
 	    // Load data
 	    loadFromFile("save/player" + save + ".json", PlayerSaveData.class);
 	    loadFromFile("save/settings" + save + ".json", SettingsSaveData.class);
-	    loadFromFile("save/world" + save + ".json", WorldSaveData.class);
 	    loadFromFile("save/recipes" + save + ".json", RecipeSaveData.class);
 	    loadFromFile("save/upgrades" + save + ".json", UpgradeSaveData.class);
 	    loadFromFile("save/catalogue" + save + ".json", CatalogueSaveData.class);
@@ -184,7 +183,8 @@ public class SaveManager {
 	        }
 	        counter++;
 	    }
-
+	    
+	    loadFromFile("save/world" + save + ".json", WorldSaveData.class);
 	    loadFromFile("save/order" + save + ".json", OrderSaveData.class);
 	    loadFromFile("save/customiser" + save + ".json", CustomiserSaveData.class);
 	    loadFromFile("save/progress" + save + ".json", ProgressSaveData.class);

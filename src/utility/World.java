@@ -87,7 +87,6 @@ public class World {
     public List<Object> boughtItems;
     private boolean crateOrdered = false;
     private int crateNum;
-    private int totalCrateNum;
     
     // Sleep
     private boolean sleeping = false;
@@ -491,7 +490,7 @@ public class World {
     }
     public void orderCrate() {
     	crateOrdered = true;
-    	crateNum = random.nextInt(totalCrateNum);
+    	crateNum = gp.catalogue.getRandomCatalogue();
     }
     public void sleep() {
         // Advance the calendar to the next day
@@ -638,7 +637,7 @@ public class World {
         orderList.clear();
     }
     private void addCrate() {
-		Parcel parcel = new Parcel(gp, 9*48, 9*48, 0);
+		Parcel parcel = new Parcel(gp, 9*48, 9*48, crateNum);
         gp.buildingM.addBuilding(parcel);
         gp.gui.addMessage("A Mystery Crate has arrived!", Color.MAGENTA);
         
