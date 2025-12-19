@@ -1,13 +1,14 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import entity.items.Plate;
 import entity.npc.Customer;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class TablePlate extends Building {
 	
@@ -24,7 +25,7 @@ public class TablePlate extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		this.direction = direction;
 		
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 16*3;
 		importImages();
@@ -107,7 +108,7 @@ public class TablePlate extends Building {
 	        npcHitbox = interactHitbox;
 	    }
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		
 		name = "Table Plate";
 		switch(direction) {
@@ -132,7 +133,7 @@ public class TablePlate extends Building {
 	public void update(double dt) {
 		super.update(dt);
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			initInteractHitbox();
 			firstUpdate = false;
@@ -142,10 +143,10 @@ public class TablePlate extends Building {
 				currentCustomer = chair.currentCustomer;
 			}
 		}
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+	     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
 	     
 		if(currentCustomer != null) {
-		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+		     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
 		}
 		
 	    //g2.setColor(Color.RED);
@@ -153,8 +154,8 @@ public class TablePlate extends Building {
 	    
 		if(currentCustomer != null) {
 		    if(interactHitbox.intersects(gp.player.interactHitbox)) {
-			    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-			    if(gp.keyI.ePressed) {
+			    renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
+			    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 				    if(currentCustomer != null) {
 				    	if(gp.player.currentItem != null) {
 				    		if(gp.player.currentItem instanceof Plate plate) {
@@ -172,7 +173,7 @@ public class TablePlate extends Building {
 		}
 	    if(orderCompleted) {
 	    	if(currentCustomer.isEating()) {
-	    		g2.drawImage(currentCustomer.foodOrder.finishedPlate, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	    		renderer.draw(currentCustomer.foodOrder.finishedPlate, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    	} else {
 	    		orderCompleted = false;
 	    		showDirtyPlate = true;
@@ -183,8 +184,8 @@ public class TablePlate extends Building {
 	    }
 	    
 	    if(showDirtyPlate) {
-    		g2.drawImage(plate.dirtyImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-	    	if(gp.keyI.ePressed) {
+    		renderer.draw(plate.dirtyImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
+	    	if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 		    	if(interactHitbox.intersects(gp.player.interactHitbox)) {
 		    		if(gp.player.currentItem == null) {
 		    			gp.player.currentItem = plate;
@@ -197,7 +198,7 @@ public class TablePlate extends Building {
 	    }
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 		
 		//g2.setColor(Color.YELLOW);

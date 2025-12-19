@@ -1,10 +1,11 @@
 package entity.items;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class CookingItem extends Item {
 	
@@ -18,7 +19,7 @@ public class CookingItem extends Item {
     protected int maxBurnTime = 60*38; //60*28
     
     //BURN WARNING
-	private BufferedImage orderSign, warningOrderSign, completeSign;
+	private TextureRegion orderSign, warningOrderSign, completeSign;
 	private int flickerCounter = 0;
 	private int flickerSpeed = 30; // frames per toggle
 	
@@ -27,7 +28,7 @@ public class CookingItem extends Item {
 		setupRecipes();
 		orderSign = importImage("/UI/Warning.png").getSubimage(16, 0, 16, 16);
 		warningOrderSign = importImage("/UI/Warning.png").getSubimage(0, 0, 16, 16);
-		completeSign = importImage("/UI/Tick.png");
+		completeSign = importImage("/UI/Tick.png").toTextureRegion();
 	}
 	protected void setupRecipes() {
 		
@@ -90,14 +91,14 @@ public class CookingItem extends Item {
 	public int getMaxCookTime() {
 	    return maxCookTime;
 	}
-	public void drawCookingWarning(Graphics2D g2, int x, int xDiff, int yDiff) {
+	public void drawCookingWarning(Renderer renderer, int x) {
 		
 		 flickerCounter++;
 		 if (flickerCounter >= flickerSpeed) {
 			 flickerCounter = 0;
 		 }
 		    
-		 BufferedImage currentSign = orderSign;
+		 TextureRegion currentSign = orderSign;
 
 		 if(cookTime >= flickerThreshold) {
 	 	     if (flickerCounter < flickerSpeed / 2) {
@@ -106,9 +107,9 @@ public class CookingItem extends Item {
 	 	         currentSign = warningOrderSign;
 	 	     }
 	
-	 	    g2.drawImage(currentSign,(int)(x - xDiff),(int)(hitbox.y - yDiff - 48),48, 48,null);
+	 	    renderer.draw(currentSign,(int)(x ),(int)(hitbox.y  - 48),48, 48);
 		} else {
-	 	    g2.drawImage(completeSign,(int)(x - xDiff),(int)(hitbox.y - yDiff - 48),48, 48,null);
+	 	    renderer.draw(completeSign,(int)(x ),(int)(hitbox.y  - 48),48, 48);
 		}
 	}
 }

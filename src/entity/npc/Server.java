@@ -1,12 +1,12 @@
 package entity.npc;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
-import entity.buildings.Door;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class Server extends Employee {
 
@@ -35,7 +35,7 @@ public class Server extends Employee {
 	}
 	
 	private void importImages() {
-		 animations = new BufferedImage[5][20][15];
+		 animations = new TextureRegion[5][20][15];
 		 importPlayerSpriteSheet("/npcs/employees/server/idle", 4, 1, 0, 0, 0, 80, 80); //IDLE
 	     importPlayerSpriteSheet("/npcs/employees/server/walk", 8, 1, 1, 0, 0, 80, 80); //RUN
 	        
@@ -108,9 +108,9 @@ public class Server extends Employee {
             }
         }
 	}	
-    public void draw(Graphics2D g2, int xDiff, int yDiff) {
+    public void draw(Renderer renderer) {
         if(animations != null) {
-            BufferedImage img = animations[0][currentAnimation][animationCounter];
+            TextureRegion img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {
 	    	  switch(direction) {
@@ -132,7 +132,7 @@ public class Server extends Employee {
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }   
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  renderer.draw(img, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y - yDrawOffset ), (int)(drawWidth), (int)(drawHeight));
         }
         if(talking) {
         	//gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- gp.player.xDiff, (int)hitbox.y - 48*3- gp.player.yDiff, dialogues[dialogueIndex], this);

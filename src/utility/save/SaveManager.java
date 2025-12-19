@@ -1,20 +1,18 @@
 package utility.save;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
+import org.lwjgl.stb.STBImageWrite;
 
 import com.google.gson.Gson;
 
 import main.GamePanel;
+import main.renderer.Texture;
 import map.Room;
 import utility.RecipeManager;
 import utility.Season;
@@ -61,41 +59,99 @@ public class SaveManager {
 			saveSlots.put(3, false);
 		}
 	}
+	public static ByteBuffer readTexture(Texture tex) {
+	    int w = tex.getWidth();
+	    int h = tex.getHeight();
+
+	    ByteBuffer buffer = ByteBuffer.allocateDirect(w * h * 4); // RGBA8
+	    org.lwjgl.opengl.GL45.glGetTextureImage(
+	            tex.getTexId(),
+	            0,
+	            org.lwjgl.opengl.GL11.GL_RGBA,
+	            org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE,
+	            buffer
+	    );
+
+	    return buffer;
+	}
+	public static void savePNG(String path, ByteBuffer pixels, int w, int h) {
+	    STBImageWrite.stbi_write_png(path, w, h, 4, pixels, w * 4);
+	}
 	private void savePreview(int slot) {
-		// World position of the player
-		int px = (int)(gp.player.hitbox.x + gp.player.hitbox.width/2);
-		int py = (int)(gp.player.hitbox.y + gp.player.hitbox.height/2);
+	    //Texture framebuffer = gp.colorBuffer;
+		/*
 
-		// Choose how much of the world around the player you want
-		int viewW = 180;
-		int viewH = 110;
+	    int fbW = framebuffer.getWidth();
+	    int fbH = framebuffer.getHeight();
 
-		// Calculate top-left corner of the crop
-		int cropX = px - viewW / 2;
-		int cropY = py - viewH / 2;
+	    // --- Player screen position ---
+	    int px = (int)(gp.player.hitbox.x + gp.player.hitbox.width / 2f);
+	    int py = (int)(gp.player.hitbox.y + gp.player.hitbox.height / 2f);
 
-		// Clamp to screen bounds
-		cropX = Math.max(0, Math.min(gp.colorBuffer.getWidth() - viewW, cropX));
-		cropY = Math.max(0, Math.min(gp.colorBuffer.getHeight() - viewH, cropY));
+	    // region size (world screenshot area)
+	    int viewW = 180;
+	    int viewH = 110;
 
-		// Crop region
-		BufferedImage cropped = gp.colorBuffer.getSubimage(cropX, cropY, viewW, viewH);
+	    int cropX = px - viewW / 2;
+	    int cropY = py - viewH / 2;
 
-		// Scale to preview size (zoom effect)
-		Image preview = cropped.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
+	    // clamp
+	    cropX = Math.max(0, Math.min(fbW - viewW, cropX));
+	    cropY = Math.max(0, Math.min(fbH - viewH, cropY));
 
-		// Save preview
-		BufferedImage out = new BufferedImage(200, 150, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = out.createGraphics();
-		g2.drawImage(preview, 0, 0, null);
-		g2.dispose();
+	    // --- Read full framebuffer pixels ---
+	    ByteBuffer full = readTexture(framebuffer);  // from earlier
 
-		try {
-			ImageIO.write(out, "png", new File("save/preview" + slot + ".png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	    // --- Crop into new buffer ---
+	    ByteBuffer cropped = ByteBuffer.allocateDirect(viewW * viewH * 4);
+
+	    for (int y = 0; y < viewH; y++) {
+	        for (int x = 0; x < viewW; x++) {
+
+	            int srcX = cropX + x;
+	            int srcY = cropY + y;
+
+	            int srcIndex = (srcY * fbW + srcX) * 4;
+	            int dstIndex = (y * viewW + x) * 4;
+
+	            cropped.put(dstIndex    , full.get(srcIndex    ));
+	            cropped.put(dstIndex + 1, full.get(srcIndex + 1));
+	            cropped.put(dstIndex + 2, full.get(srcIndex + 2));
+	            cropped.put(dstIndex + 3, full.get(srcIndex + 3));
+	        }
+	    }
+
+	    // --- Scale to preview size 200x150 ---
+	    int previewW = 200;
+	    int previewH = 150;
+
+	    ByteBuffer scaled = ByteBuffer.allocateDirect(previewW * previewH * 4);
+
+	    float sx = viewW / (float)previewW;
+	    float sy = viewH / (float)previewH;
+
+	    for (int y = 0; y < previewH; y++) {
+	        for (int x = 0; x < previewW; x++) {
+
+	            int srcX = (int)(x * sx);
+	            int srcY = (int)(y * sy);
+
+	            int srcIndex = (srcY * viewW + srcX) * 4;
+	            int dstIndex = (y * previewW + x) * 4;
+
+	            scaled.put(dstIndex    , cropped.get(srcIndex    ));
+	            scaled.put(dstIndex + 1, cropped.get(srcIndex + 1));
+	            scaled.put(dstIndex + 2, cropped.get(srcIndex + 2));
+	            scaled.put(dstIndex + 3, cropped.get(srcIndex + 3));
+	        }
+	    }
+
+	    // --- Save the PNG ---
+	    String path = "save/preview" + slot + ".png";
+	    savePNG(path, scaled, previewW, previewH);
+
+	    System.out.println("Saved preview: " + path);
+	    */
 	}
 	public boolean isSlotEmpty(int slot) {
 	    return !saveSlots.getOrDefault(slot, false);

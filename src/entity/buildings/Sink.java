@@ -3,11 +3,16 @@ package entity.buildings;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import entity.items.Food;
 import entity.items.Plate;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import net.packets.Packet03PickupItem;
 import net.packets.Packet10RemoveSinkPlate;
 
@@ -26,7 +31,7 @@ public class Sink extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 16*3;
 		importImages();
@@ -50,7 +55,7 @@ public class Sink extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][11];
+		animations = new TextureRegion[1][1][11];
 		
         name = "Kitchen Sink 1";
     	animations[0][0][0] = importImage("/decor/bathroom props.png").getSubimage(0, 192, 32, 32);
@@ -103,9 +108,9 @@ public class Sink extends Building {
 			cleanedPlateCount--;
 		}
 	}
-	private void drawWashingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {
-	    float screenX = worldX - xDrawOffset - xDiff;
-	    float screenY = worldY - yDrawOffset - yDiff;
+	private void drawWashingBar(Renderer renderer, float worldX, float worldY, int cookTime, int maxCookTime) {
+	    float screenX = worldX - xDrawOffset ;
+	    float screenY = worldY - yDrawOffset ;
 
 	    int barWidth = 48;
 	    int barHeight = 6;
@@ -119,11 +124,9 @@ public class Sink extends Building {
 	    int g = (int) (progress * 255);
 
 	    // Optional: draw a border
-	    g2.setColor(Color.BLACK);
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight, Colour.BLACK);
 	    
-	    g2.setColor(new Color(r, g, 0));
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 
 	}
 	public void update(double dt) {
@@ -144,7 +147,7 @@ public class Sink extends Building {
 				if(gp.player.currentItem instanceof Plate plate) {
 					if(plate.isDirty()) {
 						if(sinkHitbox.intersects(gp.player.hitbox)) {
-						    if(gp.keyI.ePressed && clickCooldown == 0) {
+						    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 						    	if(currentPlate == null) {
 							    	clickCooldown = 0.1;
 							    	currentPlate = (Plate)gp.player.currentItem;
@@ -160,7 +163,7 @@ public class Sink extends Building {
 				}
 			} else if(currentPlate != null) {
 				if(sinkHitbox.intersects(gp.player.hitbox)) {
-				    if(gp.keyI.ePressed) {
+				    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 				    	chopCount+=dt;
 				    	if(chopCount >= maxWashCount) {
 				    		chopCount = 0;
@@ -177,7 +180,7 @@ public class Sink extends Building {
 		}
 		if(cleanedPlateHitbox != null) {
 			if(cleanedPlateHitbox.intersects(gp.player.hitbox) && !sinkHitbox.intersects(gp.player.hitbox)) {
-				if(gp.keyI.ePressed && clickCooldown == 0) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 					if(cleanedPlateCount > 0 && gp.player.currentItem == null) {
 						cleanedPlateCount--;
 						Plate plate = new Plate(gp, 0, 0);
@@ -202,7 +205,7 @@ public class Sink extends Building {
 			}
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		
 		if(firstUpdate) {
 			firstUpdate = false;
@@ -211,32 +214,32 @@ public class Sink extends Building {
 		}
 		
 		if(cleanedPlateCount == 0) {
-		     g2.drawImage(animations[0][0][7], (int) hitbox.x - xDrawOffset - xDiff+18, (int) (hitbox.y - yDiff)-yDrawOffset, 48, 48, null);
+		     renderer.draw(animations[0][0][7], (int) hitbox.x - xDrawOffset +18, (int) (hitbox.y )-yDrawOffset, 48, 48);
 		} else {
-		     g2.drawImage(animations[0][0][7+cleanedPlateCount], (int) hitbox.x - xDrawOffset - xDiff+18, (int) (hitbox.y - yDiff)-yDrawOffset, 48, 48, null);
+		     renderer.draw(animations[0][0][7+cleanedPlateCount], (int) hitbox.x - xDrawOffset +18, (int) (hitbox.y )-yDrawOffset, 48, 48);
 		}
 		
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		 
 		if(sinkHitbox != null) {
 			if(gp.player.currentItem != null) {
 				if(gp.player.currentItem instanceof Plate plate) {
 					if(plate.isDirty()) {
 						if(sinkHitbox.intersects(gp.player.hitbox)) {
-						    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+						    renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 						}
 					}
 				}
 			} else if(currentPlate != null) {
 				if(sinkHitbox.intersects(gp.player.hitbox)) {
-				    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				    renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 				}
 			}
 		}
 		
 		
 		if(currentPlate != null) {
-			BufferedImage img = animations[0][0][2];
+			TextureRegion img = animations[0][0][2];
 			switch(currentPlate.getCurrentStackCount()) {
 			case 2:
 				img = animations[0][0][3];
@@ -245,24 +248,24 @@ public class Sink extends Building {
 				img = animations[0][0][4];
 				break;
 			}
-			 g2.drawImage(img, (int) hitbox.x - xDrawOffset - xDiff + 19, (int) (hitbox.y - yDiff)-yDrawOffset+30, 48, 48, null);
+			 renderer.draw(img, (int) hitbox.x - xDrawOffset  + 19, (int) (hitbox.y )-yDrawOffset+30, 48, 48);
 
 			
 		    if(sinkHitbox.intersects(gp.player.hitbox)) {
-		    	g2.drawImage(animations[0][0][5], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    	renderer.draw(animations[0][0][5], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    } else {
-				g2.drawImage(animations[0][0][6], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				renderer.draw(animations[0][0][6], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    }
 		}
 		
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	}
-	public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {
+	public void drawOverlayUI(Renderer renderer) {
 		if(currentPlate != null) {
-			drawWashingBar(g2, hitbox.x+30, hitbox.y+32, (int)chopCount, (int)maxWashCount, xDiff, yDiff);
+			drawWashingBar(renderer, hitbox.x+30, hitbox.y+32, (int)chopCount, (int)maxWashCount);
 		}
 	}
 }

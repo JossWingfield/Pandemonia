@@ -1,14 +1,10 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.util.Random;
 
-import entity.buildings.outdoor.SeasonalDecoration;
-import entity.items.Item;
 import main.GamePanel;
-import utility.CollisionMethods;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class Calendar extends Building {
 	
@@ -16,7 +12,7 @@ public class Calendar extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		
 		isSolid = false;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 32*3;
 		importImages();
@@ -37,7 +33,7 @@ public class Calendar extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][5];
+		animations = new TextureRegion[1][1][5];
 		
 		name = "Calendar";
      	animations[0][0][0] = importImage("/decor/calendar.png").getSubimage(0, 0, 16, 32);
@@ -45,7 +41,7 @@ public class Calendar extends Building {
      	animations[0][0][2] = importImage("/decor/calendar.png").getSubimage(32, 0, 16, 32);
      	animations[0][0][3] = importImage("/decor/calendar.png").getSubimage(48, 0, 16, 32);
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		int season = -1;
 		switch(gp.world.getCurrentSeason()) {
 		case SPRING:
@@ -61,10 +57,10 @@ public class Calendar extends Building {
 			season = 3;
 			break;
 		}
-	     g2.drawImage(animations[0][0][season], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	     renderer.draw(animations[0][0][season], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	     
 		 if(destructionUIOpen) {
-		     g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		     renderer.draw(destructionImage, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		 }
 	        
 	}

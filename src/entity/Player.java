@@ -1,60 +1,51 @@
 package entity;
 
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+
+import org.lwjgl.glfw.GLFW;
+
+import entity.buildings.Building;
+import entity.buildings.FloorDecor_Building;
+import entity.items.CookingItem;
+import entity.items.Food;
+import entity.items.FoodState;
+import entity.items.Item;
+import entity.items.Plate;
 import main.GamePanel;
+import main.KeyListener;
+import main.MouseListener;
+import main.renderer.AssetPool;
+import main.renderer.BitmapFont;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import map.LightSource;
 import map.particles.PlayerDustParticle;
 import net.packets.Packet;
 import net.packets.Packet02Move;
-import net.packets.Packet03PickupItem;
 import net.packets.Packet04PlaceItem;
 import net.packets.Packet07PickUpItemFromTable;
 import net.packets.Packet19AddFoodToPlateInHand;
 import net.packets.Packet20AddFoodToPlateOnTable;
 import net.packets.Packet21PickupPlate;
 import net.packets.Packet22PlacePlate;
-import utility.Animator;
 import utility.CollisionMethods;
-import utility.KeyboardInput;
-import utility.MouseInput;
 import utility.Settings;
 import utility.save.PlayerSaveData;
-
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-
-import entity.buildings.Building;
-import entity.buildings.CornerTable;
-import entity.buildings.FloorDecor_Building;
-import entity.items.Cheese;
-import entity.items.CookingItem;
-import entity.items.Food;
-import entity.items.FoodState;
-import entity.items.Item;
-import entity.items.Plate;
 
 public class Player extends Entity{
 	
     //INPUTS
-    public KeyboardInput keyI;
-    public MouseInput mouseI;
+    public KeyListener keyI;
+    public MouseListener mouseI;
     //USERNAME
     private String username;
-    private Font usernameFont;
-    private Color usernameColor;
+    private BitmapFont usernameFont;
+    private Colour usernameColor;
     
-    //ARMOUR
-    private Animator headgearAnimator;
-    private Animator chestplateAnimator;
-    private Animator trouserAnimator;
-    private BufferedImage[][][] headgearImages;
-    private BufferedImage[][][] chestplateImages;
-    private BufferedImage[][][] trouserImages;
-    private BufferedImage[][][] handImages;
-    private BufferedImage litHandImage, litHeadgearImage, litChestplateImage, litTrouserImage;
-
     //GENERAL VARIABLES
-    private BufferedImage[][][] normalImages; 
     private boolean firstUpdate = true;
     private float speed; //How many pixels per update the player moves at
     private final float initialSpeed;
@@ -86,21 +77,16 @@ public class Player extends Entity{
     public LightSource playerLight;
     public boolean isInvisible = false;
     private double dustCooldown = 0;
-    
-    //INVENTORY
-    //public Headgear currentHeadgear = null;
-    //public Chestplate currentChestplate = null;
-    //public Trousers currentTrousers = null;
 
-    public Player(GamePanel gp, int xPos, int yPos, KeyboardInput keyI, MouseInput mouseI, String username) { //Setting default variables
+    public Player(GamePanel gp, int xPos, int yPos, KeyListener keyL, MouseListener mouseL, String username) { //Setting default variables
         super(gp, (xPos), (yPos), 32, 32);
         
-        this.keyI = keyI;
-        this.mouseI = mouseI;
+        this.keyI = keyL;
+        this.mouseI = mouseL;
         this.username = username;
         
-        usernameFont = new Font("monogram", Font.PLAIN, 30);
-        usernameColor = new Color(213, 213, 213);
+        usernameFont = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
+        usernameColor = new Colour(213, 213, 213);
 
         initialSpeed = 300;
         speed = initialSpeed;
@@ -118,7 +104,7 @@ public class Player extends Entity{
         //hitbox.y = (float) spawnPoint.getY();
         
         //animationSpeedFactor = 2;
-    	animationSpeedFactor = 0.1;
+    	animationSpeedFactor = 0.09;
         
         reachDistance = (3*gp.tileSize);
         talkDistance = (5*gp.tileSize);
@@ -129,10 +115,11 @@ public class Player extends Entity{
         xDrawOffset = 34*drawScale;
         yDrawOffset = 36*drawScale;
         
-        playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Color.WHITE, 100);
+        playerLight = new LightSource((int)hitbox.x, (int)hitbox.y, Colour.WHITE, 100);
         
         importImages();
     }
+    
     public PlayerSaveData toSaveData() {
         PlayerSaveData data = new PlayerSaveData();
         data.username = username;
@@ -191,12 +178,7 @@ public class Player extends Entity{
     }
     public void importImages() {
 
-        animations = new BufferedImage[4][20][15];
-        normalImages = new BufferedImage[4][20][15];
-        handImages = new BufferedImage[4][20][15];
-        headgearImages = new BufferedImage[4][20][15];
-        chestplateImages = new BufferedImage[4][20][15];
-        trouserImages = new BufferedImage[4][20][15];
+        animations = new TextureRegion[4][20][15];
         
         importPlayerSpriteSheet("/player/idle", 4, 1, 0, 0, 0, 80, 80); //IDLE
         importPlayerSpriteSheet("/player/run", 8, 1, 1, 0, 0, 80, 80); //RUN
@@ -205,66 +187,63 @@ public class Player extends Entity{
         importPlayerSpriteSheet("/player/holdingRun", 8, 1, 3, 0, 0, 80, 80); //HOLDING RUN
 
         importPlayerSpriteSheet("/player/pickup", 6, 1, 4, 0, 0, 80, 80); //Pick Up
+        
 
-        
-        //headgearAnimator = new Animator(0);
-        //chestplateAnimator = new Animator(1);
-        //trouserAnimator = new Animator(2);
-        
         currentAnimation = 0;
     }
     
-    protected void importPlayerSpriteSheet(String filePath, int columnNumber, int rowNumber, int currentAnimation, int startX, int startY, int width, int height) {
-
-    	for(int k = 0; k < 4; k++) {
-	        int arrayIndex = 0;
+    protected void importPlayerSpriteSheet(String filePath, int columnNumber, int rowNumber, int animationIndex,int startX, int startY, int width, int height) {
 	
-	        BufferedImage img = importImage(filePath + ".png");
-	        BufferedImage normalImage = importImage(filePath + "Normal.png");
-	
-	        for(int i = 0; i < columnNumber; i++) {
-	            for(int j = 0; j < rowNumber; j++) {
-	                animations[k][currentAnimation][arrayIndex] = img.getSubimage(i*width + startX, j*height + startY, width, height);
-	                normalImages[k][currentAnimation][arrayIndex] = normalImage.getSubimage(i*width + startX, j*height + startY, width, height);
-	                arrayIndex++;
-	            }
-	        }
-	        if(k > 0) {
-	        	startY += height;
-	        }
-    	}
-
-    }
-    private void importSingleRowSpriteSheet(String filePath, int columnNumber, int rowNumber, int currentAnimation, int startX, int startY, int width, int height) {
-    	for(int k = 0; k < 4; k++) {
-	        int arrayIndex = 0;
-	
-	        BufferedImage img = importImage(filePath + ".png");
-	        BufferedImage handImage = importImage(filePath + "Hand.png");
-	
-	        for(int i = 0; i < columnNumber; i++) {
-	            for(int j = 0; j < rowNumber; j++) {
-	                animations[k][currentAnimation][arrayIndex] = img.getSubimage(i*width + startX, j*height + startY, width, height);
-	                handImages[k][currentAnimation][arrayIndex] = handImage.getSubimage(i*width + startX, j*height + startY, width, height);
-	                arrayIndex++;
-	            }
-	        }
-    	}
-    }
+		Texture sheetTexture = AssetPool.getTexture(filePath + ".png");
+		int sheetWidth = sheetTexture.getWidth();
+		int sheetHeight = sheetTexture.getHeight();
+		
+		int originalStartY = startY; // save the original startY
+		
+		for (int k = 0; k < 4; k++) {
+		int arrayIndex = 0;
+		
+		for (int i = 0; i < columnNumber; i++) {     // column-first
+		for (int j = 0; j < rowNumber; j++) {   // row-second
+		int px = i * width + startX;
+		int py = j * height + startY;
+		
+		float u0 = px / (float) sheetWidth;
+		float v0 = 1f - (py + height) / (float) sheetHeight; // flip V
+		float u1 = (px + width) / (float) sheetWidth;
+		float v1 = 1f - py / (float) sheetHeight;
+		
+		animations[k][animationIndex][arrayIndex] =
+		new TextureRegion(sheetTexture, u0, v0, u1, v1);
+		
+		arrayIndex++;
+		}
+		}
+		
+		if (k > 0) {
+		startY += height;  // increment just like old version
+		}
+		}
+		
+		startY = originalStartY; // restore startY in case needed elsewhere
+	}
     
     public String getUsername() {
         return username;
     }
-    
     private void normaliseSpeed() {
+    	boolean left = keyI.isKeyPressed(GLFW.GLFW_KEY_A);
+    	boolean right = keyI.isKeyPressed(GLFW.GLFW_KEY_D);
+    	boolean up = keyI.isKeyPressed(GLFW.GLFW_KEY_W);
+    	boolean down = keyI.isKeyPressed(GLFW.GLFW_KEY_S);
     	if(direction == 0 || direction == 1) {
-    		if(gp.keyI.up || gp.keyI.down) { //NORMALISING SPEED
+    		if(up || down) { //NORMALISING SPEED
         		currentSpeed = (float)(speed/(Math.sqrt(2)));
         	} else {
         		currentSpeed = speed;
         	}
     	} else if(direction == 2 || direction == 3) {
-    		if(gp.keyI.left || gp.keyI.right) { //NORMALISING SPEED
+    		if(left || right) { //NORMALISING SPEED
         		currentSpeed = (float)(speed/(Math.sqrt(2)));
         	} else {
         		currentSpeed = speed;
@@ -274,7 +253,11 @@ public class Player extends Entity{
 
     private void handleMovement(double dt) {
 
-    		if (!(keyI.left || keyI.right || keyI.up || keyI.down) && currentAnimation != 4) {
+    	boolean left = keyI.isKeyPressed(GLFW.GLFW_KEY_A);
+    	boolean right = keyI.isKeyPressed(GLFW.GLFW_KEY_D);
+    	boolean up = keyI.isKeyPressed(GLFW.GLFW_KEY_W);
+    	boolean down = keyI.isKeyPressed(GLFW.GLFW_KEY_S);
+    		if (!(left || right || up || down) && currentAnimation != 4) {
                 currentAnimation = 0;
                 if(currentItem != null) {
                 	currentAnimation = 2;
@@ -282,7 +265,7 @@ public class Player extends Entity{
             }
     		
 
-            if (keyI.left) { //Moving left
+            if (left) { //Moving left
             	direction = 1;
             	facingLeft = true;
             	normaliseSpeed();
@@ -300,7 +283,7 @@ public class Player extends Entity{
                 } else {
                 	hitbox.x = CollisionMethods.getWallPos(hitbox.x, gp);
                 }
-            } else if (keyI.right) { //Moving right
+            } else if (right) { //Moving right
                 direction = 0;
                 facingLeft = false;
                 normaliseSpeed();
@@ -319,7 +302,7 @@ public class Player extends Entity{
                     hitbox.x = CollisionMethods.getWallPos(hitbox.x + hitbox.width - 1, gp) - (hitbox.width- gp.tileSize);
                 }
             }
-            if (keyI.up) {
+            if (up) {
             	direction = 3;
             	normaliseSpeed();
              	float moveAmount = (float) (currentSpeed * dt);
@@ -336,7 +319,7 @@ public class Player extends Entity{
                 } else {
                     hitbox.y = CollisionMethods.getFloorPos(hitbox.y, gp);
                 }
-            } else if (keyI.down) {
+            } else if (down) {
             	direction = 2;
             	normaliseSpeed();
             	float moveAmount = (float) (currentSpeed * dt);
@@ -364,14 +347,13 @@ public class Player extends Entity{
 	            Packet02Move packet = new Packet02Move(getUsername(), (int)hitbox.x, (int)hitbox.y, currentAnimation, direction);
 	            packet.writeData(gp.socketClient);
             }
-
     }
     
     public void sendPacket(Packet packet) {
     	packet.writeData(gp.socketClient);
     }
     private void handleDebugMode(int xDiff, int yDiff) {
-        System.out.println((int)((mouseI.mouseX + xDiff) / gp.tileSize) + "   " + (int)((mouseI.mouseY + yDiff) / gp.tileSize));
+        //System.out.println((int)((mouseI.mouseX + xDiff) / gp.tileSize) + "   " + (int)((mouseI.mouseY + yDiff) / gp.tileSize));
     }
     public void takeDamage(int damage) {
     	
@@ -406,11 +388,10 @@ public class Player extends Entity{
     public void rightClick(int x, int y) {
     	
     }
-  
     private void handleItems(double dt) {
     	if(currentItem != null) {
     		currentItem.update(dt);
-	    	if(gp.keyI.ePressed && clickCounter == 0) {
+	    	if(keyI.isKeyPressed(GLFW.GLFW_KEY_E) && clickCounter == 0) {
 	    		FloorDecor_Building b = gp.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {
 		    		if(gp.buildingM.intersectsKitchenBuilding(gp, b, b.interactHitbox)) {
@@ -480,7 +461,7 @@ public class Player extends Entity{
 	    		}
 	    	}
     	} else if(currentItem == null){
-    		if(gp.keyI.ePressed && clickCounter == 0) {
+    		if(keyI.isKeyPressed(GLFW.GLFW_KEY_E) && clickCounter == 0) {
 	    		FloorDecor_Building b = gp.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {
 		    		if(gp.buildingM.intersectsKitchenBuilding(gp, b, interactHitbox)) {
@@ -578,7 +559,6 @@ public class Player extends Entity{
     	controlEnabled = isEnabled;
     }
     public void update(double dt) {
-
     	if(!gp.minigameM.miniGameActive && controlEnabled) {
     		handleMovement(dt);
     		updateCounters(dt);
@@ -600,10 +580,6 @@ public class Player extends Entity{
         if (animationSpeed >= animationSpeedFactor) {
         	animationSpeed = 0;
             animationCounter++;
-            litHandImage = null;
-            litHeadgearImage = null;
-            litChestplateImage = null;
-            litTrouserImage = null;
         }
         if (animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
             animationCounter = 0;
@@ -625,7 +601,7 @@ public class Player extends Entity{
     public void setDirection(int direction) {
         this.direction = direction;
     }
-    public void drawCurrentItem(Graphics2D g2, int xDiff, int yDiff) {
+    public void drawCurrentItem(Renderer renderer) {
     	if(currentItem == null) {
     		return;
     	}
@@ -648,10 +624,10 @@ public class Player extends Entity{
 	    	yOffset = baseOffset + (finalOffset - baseOffset) * currentStage / totalStages;
     	}
     	
-    	BufferedImage img = currentItem.animations[0][0][0];
+        TextureRegion frame = currentItem.animations[0][0][0];
     	if(currentItem instanceof Food) {
     		Food f = (Food)currentItem;
-    		img = f.getImage();
+    		frame = f.getImage();
     	}
     	switch(direction) {
     	case 0:
@@ -659,7 +635,7 @@ public class Player extends Entity{
     		break;
     	case 1:
     		//xOffset -= 14;
-    		img = createHorizontalFlipped(img);
+    		frame = createHorizontalFlipped(frame);
     		break;
     	case 2:
     		//yOffset +=8;
@@ -670,77 +646,63 @@ public class Player extends Entity{
     	}
     	if(currentItem instanceof Plate plate) {
     		boolean flip = direction == 1;
-    		plate.drawInHand(g2, (int)(hitbox.x - xDiff - xDrawOffset + xOffset), (int)(hitbox.y - yDiff - yDrawOffset + yOffset), flip);
+    		plate.drawInHand(renderer, (int)(hitbox.x - xDrawOffset + xOffset), (int)(hitbox.y - yDrawOffset + yOffset), flip);
     	} else {
-    		g2.drawImage(img, (int)(hitbox.x - xDiff - xDrawOffset + xOffset), (int)(hitbox.y - yDiff - yDrawOffset + yOffset), (int)(48), (int)(48), null);
+		    renderer.draw(frame, (int)(hitbox.x - xDrawOffset + xOffset), (int)(hitbox.y - yDrawOffset + yOffset), (int)(48), (int)(48));
     	}
     }
     public void setUsername(String newName) {
     	username = newName;
     }
     
-    public void draw(Graphics2D g2, int xDiff, int yDiff) {
+    public void draw(Renderer renderer) {
     	if(isInvisible) {
     		return;
     	}
     	if(direction == 3) {
-    		drawCurrentItem(g2, xDiff, yDiff);
+    		drawCurrentItem(renderer);
     	}
-    	
-    	/*
-        animationSpeed++; //Updating animation frame
-        if (animationSpeed >= animationSpeedFactor) {
-            animationSpeed = 0;
-            animationCounter++;
-            litHandImage = null;
-            litHeadgearImage = null;
-            litChestplateImage = null;
-            litTrouserImage = null;
-        }
-        if (animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
-            animationCounter = 0;
-            if(currentAnimation == 4) {
-            	currentAnimation = 2;
-            }
-        }
-        */
 
+        TextureRegion frame = animations[direction][currentAnimation][animationCounter];
         //The image is flipped
-        BufferedImage img = animations[direction][currentAnimation][animationCounter];
-        //BufferedImage handImg = handImages[direction][currentAnimation][animationCounter];
         if(direction == 1) {
-        	img = createHorizontalFlipped(img);
-        	//handImg = createHorizontalFlipped(handImg);
-        }
-    	g2.drawImage(img, (int)(hitbox.x - xDiff - xDrawOffset), (int)(hitbox.y - yDiff - yDrawOffset), (int)(drawWidth), (int)(drawHeight), null);
-	    
+        	frame = createHorizontalFlipped(frame);
+        }	    
+     
+
+		if (frame != null) {
+		    renderer.draw(frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+		}     
         if(direction != 3) {
-    		drawCurrentItem(g2, xDiff, yDiff);
+    		drawCurrentItem(renderer);
     	}	 
-	    //g2.drawImage(handImg, (int)(hitbox.x - xDiff - xDrawOffset), (int)(hitbox.y - yDiff - yDrawOffset), (int)(drawWidth), (int)(drawHeight), null);    
+        
+        
         //Draw username
         if(gp.multiplayer) {
         	if(Settings.showUsernames) {
 		        if(username != null) {
-		            g2.setColor(usernameColor);
-		            g2.setFont(usernameFont);
+		            renderer.setColour(usernameColor);
+		            renderer.setFont(usernameFont);
 		
 		            //Get centered text
 		            int x;
-		            int length = (int)g2.getFontMetrics().getStringBounds(username, g2).getWidth();
+		            int length = (int)usernameFont.getTextWidth(username);
 		            x = (int)(hitbox.x + (hitbox.width/2)) - length/2;
 		
-		            g2.drawString(username, x - xDiff, hitbox.y - yDiff - 20);
+		            renderer.drawString(username, x , hitbox.y  - 20);
 		        }
         	}
         }
         
+        
         //g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)interactHitbox.x, (int)interactHitbox.y, (int)interactHitbox.width, (int)interactHitbox.height);
         
+        /*
         if(gp.keyI.showHitboxes) {
             g2.setColor(Color.RED);
-            g2.drawRect((int) hitbox.x - xDiff, (int) (hitbox.y) - yDiff, (int) hitbox.width, (int) hitbox.height);
+            g2.drawRect((int) hitbox.x , (int) (hitbox.y) , (int) hitbox.width, (int) hitbox.height);
             g2.setColor(Color.BLUE);
             gp.buildingM.drawHitboxes(g2, xDiff, yDiff);
             g2.setColor(Color.YELLOW);
@@ -749,9 +711,11 @@ public class Player extends Entity{
             gp.npcM.drawNPCHitboxes(g2);
         }
         
+        
         if (keyI.debugMode) {
-        	handleDebugMode(xDiff, yDiff);
+        	//handleDebugMode(xDiff, yDiff);
         }
+        */
     }
 
 }

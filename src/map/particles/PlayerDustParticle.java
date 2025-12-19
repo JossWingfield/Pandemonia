@@ -1,10 +1,12 @@
 package map.particles;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
+
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
 
 public class PlayerDustParticle extends Particle {
 
@@ -20,7 +22,7 @@ public class PlayerDustParticle extends Particle {
             -rand.nextFloat() * 0.2f,           // drift slightly upward
             40 + rand.nextInt(30),              // short lifetime (frames)
             1.5f + rand.nextFloat() * 2.0f,     // small particles
-            new Color(
+            new Colour(
                 120 + rand.nextInt(30),
                 120 + rand.nextInt(30),
                 120 + rand.nextInt(30)
@@ -39,18 +41,18 @@ public class PlayerDustParticle extends Particle {
     }
 
     //@Override
-    public void draw(Graphics2D g, int xDiff, int yDiff) {
-        int screenX = (int)(x - xDiff);
-        int screenY = (int)(y - yDiff);
+    public void draw(Renderer renderer) {
+        int screenX = (int)(x );
+        int screenY = (int)(y );
 
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-        g.setColor(color);
-        g.fillOval((int)(screenX - size/2), (int)(screenY - size/2), (int)size, (int)size);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        //g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+        //g.setColor(color);
+        //g.fillOval((int)(screenX - size/2), (int)(screenY - size/2), (int)size, (int)size);
+        //g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 
 	//@Override
-	public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
+	public void drawEmissive(Renderer renderer) {
 		// TODO Auto-generated method stub
 		
 	}

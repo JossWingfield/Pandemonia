@@ -1,15 +1,14 @@
 package utility;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
-
 import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.save.RecipeSaveData;
 
 public class RecipeManager {
@@ -20,8 +19,8 @@ public class RecipeManager {
     
     private static final Random random = new Random();
 
-    private BufferedImage panIcon, choppedIcon, potIcon, ovenIcon;
-    private BufferedImage panIcon2, choppedIcon2, potIcon2, ovenIcon2;
+    private TextureRegion panIcon, choppedIcon, potIcon, ovenIcon;
+    private TextureRegion panIcon2, choppedIcon2, potIcon2, ovenIcon2;
 
     public RecipeManager() {
         // Register all recipes here (master list)
@@ -69,7 +68,7 @@ public class RecipeManager {
                 Arrays.asList("Pan"),
                 Arrays.asList(""),
                 false, 
-                importImage("/food/egg/PlatedEgg.png"),
+                importImage("/food/egg/PlatedEgg.png").toTextureRegion(),
                 null,
                 5,
                 1
@@ -228,7 +227,7 @@ public class RecipeManager {
                 Arrays.asList("Chopping Board", "Chopping Board"),
                 Arrays.asList("", ""),
                 false, 
-                importImage("/food/Salad.png"),
+                importImage("/food/Salad.png").toTextureRegion(),
                 null,
                 5,
                 1
@@ -240,7 +239,7 @@ public class RecipeManager {
                 Arrays.asList("Chopping Board", "Chopping Board"),
                 Arrays.asList("", ""),
                 false, 
-                importImage("/food/Bruschetta.png"),
+                importImage("/food/Bruschetta.png").toTextureRegion(),
                 null,
                 5,
                 1
@@ -365,7 +364,7 @@ public class RecipeManager {
         }
         return null;
     }
-    public BufferedImage getIconFromName(String name, boolean isCursed) {
+    public TextureRegion getIconFromName(String name, boolean isCursed) {
     	if(!isCursed) {
 	        switch(name) {
 	            case "Pan": return panIcon;
@@ -414,15 +413,10 @@ public class RecipeManager {
         return false;
     }
 
-    protected BufferedImage importImage(String filePath) {
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
+    private Texture importImage(String filePath) {
+		Texture texture = AssetPool.getTexture(filePath);
+	    return texture;
+	}
 
     public static List<Recipe> getCurrentOrders() {
         return currentOrders;

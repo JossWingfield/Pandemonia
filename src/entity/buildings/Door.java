@@ -1,11 +1,11 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import map.LightSource;
 
 public class Door extends Building {
@@ -28,7 +28,7 @@ public class Door extends Building {
 		this.preset = presetNum;
 		
 		isSolid = false;
-		blueprint = false;
+		
 		drawWidth = 32*3;
 		drawHeight = 48*3;
 		canBePlaced = false;
@@ -76,13 +76,13 @@ public class Door extends Building {
 		justUnlocked = true;
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][3];
+		animations = new TextureRegion[1][1][3];
 		
 		name = "Door 1";
 		switch(preset) {
 		case 0:
 	    	if(facing == 1) { 
-	        	animations[0][0][0] = importImage("/decor/DownDoor.png");
+	        	animations[0][0][0] = importImage("/decor/DownDoor.png").toTextureRegion();
 	        	animations[0][0][1] = animations[0][0][0];
 	        	drawHeight = 48;
 	        	isThirdLayer = true;
@@ -112,7 +112,7 @@ public class Door extends Building {
         	animations[0][0][2] = importImage("/decor/Chefdoor.png").getSubimage(64, 0, 32, 48);
         	locked = true;
     		locked = false;
-			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 25),Color.RED, 16);
+			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 25),Colour.RED, 16);
 			break;
 		}
 	}
@@ -131,7 +131,7 @@ public class Door extends Building {
 		}
 		
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if (doorCooldown > 0) {
 			doorCooldown -= 0.05;
 		    if (doorCooldown < 0) {
@@ -165,9 +165,9 @@ public class Door extends Building {
 			}
 			open = true;
 			if(!justUnlocked) {
-				g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);	
+				renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);	
 			} else {
-				g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);	
+				renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);	
 			}
 		} else {
 			if(open) {
@@ -176,26 +176,26 @@ public class Door extends Building {
 			if(justUnlocked) {
 				justUnlocked = false;
 			}
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 		
 	    //g2.setColor(Color.YELLOW);
-	    //g2.fillRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
+	    //renderer.fillRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
 		
 		//g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)gp.player.interactHitbox.x, (int)gp.player.interactHitbox.y, (int)gp.player.interactHitbox.width, (int)gp.player.interactHitbox.height);
 		
 		if(drawLight && animations[0][0][2] != null) {
-			g2.drawImage(animations[0][0][2], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+			renderer.draw(animations[0][0][2], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
 		}
 		
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	}
-	public void drawEmissive(Graphics2D g2, int xDiff, int yDiff) {
+	public void drawEmissive(Renderer renderer) {
 		if(drawLight && animations[0][0][2] != null) {
-			g2.drawImage(animations[0][0][2], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+			renderer.draw(animations[0][0][2], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package utility;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +8,9 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.Texture;
 import utility.ProgressManager.RewardType;
-
 import utility.save.UpgradeSaveData;
 
 public class UpgradeManager {
@@ -101,7 +101,7 @@ public class UpgradeManager {
         //PHASE 2
         registerUpgrade(new Upgrade(gp, "Coloured Walls",
         		"Coloured Walls are added /nto the catalogue.",
-        		importImage("/UI/levels/decor/ColoredWallUI.png"),
+        		importImage("/UI/levels/decor/ColoredWallUI.png").toTextureRegion(),
         		2,
         		RewardType.COSMETIC));
         
@@ -126,15 +126,10 @@ public class UpgradeManager {
         //ADD SOUPS
     	
     }
-    protected BufferedImage importImage(String filePath) {
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
+    public Texture importImage(String filePath) {
+		Texture texture = AssetPool.getTexture(filePath);
+	    return texture;
+	}
     public static void registerUpgrade(Upgrade u) {
     	allUpgrades.add(u);
     }

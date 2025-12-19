@@ -1,11 +1,11 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import entity.npc.Customer;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class Chair extends Building {
 	
@@ -21,7 +21,7 @@ public class Chair extends Building {
 		this.facing = direction;
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 16*3;
 		importImages();
@@ -43,7 +43,7 @@ public class Chair extends Building {
 		//System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][1];
+		animations = new TextureRegion[1][1][1];
 		
 		name = "Chair 1";
     	animations[0][0][0] = importImage("/decor/chair.png").getSubimage(2, 73, 16, 16);
@@ -54,18 +54,18 @@ public class Chair extends Building {
 	public void refreshImages() {
 		animations[0][0][0] = gp.mapM.getRooms()[roomNum].getChairSkin().getImage();
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			tablePlate = new TablePlate(gp, hitbox.x, hitbox.y, facing, this);
 			gp.buildingM.addBuilding(tablePlate);
 			firstUpdate = false;
 		}
 		 
-	    g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	    renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 	     
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	    
 	}

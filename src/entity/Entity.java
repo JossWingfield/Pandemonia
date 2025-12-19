@@ -1,24 +1,25 @@
 package entity;
 
-import main.GamePanel;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+
+import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.GLSLCamera;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public abstract class Entity implements Cloneable {
     //The parent class for everything that has a hitbox in game
 
-    GamePanel gp;
+	GamePanel gp;
     public Rectangle2D.Float hitbox; //The rectangle which is used to check collisions
     protected int movementSpeed;
     protected int direction = 0;
     
     //ANIMATIONS
-    public BufferedImage[][][] animations; //The array which stores all animation images
+    public TextureRegion[][][] animations; //The array which stores all animation images
     public int currentAnimation; //The index for the current animation
     protected int animationCounter = 0; //The index for the current frame of the animation
     protected double animationSpeed; //The counter which counts down to the next frame
@@ -48,85 +49,8 @@ public abstract class Entity implements Cloneable {
     }
     public void drawHitbox(Graphics2D g, float xDiff, float yDiff) {
         //FOR COLLISION TESTING
-        g.drawRect((int)(hitbox.x - xDiff), (int)(hitbox.y - yDiff), (int)hitbox.width, (int)hitbox.height);
+        g.drawRect((int)(hitbox.x ), (int)(hitbox.y ), (int)hitbox.width, (int)hitbox.height);
     }
-    protected BufferedImage importImage(String filePath) { //Imports and stores the image
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-            //BufferedImage scaledImage = new BufferedImage(width, height, original.getType());
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
-    protected void importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int currentAnimation, int startX, int startY, int width, int height, int direction) {
-
-        int arrayIndex = 0;
-
-        BufferedImage img = importImage(filePath);
-
-        for(int i = 0; i < columnNumber; i++) {
-            for(int j = 0; j < rowNumber; j++) {
-                animations[direction][currentAnimation][arrayIndex] = img.getSubimage(i*width + startX, j*height + startY, width, height);
-                arrayIndex++;
-            }
-        }
-
-    }
-    
-    protected void importFromSpriteSheetWithNormal(String filePath, int columnNumber, int rowNumber, int currentAnimation, int startX, int startY, int width, int height) {
-
-	        int arrayIndex = 0;
-	
-	        BufferedImage img = importImage(filePath + ".png");
-	        //BufferedImage normalImage = importImage(filePath + "Normal.png");
-	
-	        for(int i = 0; i < columnNumber; i++) {
-	            for(int j = 0; j < rowNumber; j++) {
-	                animations[0][currentAnimation][arrayIndex] = img.getSubimage(i*width + startX, j*height + startY, width, height);
-	                //normalImages[0][currentAnimation][arrayIndex] = normalImage.getSubimage(i*width + startX, j*height + startY, width, height);
-	                arrayIndex++;
-	            }
-	        }
-
-    }
-
-    private static BufferedImage createTransformed(BufferedImage image, AffineTransform at) {
-        BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = newImage.createGraphics();
-        g.transform(at);
-        g.drawImage(image, 0, 0, null);
-        g.dispose();
-        return newImage;
-    }
-
-    protected static BufferedImage createHorizontalFlipped(BufferedImage image) {
-        AffineTransform at = new AffineTransform();
-        at.concatenate(AffineTransform.getScaleInstance(-1, 1));
-        at.concatenate(AffineTransform.getTranslateInstance(-image.getWidth(), 0));
-        return createTransformed(image, at);
-    }
-    protected static BufferedImage createVerticalFlipped(BufferedImage image) {
-        AffineTransform at = new AffineTransform();
-        at.concatenate(AffineTransform.getScaleInstance(1, -1));
-        at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
-        return createTransformed(image, at);
-    }
-    protected static BufferedImage rotateClockwise90(BufferedImage src) {
-        int width = src.getWidth();
-        int height = src.getHeight();
-
-        BufferedImage dest = new BufferedImage(height, width, src.getType());
-
-        Graphics2D graphics2D = dest.createGraphics();
-        graphics2D.translate((height - width) / 2, (height - width) / 2);
-        graphics2D.rotate(Math.PI / 2, height / 2, width / 2);
-        graphics2D.drawRenderedImage(src, null);
-
-        return dest;
-    }
-    
     public void resetAnimation(int animationNum) {
     	currentAnimation = animationNum;
     	animationCounter = 0;
@@ -137,6 +61,7 @@ public abstract class Entity implements Cloneable {
     	return direction;
     }
     public void update(double dt) {}
+    /*
     public boolean isInSimulationChunks(int simulationDistance) {
     	if(gp == null) {
     		return false;
@@ -156,20 +81,64 @@ public abstract class Entity implements Cloneable {
         return Math.abs(entityChunkX - playerChunkX) <= simulationDistance &&
                Math.abs(entityChunkY - playerChunkY) <= simulationDistance;
     }
-    public boolean isOnScreen(float xDiff, float yDiff, int width, int height) {
+    */
+    public boolean isOnScreen(GLSLCamera camera, float screenWidth, float screenHeight) {
+        float camX = camera.position.x;
+        float camY = camera.position.y;
 
-        int buffer = 500; // Expand the draw range by 100 pixels in each direction
-
-        // Get entity's position relative to the screen
-        float entityScreenX = hitbox.x - xDiff;
-        float entityScreenY = hitbox.y - yDiff;
-
-        // Check if any part of the entity (including buffer zone) is within the screen bounds
-        return entityScreenX + hitbox.width > -buffer && entityScreenX < width + buffer &&
-               entityScreenY + hitbox.height > -buffer && entityScreenY < height + buffer;
+        return hitbox.x + hitbox.width  >= camX &&
+               hitbox.x             <= camX + screenWidth &&
+               hitbox.y + hitbox.height >= camY &&
+               hitbox.y             <= camY + screenHeight;
     }
+    public Texture importImage(String filePath) {
+		Texture texture = AssetPool.getTexture(filePath);
+	    return texture;
+	}
+    public TextureRegion importTextureRegion(String filePath) {
+        Texture texture = AssetPool.getTexture(filePath);
+        // Full image UVs: u0,v0 = 0,0 and u1,v1 = 1,1
+        return new TextureRegion(texture, 0f, 0f, 1f, 1f);
+    }
+    public TextureRegion createHorizontalFlipped(TextureRegion original) {
+        // Swap U coordinates (flip horizontally)
+        float u0 = original.u1;
+        float u1 = original.u0;
+
+        // Keep V coordinates the same
+        float v0 = original.v0;
+        float v1 = original.v1;
+
+        return new TextureRegion(original.texture, u0, v0, u1, v1);
+    }
+    protected void importFromSpriteSheet(String filePath, int columnNumber, int rowNumber,int currentAnimation, int startX, int startY,int width, int height, int direction) {
+
+    	Texture sheetTexture = AssetPool.getTexture(filePath);
+		int sheetWidth = sheetTexture.getWidth();
+		int sheetHeight = sheetTexture.getHeight();
+		
+		int arrayIndex = 0;
+		
+		for (int j = 0; j < rowNumber; j++) {         // Y first (rows)
+			for (int i = 0; i < columnNumber; i++) {  // X second (columns)
+				int px = i * width + startX;
+				int py = j * height + startY;
+				
+				// Convert pixel rect → UV coords (0..1)
+				float u0 = px / (float) sheetWidth;
+				float v0 = py / (float) sheetHeight;
+				float u1 = (px + width) / (float) sheetWidth;
+				float v1 = (py + height) / (float) sheetHeight;
+				
+				animations[direction][currentAnimation][arrayIndex] =
+				new TextureRegion(sheetTexture, u0, v0, u1, v1);
+				
+				arrayIndex++;
+			}
+		}
+	}
     
-    public void draw(Graphics2D g2, int xDiff, int yDiff) {}
+    public void draw(Renderer renderer) {}
 
 }
 

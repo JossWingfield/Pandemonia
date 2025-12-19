@@ -1,11 +1,10 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class EscapeHole extends Building {
 	
@@ -15,7 +14,7 @@ public class EscapeHole extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		
 		isSolid = false;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 16*3;
 		importImages();
@@ -35,15 +34,15 @@ public class EscapeHole extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][1];
+		animations = new TextureRegion[1][1][1];
 		
 		name = "Escape Hole";
-    	animations[0][0][0] = importImage("/decor/EscapeHole.png");
+    	animations[0][0][0] = importImage("/decor/EscapeHole.png").toTextureRegion();
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	        
 	}

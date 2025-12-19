@@ -1,10 +1,13 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class HerbBasket extends Building {
 	
@@ -13,13 +16,13 @@ public class HerbBasket extends Building {
 	public int foodType;
 	public double clickCooldown;
 	private boolean openUI;
-	private BufferedImage itemBorder, itemBorder2;
+	private TextureRegion itemBorder, itemBorder2;
 	
 	public HerbBasket(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
 		
 		isSolid = false;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 32*3;
 		isKitchenBuilding = true;
@@ -40,7 +43,7 @@ public class HerbBasket extends Building {
 	}
 	private void importImages() {
 		name = "Herb Basket";
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		
 		animations[0][0][1] = importImage("/decor/HerbTray.png").getSubimage(16, 0, 16, 32);;
 		animations[0][0][0] = importImage("/decor/HerbTray.png").getSubimage(0, 0, 16, 32);
@@ -59,7 +62,7 @@ public class HerbBasket extends Building {
 			}
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
@@ -67,8 +70,8 @@ public class HerbBasket extends Building {
 		}
 				
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-			if(gp.keyI.ePressed && clickCooldown == 0) {
+			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
+			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 				if(gp.player.currentItem == null) {
 					openUI = !openUI;
 					clickCooldown = 0.06;
@@ -76,7 +79,7 @@ public class HerbBasket extends Building {
 			}
 		} else {
 			openUI = false;
-		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 		
 		//g2.setColor(Color.YELLOW);
@@ -84,17 +87,17 @@ public class HerbBasket extends Building {
       		
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	        
 	}
 	
-	public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {
+	public void drawOverlayUI(Renderer renderer) {
 	    if (!openUI) return;
 
 	    // Determine base position for UI (above the basket)
-	    int basketScreenX = (int) (hitbox.x - xDrawOffset - xDiff);
-	    int basketScreenY = (int) (hitbox.y - yDiff) - yDrawOffset + 20;
+	    int basketScreenX = (int) (hitbox.x - xDrawOffset );
+	    int basketScreenY = (int) (hitbox.y ) - yDrawOffset + 20;
 
 	    // Dimensions for each slot
 	    int slotSize = 20 * 2;
@@ -113,8 +116,8 @@ public class HerbBasket extends Building {
 
 
 	    // Mouse position (screen space)
-	    int mouseX = gp.mouseI.mouseX;
-	    int mouseY = gp.mouseI.mouseY;
+	    int mouseX = (int)gp.mouseL.getWorldX();
+	    int mouseY = (int)gp.mouseL.getWorldY();
 
 	    // Draw 4 borders horizontally with items inside
 	    for (int i = 0; i < numSlots; i++) {
@@ -126,8 +129,8 @@ public class HerbBasket extends Building {
 	                           mouseY >= y && mouseY <= y + slotSize;
 
 	        // Choose which border to draw
-	        BufferedImage currentBorder = hovering ? itemBorder2 : itemBorder;
-	        g2.drawImage(currentBorder, x, y, slotSize, slotSize, null);
+	        TextureRegion currentBorder = hovering ? itemBorder2 : itemBorder;
+	        renderer.draw(currentBorder, x, y, slotSize, slotSize);
 
 	        // Retrieve the herb item
 	        var item = gp.itemRegistry.getItemFromName(herbNames[i], 0);
@@ -135,18 +138,18 @@ public class HerbBasket extends Building {
 	            int iconPadding = 6;
 	            int iconSize = slotSize - iconPadding * 2;
 
-	            g2.drawImage(
+	            renderer.draw(
 	                item.animations[0][0][0],
 	                x + iconPadding,
 	                y + iconPadding,
 	                iconSize,
-	                iconSize,
-	                null
+	                iconSize
+	                
 	            );
 	        }
 
 	        // Handle click (once per frame when hovering)
-	        if (hovering && gp.mouseI.leftClickPressed) {
+	        if (hovering && gp.mouseL.mouseButtonDown(0)) {
 	            gp.player.currentItem = item.clone();
 	            openUI = false;
 	        }

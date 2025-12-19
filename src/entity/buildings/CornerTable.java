@@ -1,12 +1,11 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import entity.items.Item;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class CornerTable extends Building {
 	
@@ -21,7 +20,7 @@ public class CornerTable extends Building {
 		
 		this.presetNum = presetNum;
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 16*3;
 		isBottomLayer = true;
@@ -42,7 +41,7 @@ public class CornerTable extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-	    animations = new BufferedImage[1][1][1];
+	    animations = new TextureRegion[1][1][1];
 
 	    name = "Table Corner 1";
 	    interactHitbox1 = new Rectangle2D.Float(0, 0, 1, 1);
@@ -116,7 +115,7 @@ public class CornerTable extends Building {
 			break;
 		}	
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			int hitboxWidth = 24;
@@ -148,14 +147,14 @@ public class CornerTable extends Building {
 				break;
 			}
 		}
-	     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
  
 	    //g2.setColor(Color.YELLOW);
 	    //g2.drawRect((int)interactHitbox1.x, (int)interactHitbox1.y, (int)interactHitbox1.width, (int)interactHitbox1.height);
 	    //g2.drawRect((int)interactHitbox2.x, (int)interactHitbox2.y, (int)interactHitbox2.width, (int)interactHitbox2.height);
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	        
 	}

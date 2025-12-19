@@ -1,9 +1,7 @@
 package entity.npc;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,12 +12,18 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
+import org.lwjgl.glfw.GLFW;
+
 import ai.Node;
 import ai.PathFinder;
 import entity.Entity;
 import entity.buildings.Building;
 import entity.buildings.Door;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import map.Room;
 import utility.CollisionMethods;
 import utility.RoomHelperMethods;
@@ -38,7 +42,7 @@ public abstract class NPC extends Entity {
     int dialogueIndex = 0;
     protected boolean talking = false;
     public boolean isSolid = false;
-    public BufferedImage portrait;
+    public TextureRegion portrait;
     protected String npcType;
 
     protected String name;
@@ -112,8 +116,7 @@ public abstract class NPC extends Entity {
 		}
 		
 		if(talking) {
-			if(gp.keyI.qPressed && cooldownCounter == 0) {
-				gp.keyI.qPressed = false;
+			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_Q) && cooldownCounter == 0) {
 		        nextDialogueLine();
 		        cooldownCounter = 0.05;
 			}
@@ -279,8 +282,8 @@ public abstract class NPC extends Entity {
     	for(int k = 0; k < 4; k++) {
 	        int arrayIndex = 0;
 	
-	        BufferedImage img = importImage(filePath + ".png");
-	        //BufferedImage handImage = importImage(filePath + "Hand.png");
+	        Texture img = importImage(filePath + ".png");
+	        //Texture handImage = importImage(filePath + "Hand.png");
 	
 	        for(int i = 0; i < columnNumber; i++) {
 	            for(int j = 0; j < rowNumber; j++) {
@@ -296,7 +299,7 @@ public abstract class NPC extends Entity {
 
     }
     public void drawHitbox(Graphics2D g, int xDiff, int yDiff) {
-        g.drawRect((int)(hitbox.x- xDiff), (int) (hitbox.y- yDiff), (int)(hitbox.width), (int)(hitbox.height));
+        g.drawRect((int)(hitbox.x), (int) (hitbox.y), (int)(hitbox.width), (int)(hitbox.height));
     }
     
     public void interact() {
@@ -394,13 +397,11 @@ public abstract class NPC extends Entity {
         }
         
     }
-    protected void drawNextNode(Graphics2D g2) {
+    protected void drawNextNode(Renderer renderer) {
         if (gp.mapM.drawPath) {
-            g2.setColor(new Color(100, 255, 150, 80));
-            g2.fillRect(nextX * gp.tileSize, nextY * gp.tileSize, 48, 48);
+            renderer.fillRect(nextX * gp.tileSize, nextY * gp.tileSize, 48, 48, new Colour(100, 255, 150, 80));
         }
 
-        g2.setColor(new Color(100, 255, 150, 80));
         if (pathF.pathList.size() > 0) {
             // Iterate through all the nodes in the pathList
             for (int j = 0; j < pathF.pathList.size(); j++) {
@@ -408,7 +409,7 @@ public abstract class NPC extends Entity {
                 int x = node.col * gp.tileSize;
                 int y = node.row * gp.tileSize;
                 // Draw a rectangle for each node in the path
-                g2.fillRect(x, y, gp.tileSize, gp.tileSize);
+                renderer.fillRect(x, y, gp.tileSize, gp.tileSize, new Colour(100, 255, 150, 80));
             }
         }
     }

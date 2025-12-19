@@ -1,22 +1,21 @@
 package utility.minigame;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
+import org.lwjgl.glfw.GLFW;
 
 import entity.items.Plate;
 import entity.items.Seasoning;
-
-import java.util.Iterator;
-
 import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.BitmapFont;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class SeasoningMiniGame {
 
@@ -53,9 +52,9 @@ public class SeasoningMiniGame {
     private int totalBeats = 0;
     private int maxBursts = 2;
     
-    private BufferedImage borderImg;
-    private BufferedImage hitZoneImg;
-    private BufferedImage beatImg;
+    private TextureRegion borderImg;
+    private TextureRegion hitZoneImg;
+    private TextureRegion beatImg;
     
     private int SCALE = 3; 
 
@@ -66,21 +65,21 @@ public class SeasoningMiniGame {
     private Plate plate;
     private Seasoning seasoning;
     
-    private Font nameFont = new Font("monogram", Font.PLAIN, 20);
+	private BitmapFont font;
 
     public SeasoningMiniGame(GamePanel gp) {
         this.gp = gp;
         loadImages();
+        font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
     }
-    
+    public Texture importImage(String filePath) {
+		Texture texture = AssetPool.getTexture(filePath);
+	    return texture;
+	}
     private void loadImages() {
-        try {
-            borderImg = ImageIO.read(getClass().getResourceAsStream("/UI/minigame/SeasoningBorder.png"));
-            hitZoneImg = ImageIO.read(getClass().getResourceAsStream("/UI/minigame/SeasoningIcon.png"));
-            beatImg = ImageIO.read(getClass().getResourceAsStream("/UI/minigame/Beat.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    	borderImg = importImage("/UI/minigame/SeasoningBorder.png").toTextureRegion();
+        hitZoneImg = importImage("/UI/minigame/SeasoningIcon.png").toTextureRegion();
+        beatImg = importImage("/UI/minigame/Beat.png").toTextureRegion();
     }
 
     public void start(Plate p, Seasoning s) {
@@ -149,7 +148,7 @@ public class SeasoningMiniGame {
 		    }
 		}
         // Handle input
-        if (gp.keyI.ePressed && clickCooldown == 0) {
+        if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
             clickCooldown = 0.1;
             Beat closest = null;
             float closestDist = Float.MAX_VALUE;
@@ -209,45 +208,42 @@ public class SeasoningMiniGame {
         totalBeats++;
     }
 
-    public void draw(Graphics2D g2) {
+    public void draw(Renderer renderer) {
         if (!active) return;
 
         int centerX = gp.frameWidth / 2;
         int centerY = gp.frameHeight / 2;
 
         // === Draw border background ===
-        int borderW = borderImg.getWidth() * SCALE;
-        int borderH = borderImg.getHeight() * SCALE;
-        g2.drawImage(borderImg, centerX - borderW / 2, centerY - borderH / 2, borderW, borderH, null);
+        int borderW = borderImg.getPixelWidth() * SCALE;
+        int borderH = borderImg.getPixelHeight() * SCALE;
+        renderer.draw(borderImg, centerX - borderW / 2, centerY - borderH / 2, borderW, borderH);
 
         // === Define bar area inside the border ===
         int innerBarWidth = (int)(borderW * 0.75);
         int barY = centerY;
 
         // === Draw hit zone ===
-        int hitZoneW = hitZoneImg.getWidth() * SCALE;
-        int hitZoneH = hitZoneImg.getHeight() * SCALE;
+        int hitZoneW = hitZoneImg.getPixelWidth() * SCALE;
+        int hitZoneH = hitZoneImg.getPixelHeight() * SCALE;
         int hitX = centerX - hitZoneW / 2;
         int hitY = barY - hitZoneH / 2;
-        g2.drawImage(hitZoneImg, hitX, hitY, hitZoneW, hitZoneH, null);
+        renderer.draw(hitZoneImg, hitX, hitY, hitZoneW, hitZoneH);
 
         // === Draw beats ===
         for (Beat beat : beats) {
             int beatX = (int)(centerX - innerBarWidth / 2 + innerBarWidth * beat.x);
-            int beatY = centerY - (beatImg.getHeight() * SCALE) / 2;
-            g2.drawImage(beatImg,
-                    beatX - (beatImg.getWidth() * SCALE) / 2,
+            int beatY = centerY - (beatImg.getPixelHeight() * SCALE) / 2;
+            renderer.draw(beatImg,
+                    beatX - (beatImg.getPixelWidth() * SCALE) / 2,
                     beatY,
-                    beatImg.getWidth() * SCALE,
-                    beatImg.getHeight() * SCALE,
-                    null);
+                    beatImg.getPixelWidth() * SCALE,
+                    beatImg.getPixelHeight() * SCALE);
         }
 
         // === Feedback ===
         if (resultTimer > 0 && !resultText.isEmpty()) {
-            g2.setColor(Color.WHITE);
-            g2.setFont(nameFont);
-            g2.drawString(resultText, centerX - 25 * SCALE, centerY - borderH / 2 - 10 * SCALE);
+            renderer.drawString(font, resultText, centerX - 25 * SCALE, centerY - borderH / 2 - 10 * SCALE, 1.0f, Colour.WHITE);
         }
 
     }

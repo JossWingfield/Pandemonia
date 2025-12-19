@@ -3,9 +3,13 @@ package entity.buildings;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class Spill extends Building {
 	
@@ -19,7 +23,7 @@ public class Spill extends Building {
 		
 		isSolid = false;
 		isBottomLayer = true;
-		blueprint = false;
+		
 		drawWidth = 32*3;
 		drawHeight = 32*3;
 		xDrawOffset = 24;
@@ -37,16 +41,16 @@ public class Spill extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		
 		name = "Spill";
     	animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(96, 96, 32, 32);
-    	animations[0][0][1] = importImage("/decor/SpillHighlight.png");
+    	animations[0][0][1] = importImage("/decor/SpillHighlight.png").toTextureRegion();
 	}
 	public void update(double dt) {
 		super.update(dt);
 		if(hitbox.intersects(gp.player.interactHitbox)) {
-		    if(gp.keyI.ePressed) {
+		    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 		    	spillCount+=dt;
 		    	if(spillCount >= maxSpillTime) {
 		    		spillCount = 0;
@@ -57,26 +61,26 @@ public class Spill extends Building {
 		    }
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 	    
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
-		    g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    } else {
-		    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    }
 	    
 	    if(spillCount > 0) {
-	    	drawChoppingBar(g2, hitbox.x+24, hitbox.y+24, (int)spillCount, (int)maxSpillTime, xDiff, yDiff);
+	    	drawChoppingBar(renderer, hitbox.x+24, hitbox.y+24, (int)spillCount, (int)maxSpillTime);
 	    }
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	    
 	}
-	private void drawChoppingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {
-	    float screenX = worldX - xDrawOffset - xDiff;
-	    float screenY = worldY - yDrawOffset - yDiff;
+	private void drawChoppingBar(Renderer renderer, float worldX, float worldY, int cookTime, int maxCookTime) {
+	    float screenX = worldX - xDrawOffset ;
+	    float screenY = worldY - yDrawOffset ;
 
 	    int barWidth = 48;
 	    int barHeight = 6;
@@ -90,11 +94,9 @@ public class Spill extends Building {
 	    int g = (int) (progress * 255);
 
 	    // Optional: draw a border
-	    g2.setColor(Color.BLACK);
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight, Colour.BLACK);
 	    
-	    g2.setColor(new Color(r, g, 0));
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 
 	}
 	

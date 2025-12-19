@@ -1,9 +1,10 @@
 package map.particles;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
 import map.LightSource;
 
 public class FireflyParticle extends Particle {
@@ -16,10 +17,10 @@ public class FireflyParticle extends Particle {
     private float speed = 0.5f; 
 
     public FireflyParticle(GamePanel gp, float x, float y, int lifetime) {
-        super(gp, x, y, 0, 0, lifetime, 3, new Color(180, 190, 20));
+        super(gp, x, y, 0, 0, lifetime, 3, new Colour(180, 190, 20));
         lightRadius = 9;
         
-        light = new LightSource((int)x, (int)y, color, lightRadius);
+        light = new LightSource((int)x, (int)y, colour, lightRadius);
         
         gp.lightingM.addLight(light); // assume addLight(x, y, radius, color, intensity)
     }
@@ -58,14 +59,13 @@ public class FireflyParticle extends Particle {
     }
 
     //@Override
-    public void draw(Graphics2D g, int camX, int camY) {
+    public void draw(Renderer renderer) {
         float alpha = Math.max(0f, lifetime / maxLifetime);
-        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(alpha * 255)));
-        g.fillRect((int)(x - camX), (int)(y - camY), (int)size, (int)size);
+        renderer.fillRect((int)(x), (int)(y), (int)size, (int)size, new Colour(colour.r, colour.g, colour.b, (int)(alpha * 255)));
     }
 
 	//@Override
-	public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
+	public void drawEmissive(Renderer renderer) {
 		// TODO Auto-generated method stub
 		
 	}

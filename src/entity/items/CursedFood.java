@@ -1,7 +1,5 @@
 package entity.items;
 
-import java.awt.image.BufferedImage;
-
 import main.GamePanel;
 
 public class CursedFood extends Food {

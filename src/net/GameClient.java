@@ -1,11 +1,9 @@
 package net;
 
-import main.GamePanel;
-import net.packets.*;
-
-import java.awt.Color;
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.Arrays;
 
 import entity.PlayerMP;
@@ -22,6 +20,32 @@ import entity.items.FryingPan;
 import entity.items.Item;
 import entity.items.Plate;
 import entity.items.SmallPan;
+import main.GamePanel;
+import main.renderer.Colour;
+import net.packets.Packet;
+import net.packets.Packet00Login;
+import net.packets.Packet01Disconnect;
+import net.packets.Packet02Move;
+import net.packets.Packet03PickupItem;
+import net.packets.Packet04PlaceItem;
+import net.packets.Packet05ChangeRoom;
+import net.packets.Packet06BinItem;
+import net.packets.Packet07PickUpItemFromTable;
+import net.packets.Packet08PickUpFromStove;
+import net.packets.Packet09PlaceItemOnStove;
+import net.packets.Packet10RemoveSinkPlate;
+import net.packets.Packet11SpawnInfo;
+import net.packets.Packet12AddItemToChoppingBoard;
+import net.packets.Packet13ClearPlayerHand;
+import net.packets.Packet14UpdateChoppingProgress;
+import net.packets.Packet15RemoveItemFromChoppingBoard;
+import net.packets.Packet16StartCookingOnStove;
+import net.packets.Packet17AddItemToFridge;
+import net.packets.Packet18RemoveItemFromFridge;
+import net.packets.Packet19AddFoodToPlateInHand;
+import net.packets.Packet20AddFoodToPlateOnTable;
+import net.packets.Packet21PickupPlate;
+import net.packets.Packet22PlacePlate;
 
 public class GameClient extends Thread {
     private InetAddress ipAddress;
@@ -88,7 +112,7 @@ public class GameClient extends Thread {
                 	gp.currentState = gp.titleState;
                 }
                 System.out.println("[" + address.getHostAddress() + ":" + port + "] " + ((Packet01Disconnect) packet).getUsername() + " has left the game...");
-                gp.gui.addMessage(((Packet01Disconnect) packet).getUsername() + " has left the game...", Color.YELLOW);
+                gp.gui.addMessage(((Packet01Disconnect) packet).getUsername() + " has left the game...", Colour.YELLOW);
                 gp.removePlayerMP(((Packet01Disconnect) packet).getUsername());
                 break;
             case MOVE:

@@ -1,8 +1,100 @@
 package main;
 
-import javax.imageio.ImageIO;
+import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
+import static org.lwjgl.glfw.GLFW.GLFW_DEPTH_BITS;
+import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
+import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.openal.ALC10.ALC_DEFAULT_DEVICE_SPECIFIER;
+import static org.lwjgl.openal.ALC10.alcCloseDevice;
+import static org.lwjgl.openal.ALC10.alcCreateContext;
+import static org.lwjgl.openal.ALC10.alcDestroyContext;
+import static org.lwjgl.openal.ALC10.alcGetString;
+import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
+import static org.lwjgl.openal.ALC10.alcOpenDevice;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_COMPLETE;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
+import static org.lwjgl.opengl.GL30.glCheckFramebufferStatus;
+import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
+import static org.lwjgl.opengl.GL30.glGenFramebuffers;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.*;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
+import java.io.IOException;
+import java.net.BindException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
+import java.util.stream.Stream;
+
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+
+import org.joml.Vector2f;
+import org.joml.Vector4f;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALCapabilities;
+import org.lwjgl.opengl.GL;
 
 import ai.PathFinder;
 import entity.Entity;
@@ -14,6 +106,10 @@ import entity.items.Item;
 import entity.items.ItemManager;
 import entity.npc.NPC;
 import entity.npc.NPCManager;
+import main.renderer.AssetPool;
+import main.renderer.DebugDraw;
+import main.renderer.GLSLCamera;
+import main.renderer.Renderer;
 import map.Customiser;
 import map.LightingManager;
 import map.MapBuilder;
@@ -28,8 +124,6 @@ import utility.Catalogue;
 import utility.Debug;
 import utility.GUI;
 import utility.ItemRegistry;
-import utility.KeyboardInput;
-import utility.MouseInput;
 import utility.ProgressManager;
 import utility.RecipeManager;
 import utility.RoomHelperMethods;
@@ -40,25 +134,31 @@ import utility.cutscene.CutsceneManager;
 import utility.minigame.MiniGameManager;
 import utility.save.SaveManager;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.BindException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
 
-public class GamePanel extends JPanel implements Runnable {
+public class GamePanel {
+
+    private long window;
+	private String title;
+	public GLSLCamera camera;
+	private DebugDraw debugDraw;
+	public Renderer renderer;
+    
+	private long audioContext;
+	private long audioDevice;
 	
+    private final int scale = 3; //The scale factor the tiles will be multiplied by, to make the game more visible
+    private final int baseTileSize = 16; // The base size of each tile
+    public final int tileSize = baseTileSize * scale; //The drawn size of each tile
+
+    // SCREEN SIZE
+    public int tilesInWidth = 24; //The number of tiles in width and in height
+    public int tilesInHeight = 16;
+    public int frameWidth = tilesInWidth * tileSize; //The number of pixels in width and in height
+    public int frameHeight = tilesInHeight * tileSize;
+    
+    public KeyListener keyL = new KeyListener(this);
+    public MouseListener mouseL = new MouseListener(this);
+    
 	// NETWORKING
     public GameClient socketClient;
     public GameServer socketServer;
@@ -73,51 +173,33 @@ public class GamePanel extends JPanel implements Runnable {
     private int errorCounter = 0;
 
     public ArrayList<PlayerMP> playerList;
-    
-    // SETTINGS
-    private final int FPS = 60; //The frames per second the game is updated and drawn at
-    private final double optimalLoopTime = 1000000000 / FPS; //The optimal time for the game loop
-    private final int scale = 3; //The scale factor the tiles will be multiplied by, to make the game more visible
-    private final int baseTileSize = 16; // The base size of each tile
-    public final int tileSize = baseTileSize * scale; //The drawn size of each tile
-
-    // SCREEN SIZE
-    public int tilesInWidth = 24; //The number of tiles in width and in height
-    public int tilesInHeight = 16;
-    public int frameWidth = tilesInWidth * tileSize; //The number of pixels in width and in height
-    public int frameHeight = tilesInHeight * tileSize;
 
     // SYSTEM initialising all classes and managers
     public Player player;
-    public BuildingManager buildingM = new BuildingManager(this);
-    public ItemManager itemM = new ItemManager(this);
-    public NPCManager npcM = new NPCManager(this);
-    public MapManager mapM = new MapManager(this);
-    public KeyboardInput keyI = new KeyboardInput(this);
-    public MouseInput mouseI = new MouseInput(this);
-    public GUI gui = new GUI(this);
-    public ArrayList<Entity> updateEntityList = new ArrayList<>();
-    public ArrayList<Entity> entityList = new ArrayList<>();
-    public ItemRegistry itemRegistry = new ItemRegistry(this);
-    public BuildingRegistry buildingRegistry = new BuildingRegistry(this);
-    public Catalogue catalogue = new Catalogue(this);
-    public World world = new World(this);
-    public Camera camera = new Camera(this);
+    public BuildingManager buildingM;
+    public ItemManager itemM;
+    public NPCManager npcM;
+    public MapManager mapM;
+    public GUI gui;
+    public ArrayList<Entity> updateEntityList;
+    public ArrayList<Entity> entityList;
+    public ItemRegistry itemRegistry;
+    public BuildingRegistry buildingRegistry;
+    public Catalogue catalogue;
+    public World world;
     public LightingManager lightingM = new LightingManager(this, camera);
-    public ParticleSystem particleM = new ParticleSystem(this);
-    public Customiser customiser = new Customiser(this);
-    public PathFinder pathF = new PathFinder(this);
-    public RecipeManager recipeM = new RecipeManager();
-    public UpgradeManager upgradeM = new UpgradeManager(this);
-    public ProgressManager progressM = new ProgressManager(this);
-    public MiniGameManager minigameM = new MiniGameManager(this);
-    public RoomHelperMethods roomH = new RoomHelperMethods();
-    public CutsceneManager cutsceneM = new CutsceneManager(this);
-    public SaveManager saveM = new SaveManager(this);
-    public MapBuilder mapB = new MapBuilder(this);
-    public Debug debug = new Debug(this);
-    //THREAD initialising the thread which the game loop is run off
-    public Thread thread;
+    public ParticleSystem particleM;
+    public Customiser customiser;
+    public PathFinder pathF;
+    public RecipeManager recipeM;;
+    public UpgradeManager upgradeM;
+    public ProgressManager progressM;
+    public MiniGameManager minigameM;
+    public RoomHelperMethods roomH;
+    public CutsceneManager cutsceneM;
+    public SaveManager saveM;
+    public MapBuilder mapB;
+    public Debug debug;
 
     // GAME STATES The different states which represent which, screens, gui and gameplay should be allowed in each state
     public int currentState = 0; //Determines which 'state' the game is in
@@ -141,70 +223,38 @@ public class GamePanel extends JPanel implements Runnable {
     public final int achievementState = 17;
     public final int recipeState = 18;
 
-    // AESTHETICS
-    private Color backgroundColour = new Color(51, 60, 58);
-    
-    //SCREEN SETTINGS AND FREEZE
-    private int freezeCounter = 0;
-    public int screenWidth, screenHeight;
-    private BufferedImage frozenImage;
-    private boolean getFrozenImage = false;
-    
-    // SCREEN SHAKE VARIABLES
-    private int shakeDuration = 0;  // Duration of the shake in frames
-    private int shakeIntensity = 0; // Intensity of the shake (max offset in pixels)
     private final Random random = new Random(); // Random generator for shake offsets
-    private int shakeOffsetX = 0; // Current horizontal shake offset
-    private int shakeOffsetY = 0; // Current vertical shake offset
     
-    private boolean firstUpdate = true;
+    Queue<String> textureQueue = new LinkedList<>();
+    Queue<String> fontQueue = new LinkedList<>();
+    private boolean texturesLoaded = false;
+    private boolean fontsLoaded = false;
+    private boolean managersInitialised = false;
     
-    //LIGHTING
-    public BufferedImage colorBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
-    public BufferedImage emissiveBuffer = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
-
-    private Graphics2D gColor;
-    private Graphics2D gEmissive;
-
-
-    // INITIATES PANEL SETTINGS
+    public int emissiveFbo;
+    public int emissiveTextureId;
+    
+    public int sizeX, sizeY;
+    
+    public int sceneFbo, litFbo;
+    public int sceneTextureId, litTextureId;
+    public int bloomFbo1, bloomFbo2;
+    public int bloomTex1, bloomTex2;
+    public int godrayFbo, godrayTextureId;
+    public int godrayProcessedFbo, godrayProcessedTextureId;
+    
     public GamePanel() {
-        this.setPreferredSize(new Dimension(frameWidth, frameHeight));
-        this.setDoubleBuffered(true);
-        this.setFocusable(true);
-        this.setBackground(backgroundColour);
-        //Adds keyboard and mouse inputs
-        this.addKeyListener(keyI);
-        this.addMouseListener(mouseI);
-        this.addMouseMotionListener(mouseI);
-        screenWidth = (int)(frameWidth);
-        screenHeight = (int)(frameHeight);
-        Graphics2D warm = colorBuffer.createGraphics();
-        warm.setComposite(AlphaComposite.SrcOver);
-        warm.setColor(Color.BLACK);
-        warm.fillRect(0, 0, frameWidth, frameHeight);
-        warm.dispose();
-        gColor = colorBuffer.createGraphics();
-    	gColor.setComposite(AlphaComposite.SrcOver);
-    	gColor.setColor(backgroundColour);
-    	gColor.fillRect(0, 0, frameWidth, frameHeight);
-        gColor.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF));
-        camera.follow(player);
-        camera.setZoom(1.0f);
-        playSinglePlayer(1);
+    	this.camera = new GLSLCamera(new Vector2f(0, 0), frameWidth, frameHeight);
     }
     public void startGame() {
-    	player = new Player(this, 48*10, 48*10, keyI, mouseI, "");
-    	buildingM = new BuildingManager(this);
+    	player = new Player(this, 48*10, 48*10, keyL, mouseL, "");
+        buildingM = new BuildingManager(this);
         itemM = new ItemManager(this);
         npcM = new NPCManager(this);
         mapM = new MapManager(this);
-        updateEntityList.clear();
-        entityList.clear();
+        updateEntityList = new ArrayList<>();
+        entityList = new ArrayList<>();
         world = new World(this);
-        camera = new Camera(this);
-        camera.follow(player);
-        camera.setZoom(1.0f);
         lightingM = new LightingManager(this, camera);
         customiser = new Customiser(this);
         cutsceneM = new CutsceneManager(this);
@@ -217,7 +267,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void playSinglePlayer(int saveSlot) {
     	saveM.currentSave = saveSlot;
-    	player = new Player(this, 48*10, 48*10, keyI, mouseI, "");
+    	player = new Player(this, 48*10, 48*10, keyL, mouseL, "");
     	currentState = playState;
     	saveM.loadGame(saveSlot);
     }
@@ -231,7 +281,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         playerList = new ArrayList<PlayerMP>();
         // 1) Create host player
-        player = new PlayerMP(this, 48 * 10, 48 * 10, keyI, mouseI, username, null, -1);
+        player = new PlayerMP(this, 48 * 10, 48 * 10, keyL, mouseL, username, null, -1);
         if (!playerList.contains(player)) playerList.add((PlayerMP) player);
 
         // 2) Start server
@@ -249,7 +299,7 @@ public class GamePanel extends JPanel implements Runnable {
                 JOptionPane.ERROR_MESSAGE);
             serverHost = false;
             currentState = multiplayerSettingsState;
-            mouseI.leftClickPressed = false;
+            //mouseL.leftClickPressed = false;
             gui.startLoading = false;
             return;
         } catch (Exception e) {
@@ -273,7 +323,7 @@ public class GamePanel extends JPanel implements Runnable {
             discovery.start();
         }
 
-        player.mouseI.leftClickPressed = false;
+        //player.mouseI.leftClickPressed = false;
         multiplayer = true;
         currentState = playState;
     }
@@ -287,7 +337,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         // 1) Create local player
-        player = new PlayerMP(this, 48 * 10, 48 * 10, keyI, mouseI, username, null, -1);
+        player = new PlayerMP(this, 48 * 10, 48 * 10, keyL, mouseL, username, null, -1);
         if (!playerList.contains(player)) playerList.add((PlayerMP) player);
 
         // 2) Ensure discovery is running
@@ -305,7 +355,7 @@ public class GamePanel extends JPanel implements Runnable {
         loginPacket.writeData(socketClient);
 
         multiplayer = true;
-        player.mouseI.leftClickPressed = false;
+        //player.mouseI.leftClickPressed = false;
         currentState = playState;
     }
     public void startDiscovery() {
@@ -343,60 +393,10 @@ public class GamePanel extends JPanel implements Runnable {
         // Optionally clear players
         if (playerList != null) playerList.clear();
     }
-    //Starts the thread, called from the Main class
-    public void start() {
-        startThread();
-    }
     public void stopDiscovery() {
         if (discovery != null) {
             discovery.shutdown();
             discovery = null;
-        }
-    }
-    //Initialises and starts the thread
-    public void startThread() {
-        thread = new Thread(this);
-        thread.start();
-    }
-    
-    protected BufferedImage importImage(String filePath) { //Imports and stores the image
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-            //BufferedImage scaledImage = new BufferedImage(width, height, original.getType());
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
-    //THE GAME LOOP
-    //@Override
-    public void run() {
-        final double TICK_RATE = 1.0 / 60.0;   // 60 updates per second
-        double accumulator = 0.0;
-
-        long previousTime = System.nanoTime();
-
-        while (thread != null) {
-
-            long currentTime = System.nanoTime();
-            double frameTime = (currentTime - previousTime) / 1_000_000_000.0; // seconds
-            previousTime = currentTime;
-
-            // Avoid spiral of death (very long frames)
-            if (frameTime > 0.25)
-                frameTime = 0.25;
-
-            accumulator += frameTime;
-
-            // Run update() fixed number of times
-            while (accumulator >= TICK_RATE) {
-                update(TICK_RATE); 
-                accumulator -= TICK_RATE;
-            }
-
-            // Render once per loop
-            repaint();
         }
     }
     public synchronized ArrayList<PlayerMP> getPlayerList() {
@@ -413,7 +413,140 @@ public class GamePanel extends JPanel implements Runnable {
         }
         getPlayerList().remove(index);
     }
+    public void createEmissiveBuffer(int width, int height) {
+        emissiveFbo = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, emissiveFbo);
 
+        emissiveTextureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, emissiveTextureId);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, emissiveTextureId, 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            System.err.println("ERROR: Emissive FBO is incomplete!");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    public void createSceneBuffer(int width, int height) {
+        sceneFbo = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, sceneFbo);
+
+        sceneTextureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, sceneTextureId);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+                     width, height, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, sceneTextureId, 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            System.err.println("ERROR: Scene FBO incomplete!");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    public void createLitBuffer(int width, int height) {
+        litFbo = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, litFbo);
+
+        litTextureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, litTextureId);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+                     width, height, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, litTextureId, 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            System.err.println("ERROR: Lit FBO incomplete!");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    public void createBloomBuffers(int width, int height) {
+        bloomFbo1 = glGenFramebuffers();
+        bloomTex1 = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, bloomTex1);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo1);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bloomTex1, 0);
+
+        bloomFbo2 = glGenFramebuffers();
+        bloomTex2 = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, bloomTex2);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo2);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bloomTex2, 0);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    public void createGodrayBuffer(int width, int height) {
+        godrayFbo = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, godrayFbo);
+
+        godrayTextureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, godrayTextureId);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, godrayTextureId, 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            System.err.println("ERROR: Godray FBO incomplete!");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    public void createGodrayProcessedBuffer(int width, int height) {
+    	godrayProcessedFbo = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, godrayProcessedFbo);
+
+        godrayProcessedTextureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, godrayProcessedTextureId);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, godrayProcessedTextureId, 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            System.err.println("ERROR: Godray FBO incomplete!");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
     public int getPlayerMPIndex(String username) {
         for (int i = 0; i < getPlayerList().size(); i++) {
             if (username.equals(getPlayerList().get(i).getUsername())) {
@@ -431,66 +564,361 @@ public class GamePanel extends JPanel implements Runnable {
         player.setCurrentAnimation(currentAnimation);
         player.setDirection(direction);
     }
-    
-    public void setFreezeCounter(int freezeCounter) {
-    	this.freezeCounter = freezeCounter;
-    	getFrozenImage = true;
+    private void createTextureList() {
+        Path resFolder = Paths.get("res");
+
+        try (Stream<Path> paths = Files.walk(resFolder)) {
+            paths
+                .filter(Files::isRegularFile)               // only files
+                .filter(p -> p.toString().endsWith(".png")) // only PNGs
+                .forEach(p -> {
+                    // Make path relative to resFolder and prepend "/"
+                    Path relativePath = resFolder.relativize(p);
+                    textureQueue.add("/" + relativePath.toString().replace("\\", "/"));
+                });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    
-    // SCREEN SHAKE METHOD
-    public void screenShake(int duration, int intensity) {
-        this.shakeDuration = duration; // Set shake duration (frames)
-        this.shakeIntensity = intensity; // Set shake intensity (max offset)
+    private void createFontList() {
+        Path resFolder = Paths.get("res");
+
+        try (Stream<Path> paths = Files.walk(resFolder)) {
+            paths
+                .filter(Files::isRegularFile)
+                .filter(p -> p.toString().endsWith(".ttf"))
+                .forEach(p -> {
+                    Path relative = resFolder.relativize(p); // remove leading "res/"
+                    String clean = "/" + relative.toString().replace("\\", "/"); // ensure leading /
+                    fontQueue.add(clean);
+                });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    
-    public void setFullScreen() {
-    	
-    	Settings.fullScreen = true;
-    	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    	GraphicsDevice gd = ge.getDefaultScreenDevice();
-    	
-    	screenWidth = gd.getDisplayMode().getWidth();
-    	screenHeight = gd.getDisplayMode().getHeight();
-    	
-    	//Center the game panel within the fullscreen window
-        int xOffset = (screenWidth - frameWidth) / 2;
-        int yOffset = (screenHeight - frameHeight) / 2;
-
-        // Apply centering offsets in the paintComponent method
-        this.setLocation(xOffset, yOffset);
-    	
-    	Main.window.setSize(screenWidth, screenHeight);
+    public void run() {
+        init();
+        createTextureList();
+        createFontList();
+        loop();
+        
+		//Destroy audio context
+		alcDestroyContext(audioContext);
+		alcCloseDevice(audioDevice);
+		
+		//Free the memory
+		glfwSetKeyCallback(window, null);
+		glfwDestroyWindow(window);
+		
+		//Terminate GLFW
+		glfwTerminate();
+		glfwSetErrorCallback(null).free();
     }
-    public void stopFullScreen() {
-    	Settings.fullScreen = false;
-
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-
-        screenWidth = frameWidth;
-        screenHeight = frameHeight;
-
-        // Center the window on screen
-        int xOffset = (gd.getDisplayMode().getWidth() - frameWidth) / 2;
-        int yOffset = (gd.getDisplayMode().getHeight() - frameHeight) / 2;
-
-        this.setLocation(0, 0); // reset GamePanel position
-        Main.window.setSize(frameWidth, frameHeight);
-        Main.window.setLocation(xOffset, yOffset);
+    private void initialiseManagers() {
+            buildingM = new BuildingManager(this);
+            itemM = new ItemManager(this);
+            npcM = new NPCManager(this);
+            mapM = new MapManager(this);
+            gui = new GUI(this);
+            updateEntityList = new ArrayList<>();
+            entityList = new ArrayList<>();
+            itemRegistry = new ItemRegistry(this);
+            buildingRegistry = new BuildingRegistry(this);
+            catalogue = new Catalogue(this);
+            world = new World(this);
+            particleM = new ParticleSystem(this);
+            customiser = new Customiser(this);
+            pathF = new PathFinder(this);
+            recipeM = new RecipeManager();
+            upgradeM = new UpgradeManager(this);
+            progressM = new ProgressManager(this);
+            minigameM = new MiniGameManager(this);
+            roomH = new RoomHelperMethods();
+            cutsceneM = new CutsceneManager(this);
+            saveM = new SaveManager(this);
+            mapB = new MapBuilder(this);
+            debug = new Debug(this);
+            // -----------------------
+            // Game Setup
+            // -----------------------
+            playSinglePlayer(0);
     }
-    //UPDATES THE GAME
-    public void update(double dt) {
+
+    public void init() {
+        // -----------------------
+        // GLFW Setup
+        // -----------------------
+        GLFWErrorCallback.createPrint(System.err).set();
+
+        if (!glfwInit()) {
+            throw new IllegalStateException("Unable to initialize GLFW");
+        }
+
+        // Configure GLFW
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_DEPTH_BITS, 0);
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+        this.title = "Pandemonia";
+        // Create the window
+        window = glfwCreateWindow(frameWidth, frameHeight, title, NULL, NULL);
+        if (window == NULL) {
+            throw new IllegalStateException("Failed to create the GLFW window.");
+        }
+        
+        glfwSetCursorPosCallback(window, mouseL::mousePosCallback);
+        glfwSetMouseButtonCallback(window, mouseL::mouseButtonCallback);
+        glfwSetScrollCallback(window, mouseL::mouseScrollCallback);
+        glfwSetKeyCallback(window, keyL::keyCallback);
+        
+        glfwSetWindowSizeCallback(window, (win, newWidth, newHeight) -> {
+            try {
+                setWidth(newWidth);
+                setHeight(newHeight);
+
+                // Update viewport
+                int[] fbW = new int[1];
+                int[] fbH = new int[1];
+                glfwGetFramebufferSize(window, fbW, fbH);
+                glViewport(0, 0, fbW[0], fbH[0]);
+
+                // Update camera logical size
+                camera.setSize(newWidth, newHeight);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        // -----------------------
+        // Make OpenGL context current
+        // -----------------------
+        glfwMakeContextCurrent(window);
+        GL.createCapabilities(); // MUST be called after context is current
+
+        // Enable V-sync
+        glfwSwapInterval(1);
+        
+        // Show window
+        glfwShowWindow(window);
+
+        // -----------------------
+        // OpenGL State
+        // -----------------------
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_DEPTH_TEST); // Now safe to call
+
+        // Use the framebuffer size for the viewport, NOT the logical frameWidth/frameHeight
+        int[] px = new int[1];
+        int[] py = new int[1];
+
+        glfwGetFramebufferSize(window, px, py);
+
+        sizeX = px[0];
+        sizeY = py[0];
+        // correct viewport (physical pixels)
+        glViewport(0, 0, px[0], py[0]);
+
+        // correct camera / projection (logical pixels)
+        camera.setSize(frameWidth, frameHeight);
+        
+        
+         
+
+        // -----------------------
+        // FrameBuffer and Renderers
+        // -----------------------
+        this.renderer = new Renderer(this, camera);
+        this.debugDraw = new DebugDraw(this);
+
+        // -----------------------
+        // Audio Initialization
+        // -----------------------
+        String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
+        audioDevice = alcOpenDevice(defaultDeviceName);
+
+        int[] attributes = {0};
+        audioContext = alcCreateContext(audioDevice, attributes);
+        alcMakeContextCurrent(audioContext);
+
+        ALCCapabilities alcCapabilities = ALC.createCapabilities(audioDevice);
+        ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
+
+        if (!alCapabilities.OpenAL10) {
+            throw new IllegalStateException("Audio library not supported.");
+        }
+        
+        createEmissiveBuffer(px[0], py[0]);
+        createSceneBuffer(px[0], py[0]);
+        createBloomBuffers(px[0], py[0]);
+        createLitBuffer(px[0], py[0]);
+        createGodrayBuffer(px[0], py[0]);
+        createGodrayProcessedBuffer(px[0], py[0]);
+    }
+    public void loop() {
+    	double beginTime = glfwGetTime();
+    	double endTime;
+    	double dt = 0;
     	
-    	float viewWidthWorld  = frameWidth  / camera.zoom;
-    	float viewHeightWorld = frameHeight / camera.zoom;
+		while(!glfwWindowShouldClose(window)) {
+			//Poll Events
+			glfwPollEvents();
+			
+			debugDraw.beginFrame();
+			
+			
+			  int loadsPerFrame = 2;
+		        // Load some textures
+		        for (int i = 0; i < loadsPerFrame && !textureQueue.isEmpty(); i++) {
+		            String file = textureQueue.poll();
+		            AssetPool.getTexture(file);
+		        }
 
-    	// Top-left of camera view in world coords
-    	float viewLeftWorld = camera.x - viewWidthWorld * 0.5f;
-    	float viewTopWorld  = camera.y - viewHeightWorld * 0.5f;
+		        
+		        // Load some fonts
+		        for (int i = 0; i < loadsPerFrame && !fontQueue.isEmpty(); i++) {
+		            String font = fontQueue.poll();
+		            AssetPool.getBitmapFont(font, 32);
+		        }
 
-    	// These are *positive* offsets from world to screen
-    	int xDiff = Math.round(viewLeftWorld);
-    	int yDiff = Math.round(viewTopWorld);
+		        // Check if done
+		        if (!texturesLoaded && textureQueue.isEmpty()) {
+		            texturesLoaded = true;
+		        }
+		        if (!fontsLoaded && fontQueue.isEmpty()) {
+		        	fontsLoaded = true;
+		        }
+
+		        
+		        if (!managersInitialised && texturesLoaded && fontsLoaded) {
+		            managersInitialised = true;
+		            initialiseManagers();
+		        }
+
+		        // -------------------------------
+		        // 2. Game update & render
+		        // -------------------------------
+		        if (managersInitialised) {
+		        	
+					if(dt >= 0) {
+						update(dt);
+						
+						int[] fbw = new int[1];
+						int[] fbh = new int[1];
+						glfwGetFramebufferSize(window, fbw, fbh);
+
+						int w = fbw[0];
+						int h = fbh[0];
+						
+						glBindFramebuffer(GL_FRAMEBUFFER, sceneFbo);
+						glViewport(0, 0, w, h);
+						glClearColor(0, 0, 0, 1);
+						glClear(GL_COLOR_BUFFER_BIT);
+				    	renderer.beginFrame();
+						draw();
+						renderer.endFrame();
+						
+			        	glBindFramebuffer(GL_FRAMEBUFFER, emissiveFbo);
+			        	glViewport(0, 0, w, h);
+			        	glClearColor(0, 0, 0, 0);
+			        	glClear(GL_COLOR_BUFFER_BIT);
+			        	renderer.beginFrame();
+			        	drawEmissiveBuffers();
+			        	renderer.endFrame();
+			        	
+			        	int finalTexture = sceneTextureId;
+			        	if (Settings.fancyLighting) {
+			        		glBindFramebuffer(GL_FRAMEBUFFER, litFbo);
+			        		glClear(GL_COLOR_BUFFER_BIT);
+							renderer.updateLightsOncePerFrame();
+							renderer.renderLightingPass();
+							finalTexture = litTextureId;   
+							if(Settings.bloomEnabled) {
+							    renderer.applyAndDrawBloom(finalTexture, bloomFbo1, bloomFbo2, bloomTex1, bloomTex2);
+							} else {
+							    // Just draw the finalTexture to screen without bloom
+							    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+							    glViewport(0, 0, w, h);
+							    glClear(GL_COLOR_BUFFER_BIT);
+							    
+							    // Draw fullscreen quad with finalTexture
+							    renderer.drawFullscreenTexture(litTextureId);
+							}
+							
+							if(Settings.godraysEnabled) {
+					        	glBindFramebuffer(GL_FRAMEBUFFER, godrayFbo);
+					        	glViewport(0, 0, sizeX, sizeY);
+					        	glClearColor(0, 0, 0, 0);
+					        	glClear(GL_COLOR_BUFFER_BIT);
+	
+					        	renderer.beginFrame();
+					        	drawGodRays();
+					        	renderer.endFrame();
+					        	
+					        	renderer.renderGodRays(godrayTextureId, godrayProcessedFbo, 0.4f, 0.95f, 1.3f);
+					        	
+					        	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+					        	glViewport(0, 0, w, h);
+					        	//renderer.drawFullscreenTexture(finalTexture); // scene
+					        	glEnable(GL_BLEND);
+					        	glBlendFunc(GL_ONE, GL_ONE);
+					        	renderer.drawFullscreenTexture(godrayProcessedTextureId); // add god rays
+					        	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+							}
+			        	} else {
+			        		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			        		glViewport(0, 0, w, h);
+			        		glClear(GL_COLOR_BUFFER_BIT);
+			        		renderer.drawFullscreenTexture(sceneTextureId);
+			        	}
+	
+			        	//GUI
+			        	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		        		glViewport(0, 0, w, h);
+		    	    	renderer.beginFrame();
+			        	drawGUI();
+				    	renderer.endFrame();
+						debugDraw.draw();
+					}
+		        } else {
+		            //drawLoadingScreen();
+		        }
+			
+			
+			keyL.endFrame();
+			mouseL.endFrame();
+			glfwSwapBuffers(window);
+			
+			endTime = (float)glfwGetTime();
+			dt = endTime - beginTime;
+			beginTime = endTime;
+		}
+		
+	}
+	public int getWidth() {
+		return frameWidth;
+	}
+	public int getHeight() {
+		return frameHeight;
+	}
+	public int getFullScreenWidth() {
+		return 2560;
+	}
+	public int getFullScreenHeight() {
+		return 1600;
+	}
+	public void setWidth(int newWidth) {
+		frameWidth = newWidth;
+	}
+	public void setHeight(int newHeight) {
+		frameHeight = newHeight;
+	}
+    private void update(double dt) {
     	
     	if(errorCounter > 0) {
     		errorCounter--;
@@ -499,22 +927,10 @@ public class GamePanel extends JPanel implements Runnable {
     		}
     	}
     	
-    	if (shakeDuration > 0) {
-            // Randomly generate shake offsets within the intensity range
-            shakeOffsetX = random.nextInt(shakeIntensity * 2 + 1) - shakeIntensity;
-            shakeOffsetY = random.nextInt(shakeIntensity * 2 + 1) - shakeIntensity;
-            shakeDuration--; // Decrease shake duration
-        } else {
-            // Reset shake offsets when shake duration ends
-            shakeOffsetX = 0;
-            shakeOffsetY = 0;
-        }
+    	keyL.update();
+    	
 
-    	if(freezeCounter == 0) {
 	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState) {
-		    	if(firstUpdate) {
-		    		firstUpdate = false;
-		    	}
 		    	
 		    	if(multiplayer) {
 		    		for(Player p: getPlayerList()) {
@@ -532,109 +948,44 @@ public class GamePanel extends JPanel implements Runnable {
 		    	npcM.update(dt);
 		    	itemM.update(dt);
 		    	world.update(dt);
-    			camera.update(dt);
     			cutsceneM.update(dt);
 		    	lightingM.update(dt);
 		    	minigameM.update(dt);
-		        if(keyI.debugMode) {
-		        	debug.update(dt);
-		        }
+		        //if(keyI.debugMode) {
+		        	//debug.update(dt);
+		        //}
 		    	if(currentState == customiseRestaurantState) {
 		    		customiser.update(dt);
 		    	}
 	    	} else if(currentState == mapBuildState) {
-	    		mapB.update(dt, xDiff, yDiff);
+	    		//mapB.update(dt);
 	    		buildingM.update(dt);
 	    	}
     		catalogue.update(dt);
     		gui.update(dt);
 	    	particleM.update(dt);
-    	} else {
-    		freezeCounter--;
-    		if(freezeCounter<= 0) {
-    			freezeCounter = 0;
-    		}
-    	}
 
     }
-    //DRAWS THE GAME
-    public void paintComponent(Graphics g1) {
 
-        super.paintComponent(g1);
-        Graphics2D g2 = (Graphics2D) g1;
-        
-        double scaleX = (double) screenWidth / frameWidth;
-        double scaleY = (double) screenHeight / frameHeight;
-
-        g2.scale(scaleX, scaleY);
-        
-        // Apply shake offsets
-        g2.translate(shakeOffsetX, shakeOffsetY);
-        
-        if(getFrozenImage) {
-        	getFrozenImage = false;
-        	frozenImage = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
-            // Get the Graphics2D object from the BufferedImage
-            Graphics2D g3 = frozenImage.createGraphics();
-            draw(g3);
-            g3.dispose();
-        }
-
-        // Draw the game content directly with scaling
-        if(freezeCounter == 0) {
-        	draw(g2);
-        } else {
-        	g2.drawImage(frozenImage, 0, 0, screenWidth, screenHeight, null);
-        }
-        
-        g2.dispose();
-    }
-    
-    public void draw(Graphics2D g2) {
-    	
-    	float viewWidthWorld  = frameWidth  / camera.zoom;
-    	float viewHeightWorld = frameHeight / camera.zoom;
-
-    	// Top-left of camera view in world coords
-    	float viewLeftWorld = camera.x - viewWidthWorld * 0.5f;
-    	float viewTopWorld  = camera.y - viewHeightWorld * 0.5f;
-
-    	// These are *positive* offsets from world to screen
-    	int xDiff = Math.round(viewLeftWorld);
-    	int yDiff = Math.round(viewTopWorld);
-    	
-    	 xDiff = Math.round(xDiff / scale) * scale;
-         yDiff = Math.round(yDiff / scale) * scale;
-    	
+    // --------------------------
+    // DRAW USING OPENGL
+    // --------------------------
+    private void draw() {
         
         if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
-        	
-        	gColor = colorBuffer.createGraphics();
-        	gColor.setComposite(AlphaComposite.SrcOver);
-        	gColor.setColor(backgroundColour);
-        	gColor.fillRect(0, 0, frameWidth, frameHeight);
-            gColor.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF));
-
-            gEmissive = emissiveBuffer.createGraphics();
-            gEmissive.setComposite(AlphaComposite.Clear);
-            gEmissive.fillRect(0, 0, frameWidth, frameHeight); // make it fully transparent
-            // Switch back to normal drawing
-            gEmissive.setComposite(AlphaComposite.SrcOver);
-            gEmissive.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-            
-        		mapM.draw(gColor, xDiff, yDiff);	 
+        		mapM.draw(renderer);	 
         		
         		Building[] bottomLayer = buildingM.getBottomLayer();
     	        for(int i = 0; i < bottomLayer.length-1; i++) {
     	        	if(bottomLayer[i] != null) {
-    	        		bottomLayer[i].draw(gColor, xDiff, yDiff);
+    	        		bottomLayer[i].draw(renderer);
     	        	}
     	        }
     	        
     	        Building[] secondLayer = buildingM.getSecondLayer();
     	        for(int i = 0; i < secondLayer.length-1; i++) {
     	        	if(secondLayer[i] != null) {
-    	        		secondLayer[i].draw(gColor, xDiff, yDiff);
+    	        		secondLayer[i].draw(renderer);
     	        	}
     	        }
         		
@@ -659,7 +1010,7 @@ public class GamePanel extends JPanel implements Runnable {
 		        for(int i = 0; i < builds.length-1; i++) {
 		        	if(builds[i] != null) {
 		        		entityList.add(builds[i]);
-		        		builds[i].drawEmissive(gEmissive, xDiff, yDiff);
+		        		builds[i].drawEmissive(renderer);
 		        	}
 		        }
 		        Item[] itemsInBuildings = buildingM.getBuildingItems();
@@ -693,8 +1044,8 @@ public class GamePanel extends JPanel implements Runnable {
 	            for(int i = 0; i < entityList.size(); i++) {
 	            	Entity a = entityList.get(i);
 	            	if(a != null) {
-		            	if(a.isOnScreen(xDiff, yDiff, frameWidth, frameHeight)) {
-		            		a.draw(gColor, xDiff, yDiff);
+		            	if(a.isOnScreen(camera, frameWidth, frameHeight)) {
+		            		a.draw(renderer);
 		            	}
 	            	}
 	            }
@@ -724,8 +1075,8 @@ public class GamePanel extends JPanel implements Runnable {
 		            for(int i = 0; i < entityList.size(); i++) {
 		            	Entity a = entityList.get(i);
 		            	if(a != null) {
-			            	if(a.isOnScreen(xDiff, yDiff, frameWidth, frameHeight)) {
-			            		a.draw(gColor, xDiff, yDiff);
+		            		if(a.isOnScreen(camera, frameWidth, frameHeight)) {
+			            		a.draw(renderer);
 			            	}
 		            	}
 		            }
@@ -735,14 +1086,14 @@ public class GamePanel extends JPanel implements Runnable {
 		        List<Item> items = new ArrayList<Item>(itemM.getItems());
 		        for(Item item: items) {
 		        	if(item != null) {
-		        		item.draw(gColor, xDiff, yDiff);
+		        		item.draw(renderer);
 		        	}
 		        }
 		    
 		        Building[] fourthLayer = buildingM.getFourthLayer();
 		        for(int i = 0; i < fourthLayer.length-1; i++) {
 		        	if(fourthLayer[i] != null) {
-		        		fourthLayer[i].draw(gColor, xDiff, yDiff);
+		        		fourthLayer[i].draw(renderer);
 		        	}
 		        }
 		        
@@ -771,26 +1122,25 @@ public class GamePanel extends JPanel implements Runnable {
 	            for(int i = 0; i < entityList.size(); i++) {
 	            	Entity a = entityList.get(i);
 	            	if(a != null) {
-		            	if(a.isOnScreen(xDiff, yDiff, frameWidth, frameHeight)) {
-		            		a.draw(gColor, xDiff, yDiff);
+		            	if(a.isOnScreen(camera, frameWidth, frameHeight)) {
+		            		a.draw(renderer);
 		            	}
 	            	}
 	            }
 	            //EMPTY ENTITY LIST
 	            entityList.clear();
 		        
-	            mapM.drawForeground(gColor, xDiff, yDiff);
-	            
-		        gColor.dispose();
+	            mapM.drawForeground(renderer);
 		        
 	            
-	            particleM.draw(gColor, xDiff, yDiff);
-	            particleM.drawEmissive(gEmissive, xDiff, yDiff);
+	            particleM.draw(renderer);
+        		}
+	            /*
 		        if (Settings.fancyLighting) {
-		            BufferedImage litFull = lightingM.applyLighting(colorBuffer, emissiveBuffer, xDiff, yDiff);
+		            Texture litFull = lightingM.applyLighting(colorBuffer, emissiveBuffer, xDiff, yDiff);
 		            
-		            int bufferCamX = Math.round(camera.x - xDiff);
-		            int bufferCamY = Math.round(camera.y - yDiff);
+		            int bufferCamX = Math.round(camera.x );
+		            int bufferCamY = Math.round(camera.y );
 		            int srcW = Math.max(1, (int) Math.round(frameWidth / camera.zoom));
 		            int srcH = Math.max(1, (int) Math.round(frameHeight / camera.zoom));
 
@@ -807,11 +1157,11 @@ public class GamePanel extends JPanel implements Runnable {
 		            srcX = Math.max(0, Math.min(srcX, litFull.getWidth() - srcW));
 		            srcY = Math.max(0, Math.min(srcY, litFull.getHeight() - srcH));
 
-		            BufferedImage viewSub = litFull.getSubimage(srcX, srcY, srcW, srcH);
-		            g2.drawImage(viewSub, 0, 0, frameWidth, frameHeight, null);
+		            Texture viewSub = litFull.getSubimage(srcX, srcY, srcW, srcH);
+		            renderer.draw(viewSub, 0, 0, frameWidth, frameHeight, null);
 		        } else {
-		        	int bufferCamX = Math.round(camera.x - xDiff);
-		        	int bufferCamY = Math.round(camera.y - yDiff);
+		        	int bufferCamX = Math.round(camera.x );
+		        	int bufferCamY = Math.round(camera.y );
 		        	int srcW = Math.max(1, (int) Math.round(frameWidth / camera.zoom));
 		        	int srcH = Math.max(1, (int) Math.round(frameHeight / camera.zoom));
 
@@ -824,98 +1174,123 @@ public class GamePanel extends JPanel implements Runnable {
 		        	if (srcX + srcW > colorBuffer.getWidth()) srcX = colorBuffer.getWidth() - srcW;
 		        	if (srcY + srcH > colorBuffer.getHeight()) srcY = colorBuffer.getHeight() - srcH;
 
-		        	BufferedImage viewSub = colorBuffer.getSubimage(srcX, srcY, srcW, srcH);
-		        	g2.drawImage(viewSub, 0, 0, frameWidth, frameHeight, null);
+		        	Texture viewSub = colorBuffer.getSubimage(srcX, srcY, srcW, srcH);
+		        	renderer.draw(viewSub, 0, 0, frameWidth, frameHeight, null);
+		        }
+		        */
+
+    }
+    private void drawEmissiveBuffers() {
+        if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
+	    	Building[] builds = buildingM.getBuildingsToDraw();
+	        for(int i = 0; i < builds.length-1; i++) {
+	        	if(builds[i] != null) {
+	        		entityList.add(builds[i]);
+	        		builds[i].drawEmissive(renderer);
+	        	}
+	        }
+    	
+	        particleM.drawEmissive(renderer);
+        }
+    }
+    private void drawGUI() {
+		        //renderer.setGUI();
+		        
+		        if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
+		            Building[] thirdLayer = buildingM.getThirdLayer();
+		        	for (int i = 0; i < thirdLayer.length; i++) {
+		            if (thirdLayer[i] != null) {
+		                thirdLayer[i].drawOverlayUI(renderer);
+		            }
+		        }
+		        	
+			    Building[] fourthLayer = buildingM.getFourthLayer();
+		        for (int i = 0; i < fourthLayer.length; i++) {
+		            if (fourthLayer[i] != null) {
+		                fourthLayer[i].drawOverlayUI(renderer);
+		            }
+		        }
+		
+		        Building[] fifthLayer = buildingM.getFifthLayer();
+		        for (int i = 0; i < fifthLayer.length; i++) {
+		            if (fifthLayer[i] != null) {
+		                fifthLayer[i].drawOverlayUI(renderer);
+		            }
+		        }
+
+		        Building[] builds = buildingM.getBuildings();
+		        for (int i = 0; i < builds.length; i++) {
+		            if (builds[i] != null) {
+		                builds[i].drawOverlayUI(renderer);
+		            }
 		        }
 		        
-		        //lightingM.drawOcclusionDebug(g2);
-	            
-	            for (int i = 0; i < thirdLayer.length; i++) {
-	                if (thirdLayer[i] != null) {
-	                    thirdLayer[i].drawOverlayUI(g2, xDiff, yDiff);
-	                }
-	            }
-
-	            for (int i = 0; i < fourthLayer.length; i++) {
-	                if (fourthLayer[i] != null) {
-	                    fourthLayer[i].drawOverlayUI(g2, xDiff, yDiff);
-	                }
-	            }
-
-	            for (int i = 0; i < fifthLayer.length; i++) {
-	                if (fifthLayer[i] != null) {
-	                    fifthLayer[i].drawOverlayUI(g2, xDiff, yDiff);
-	                }
-	            }
-	            builds = buildingM.getBuildings();
-	            for (int i = 0; i < builds.length; i++) {
-	                if (builds[i] != null) {
-	                    builds[i].drawOverlayUI(g2, xDiff, yDiff);
-	                }
-	            }
-		        
-		        world.drawFilters(g2);
-		        world.drawWeather(g2); 
-	            cutsceneM.draw(g2, xDiff, yDiff);
-		        if(keyI.debugMode) {
-		        	debug.draw(g2);
-		        }
-        }
-        
-        
-        if(currentState == mapBuildState) {
-        	mapM.draw(g2, xDiff, yDiff);
-        	mapM.drawForeground(g2, xDiff, yDiff);
-        	
-        	Building[] bottomLayer = buildingM.getBottomLayer();
-	        for(int i = 0; i < bottomLayer.length-1; i++) {
-	        	if(bottomLayer[i] != null) {
-	        		bottomLayer[i].draw(g2, xDiff, yDiff);
-	        	}
-	        }
-	        Building[] middleLayer = buildingM.getSecondLayer();
-	        for(int i = 0; i < middleLayer.length-1; i++) {
-	        	if(middleLayer[i] != null) {
-	        		middleLayer[i].draw(g2, xDiff, yDiff);
-	        	}
-	        }
-        	
-        	Building[] main = buildingM.getBuildingsToDraw();
-	        for(int i = 0; i < main.length-1; i++) {
-	        	if(main[i] != null) {
-	        		main[i].draw(g2, xDiff, yDiff);
-	        	}
-	        }
-        	
-        	Building[] secondLayer = buildingM.getThirdLayer();
-	        for(int i = 0; i < secondLayer.length-1; i++) {
-	        	if(secondLayer[i] != null) {
-	        		secondLayer[i].draw(g2, xDiff, yDiff);
-	        	}
-	        }
-	        Building[] thirdLayer = buildingM.getFourthLayer();
-	        for(int i = 0; i < thirdLayer.length-1; i++) {
-	        	if(thirdLayer[i] != null) {
-	        		thirdLayer[i].draw(g2, xDiff, yDiff);
-	        	}
-	        }
-	        Building[] fourthLayer = buildingM.getFifthLayer();
-	        for(int i = 0; i < fourthLayer.length-1; i++) {
-	        	if(fourthLayer[i] != null) {
-	        		fourthLayer[i].draw(g2, xDiff, yDiff);
-	        	}
-	        }
-        	
-        	mapB.draw(g2, xDiff, yDiff);
-        } 
-        if(currentState == customiseRestaurantState) {
-        	customiser.draw(g2, xDiff, yDiff);
-        }
-        
-    	minigameM.draw(g2);
-        gui.draw(g2);
-        
-        g2.dispose();
+		        world.drawFilters(renderer);
+		        world.drawWeather(renderer); 
+		        cutsceneM.draw(renderer);
+		}
+		
+		
+		if(currentState == mapBuildState) {
+			mapM.draw(renderer);
+			mapM.drawForeground(renderer);
+			
+			Building[] bottomLayer = buildingM.getBottomLayer();
+		    for(int i = 0; i < bottomLayer.length-1; i++) {
+		    	if(bottomLayer[i] != null) {
+		    		bottomLayer[i].draw(renderer);
+		    	}
+		    }
+		    Building[] middleLayer = buildingM.getSecondLayer();
+		    for(int i = 0; i < middleLayer.length-1; i++) {
+		    	if(middleLayer[i] != null) {
+		    		middleLayer[i].draw(renderer);
+		    	}
+		    }
+			
+			Building[] main = buildingM.getBuildingsToDraw();
+		    for(int i = 0; i < main.length-1; i++) {
+		    	if(main[i] != null) {
+		    		main[i].draw(renderer);
+		    	}
+		    }
+			
+			Building[] secondLayer = buildingM.getThirdLayer();
+		    for(int i = 0; i < secondLayer.length-1; i++) {
+		    	if(secondLayer[i] != null) {
+		    		secondLayer[i].draw(renderer);
+		    	}
+		    }
+		    Building[] thirdLayer = buildingM.getFourthLayer();
+		    for(int i = 0; i < thirdLayer.length-1; i++) {
+		    	if(thirdLayer[i] != null) {
+		    		thirdLayer[i].draw(renderer);
+		    	}
+		    }
+		    Building[] fourthLayer = buildingM.getFifthLayer();
+		    for(int i = 0; i < fourthLayer.length-1; i++) {
+		    	if(fourthLayer[i] != null) {
+		    		fourthLayer[i].draw(renderer);
+		    	}
+		    }
+			
+			mapB.draw(renderer);
+		} 
+		if(currentState == customiseRestaurantState) {
+			customiser.draw(renderer);
+		}
+		//renderer.setGUI();
+		
+		minigameM.draw(renderer);
+		gui.draw(renderer);
+    }
+    private void drawGodRays() {
+    	Building[] main = buildingM.getBuildingsToDraw();
+	    for(int i = 0; i < main.length-1; i++) {
+	    	if(main[i] != null) {
+	    		main[i].drawGodRay(renderer);
+	    	}
+	    }
     }
 
 }

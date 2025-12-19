@@ -3,18 +3,20 @@ package entity.npc;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import entity.buildings.Chair;
-import entity.buildings.Door;
 import entity.buildings.Toilet;
-import entity.items.FoodState;
 import entity.items.Plate;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.Recipe;
 import utility.RecipeManager;
 import utility.RoomHelperMethods;
-import utility.RoomHelperMethods.*;
 import utility.Statistics;
 
 public class Customer extends NPC {
@@ -33,7 +35,7 @@ public class Customer extends NPC {
 	public Recipe foodOrder = null;
 	private double eatTime = 5;
 	private double eatCounter = 0;
-	protected BufferedImage orderSign, warningOrderSign;
+	protected TextureRegion orderSign, warningOrderSign;
 	private double orderTime = 0;
 	private double maxOrderTime = 3.6;
 	private double toiletTime = 0;
@@ -56,8 +58,8 @@ public class Customer extends NPC {
 	protected float orangeTipMultiplier = 0.5f;
 	protected float redTipMultiplier = 0f;
 	
-	public BufferedImage faceIcon;
-	private Graphics2D g2;
+	public TextureRegion faceIcon;
+	Renderer renderer;
 	
 	private Pet pet;
 
@@ -84,7 +86,7 @@ public class Customer extends NPC {
 	}
 	
 	private void importImages() {
-		animations = new BufferedImage[5][10][10];
+		animations = new TextureRegion[5][10][10];
 		animations[0][0][0] = importImage("/npcs/mannequin.png").getSubimage(16, 0, 16, 32);
 		orderSign = importImage("/UI/Warning.png").getSubimage(16, 0, 16, 16);
 		warningOrderSign = importImage("/UI/Warning.png").getSubimage(0, 0, 16, 16);
@@ -124,7 +126,6 @@ public class Customer extends NPC {
 		case 6:
 	        importPlayerSpriteSheet("/npcs/miner/Idle", 4, 1, 0, 0, 0, 80, 80);
 	        importPlayerSpriteSheet("/npcs/miner/Walk", 8, 1, 1, 0, 0, 80, 80);
-	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
 			break;
 		}
 		
@@ -195,7 +196,7 @@ public class Customer extends NPC {
 		
 		RecipeManager.addOrder(foodOrder);
 		ordered = true;
-		gp.gui.addOrder(foodOrder, this, g2);
+		gp.gui.addOrder(foodOrder, this, renderer);
 	}
 	private void waitForOrder() {
 		waitingToOrder = true;
@@ -346,7 +347,7 @@ public class Customer extends NPC {
 	                waitForOrder();
 	            } else {
 	                if(hitbox.intersects(gp.player.interactHitbox)) {
-	                    if(gp.keyI.ePressed) {
+	                    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 	                        takeOrder(dt);
 	                    }
 	                }
@@ -424,9 +425,9 @@ public class Customer extends NPC {
 	public double getMaxPatienceTime() {
 		return maxPatienceTime;
 	}
-	private void drawOrderBar(Graphics2D g2, float worldX, float worldY, int orderTime, int maxOrderTime, int xDiff, int yDiff) {
-	    float screenX = worldX - xOffset - xDiff;
-	    float screenY = worldY - yOffset - yDiff;
+	private void drawOrderBar(Renderer renderer, float worldX, float worldY, int orderTime, int maxOrderTime) {
+	    float screenX = worldX - xOffset ;
+	    float screenY = worldY - yOffset ;
 
 	    int barWidth = 48;
 	    int barHeight = 6;
@@ -440,18 +441,16 @@ public class Customer extends NPC {
 	    int g = (int) (progress * 255);
 
 	    // Optional: draw a border
-	    g2.setColor(Color.BLACK);
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight, Colour.BLACK);
 	    
-	    g2.setColor(new Color(r, g, 0));
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-		this.g2 = g2;
-	      
+	public void draw(Renderer renderer) {
+	    this.renderer = renderer;  
+		
 	      if(animations != null) {
-	    	  BufferedImage img = animations[0][currentAnimation][animationCounter];
+	    	  TextureRegion img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {
 	    	  switch(direction) {
@@ -474,11 +473,11 @@ public class Customer extends NPC {
 		          }
 	    	  }
 	    	  
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  renderer.draw(img, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y - yDrawOffset ), (int)(drawWidth), (int)(drawHeight));
 	      }
 	      
 	      if(orderTime > 0) {
-	    	  drawOrderBar(g2, hitbox.x, hitbox.y+8, (int)orderTime, (int)maxOrderTime, xDiff, yDiff);
+	    	  drawOrderBar(renderer, hitbox.x, hitbox.y+8, (int)orderTime, (int)maxOrderTime);
 	      }
   	      float patienceRatio = (float)(patienceCounter / maxPatienceTime);
 	      if(patienceRatio >= 0.5f) {
@@ -488,7 +487,7 @@ public class Customer extends NPC {
 	      if (waitingToOrder) {
 
 	    	    boolean lowPatience = patienceRatio >= 0.5f && !ordered;
-	    	    BufferedImage currentSign = orderSign;
+	    	    TextureRegion currentSign = orderSign;
 
 	    	    if (lowPatience) {
 	    	        // alternate every flickerSpeed frames
@@ -499,10 +498,10 @@ public class Customer extends NPC {
 	    	        }
 	    	    }
 
-	    	    g2.drawImage(currentSign,(int)(hitbox.x - xOffset - xDiff),(int)(hitbox.y - yOffset - yDiff - 48), 48, 48, null);
+	    	    renderer.draw(currentSign,(int)(hitbox.x - xOffset ),(int)(hitbox.y - yOffset  - 48), 48, 48);
 	    	}
 	      if(talking) {
-	    	  //gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- xDiff, (int)hitbox.y - 48*3- yDiff, dialogues[dialogueIndex], this);
+	    	  //gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2, (int)hitbox.y - 48*3, dialogues[dialogueIndex], this);
 	      }
 	      
 	  }

@@ -1,13 +1,14 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
-import entity.PlayerMP;
+import org.lwjgl.glfw.GLFW;
+
 import entity.items.Item;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import map.LightSource;
 import utility.RecipeManager;
 
@@ -22,7 +23,7 @@ public class Cauldron extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 32*3;
 		drawHeight = 32*3;
 		importImages();
@@ -44,7 +45,7 @@ public class Cauldron extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		
 		name = "Cauldron";
     	animations[0][0][0] = importImage("/decor/Cauldron.png").getSubimage(0, 0, 32, 32);
@@ -54,10 +55,10 @@ public class Cauldron extends Building {
 		super.update(dt);
 		if(!isActive) {
 			if(gp.player.interactHitbox.intersects(hitbox)) {
-				if(gp.keyI.ePressed) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 					isActive = true;
 					activeCounter = 0;
-					light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.GREEN, 48*4);
+					light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.GREEN, 48*4);
 					light.setIntensity(0.5f);
 					gp.lightingM.addLight(light);
 				}
@@ -74,16 +75,16 @@ public class Cauldron extends Building {
 		}
 		
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 
 		if(isActive) {
-			g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][1], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {
-			g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 		
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	        
 	}

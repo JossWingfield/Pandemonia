@@ -1,12 +1,13 @@
 package entity.npc;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
+import org.lwjgl.glfw.GLFW;
+
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class Duck extends NPC {
 	
@@ -30,7 +31,7 @@ public class Duck extends NPC {
 		importImages();
 	}
 	private void importImages() {
-		animations = new BufferedImage[5][10][10];
+		animations = new TextureRegion[5][10][10];
 		
 		name = "Duck";
 		
@@ -41,7 +42,7 @@ public class Duck extends NPC {
 		if(!leaving) {
 			fleeFromPlayer(dt);
 			if(hitbox.intersects(gp.player.hitbox)) {
-				if(gp.keyI.ePressed) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 					timesPetted++;
 					if(timesPetted >= 60) {
 						gp.world.animalPresent = false;
@@ -74,11 +75,11 @@ public class Duck extends NPC {
     }
 	protected void leave(double dt) {
 		super.leave(dt);
-		gp.gui.addMessage("The duck is leaving now", Color.GREEN);
+		gp.gui.addMessage("The duck is leaving now", Colour.GREEN);
     }
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
         if(animations != null) {
-            BufferedImage img = animations[0][currentAnimation][animationCounter];
+            TextureRegion img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {
 	    	  switch(direction) {
@@ -101,7 +102,7 @@ public class Duck extends NPC {
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  renderer.draw(img, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y - yDrawOffset ), (int)(drawWidth), (int)(drawHeight));
         }
 	      
         //g2.setColor(new Color(255, 0, 0, 50)); // red transparent

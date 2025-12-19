@@ -2,10 +2,7 @@ package map;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -13,17 +10,14 @@ import javax.imageio.ImageIO;
 import entity.buildings.Building;
 import entity.buildings.Door;
 import entity.buildings.EscapeHole;
-import entity.buildings.Fridge;
-import entity.buildings.Sink;
-import entity.buildings.StorageFridge;
-import entity.buildings.TablePlate;
 import entity.buildings.Trapdoor;
 import entity.npc.Customer;
 import entity.npc.NPC;
 import main.GamePanel;
-import net.packets.Packet02Move;
+import main.renderer.AssetPool;
+import main.renderer.Renderer;
+import main.renderer.Texture;
 import net.packets.Packet05ChangeRoom;
-import utility.RoomHelperMethods;
 import utility.Season;
 
 public class MapManager {
@@ -120,7 +114,7 @@ public class MapManager {
 	    	return rooms[i];
 	    }
 	    private void importTilesFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
-	        BufferedImage img = importImage(filePath+".png");
+	        Texture img = importImage(filePath+".png");
 	        int tileSize = 16;
 	        for(int j = 0; j < rows; j++) {
 	            for(int i = 0; i < columns; i++) {
@@ -131,7 +125,7 @@ public class MapManager {
 	        }
 	    }
 	    private void importWallFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
-	        BufferedImage img = importImage(filePath+".png");
+	        Texture img = importImage(filePath+".png");
 	        int tileSize = 16;
 	        for(int j = 0; j < rows; j++) {
 	            for(int i = 0; i < columns; i++) {
@@ -143,7 +137,7 @@ public class MapManager {
 	        }
 	    }
 	    private void importFloorFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
-	        BufferedImage img = importImage(filePath+".png");
+	        Texture img = importImage(filePath+".png");
 	        int tileSize = 16;
 	        for(int j = 0; j < rows; j++) {
 	            for(int i = 0; i < columns; i++) {
@@ -155,7 +149,7 @@ public class MapManager {
 	        }
 	    }
 	    private void importBeamFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
-	        BufferedImage img = importImage(filePath+".png");
+	        Texture img = importImage(filePath+".png");
 	        int tileSize = 16;
 	        for(int j = 0; j < rows; j++) {
 	            for(int i = 0; i < columns; i++) {
@@ -175,15 +169,10 @@ public class MapManager {
 	            }
 	        }
 	    }
-	    private BufferedImage importImage(String filePath) { //Imports and stores the image
-	        BufferedImage importedImage = null;
-	        try {
-	            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-	        } catch(IOException e) {
-	            e.printStackTrace();
-	        }
-	        return importedImage;
-	    }
+	    public Texture importImage(String filePath) {
+			Texture texture = AssetPool.getTexture(filePath);
+		    return texture;
+		}
 	    public void update(double dt) {
 	    		    	
 	    	for(Room room: rooms) {
@@ -257,7 +246,7 @@ public class MapManager {
 	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
 	    	currentRoom.editNPCs(gp.npcM.getNPCs());
 	    	currentRoom.editItems(gp.itemM.getItems());
-	    	currentRoom.editLights(gp.lightingM.getLights());
+	    	//currentRoom.editLights(gp.lightingM.getLights());
 	    	currentRoom = rooms[roomNum];
 	    	gp.buildingM.setBuildings(currentRoom.getBuildings());
 	    	gp.npcM.setNPCs(currentRoom.getNPCs());
@@ -449,7 +438,7 @@ public class MapManager {
 	            }
 	        }
 	    }
-	    public void draw(Graphics2D g2, float xDiff, float yDiff) {
+	    public void draw(Renderer renderer) {
 	    	if(firstUpdate) {
         		for(Room r: rooms) {
         			if(r != null) {
@@ -458,55 +447,55 @@ public class MapManager {
         		}
         		firstUpdate = false;
 	    	}
-	        drawBackground(g2, xDiff, yDiff);
+	        drawBackground(renderer);
 
-	        drawLayer(g2, xDiff, yDiff, 1); // main floor layer
-	        drawMidLayer(g2, xDiff, yDiff);
+	        drawLayer(renderer, 1); // main floor layer
+	        drawMidLayer(renderer);
 
 	        if (drawPath) {
-	            g2.setColor(new Color(255, 220, 100, 80));
-	            gp.npcM.drawPaths(g2);
+	            //g2.setColor(new Color(255, 220, 100, 80));
+	            gp.npcM.drawPaths(renderer);
 	        }
 	    }
 	    //Draws the selected level
-	    private void drawLayer(Graphics2D g, float xDiff, float yDiff, int layer) {
+	    private void drawLayer(Renderer renderer, int layer) {
 	        int tileSize = gp.tileSize;
 
 	        // Convert camera offset to tile indices
-	        int startCol = Math.max(0, (int)(xDiff / tileSize));
-	        int startRow = Math.max(0, (int)(yDiff / tileSize));
+	        int startCol = Math.max(0, (int)(gp.camera.position.x / tileSize));
+	        int startRow = Math.max(0, (int)(gp.camera.position.y / tileSize));
 
-	        int endCol = Math.min(currentMapWidth, (int)((xDiff + gp.screenWidth) / tileSize) + 1);
-	        int endRow = Math.min(currentMapHeight, (int)((yDiff + gp.screenHeight) / tileSize) + 1);
+	        int endCol = Math.min(currentMapWidth, (int)((gp.camera.position.x + gp.frameWidth) / tileSize) + 1);
+	        int endRow = Math.min(currentMapHeight, (int)((gp.camera.position.y + gp.frameHeight) / tileSize) + 1);
 
 	        for (int i = startCol; i < endCol; i++) {
 	            for (int j = startRow; j < endRow; j++) {
 	                int tileIndex = currentRoom.mapGrid[layer][i][j];
 	                if(tileIndex == 0) {
-	                	g.drawImage(tiles[tileIndex].image,i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize,null);
+	                	renderer.draw(tiles[tileIndex].image,i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
 	                } else {
 		                if (tileIndex < 0 || tileIndex >= tiles.length) continue; // safety check
 		                
 		                if(!tiles[tileIndex].isWall && !tiles[tileIndex].isFloor && !tiles[tileIndex].isBeam) {
-		                	g.drawImage(tiles[tileIndex].image, i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize,null);
+		                	renderer.draw(tiles[tileIndex].image, i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
 		                } else if(tiles[tileIndex].isWall){
-		                	g.drawImage(currentRoom.getWallpaper().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                	renderer.draw(currentRoom.getWallpaper().getImage(tileIndex), i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
 		                } else if(tiles[tileIndex].isFloor){
-		                	g.drawImage(currentRoom.getFloorpaper().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                	renderer.draw(currentRoom.getFloorpaper().getImage(tileIndex), i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
 		                } else {
-		                	g.drawImage(currentRoom.getBeam().getImage(tileIndex), i * tileSize - (int)xDiff,j * tileSize - (int)yDiff,tileSize,tileSize, null);
+		                	renderer.draw(currentRoom.getBeam().getImage(tileIndex), i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
 		                }
 	                }
 	            }
 	        }
 	    }
-	    public void drawBackground(Graphics2D g, float xDiff, float yDiff) {
-	        drawLayer(g, xDiff, yDiff, 0);
+	    public void drawBackground(Renderer renderer) {
+	        drawLayer(renderer, 0);
 	    }
-	    public void drawMidLayer(Graphics2D g, float xDiff, float yDiff) {
-	        drawLayer(g, xDiff, yDiff, 2);
+	    public void drawMidLayer(Renderer renderer) {
+	        drawLayer(renderer, 2);
 	    }
-	    public void drawForeground(Graphics2D g, float xDiff, float yDiff) {
-	    	drawLayer(g, xDiff, yDiff, 3);
+	    public void drawForeground(Renderer renderer) {
+	    	drawLayer(renderer, 3);
 	    }
 }

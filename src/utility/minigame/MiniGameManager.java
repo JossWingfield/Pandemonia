@@ -1,10 +1,9 @@
 package utility.minigame;
 
-import java.awt.Graphics2D;
-
 import entity.items.Plate;
 import entity.items.Seasoning;
 import main.GamePanel;
+import main.renderer.Renderer;
 
 public class MiniGameManager {
     public SeasoningMiniGame seasoningMiniGame;
@@ -25,8 +24,8 @@ public class MiniGameManager {
         // other UI updates...
     }
 
-    public void draw(Graphics2D g2) {
+    public void draw(Renderer renderer) {
         // other UI elements...
-        seasoningMiniGame.draw(g2);
+        seasoningMiniGame.draw(renderer);
     }
 }

@@ -1,10 +1,10 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import utility.DayPhase;
 
 public class TipJar extends Building {
@@ -15,7 +15,7 @@ public class TipJar extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		
 		isSolid = false;
-		blueprint = false;
+		
 		hitbox.width = 32;
 		hitbox.height = 32;
 		drawWidth = 48;
@@ -40,7 +40,7 @@ public class TipJar extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][3];
+		animations = new TextureRegion[1][1][3];
 		
 		name = "Tip Jar";
 		animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(0, 0, 16, 16);
@@ -57,7 +57,7 @@ public class TipJar extends Building {
 			firstDraw = false;
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		
 		int a = 0;
 		if(gp.world.getCurrentPhase() == DayPhase.SERVICE) {
@@ -66,10 +66,10 @@ public class TipJar extends Building {
 			a = 2;
 		}
         
-	    g2.drawImage(animations[0][0][a], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	    renderer.draw(animations[0][0][a], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
         
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDiff, (int) (hitbox.y - yDiff), gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x , (int) (hitbox.y ), gp.tileSize, gp.tileSize);
 		}
 	        
 	}

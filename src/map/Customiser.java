@@ -3,51 +3,41 @@ package map;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import entity.buildings.Building;
-import entity.buildings.FloorDecor_Building;
-import entity.buildings.FoodStore;
-import entity.buildings.HerbBasket;
 import entity.buildings.Shelf;
-import entity.buildings.Sink;
-import entity.buildings.TipJar;
-import entity.buildings.Toilet;
-import entity.buildings.Torch;
-import entity.buildings.Turntable;
-import entity.buildings.WallDecor_Building;
 import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.BitmapFont;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.CollisionMethods;
 import utility.Statistics;
-import utility.save.CatalogueSaveData;
 import utility.save.CustomiserSaveData;
 
 public class Customiser {
 	
 	GamePanel gp;
 	
-	Color c = new Color(51, 60, 58);
-	BasicStroke s = new BasicStroke(3);
-	Font font = new Font("monogram", Font.BOLD, 100);
+	Colour c = new Colour(51, 60, 58);
+	BitmapFont font;
 	
-	private BufferedImage frame, buildFrame, buildFrameHighlight, buildFrameHighlight2, border;
-	private BufferedImage decorTab, kitchenTab, floorTab, wallTab, storeTab, bathroomTab, beamTab, chairTab, tableTab;
-	private BufferedImage decorTab2, kitchenTab2, floorTab2, wallTab2, storeTab2, bathroomTab2, beamTab2, chairTab2, tableTab2;
+	private TextureRegion frame, buildFrame, buildFrameHighlight, buildFrameHighlight2, border;
+	private TextureRegion decorTab, kitchenTab, floorTab, wallTab, storeTab, bathroomTab, beamTab, chairTab, tableTab;
+	private TextureRegion decorTab2, kitchenTab2, floorTab2, wallTab2, storeTab2, bathroomTab2, beamTab2, chairTab2, tableTab2;
 	
 	private int ySize = 126*3;
 	int yStart;
 	private double clickCounter = 0;
 	public boolean showBuildings = true;
 	
-	private Color noBuild = new Color(239, 4, 4, 150);
-	private Color yesBuild = new Color(48, 227, 13, 150);
+	private Colour noBuild = new Colour(239, 4, 4, 150);
+	private Colour yesBuild = new Colour(48, 227, 13, 150);
 	
 	public int pageNum = 1;
 	private List<Building> decorBuildingInventory = new ArrayList<Building>();
@@ -66,7 +56,7 @@ public class Customiser {
 	public Customiser(GamePanel gp) {
 		this.gp = gp;
 		yStart = gp.frameHeight-ySize+4;
-		frame = importImage("/UI/customise/CustomiseFrame.png");
+		frame = importImage("/UI/customise/CustomiseFrame.png").toTextureRegion();
 		buildFrame = importImage("/UI/customise/BuildFrame.png").getSubimage(0, 0, 37, 37);
 		buildFrameHighlight = importImage("/UI/customise/BuildFrame.png").getSubimage(37, 0, 37, 37);
 		buildFrameHighlight2 = importImage("/UI/customise/BuildFrame.png").getSubimage(37*2, 0, 37, 37);
@@ -90,7 +80,9 @@ public class Customiser {
 		chairTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*8, 25, 34, 25);
 		tableTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 25, 34, 25);
 		
-		border = importImage("/UI/customise/WallBorder.png");
+		border = importImage("/UI/customise/WallBorder.png").toTextureRegion();
+		
+		font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
 	}
 	public void clear() {
 		decorBuildingInventory.clear();
@@ -169,19 +161,14 @@ public class Customiser {
 			tableSkinInventory.add(new TableSkin(gp, i));
 		}
 	}
-	private BufferedImage importImage(String filePath) { //Imports and stores the image
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
+	private Texture importImage(String filePath) {
+		Texture texture = AssetPool.getTexture(filePath);
+	    return texture;
+	}
 	private boolean containsMouse(int x, int y, int w, int h) {
 		
-		int mouseX = gp.mouseI.mouseX;
-		int mouseY = gp.mouseI.mouseY;
+		int mouseX = (int)gp.mouseL.getWorldX();
+		int mouseY = (int)gp.mouseL.getWorldY();
 		
 		if(mouseX > x && mouseX < x+w && mouseY>y && mouseY <y+h) {
 			return true;
@@ -238,116 +225,124 @@ public class Customiser {
 		    	clickCounter = 0;      // clamp to zero
 		    }
 		}
+		/*
+		if(gp.currentState == gp.customiseRestaurantState) {
+        	if(!showBuildings) {
+        		showBuildings = true;
+        		selectedBuilding = null;
+        	}
+        }
+        */
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		
-		int mouseX = gp.mouseI.mouseX;
-		int mouseY = gp.mouseI.mouseY;
+		int mouseX = (int)gp.mouseL.getWorldX();
+		int mouseY = (int)gp.mouseL.getWorldY();
 		int yOffset = 32;
 
 		if(showBuildings) {
-			g2.setColor(c);
-			g2.drawImage(frame, 0, yStart, gp.frameWidth, ySize, null);
+			renderer.draw(frame, 0, yStart, gp.frameWidth, ySize);
 			int xStart = 20;
 			yStart = gp.frameHeight-ySize+4 - 20 + yOffset;
 			
 			
 			int xTabStart = 40;
+			float fontScale = 1.0f;
 			
 			if(pageNum == 1) {
-				g2.drawImage(decorTab2, xTabStart, yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(decorTab2, xTabStart, yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart, yStart-25*3, 34*3, 25*3)) {
-					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 1;
 					}
 				}
-				g2.drawImage(decorTab, xTabStart, yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(decorTab, xTabStart, yStart-25*3, 34*3, 25*3);
 			}
 			
 			if(pageNum == 2) {
-				g2.drawImage(kitchenTab2, xTabStart + (34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(kitchenTab2, xTabStart + (34*3), yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart + (34*3), yStart-25*3, 34*3, 25*3)) {
-					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 2;
 					}
 				}
-				g2.drawImage(kitchenTab, xTabStart + (34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(kitchenTab, xTabStart + (34*3), yStart-25*3, 34*3, 25*3);
 			}
 			
 			if(pageNum == 3) {
-				g2.drawImage(floorTab2, xTabStart + 2*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(floorTab2, xTabStart + 2*(34*3), yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart + 2*(34*3), yStart-25*3, 34*3, 25*3)) {
-					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 3;
 					}
 				}
-				g2.drawImage(floorTab, xTabStart + 2*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(floorTab, xTabStart + 2*(34*3), yStart-25*3, 34*3, 25*3);
 			}
 			
 			if(pageNum == 4) {
-				g2.drawImage(wallTab2, xTabStart + 3*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(wallTab2, xTabStart + 3*(34*3), yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart + 3*(34*3), yStart-25*3, 34*3, 25*3)) {
-					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 4;
 					}
 				}
-				g2.drawImage(wallTab, xTabStart + 3*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(wallTab, xTabStart + 3*(34*3), yStart-25*3, 34*3, 25*3);
 			}
 			if(pageNum == 5) {
-				g2.drawImage(beamTab2, xTabStart + 4*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(beamTab2, xTabStart + 4*(34*3), yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart + 4*(34*3), yStart-25*3, 34*3, 25*3)) {
-					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 5;
 					}
 				}
-				g2.drawImage(beamTab, xTabStart + 4*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(beamTab, xTabStart + 4*(34*3), yStart-25*3, 34*3, 25*3);
 			}
 			if(pageNum == 6) {
-				g2.drawImage(storeTab2, xTabStart + 5*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(storeTab2, xTabStart + 5*(34*3), yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart + 5*(34*3), yStart-25*3, 34*3, 25*3)) {
-					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 6;
 					}
 				}
-				g2.drawImage(storeTab, xTabStart + 5*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(storeTab, xTabStart + 5*(34*3), yStart-25*3, 34*3, 25*3);
 			}
 			
 			if(pageNum == 7) {
-				g2.drawImage(bathroomTab2, xTabStart + 6*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(bathroomTab2, xTabStart + 6*(34*3), yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart + 6*(34*3), yStart-25*3, 34*3, 25*3)) {
-					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 7;
 					}
 				}
-				g2.drawImage(bathroomTab, xTabStart + 6*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(bathroomTab, xTabStart + 6*(34*3), yStart-25*3, 34*3, 25*3);
 			}
 			
 			if(pageNum == 8) {
-				g2.drawImage(chairTab2, xTabStart + 7*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(chairTab2, xTabStart + 7*(34*3), yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart + 7*(34*3), yStart-25*3, 34*3, 25*3)) {
-					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 8;
 					}
 				}
-				g2.drawImage(chairTab, xTabStart + 7*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(chairTab, xTabStart + 7*(34*3), yStart-25*3, 34*3, 25*3);
 			}
 			if(pageNum == 9) {
-				g2.drawImage(tableTab2, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(tableTab2, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3)) {
-					if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 9;
 					}
 				}
-				g2.drawImage(tableTab, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3, null);
+				renderer.draw(tableTab, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3);
 			}
 				
 			if(pageNum == 1) {
@@ -360,9 +355,7 @@ public class Customiser {
 				int startDraw = 0;
 				
 				if(decorBuildingInventory.size() == 0) {
-					g2.setFont(font);
-					g2.setColor(c);
-					g2.drawString("No Decorations!", xStart + 50, yPos+50);
+					renderer.drawString(font, "No Decorations!", xStart + 50, yPos+50, fontScale, c);
 				}
 				
 				int index = 0;
@@ -371,16 +364,16 @@ public class Customiser {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					selectedBuilding = b;
 			    					clickCounter = 0.33;
 			    					showBuildings = false;
 			    				}
 			    			} else {
-								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
+							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
 
 			    			xStart+= 37*3;
@@ -405,9 +398,7 @@ public class Customiser {
 				int startDraw = 0;
 				
 				if(kitchenBuildingInventory.size() == 0) {
-					g2.setFont(font);
-					g2.setColor(c);
-					g2.drawString("No Kitchen Items!", xStart + 50, yPos+50);
+					renderer.drawString(font, "No Kitchen Items!", xStart + 50, yPos+50, fontScale, c);
 				}
 				
 				int index = 0;
@@ -416,16 +407,16 @@ public class Customiser {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					selectedBuilding = b;
 			    					clickCounter = 0.33;
 			    					showBuildings = false;
 			    				}
 			    			} else {
-								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
+							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
 			    			xStart+= 37*3;
 			    			counter++;
@@ -450,9 +441,7 @@ public class Customiser {
 				int startDraw = 0;
 				
 				if(floorpaperInventory.size() == 0) {
-					g2.setFont(font);
-					g2.setColor(c);
-					g2.drawString("No Flooring!", xStart + 50, yPos+50);
+					renderer.drawString(font, "No Flooring!", xStart + 50, yPos+50, fontScale, c);
 				}
 				
 				int index = 0;
@@ -461,17 +450,17 @@ public class Customiser {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setFloorpaper(b);
 			    					floorpaperInventory.remove(b);
 			    					clickCounter = 0.33;
 			    				}
 			    			} else {
-								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
-			    			g2.drawImage(border, xStart+(55) - 24, yPos+28, 48, 48, null);
+							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
+			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 
 			    			xStart+= 37*3;
 			    			counter++;
@@ -495,9 +484,7 @@ public class Customiser {
 				int startDraw = 0;
 				
 				if(wallpaperInventory.size() == 0) {
-					g2.setFont(font);
-					g2.setColor(c);
-					g2.drawString("No Wallpapers!", xStart + 50, yPos+50);
+					renderer.drawString(font, "No Wallpapers!", xStart + 50, yPos+50, fontScale, c);
 				}
 				
 				int index = 0;
@@ -506,17 +493,17 @@ public class Customiser {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setWallpaper(b);
 			    					wallpaperInventory.remove(b);
 			    					clickCounter = 0.33;
 			    				}
 			    			} else {
-								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
-			    			g2.drawImage(border, xStart+(55) - 24, yPos+28, 48, 48, null);
+							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
+			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 
 			    			xStart+= 37*3;
 			    			counter++;
@@ -540,9 +527,7 @@ public class Customiser {
 				int startDraw = 0;
 				
 				if(beamInventory.size() == 0) {
-					g2.setFont(font);
-					g2.setColor(c);
-					g2.drawString("No Beams!", xStart + 50, yPos+50);
+					renderer.drawString(font, "No Beams!", xStart + 50, yPos+50, fontScale, c);
 				}
 				
 				int index = 0;
@@ -551,18 +536,18 @@ public class Customiser {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								g2.drawImage(buildFrameHighlight2, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+								renderer.draw(buildFrameHighlight2, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setBeam(b);
 			    					beamInventory.remove(b);
 			    					clickCounter = 0.33;
 			    				}
 			    			} else {
-								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
 			    			
-							g2.drawImage(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
-			    			g2.drawImage(border, xStart+(55) - 24, yPos+28, 48, 48, null);
+							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
+			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 
 			    			xStart+= 37*3;
 			    			counter++;
@@ -586,9 +571,7 @@ public class Customiser {
 				int startDraw = 0;
 				
 				if(storeBuildingInventory.size() == 0) {
-					g2.setFont(font);
-					g2.setColor(c);
-					g2.drawString("No Store Items!", xStart + 50, yPos+50);
+					renderer.drawString(font, "No Store Items!", xStart + 50, yPos+50, fontScale, c);
 				}
 				
 				int index = 0;
@@ -597,16 +580,16 @@ public class Customiser {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					selectedBuilding = b;
 			    					clickCounter = 0.33;
 			    					showBuildings = false;
 			    				}
 			    			} else {
-								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
+							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
 			    			xStart+= 37*3;
 			    			counter++;
@@ -630,9 +613,7 @@ public class Customiser {
 				int startDraw = 0;
 				
 				if(bathroomBuildingInventory.size() == 0) {
-					g2.setFont(font);
-					g2.setColor(c);
-					g2.drawString("No Bathroom Items!", xStart + 50, yPos+50);
+					renderer.drawString(font, "No Bathroom Items!", xStart + 50, yPos+50, fontScale, c);
 				}
 				
 				int index = 0;
@@ -641,16 +622,16 @@ public class Customiser {
 						if(b != null) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					selectedBuilding = b;
 			    					clickCounter = 0.33;
 			    					showBuildings = false;
 			    				}
 			    			} else {
-								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
+							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
 			    			xStart+= 37*3;
 			    			counter++;
@@ -674,9 +655,7 @@ public class Customiser {
 				int startDraw = 0;
 				
 				if(chairSkinInventory.size() == 0) {
-					g2.setFont(font);
-					g2.setColor(c);
-					g2.drawString("No Chairs!", xStart + 50, yPos+50);
+					renderer.drawString(font, "No Chairs!", xStart + 50, yPos+50, fontScale, c);
 				}
 				
 				int index = 0;
@@ -684,17 +663,17 @@ public class Customiser {
 					if(index >= startDraw) {
 						if(b != null) {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setChairSkin(b);
 			    					chairSkinInventory.remove(b);
 			    					clickCounter = 0.33;
 			    					gp.buildingM.refreshBuildings();
 			    				}
 			    			} else {
-								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-			    			g2.drawImage(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
+			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
 			    			xStart+= 37*3;
 			    			counter++;
@@ -718,9 +697,7 @@ public class Customiser {
 				int startDraw = 0;
 				
 				if(tableSkinInventory.size() == 0) {
-					g2.setFont(font);
-					g2.setColor(c);
-					g2.drawString("No Tables!", xStart + 50, yPos+50);
+					renderer.drawString(font, "No Tables!", xStart + 50, yPos+50, fontScale, c);
 				}
 				
 				int index = 0;
@@ -728,17 +705,17 @@ public class Customiser {
 					if(index >= startDraw) {
 						if(b != null) {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setTableSkin(b);
 			    					tableSkinInventory.remove(b);
 			    					clickCounter = 0.33;
 			    					gp.buildingM.refreshBuildings();
 			    				}
 			    			} else {
-								g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-			    			g2.drawImage(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
+			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
 			    			xStart+= 37*3;
 			    			counter++;
@@ -756,15 +733,14 @@ public class Customiser {
 			}
 			
 		}
-		
 		if(selectedBuilding != null) {
 			if(mouseY < gp.frameHeight-ySize || !showBuildings) {
 				int size = 4*3;
 				if(selectedBuilding.tileGrid) {
 					size = 16*3;
 				}
-				int xPos = (int)((mouseX+xDiff)/size) * size;
-				int yPos = (int)((mouseY+yDiff)/size) * size;
+				int xPos = (int)((mouseX)/size) * size;
+				int yPos = (int)((mouseY)/size) * size;
 			    if(prevX != xPos || prevY != yPos) {
 			    	selectedBuilding.hitbox.x = xPos;
 					selectedBuilding.hitbox.y = yPos;
@@ -787,16 +763,17 @@ public class Customiser {
 			    	    }
 		    	    }
 				}
-				BufferedImage img = selectedBuilding.animations[0][0][0];
+				TextureRegion img = selectedBuilding.animations[0][0][0];
+				Colour c;
 				if(canPlace) {
-					img = CollisionMethods.getMaskedImage(yesBuild, img);
+					c = yesBuild;
 				} else {
-					img = CollisionMethods.getMaskedImage(noBuild, img);
+					c = noBuild;
 				}
-				g2.drawImage(img, xPos-xDiff - selectedBuilding.xDrawOffset, yPos-yDiff - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getWidth()*3, selectedBuilding.animations[0][0][0].getHeight()*3, null);
+				renderer.draw(img, xPos - selectedBuilding.xDrawOffset, yPos - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getPixelWidth()*3, selectedBuilding.animations[0][0][0].getPixelHeight()*3, c.toVec4());
 				prevX = xPos;
 				prevY = yPos;
-				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 					if(canPlace) {
 						
 						boolean onShelf = false;

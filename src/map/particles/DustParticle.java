@@ -1,11 +1,11 @@
 package map.particles;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.Random;
 
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
 
 public class DustParticle extends Particle {
     
@@ -26,11 +26,11 @@ public class DustParticle extends Particle {
         );
     }
 
-    private static Color generateGreyColor() {
+    private static Colour generateGreyColor() {
         // Randomized soft grey with slight variation (so it doesn’t look uniform)
         int base = 100 + rand.nextInt(80); // range: 100–180
         int tint = rand.nextInt(20) - 10;  // subtle tone shift
-        return new Color(
+        return new Colour(
             clamp(base + tint),
             clamp(base + tint),
             clamp(base + tint)
@@ -56,18 +56,18 @@ public class DustParticle extends Particle {
     }
 
     //@Override
-    public void draw(Graphics2D g, int xDiff, int yDiff) {
-        int screenX = (int)(x - xDiff);
-        int screenY = (int)(y - yDiff);
+    public void draw(Renderer renderer) {
+        int screenX = (int)(x );
+        int screenY = (int)(y );
 
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-        g.setColor(color);
-        g.fillOval((int)(screenX - size/2), (int)(screenY - size/2), (int)size, (int)size);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        //g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+       // g.setColor(color);
+        //g.fillOval((int)(screenX - size/2), (int)(screenY - size/2), (int)size, (int)size);
+        //g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 
 	//@Override
-	public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
+	public void drawEmissive(Renderer renderer) {
 		// TODO Auto-generated method stub
 		
 	}

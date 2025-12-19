@@ -1,14 +1,13 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import map.LightSource;
-import utility.DayPhase;
 
 public class Lantern extends Building{
 	
@@ -32,7 +31,7 @@ public class Lantern extends Building{
         drawHeight = 96;
         hitbox.height = 80;
 		isSolid = false;
-		blueprint = false;
+		
 		importImages();
 		mustBePlacedOnWall = true;
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
@@ -49,7 +48,7 @@ public class Lantern extends Building{
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		
 		name = "Lantern";
     	animations[0][0][0] = importImage("/decor/Lantern.png").getSubimage(0, 0, 16, 32);
@@ -77,11 +76,11 @@ public class Lantern extends Building{
 		}
 	}
 
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if (firstUpdate) {
 			firstUpdate = false;
 			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + hitbox.height / 2),
-					Color.ORANGE, 240);
+					Colour.ORANGE, 240);
 			light.setIntensity(0.4f);
 			if (turnedOn) {
 				gp.lightingM.addLight(light);
@@ -113,10 +112,10 @@ public class Lantern extends Building{
 			i = 1;
 		}
 		
-	     g2.drawImage(animations[0][0][i], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	     renderer.draw(animations[0][0][i], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	    
 	}

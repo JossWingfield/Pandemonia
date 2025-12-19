@@ -1,12 +1,13 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
-import entity.npc.Customer;
+import org.lwjgl.glfw.GLFW;
+
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import map.LightSource;
 
 public class Breaker extends Building{
@@ -20,7 +21,7 @@ public class Breaker extends Building{
 		super(gp, xPos, yPos, 48*2, 48*2);
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 32*3;
 		drawHeight = 48*3;
 		yDrawOffset = 24;
@@ -44,7 +45,7 @@ public class Breaker extends Building{
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][4];
+		animations = new TextureRegion[1][1][4];
 		
 		name = "Breaker";
     	animations[0][0][0] = importImage("/decor/Breaker.png").getSubimage(0, 0, 32, 48);
@@ -55,7 +56,7 @@ public class Breaker extends Building{
     }
 	public void cutPower() {
 		powerOn = false;
-		gp.lightingM.updateLightColor(3, light, Color.RED);
+		gp.lightingM.updateLightColor(3, light, Colour.RED);
 		gp.lightingM.addLight(gp.player.playerLight);
 	}
 	public boolean isPowerOff() {
@@ -65,39 +66,39 @@ public class Breaker extends Building{
 		super.update(dt);
 		if(firstUpdate) {
 			firstUpdate = false;
-			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.GREEN, 100);
+			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.GREEN, 100);
 			gp.mapM.getRoom(3).addLight(light);
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(powerOn) {
 		    if(gp.player.interactHitbox.intersects(interactHitbox)) {
-			    g2.drawImage(animations[0][0][2], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    renderer.draw(animations[0][0][2], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    } else {
-			    g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    }
 		} else {
-			gp.lightingM.updateLightColor(3, light, Color.RED);
+			gp.lightingM.updateLightColor(3, light, Colour.RED);
 			if(gp.player.interactHitbox.intersects(interactHitbox)) {
-			    g2.drawImage(animations[0][0][3], (int)(hitbox.x - xDrawOffset - xDiff), (int)(hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
-			    if(gp.keyI.ePressed) {
+			    renderer.draw(animations[0][0][3], (int)(hitbox.x - xDrawOffset ), (int)(hitbox.y )-yDrawOffset, drawWidth, drawHeight);
+			    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 			    	powerOn = true;
-			    	gp.gui.addMessage("Power Back Online", Color.GREEN);
+			    	gp.gui.addMessage("Power Back Online", Colour.GREEN);
 			    	gp.lightingM.removeLight(gp.player.playerLight);
 			    	gp.lightingM.setPowerOn();
-					gp.lightingM.updateLightColor(3, light, Color.GREEN);
+					gp.lightingM.updateLightColor(3, light, Colour.GREEN);
 					if(!gp.cutsceneM.cutscenePlayed.contains("Ignis I")) {
 						gp.cutsceneM.cutsceneQueued = true;
 						gp.cutsceneM.cutsceneName = "Ignis I";
 					}
 			    }
 			} else {
-			    g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    renderer.draw(animations[0][0][1], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    }
 		}
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	    
 	}

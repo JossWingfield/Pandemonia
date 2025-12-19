@@ -1,16 +1,16 @@
 package entity.items;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class Food extends Item {
 	
 	public FoodState foodState;
 	
 	protected int foodLayer = 0;
-	private BufferedImage burntImage;
+	private Texture burntImage;
 	public boolean cutIntoNewItem = false;
 	public boolean notRawItem = false;
 
@@ -56,8 +56,8 @@ public class Food extends Item {
 	public int getFoodLayer() {
 		return foodLayer;
 	}
-	 public void draw(Graphics2D g, int xDiff, int yDiff) {
-		 BufferedImage img = animations[0][0][0];
+	 public void draw(Renderer renderer) {
+		 TextureRegion img = animations[0][0][0];
 		 switch(foodState) {
 		 case RAW:
 			 img = animations[0][0][0];
@@ -76,11 +76,11 @@ public class Food extends Item {
 			 break;
 		 }
 		 
-		 g.drawImage(img, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		 renderer.draw(img, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 	 }
-	 public BufferedImage getImage() {
-		 BufferedImage img = animations[0][0][0];
+	 public TextureRegion getImage() {
+		 TextureRegion img = animations[0][0][0];
 		 switch(foodState) {
 		 case RAW:
 			 img = animations[0][0][0];
@@ -98,7 +98,7 @@ public class Food extends Item {
 			 img = animations[0][0][4];
 			 break;
 		 case BURNT:
-			 img = burntImage;
+			 img = burntImage.toTextureRegion();
 			 break;
 		 }
 		 return img;

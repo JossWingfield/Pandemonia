@@ -1,9 +1,9 @@
 package entity.npc;
 
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import main.renderer.TextureRegion;
 
 public class Employee extends NPC {
 	
@@ -21,7 +21,7 @@ public class Employee extends NPC {
 	}
 	
 	private void importImages() {
-		animations = new BufferedImage[1][2][2];
+		animations = new TextureRegion[1][2][2];
 		//animations[0][0][0] = importImage("/npcs/Chicken 3.png").getSubimage(0, 0, 16, 32);
 	}
 	/*

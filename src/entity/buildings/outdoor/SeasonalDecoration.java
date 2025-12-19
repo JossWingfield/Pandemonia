@@ -1,15 +1,15 @@
 package entity.buildings.outdoor;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import entity.buildings.Building;
 import entity.items.Item;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.CollisionMethods;
-import utility.Season;
 
 public class SeasonalDecoration extends Building {
 
@@ -28,7 +28,7 @@ public class SeasonalDecoration extends Building {
 		r = new Random();
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 16*3;
 		importImages();
@@ -42,7 +42,7 @@ public class SeasonalDecoration extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][10];
+		animations = new TextureRegion[1][1][10];
 		
         switch(type) {
         case 0:
@@ -81,7 +81,7 @@ public class SeasonalDecoration extends Building {
             int row = variant / cols;
             int sx = col * tileSize;
             int sy = row * tileSize;
-            BufferedImage sheet = importImage("/environment/Grass.png");
+            Texture sheet = importImage("/environment/Grass.png");
             animations[0][0][0] = sheet.getSubimage(sx, sy, tileSize, tileSize);
             animations[0][0][1] = sheet.getSubimage(sx + 64, sy, tileSize, tileSize);
             animations[0][0][2] = sheet.getSubimage(sx+128, sy, tileSize, tileSize);
@@ -284,7 +284,7 @@ public class SeasonalDecoration extends Building {
         }
 		
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
 		} 
@@ -305,19 +305,19 @@ public class SeasonalDecoration extends Building {
 			break;
 		}
 		if(invisHitbox == null) {
-		     g2.drawImage(animations[0][0][season], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     renderer.draw(animations[0][0][season], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {
 			if(gp.player.hitbox.intersects(invisHitbox)) {
-				BufferedImage img = animations[0][0][season];
-				img = CollisionMethods.reduceImageAlpha(img, 0.25f);
-				g2.drawImage(img, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				TextureRegion img = animations[0][0][season];
+				//img = CollisionMethods.reduceImageAlpha(img, 0.25f);
+				renderer.draw(img, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 			} else {
-			    g2.drawImage(animations[0][0][season], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			    renderer.draw(animations[0][0][season], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 			}
 		}
 	     
 		 if(destructionUIOpen) {
-		     g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		     renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		 }
 	        
 	}

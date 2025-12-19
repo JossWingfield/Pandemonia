@@ -1,18 +1,16 @@
 package map;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class TableSkin {
 
 	GamePanel gp;
 	
 	public int preset;
-	private BufferedImage img;
+	private TextureRegion img;
     public int cost = 0;
     public String name = "Table";
     public String description = ""; 
@@ -28,38 +26,32 @@ public class TableSkin {
 		
 		switch(preset) {
 		case 0:
-	        img = importImage("/decor/connected table 2.png");
+	        img = importImage("/decor/connected table 2.png").toTextureRegion();
 			break;
 		case 1:
-	        img = importImage("/decor/connected table.png");
+	        img = importImage("/decor/connected table.png").toTextureRegion();
 			cost = 60;
 			break;
 		case 2:
-	        img = importImage("/decor/TableCloth.png");
+	        img = importImage("/decor/TableCloth.png").toTextureRegion();
 			cost = 100;
 			break;
 		case 3:
-	        img = importImage("/decor/destroyed/OldTable.png");
+	        img = importImage("/decor/destroyed/OldTable.png").toTextureRegion();
 			break;
 		}
 		
 	}
 
-	public BufferedImage getImage() {
-		return img.getSubimage(16, 10, 16, 32);
+	public TextureRegion getImage() {
+		return img.texture.getSubimage(16, 10, 16, 32);
 	}
-	public BufferedImage getTableImage(int x, int y, int w, int h) {
-		return img.getSubimage(x, y, w, h);
+	public TextureRegion getTableImage(int x, int y, int w, int h) {
+		return img.texture.getSubimage(x, y, w, h);
 	}
-    protected BufferedImage importImage(String filePath) { //Imports and stores the image
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-            //BufferedImage scaledImage = new BufferedImage(width, height, original.getType());
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
+	protected Texture importImage(String filePath) {
+		Texture texture = AssetPool.getTexture(filePath);
+		return texture;
+	}
 	
 }

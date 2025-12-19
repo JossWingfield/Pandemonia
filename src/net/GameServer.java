@@ -1,6 +1,24 @@
 package net;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
+
+import entity.PlayerMP;
+import entity.buildings.Building;
+import entity.buildings.ChoppingBoard;
+import entity.buildings.Sink;
+import entity.buildings.Stove;
+import entity.items.Food;
+import entity.items.FryingPan;
+import entity.items.Item;
+import entity.items.SmallPan;
 import main.GamePanel;
+import main.renderer.Colour;
 import net.packets.Packet;
 import net.packets.Packet00Login;
 import net.packets.Packet01Disconnect;
@@ -25,25 +43,6 @@ import net.packets.Packet19AddFoodToPlateInHand;
 import net.packets.Packet20AddFoodToPlateOnTable;
 import net.packets.Packet21PickupPlate;
 import net.packets.Packet22PlacePlate;
-
-import java.awt.Color;
-import java.io.IOException;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import entity.PlayerMP;
-import entity.buildings.Building;
-import entity.buildings.ChoppingBoard;
-import entity.buildings.FloorDecor_Building;
-import entity.buildings.Fridge;
-import entity.buildings.Sink;
-import entity.buildings.Stove;
-import entity.items.Food;
-import entity.items.FryingPan;
-import entity.items.Item;
-import entity.items.Plate;
-import entity.items.SmallPan;
 
 
 public class GameServer extends Thread{
@@ -111,7 +110,7 @@ public class GameServer extends Thread{
                 break;
             case LOGIN:
                 packet = new Packet00Login(data);
-                gp.gui.addMessage(((Packet00Login) packet).getUsername() + " has joined the game...", Color.WHITE);
+                gp.gui.addMessage(((Packet00Login) packet).getUsername() + " has joined the game...", Colour.WHITE);
 
                 System.out.println("[" + address.getHostAddress() + ":" + port + "] " + ((Packet00Login)packet).getUsername() + " has connected...");
                 PlayerMP player = new PlayerMP(gp, 200, 200, ((Packet00Login)packet).getUsername(), address, port);

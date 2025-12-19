@@ -1,10 +1,10 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class ChefPortrait extends Building{
 	
@@ -13,7 +13,7 @@ public class ChefPortrait extends Building{
 		super(gp, xPos, yPos, 48*2, 48*2);
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 32*3;
 		drawHeight = 32*3;
 		importImages();
@@ -34,17 +34,17 @@ public class ChefPortrait extends Building{
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][1];
+		animations = new TextureRegion[1][1][1];
 		
 		name = "Chef Portrait";
-    	animations[0][0][0] = importImage("/decor/EmptyPainting.png");
+    	animations[0][0][0] = importImage("/decor/EmptyPainting.png").toTextureRegion();
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
-	     g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	public void draw(Renderer renderer) {
+	     renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	    
 	}

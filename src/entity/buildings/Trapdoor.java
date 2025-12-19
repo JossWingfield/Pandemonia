@@ -1,11 +1,12 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import utility.RecipeManager;
 
 public class Trapdoor extends Building {
@@ -22,7 +23,7 @@ public class Trapdoor extends Building {
 		this.type = type;
 		
 		isSolid = false;
-		blueprint = false;
+		
 		drawWidth = 32*3;
 		drawHeight = 32*3;
 		yDrawOffset = 24;
@@ -47,7 +48,7 @@ public class Trapdoor extends Building {
 		roomNum = num;
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		
 		name = "Trapdoor 1";
 		if(type == 0) {
@@ -76,14 +77,14 @@ public class Trapdoor extends Building {
 		}
 		if(gp.player.hitbox.intersects(entryHitbox)) {
 			if(cooldown == 0) {
-				if(gp.keyI.ePressed) {
-					gp.keyI.ePressed = false;
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+					//gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) = false;
 					gp.mapM.changeRoom(roomNum, this);
 				}
 			}
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			entryHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, 48, 48);
@@ -101,16 +102,16 @@ public class Trapdoor extends Building {
 	      	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
 			 
 			if(!gp.player.hitbox.intersects(doorHitbox) && !gp.npcM.stockerCheck(npcVisualHitbox)) {
-			    g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);		
+			    renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
 			} else {
-				g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 			}
 			
 		   //g2.setColor(Color.YELLOW);
 		   //g2.drawRect((int)npcHitbox.x, (int)npcHitbox.y, (int)npcHitbox.width, (int)npcHitbox.height);
 			
 			if(destructionUIOpen) {
-			    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+			    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 			}
 			
 		}

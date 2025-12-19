@@ -1,24 +1,19 @@
 package entity.npc;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
-import entity.buildings.Chair;
-import entity.buildings.Toilet;
-import entity.items.Plate;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import map.LightSource;
-import utility.Recipe;
-import utility.RecipeManager;
-import utility.RoomHelperMethods;
 
 public class StoryCharacter extends NPC {
 	
 	protected int type;
 	
-	public BufferedImage faceIcon;
+	public TextureRegion faceIcon;
 	private Graphics2D g2;
 	private boolean firstDraw = true;
 	
@@ -42,7 +37,7 @@ public class StoryCharacter extends NPC {
 		importImages();
 	}
 	private void importImages() {
-		animations = new BufferedImage[5][10][10];
+		animations = new TextureRegion[5][10][10];
 		animations[0][0][0] = importImage("/npcs/mannequin.png").getSubimage(16, 0, 16, 32);
 		name = "";
 		
@@ -72,7 +67,7 @@ public class StoryCharacter extends NPC {
 			case 0:
 				importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
 			    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
-			    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png");
+			    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
 				break;
 			}
 			break;
@@ -87,7 +82,7 @@ public class StoryCharacter extends NPC {
 			hasLight = true;
 			importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
 		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
-		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png");
+		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
 			break;
 		}
 		
@@ -127,11 +122,11 @@ public class StoryCharacter extends NPC {
 	    	  }
 	      }
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		this.g2 = g2;
 		if(firstDraw) {
 			if(hasLight) {
-				ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.BLUE, 48);
+				ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.BLUE, 48);
 				gp.lightingM.addLight(ghostLight);
 			}
 			firstDraw = false;
@@ -143,7 +138,7 @@ public class StoryCharacter extends NPC {
 		}
 	      
 	      if(animations != null) {
-	    	  BufferedImage img = animations[0][currentAnimation][animationCounter];
+	    	  TextureRegion img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {
 	    	  switch(direction) {
@@ -166,10 +161,10 @@ public class StoryCharacter extends NPC {
 		          }
 	    	  }
 	    	  
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  renderer.draw(img, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y - yDrawOffset ), (int)(drawWidth), (int)(drawHeight));
 	      }
 	      if(talking) {
-	    	  //gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- xDiff, (int)hitbox.y - 48*3- yDiff, dialogues[dialogueIndex], this);
+	    	  //gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2, (int)hitbox.y - 48*3, dialogues[dialogueIndex], this);
 	      }
 	      
 	  }

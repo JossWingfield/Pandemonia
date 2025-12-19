@@ -1,13 +1,15 @@
 package entity.items;
 
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.Recipe;
 import utility.RecipeManager;
 
@@ -18,14 +20,14 @@ public class Plate extends Item {
     
     private static final int MAX_LAYERS = 6;
     private boolean isDirty = false;
-    public BufferedImage dirtyImage;
+    public TextureRegion dirtyImage;
 
     private List<String> ingredients = new ArrayList<>();
-    private List<BufferedImage> ingredientImages = new ArrayList<>();
+    private List<TextureRegion> ingredientImages = new ArrayList<>();
     private Set<String> platableFoods = new HashSet<>();
     private Set<String> bypassPlateFoods = new HashSet<>();
     private Recipe matchedRecipe;
-    private BufferedImage matchedRecipeImage;
+    private TextureRegion matchedRecipeImage;
     
     public float seasoningQuality = -1;
 
@@ -47,8 +49,8 @@ public class Plate extends Item {
         bypassPlateFoods.add("Chopped Tomatoes");
     }
     private void importImages() {
-        animations = new BufferedImage[1][1][5];
-        BufferedImage sheet = importImage("/decor/kitchen props.png");
+        animations = new TextureRegion[1][1][5];
+        Texture sheet = importImage("/decor/kitchen props.png");
 
         animations[0][0][0] = sheet.getSubimage(0, 48, 16, 16);
         animations[0][0][1] = sheet.getSubimage(16, 48, 16, 16);
@@ -99,7 +101,7 @@ public class Plate extends Item {
     	isDirty = true;
     	seasoningQuality = -1;
     }
-    public void setDirty(BufferedImage dirtyImage) {
+    public void setDirty(TextureRegion dirtyImage) {
     	isDirty = true;
     	if(dirtyImage != null) {
     		this.dirtyImage = dirtyImage;
@@ -171,7 +173,7 @@ public class Plate extends Item {
         matchedRecipe = RecipeManager.getMatchingRecipe(currentIngredients);
         matchedRecipeImage = getMatchingRecipeIgnoringSeasoning();
     }
-    public BufferedImage getMatchingRecipeIgnoringSeasoning() {
+    public TextureRegion getMatchingRecipeIgnoringSeasoning() {
         for (Recipe recipe : RecipeManager.getAllRecipes()) {
             // Skip recipes that don't match in ingredient count (excluding seasoning)
             List<String> requiredIngredients = new ArrayList<>(recipe.getIngredients());
@@ -229,94 +231,94 @@ public class Plate extends Item {
         Recipe matched = RecipeManager.getMatchingRecipe(getIngredients());
         return matched != null ? matched.getName() : null;
     }
-    public void draw(Graphics2D g, int xDiff, int yDiff) {
-        int baseX = (int) hitbox.x - xDrawOffset - xDiff;
-        int baseY = (int) hitbox.y - yDrawOffset - yDiff;
+    public void draw(Renderer renderer) {
+        int baseX = (int) hitbox.x - xDrawOffset ;
+        int baseY = (int) hitbox.y - yDrawOffset ;
 
         if(isDirty) {
-            g.drawImage(dirtyImage, baseX, baseY, drawWidth, drawHeight, null);
+            renderer.draw(dirtyImage, baseX, baseY, drawWidth, drawHeight);
         } else {
-            g.drawImage(animations[0][0][0], baseX, baseY, drawWidth, drawHeight, null);
+            renderer.draw(animations[0][0][0], baseX, baseY, drawWidth, drawHeight);
         }
         
         // Draw food layers from bottom to top
         
         if (matchedRecipeImage != null) {
-        	g.drawImage(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight, null);
+        	renderer.draw(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight);
         }  else {
             for (int i = 0; i < ingredientImages.size(); i++) {
-                BufferedImage img = ingredientImages.get(i);
+            	TextureRegion img = ingredientImages.get(i);
                 if (img != null) {
-                    g.drawImage(img, baseX, baseY, drawWidth, drawHeight, null);
+                    renderer.draw(img, baseX, baseY, drawWidth, drawHeight);
                 }
             }
         }
         
         if (seasoningQuality != -1) {
-        	BufferedImage seasoning = ingredientImages.get(ingredientImages.size()-1);
-            g.drawImage(seasoning, baseX, baseY, drawWidth, drawHeight, null);
+        	TextureRegion seasoning = ingredientImages.get(ingredientImages.size()-1);
+            renderer.draw(seasoning, baseX, baseY, drawWidth, drawHeight);
         }
         
     }
-    public void drawAtPosition(Graphics2D g, int x, int y) {
+    public void drawAtPosition(Renderer renderer, int x, int y) {
         int baseX = x;
         int baseY = y;
 
         if(isDirty) {
-            g.drawImage(dirtyImage, baseX, baseY, drawWidth, drawHeight, null);
+            renderer.draw(dirtyImage, baseX, baseY, drawWidth, drawHeight);
         } else {
-            g.drawImage(animations[0][0][0], baseX, baseY, drawWidth, drawHeight, null);
+            renderer.draw(animations[0][0][0], baseX, baseY, drawWidth, drawHeight);
         }
         
         // Draw food layers from bottom to top
         
         if (matchedRecipeImage != null) {
-        	g.drawImage(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight, null);
+        	renderer.draw(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight);
         }  else {
             for (int i = 0; i < ingredientImages.size(); i++) {
-                BufferedImage img = ingredientImages.get(i);
+                TextureRegion img = ingredientImages.get(i);
                 if (img != null) {
-                    g.drawImage(img, baseX, baseY, drawWidth, drawHeight, null);
+                    renderer.draw(img, baseX, baseY, drawWidth, drawHeight);
                 }
             }
         }
         
         if (seasoningQuality != -1) {
-        	BufferedImage seasoning = ingredientImages.get(ingredientImages.size()-1);
-            g.drawImage(seasoning, baseX, baseY, drawWidth, drawHeight, null);
+        	TextureRegion seasoning = ingredientImages.get(ingredientImages.size()-1);
+            renderer.draw(seasoning, baseX, baseY, drawWidth, drawHeight);
         }
         
     }
-    public void drawInHand(Graphics2D g, int x, int y, boolean flip) {
+    public void drawInHand(Renderer renderer, int x, int y, boolean flip) {
         int baseX = (int) x;
         int baseY = (int) y;
         
-        BufferedImage base = animations[0][0][0];
+        TextureRegion base = animations[0][0][0];
         
         if(flip) {
         	base = createHorizontalFlipped(base);
         }
 
         if(isDirty) {
-            g.drawImage(dirtyImage, baseX, baseY, drawWidth, drawHeight, null);
+            renderer.draw(dirtyImage, baseX, baseY, drawWidth, drawHeight);
         } else {
-            g.drawImage(base, baseX, baseY, drawWidth, drawHeight, null);
+            renderer.draw(base, baseX, baseY, drawWidth, drawHeight);
         }
         
         if (matchedRecipeImage != null) {
-        	g.drawImage(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight, null);
+        	renderer.draw(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight);
         } else {
             for (int i = 0; i < ingredientImages.size(); i++) {
-                BufferedImage img = ingredientImages.get(i);
+                TextureRegion img = ingredientImages.get(i);
                 if (img != null) {
-                    g.drawImage(img, baseX, baseY, drawWidth, drawHeight, null);
+                    renderer.draw(img, baseX, baseY, drawWidth, drawHeight);
                 }
             }
         }
         
         if (seasoningQuality != -1) {
-        	BufferedImage seasoning = ingredientImages.get(ingredientImages.size()-1);
-            g.drawImage(seasoning, baseX, baseY, drawWidth, drawHeight, null);
+        	TextureRegion seasoning = ingredientImages.get(ingredientImages.size()-1);
+            renderer.draw(seasoning, baseX, baseY, drawWidth, drawHeight);
         }
         
     }

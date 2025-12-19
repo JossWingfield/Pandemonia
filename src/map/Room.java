@@ -1833,10 +1833,6 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Candle(gp, 576, 432, 1);
 			arrayCounter++;
-			buildings[arrayCounter] = new Lantern(gp, 480, 132);
-			arrayCounter++;
-			buildings[arrayCounter] = new Lantern(gp, 624, 132);
-			arrayCounter++;
 			buildings[arrayCounter] = new Computer(gp, 480, 312);
 			arrayCounter++;
 			break;

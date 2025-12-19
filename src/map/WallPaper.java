@@ -1,11 +1,9 @@
 package map;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class WallPaper {
 	
@@ -141,27 +139,26 @@ public class WallPaper {
 		case 30:
 			importWallFromSpriteSheet("/decor/destroyed/OldWallpaper", 6, 4, true);
 			break;
+		case 31:
+		    importWallFromSpriteSheet("/tiles/walls/CabinWall", 6, 4, 64*8, 0, true);
+		    cost = 30;
+			description = "Cosy cabin vibes.";
+			break;
 		}
 		
 	}
-	public BufferedImage getBaseImage() {
+	public TextureRegion getBaseImage() {
 		return tiles[5].image;
 	}
-	public BufferedImage getImage(int index) {
+	public TextureRegion getImage(int index) {
 		return tiles[index - 57].image;
 	}
-    protected BufferedImage importImage(String filePath) { //Imports and stores the image
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-            //BufferedImage scaledImage = new BufferedImage(width, height, original.getType());
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
+	protected Texture importImage(String filePath) {
+			Texture texture = AssetPool.getTexture(filePath);
+		    return texture;
+	}
     private void importWallFromSpriteSheet(String filePath, int rows, int columns, boolean solid) {
-        BufferedImage img = importImage(filePath+".png");
+        Texture img = importImage(filePath+".png");
         int tileSize = 16;
         for(int j = 0; j < rows; j++) {
             for(int i = 0; i < columns; i++) {
@@ -173,7 +170,7 @@ public class WallPaper {
         }
     }
     private void importWallFromSpriteSheet(String filePath, int rows, int columns, int startX, int startY, boolean solid) {
-        BufferedImage img = importImage(filePath+".png");
+        Texture img = importImage(filePath+".png");
         int tileSize = 16;
         for(int j = 0; j < rows; j++) {
             for(int i = 0; i < columns; i++) {

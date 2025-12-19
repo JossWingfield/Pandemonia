@@ -1,6 +1,5 @@
 package map.particles;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.Random;
 
 import ai.Node;
 import main.GamePanel;
+import main.renderer.Renderer;
 import map.Room;
 
 
@@ -59,8 +59,8 @@ public class ParticleSystem {
             if (spawnCooldown <= 0) {
                 spawnCooldown = 3;
                 while (particles.size() < dustTargetCount) {
-                    float x = (float) (Math.random() * gp.screenWidth);
-                    float y = (float) (Math.random() * gp.screenHeight);
+                    float x = (float) (Math.random() * gp.frameWidth);
+                    float y = (float) (Math.random() * gp.frameHeight);
                     addParticle(new DustParticle(gp, x, y));
                 }
             }
@@ -72,8 +72,8 @@ public class ParticleSystem {
 	        if (spawnCooldown <= 0) {
 	            spawnCooldown = 2; // every few frames, spawn one or two
 	            while (particles.size() < targetFireflyCount) {
-	                float x = (float) (Math.random() * gp.screenWidth);
-	                float y = (float) (Math.random() * gp.screenHeight);
+	                float x = (float) (Math.random() * gp.frameWidth);
+	                float y = (float) (Math.random() * gp.frameHeight);
 	                int lifetime = (int) (Math.random() * 200 + 100);
 	                addParticle(new FireflyParticle(gp, x, y, lifetime));
 	            }
@@ -101,7 +101,7 @@ public class ParticleSystem {
                 // Small random chance each frame to trigger a shake
                     int duration = 10 + rand.nextInt(15);   // random duration between 10–25 frames
                     int intensity = 1 + rand.nextInt(3) * 2; // random intensity between 1.5–3.5
-                    gp.screenShake(duration, intensity);
+                    //gp.screenShake(duration, intensity);
                 // Reset cooldown so we don’t trigger again too fast
                 shakeCooldown = 10 + rand.nextInt(30);
             } else {
@@ -135,22 +135,22 @@ public class ParticleSystem {
     public void stopEmbers() {
     	startEmbers = false;
     }
-    public void draw(Graphics2D g, int xDiff, int yDiff) {
+    public void draw(Renderer renderer) {
         List<Particle> copy = new ArrayList<>(particles);
         for (Particle p : copy) {
         	if(p != null) {
-        		p.draw(g, xDiff, yDiff);
+        		p.draw(renderer);
         	}
         }
     }
     public void setRandomShaking(boolean isShaking) {
     	this.randomShaking = isShaking;
     }
-    public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
+    public void drawEmissive(Renderer renderer) {
         List<Particle> copy = new ArrayList<>(particles);
         for (Particle p : copy) {
         	if(p != null) {
-        		p.drawEmissive(g, xDiff, yDiff);
+        		p.drawEmissive(renderer);
         	}
         }
     }

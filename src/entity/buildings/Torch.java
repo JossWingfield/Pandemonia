@@ -1,14 +1,13 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import map.LightSource;
-import utility.DayPhase;
 
 public class Torch extends Building{
 	
@@ -36,7 +35,7 @@ public class Torch extends Building{
         hitbox.height = 80;
         yDrawOffset = 48;
 		isSolid = true;
-		blueprint = false;
+		
 		importImages();
 		mustBePlacedOnWall = true;
 		turnedOn = false;
@@ -55,7 +54,7 @@ public class Torch extends Building{
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][3][10];
+		animations = new TextureRegion[1][3][10];
 		
 		name = "Torch";
     	animations[0][0][0] = importImage("/decor/Torch.png").getSubimage(0, 0, 16, 48);
@@ -86,10 +85,10 @@ public class Torch extends Building{
 		}
 	}
 
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if (firstUpdate) {
 			firstUpdate = false;
-			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 4),Color.ORANGE, 32);
+			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 4),Colour.YELLOW, 32);
 			light.setIntensity(1f);
 			if (turnedOn) {
 				gp.lightingM.addLight(light);
@@ -122,16 +121,16 @@ public class Torch extends Building{
 	            animationCounter = 0;
 	        }
 		
-	     g2.drawImage(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	     renderer.draw(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	    
 	}
-	public void drawEmissive(Graphics2D g2, int xDiff, int yDiff) {
+	public void drawEmissive(Renderer renderer) {
 		if(turnedOn) {
-			g2.drawImage(animations[direction][2][animationCounter], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[direction][2][animationCounter], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 	}
 	

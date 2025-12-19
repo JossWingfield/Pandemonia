@@ -1,20 +1,15 @@
 package entity.npc;
 
-import main.GamePanel;
-import utility.CollisionMethods;
-import utility.Recipe;
-import utility.RoomHelperMethods;
-
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import ai.Node;
-import entity.PlayerMP;
-import entity.buildings.Building;
 import entity.buildings.EscapeHole;
-import entity.items.Item;
+import main.GamePanel;
+import main.renderer.Renderer;
+import utility.CollisionMethods;
+import utility.Recipe;
 
 public class NPCManager {
 
@@ -84,7 +79,7 @@ public class NPCManager {
     public void checkInteractions(int simulationDistance, float xDiff, float yDiff) {
    	 for (NPC i: npcs) { //Loops through the items on the current map
             if (i != null) {
-            	if(i.hitbox.contains(gp.mouseI.mouseX+xDiff, gp.mouseI.mouseY+yDiff)) {
+            	if(i.hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
             		if(CollisionMethods.getDistance(i.hitbox.x+i.hitbox.width/2, i.hitbox.y+i.hitbox.height/2, gp.player.hitbox.x + gp.player.hitbox.width/2, gp.player.hitbox.y + gp.player.hitbox.height/2) < gp.player.reachDistance) {
             			i.interact();
 		            }
@@ -156,7 +151,7 @@ public class NPCManager {
         }
         return false; // no Stocker intersecting
     }
-    public void drawPaths(Graphics2D g2) {
+    public void drawPaths(Renderer renderer) {
         if (npcs == null) return;
 
         for (NPC i : npcs) { // Loop through all NPCs on the current map
@@ -169,7 +164,7 @@ public class NPCManager {
             for (Node node : path) {
                 int x = node.col * cellSize;
                 int y = node.row * cellSize;
-                g2.fillRect(x, y, cellSize, cellSize);
+                //renderer.fillRect(x, y, cellSize, cellSize);
             }
         }
     }
@@ -177,10 +172,10 @@ public class NPCManager {
         return npcs.size() > 0;
     }
     //Draw the item hitboxes
-    public void drawNPCHitboxes(Graphics2D g) {
+    public void drawNPCHitboxes(Renderer renderer) {
         for(NPC i: npcs) { //Loops through the items on the current map
             if(i != null) {
-                i.drawHitbox(g);
+                //i.drawHitbox(g);
             }
         }
     }

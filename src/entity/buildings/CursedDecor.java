@@ -1,9 +1,8 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class CursedDecor extends Building {
 	
@@ -14,7 +13,7 @@ public class CursedDecor extends Building {
 		this.preset = preset;
 		
 		isSolid = true;
-		blueprint = false;
+		
 		hitbox.width = 48;
 		hitbox.height = 48*2;
 		drawWidth = 48;
@@ -34,7 +33,7 @@ public class CursedDecor extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][10];
+		animations = new TextureRegion[1][1][10];
 		
 		switch(preset) {
 		case 0:
@@ -64,7 +63,7 @@ public class CursedDecor extends Building {
 			mustBePlacedOnFloor = true;
 			name = "Ruined Carpet";
 			isSolid = false;
-			animations[0][0][0] = importImage("/decor/Ruined Carpet.png");
+			animations[0][0][0] = importImage("/decor/Ruined Carpet.png").toTextureRegion();
 			hitbox.width = 208*3;
 			hitbox.height = 48*3;
 			drawWidth = 208*3;
@@ -435,7 +434,7 @@ public class CursedDecor extends Building {
 
 
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		
 		animationSpeed++; //Updating animation frame
         if (animationSpeed == animationSpeedFactor) {
@@ -447,10 +446,10 @@ public class CursedDecor extends Building {
             animationCounter = 0;
         }		
         
-	    g2.drawImage(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	    renderer.draw(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
         
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDiff, (int) (hitbox.y - yDiff), gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x , (int) (hitbox.y ), gp.tileSize, gp.tileSize);
 		}
 	        
 	}

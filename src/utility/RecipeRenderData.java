@@ -1,10 +1,11 @@
 package utility;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 import entity.npc.Customer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class RecipeRenderData {
     public Recipe recipe;
@@ -15,18 +16,18 @@ public class RecipeRenderData {
     public List<Integer> nameLineOffsets = new ArrayList<>();
 
     // Cached ingredient + state images
-    public List<BufferedImage> ingredientImages = new ArrayList<>();
-    public List<BufferedImage> cookingStateIcons = new ArrayList<>();
-    public List<BufferedImage> secondaryCookingStateIcons = new ArrayList<>();
+    public List<TextureRegion> ingredientImages = new ArrayList<>();
+    public List<TextureRegion> cookingStateIcons = new ArrayList<>();
+    public List<TextureRegion> secondaryCookingStateIcons = new ArrayList<>();
     
     public int starLevel;
 
     // Other cached images
-    public BufferedImage plateImage;
-    public BufferedImage borderImage;
-    public BufferedImage mysteryOrderImage;
-    public BufferedImage coinImage;
-    public BufferedImage faceIcon;
+    public TextureRegion plateImage;
+    public TextureRegion borderImage;
+    public TextureRegion mysteryOrderImage;
+    public TextureRegion coinImage;
+    public TextureRegion faceIcon;
 
     // Cached cost string
     public String cost;

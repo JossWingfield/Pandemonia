@@ -1,16 +1,12 @@
 package entity.items;
 
-import main.GamePanel;
-
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import entity.buildings.Building;
-import entity.npc.NPC;
-
-import static utility.CollisionMethods.entityCheck;
+import main.GamePanel;
+import main.renderer.Renderer;
 
 public class ItemManager {
 
@@ -58,10 +54,10 @@ public class ItemManager {
 
     }
 
-    public void draw(Graphics2D g, int xDiff, int yDiff) {
+    public void draw(Renderer renderer) {
         for(Item i: items) { //Loops through the items on the current map
             if(i != null) {
-            	i.draw(g, xDiff, yDiff); //Draws the item
+            	i.draw(renderer); //Draws the item
             }
         }
     }

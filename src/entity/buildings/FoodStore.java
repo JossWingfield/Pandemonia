@@ -1,21 +1,14 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
-import entity.items.Asparagus;
-import entity.items.Aubergine;
-import entity.items.Carrot;
-import entity.items.Corn;
+import org.lwjgl.glfw.GLFW;
+
 import entity.items.Food;
-import entity.items.Greens;
-import entity.items.Leek;
-import entity.items.Potato;
-import entity.items.RedOnion;
-import entity.items.Tomato;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import net.packets.Packet03PickupItem;
 
 public class FoodStore extends Building {
@@ -23,14 +16,14 @@ public class FoodStore extends Building {
 	private Rectangle2D.Float interactHitbox;
 	private boolean firstUpdate = true;
 	public int foodType;
-	private BufferedImage highlightedImage;
+	private Texture highlightedImage;
 	
 	public FoodStore(GamePanel gp, float xPos, float yPos, int foodType) {
 		super(gp, xPos, yPos, 48, 48);
 		this.foodType = foodType;
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 32*3;
 		isStoreBuilding = true;
@@ -50,7 +43,7 @@ public class FoodStore extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		highlightedImage = importImage("/decor/HighlightedStoreProps.png");
 		
 		name = "Food Store";
@@ -108,7 +101,7 @@ public class FoodStore extends Building {
 		
 		if(interactHitbox != null) {
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
-			if(gp.keyI.ePressed) {
+			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 				if (gp.player.currentItem == null) {
 				    String itemName = null;
 				    switch(foodType) {
@@ -143,16 +136,16 @@ public class FoodStore extends Building {
 		}
 		
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 				
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {
-		     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 		
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	        
 	}

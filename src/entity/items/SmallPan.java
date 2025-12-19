@@ -1,9 +1,9 @@
 package entity.items;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import main.GamePanel;
+import main.renderer.TextureRegion;
 
 public class SmallPan extends CookingItem {
 	
@@ -16,7 +16,7 @@ public class SmallPan extends CookingItem {
 	}
 	
 	private void importImages() {
-		animations = new BufferedImage[1][1][5];
+		animations = new TextureRegion[1][1][5];
 		
 		animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(112, 16, 16, 16);
 		animations[0][0][1] = importImage("/decor/kitchen props.png").getSubimage(112, 32, 16, 16);

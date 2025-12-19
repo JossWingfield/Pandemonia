@@ -1,30 +1,25 @@
 package utility;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 import entity.buildings.Building;
 import entity.buildings.Candle;
 import entity.buildings.FloorDecor_Building;
-import entity.buildings.FoodStore;
 import entity.buildings.Lantern;
-import entity.buildings.Sink;
-import entity.buildings.Toilet;
 import entity.buildings.WallDecor_Building;
 import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.BitmapFont;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import map.Beam;
 import map.ChairSkin;
 import map.FloorPaper;
@@ -51,10 +46,8 @@ public class Catalogue {
 	public boolean checkingOut = false;
 	public boolean onMysteryScreen = false;
 	public boolean onCatalogueScreen = false;
-	private BufferedImage border, buildFrame, descriptionFrame, overlay, overlay2, coinImage, mysteryIcon;
-	private Font nameFont = new Font("pix M 8pt", Font.PLAIN, 20);
-	private Font costFont = new Font("pix M 8pt", Font.PLAIN, 32);
-	private Font descriptionFont = new Font("pix M 8pt", Font.PLAIN, 14);
+	private TextureRegion border, buildFrame, descriptionFrame, overlay, overlay2, coinImage, mysteryIcon;
+	BitmapFont font;
 	
 	private List<Building> decorBuildingInventory = new ArrayList<Building>();
 	private List<Building> kitchenBuildingInventory = new ArrayList<Building>();
@@ -75,22 +68,23 @@ public class Catalogue {
 	public Catalogue(GamePanel gp) {
 		this.gp = gp;
 		r = new Random();
-		border = importImage("/UI/customise/WallBorder.png");
-		buildFrame = importImage("/UI/catalogue/ShopFrame.png");
-		descriptionFrame = importImage("/UI/catalogue/Description.png");
-		overlay = importImage("/UI/catalogue/OverLay.png");
-		overlay2 = importImage("/UI/catalogue/Overlay2.png");
-		mysteryIcon = importImage("/UI/catalogue/MysteryCrateUI.png");
-		coinImage = importImage("/UI/Coin.png");
+		border = importImage("/UI/customise/WallBorder.png").toTextureRegion();
+		buildFrame = importImage("/UI/catalogue/ShopFrame.png").toTextureRegion();
+		descriptionFrame = importImage("/UI/catalogue/Description.png").toTextureRegion();
+		overlay = importImage("/UI/catalogue/OverLay.png").toTextureRegion();
+		overlay2 = importImage("/UI/catalogue/Overlay2.png").toTextureRegion();
+		mysteryIcon = importImage("/UI/catalogue/MysteryCrateUI.png").toTextureRegion();
+		coinImage = importImage("/UI/Coin.png").toTextureRegion();
 		
 		ShopCatalogue catalogue = new ShopCatalogue(0, "Cabin");
 		List<Object> contents = new ArrayList<Object>();
 		contents.add(new WallDecor_Building(gp, 0, 0, 17));
+		contents.add(new WallPaper(gp, 31));
 		catalogue.setContents(contents);
 		addCatalogue(catalogue);
 		
-
-		addBuildings();
+		 font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
+		 addBuildings();
 	}
     public int getRandomCatalogue() {
 
@@ -260,24 +254,25 @@ public class Catalogue {
 		addToInventory(new ChairSkin(gp, 14));
 		addToInventory(new TableSkin(gp, 1));
 	}
-	private BufferedImage importImage(String filePath) { //Imports and stores the image
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
+	 private Texture importImage(String filePath) {
+			Texture texture = AssetPool.getTexture(filePath);
+		    return texture;
+		}
 	private boolean containsMouse(int x, int y, int w, int h) {
 		
-		int mouseX = gp.mouseI.mouseX;
-		int mouseY = gp.mouseI.mouseY;
+		int mouseX = (int)gp.mouseL.getWorldX();
+		int mouseY = (int)gp.mouseL.getWorldY();
 		
 		if(mouseX > x && mouseX < x+w && mouseY>y && mouseY <y+h) {
 			return true;
 		}
 		return false;
+	}
+	public void resetBasket() {
+		basket.clear();
+		layer = 0;
+		pageNum = 1;
+		basketCost = 0;
 	}
 	public void addToInventory(Building b) {
 		if(b.isDecor) {
@@ -327,12 +322,10 @@ public class Catalogue {
 		}
 		layer = 0;
 	}
-	public int getXforCenteredText(String text, Graphics2D g2) {
-        int x;
-        int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        x = gp.frameWidth/2 - length/2;
-        return x;
-    }
+	public int getXforCenteredText(String text, BitmapFont font) {
+	    float textWidth = font.getTextWidth(text);
+	    return (int)(gp.frameWidth / 2f - textWidth / 2f);
+	}
 	public void upLayer() {
 		layer--;
 		if(layer < 0) {
@@ -405,7 +398,7 @@ public class Catalogue {
 			layer = max;
 		}
 	}
-	public void drawCatalogue(Graphics2D g2) {
+	public void drawCatalogue(Renderer renderer) {
 		
 		int xStart = (int)(83*4.5);
 		yStart = (int)(47*4.5);
@@ -434,14 +427,14 @@ public class Catalogue {
 		    					} else {
 		    						selectedRow = 0;
 		    					}
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			}
-							g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
+							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 							}
 			    			xStart+= 40*3;
 			    			if(counter >= 3) {
@@ -468,7 +461,7 @@ public class Catalogue {
 							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				showDescription = true;
 			    				selectedItem = b;
 		    					if(yPos >= yStart +37*3) {
@@ -476,16 +469,16 @@ public class Catalogue {
 		    					} else {
 		    						selectedRow = 0;
 		    					}
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
-								//g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
+							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 							}
 							xStart+= 40*3;
 			    			if(counter >= 3) {
@@ -514,7 +507,7 @@ public class Catalogue {
 						if(b != null) {
 							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				showDescription = true;
 			    				selectedItem = b;
 			    				if(yPos >= yStart +37*3) {
@@ -522,17 +515,17 @@ public class Catalogue {
 		    					} else {
 		    						selectedRow = 0;
 		    					}
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
-								//g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-							g2.drawImage(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
-			    			g2.drawImage(border, xStart+(55) - 24, yPos+28, 48, 48, null);
+							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
+			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 							}
 			    			xStart+= 40*3;
 			    			if(counter >= 3) {
@@ -560,7 +553,7 @@ public class Catalogue {
 						if(b != null) {
 							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				showDescription = true;
 			    				selectedItem = b;
 			    				if(yPos >= yStart +37*3) {
@@ -568,17 +561,17 @@ public class Catalogue {
 		    					} else {
 		    						selectedRow = 0;
 		    					}
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
-								//g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-							g2.drawImage(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
-			    			g2.drawImage(border, xStart+(55) - 24, yPos+28, 48, 48, null);
+							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
+			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 							}
 			    			xStart+= 40*3;
 			    			if(counter >= 3) {
@@ -606,7 +599,7 @@ public class Catalogue {
 						if(b != null) {
 							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								//g2.drawImage(buildFrameHighlight2, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrameHighlight2, xStart, yPos, 37*3, 37*3);
 			    				showDescription = true;
 			    				selectedItem = b;
 			    				if(yPos >= yStart +37*3) {
@@ -614,17 +607,17 @@ public class Catalogue {
 		    					} else {
 		    						selectedRow = 0;
 		    					}
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
-								//g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-							g2.drawImage(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48, null);
-			    			g2.drawImage(border, xStart+(55) - 24, yPos+28, 48, 48, null);
+							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
+			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 							}
 			    			xStart+= 40*3;
 			    			if(counter >= 3) {
@@ -652,7 +645,7 @@ public class Catalogue {
 						if(b != null) {
 							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				showDescription = true;
 			    				selectedItem = b;
 			  					if(yPos >= yStart +37*3) {
@@ -660,16 +653,16 @@ public class Catalogue {
 		    					} else {
 		    						selectedRow = 0;
 		    					}
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			} else {
-								//g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
-							g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
+							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 							}
 							xStart+= 40*3;
 			    			if(counter >= 3) {
@@ -697,7 +690,7 @@ public class Catalogue {
 						if(b != null) {
 							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 		    					showDescription = true;
 		    					selectedItem = b;
 		    					if(yPos >= yStart +37*3) {
@@ -705,14 +698,14 @@ public class Catalogue {
 		    					} else {
 		    						selectedRow = 0;
 		    					}
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			}
-							g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-							g2.drawImage(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight, null);
+							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 							}
 							xStart+= 40*3;
 			    			if(counter >= 3) {
@@ -740,7 +733,7 @@ public class Catalogue {
 						if(b != null) {
 							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 		    					showDescription = true;
 		    					selectedItem = b;
 		    					if(yPos >= yStart +37*3) {
@@ -748,14 +741,14 @@ public class Catalogue {
 		    					} else {
 		    						selectedRow = 0;
 		    					}
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			}
-							g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-							g2.drawImage(b.getImage(), xStart+(55) - 24, yPos+30 - 24, 48, 48, null);
+							renderer.draw(b.getImage(), xStart+(55) - 24, yPos+30 - 24, 48, 48);
 							}
 							xStart+= 40*3;
 			    			if(counter >= 3) {
@@ -783,7 +776,7 @@ public class Catalogue {
 						if(b != null) {
 							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-								//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 		    					showDescription = true;
 		    					selectedItem = b;
 		    					if(yPos >= yStart +37*3) {
@@ -791,14 +784,14 @@ public class Catalogue {
 		    					} else {
 		    						selectedRow = 0;
 		    					}
-			    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					clickCounter = 0.17;
 			    					addToBasket(b, b.cost);
 			    				}
 			    			}
-							g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-							g2.drawImage(b.getImage(), xStart+(55) - 24, yPos+30 - 24, 48, 48, null);
+							renderer.draw(b.getImage(), xStart+(55) - 24, yPos+30 - 24, 48, 48);
 							}
 							xStart+= 40*3;
 			    			if(counter >= 3) {
@@ -815,25 +808,25 @@ public class Catalogue {
 				}
 			}
 		
-		g2.drawImage(overlay, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
+		renderer.draw(overlay, 0, 0, (int)(260*4.5), (int)(190*4.5));
 		
 		canPay = gp.player.wealth >= basketCost;
+		Colour c;
 		if(canPay) {
-			g2.setColor(Color.GREEN);
+			c = Colour.GREEN;
 		} else {
-			g2.setColor(Color.RED);
+			c = Colour.RED;
 		}
-		g2.setFont(costFont);
-		g2.drawString(Integer.toString(basketCost), (int)(153*4.5), 484);
-		//g2.drawImage(coinImage,  (int)(153*4.5) + 28, 450, 32, 32, null);
+		renderer.drawString(font, Integer.toString(basketCost), (int)(153*4.5), 484, 1.0f, c);
+		//renderer.draw(coinImage,  (int)(153*4.5) + 28, 450, 32, 32);
 		
 		
 		if(showDescription) {
-			drawBuildingDescription(g2, selectedItem, xStart);
+			drawBuildingDescription(renderer, selectedItem, xStart);
 		}
 	
 	}
-	public void drawShopCatalogueScreen(Graphics2D g2) {
+	public void drawShopCatalogueScreen(Renderer renderer) {
 		
 		int xStart = (int)(83*4.5);
 		yStart = (int)(47*4.5);
@@ -853,7 +846,7 @@ public class Catalogue {
 			for(Object o: cat.getContents()) {
 				if(index >= startDraw) {
 					if(o != null) {
-						BufferedImage img = null;
+						TextureRegion img = null;
 						int cost = 0;
 						int drawWidth = 0;
 						int drawHeight = 0;
@@ -888,7 +881,7 @@ public class Catalogue {
 						}
 						if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 		    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-							//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+							//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 		    				showDescription = true;
 		    				selectedItem = o;
 		  					if(yPos >= yStart +37*3) {
@@ -896,14 +889,14 @@ public class Catalogue {
 	    					} else {
 	    						selectedRow = 0;
 	    					}
-		    				if(gp.mouseI.leftClickPressed && clickCounter == 0) {
+		    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 		    					clickCounter = 0.17;
 		    					addToBasket(o, cost);
 		    				}
 		    			}
-						g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+						renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 
-						g2.drawImage(img, xStart+(55) - drawWidth/2 - xDrawOffset, yPos+30 - yDrawOffset, drawWidth, drawHeight, null);
+						renderer.draw(img, xStart+(55) - drawWidth/2 - xDrawOffset, yPos+30 - yDrawOffset, drawWidth, drawHeight);
 						}
 						xStart+= 40*3;
 		    			if(counter >= 3) {
@@ -918,33 +911,31 @@ public class Catalogue {
     			counter++;
     			index++;
 			}
-			g2.setFont(costFont);
-			g2.setColor(Color.WHITE);
 			String text = cat.getName();
-			int x =getXforCenteredText(text, g2);
-			g2.drawString(text, x, (int)(38*4.5));
+			int x =getXforCenteredText(text, font);
+			renderer.drawString(font, text, x, (int)(38*4.5), 1.0f, Colour.WHITE);
 		} 
 		
-		g2.drawImage(overlay, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
+		renderer.draw(overlay, 0, 0, (int)(260*4.5), (int)(190*4.5));
 		
 		canPay = gp.player.wealth >= basketCost;
+		Colour c;
 		if(canPay) {
-			g2.setColor(Color.GREEN);
+			c = Colour.GREEN;
 		} else {
-			g2.setColor(Color.RED);
+			c = Colour.RED;
 		}
-		g2.setFont(costFont);
-		g2.drawString(Integer.toString(basketCost), (int)(153*4.5), 484);
-		//g2.drawImage(coinImage,  (int)(153*4.5) + 28, 450, 32, 32, null);
+		renderer.drawString(font, Integer.toString(basketCost), (int)(153*4.5), 484, 1.0f, c);
+		//renderer.draw(coinImage,  (int)(153*4.5) + 28, 450, 32, 32);
 		
 		
 		if(showDescription) {
-			drawBuildingDescription(g2, selectedItem, xStart);
+			drawBuildingDescription(renderer, selectedItem, xStart);
 		}
 	
 	}
-	public void drawBuildingDescription(Graphics2D g2, Object b, int xStart) {
-		BufferedImage img;
+	public void drawBuildingDescription(Renderer renderer, Object b, int xStart) {
+		TextureRegion img;
 		String name = "";
 		String description = "";
 		int cost = 0;
@@ -995,29 +986,25 @@ public class Catalogue {
 			if(selectedRow == 1) {
 				yPos = yStart - 126;
 			}
-			g2.drawImage(descriptionFrame, xPos, yPos, (int)(124*3), (int)(94*3), null);
+			renderer.draw(descriptionFrame, xPos, yPos, (int)(124*3), (int)(94*3));
 			
-			g2.setColor(Color.WHITE);
-			g2.setFont(nameFont);
 			String text =  name;
-			g2.drawString(text, xPos + 32, yPos + 40);
+			renderer.drawString(font, text, xPos + 32, yPos + 40, 1.0f, Colour.WHITE);
 			
-			g2.drawImage(img, xPos+(186/2) - drawWidth/2, yPos+130 - yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(img, xPos+(186/2) - drawWidth/2, yPos+130 - yDrawOffset, drawWidth, drawHeight);
 			
-			g2.setColor(Color.BLACK);
-			g2.drawString(Integer.toString(cost), xPos + 32 + 32 + 40, yPos + 200 + 38 + 10);
-			g2.drawImage(coinImage, xPos+(186/2) - 10 + 32+16, yPos+200-24 + 46, 24, 24, null);
+			renderer.drawString(font, Integer.toString(cost), xPos + 32 + 32 + 40, yPos + 200 + 38 + 10, 1.0f, Colour.BLACK);
+			renderer.draw(coinImage, xPos+(186/2) - 10 + 32+16, yPos+200-24 + 46, 24, 24);
 			
-			g2.setFont(descriptionFont);
 			text = description;
-			for(String line: gp.gui.wrapText(description, g2, 49*3)) {
-				g2.drawString(line, xPos + 64*3, yPos + 24*3+ 12);
+			for(String line: gp.gui.wrapText(description, font, 49*3)) {
+				renderer.drawString(font, line, xPos + 64*3, yPos + 24*3+ 12, 1.0f, Colour.BLACK);
 				yPos += 30;
 			}
 			
 		}
 	}
-	public void drawCheckout(Graphics2D g2) {
+	public void drawCheckout(Renderer renderer) {
 		int xStart = (int)(83*4.5);
 		yStart = (int)(47*4.5);
 
@@ -1034,7 +1021,7 @@ public class Catalogue {
 		for(Object b: copy) {
 			if(index >= startDraw) {
 				if(b != null) {
-					BufferedImage img;
+					TextureRegion img;
 					String name = "";
 					String description = "";
 					int cost = 0;
@@ -1086,7 +1073,7 @@ public class Catalogue {
 					}
 					if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
 	    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
-						//g2.drawImage(buildFrameHighlight, xStart, yPos, 37*3, 37*3, null);
+						//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
     					showDescription = true;
     					selectedItem = b;
     					if(yPos >= yStart +37*3) {
@@ -1094,16 +1081,16 @@ public class Catalogue {
     					} else {
     						selectedRow = 0;
     					}
-	    				if(gp.mouseI.rightClickPressed && clickCounter == 0) {
+	    				if(gp.mouseL.mouseButtonDown(1) && clickCounter == 0) {
 	    					clickCounter = 0.17;
 	    					removeFromBasket(b, cost);
 	    				}
 	    			}
-					g2.drawImage(buildFrame, xStart, yPos, 37*3, 37*3, null);
+					renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 					if(b instanceof WallPaper || b instanceof FloorPaper || b instanceof Beam) {
-						g2.drawImage(border, xStart+(55) - drawWidth/2, yPos+30 - yDrawOffset, 48, 48, null);
+						renderer.draw(border, xStart+(55) - drawWidth/2, yPos+30 - yDrawOffset, 48, 48);
 					}
-					g2.drawImage(img, xStart+(55) - drawWidth/2, yPos+30 - yDrawOffset, drawWidth, drawHeight, null);
+					renderer.draw(img, xStart+(55) - drawWidth/2, yPos+30 - yDrawOffset, drawWidth, drawHeight);
 					}
 					xStart+= 40*3;
 	    			if(counter >= 3) {
@@ -1119,26 +1106,24 @@ public class Catalogue {
 			index++;
 		}
 		
-		g2.drawImage(overlay2, 0, 0, (int)(260*4.5), (int)(190*4.5), null);
+		renderer.draw(overlay2, 0, 0, (int)(260*4.5), (int)(190*4.5));
 		
 		canPay = gp.player.wealth >= basketCost;
+		Colour c;
 		if(canPay) {
-			g2.setColor(Color.GREEN);
+			c = Colour.GREEN;
 		} else {
-			g2.setColor(Color.RED);
+			c = Colour.RED;
 		}
-		g2.setFont(costFont);
-		g2.drawString(Integer.toString(basketCost), (int)(128*4.5), 484);
+		renderer.drawString(font, Integer.toString(basketCost), (int)(128*4.5), 484, 1.0f, c);
 		
 		if(showDescription) {
-			drawBuildingDescription(g2, selectedItem, xStart);
+			drawBuildingDescription(renderer, selectedItem, xStart);
 		}
 			
 	}
-	public void drawMysteryScreen(Graphics2D g2) {
-		g2.setFont(costFont);
-		g2.setColor(Color.black);
-		g2.drawString(Integer.toString(mysteryCrateCost), (int)(173*4.5), (int)(117*4.5));
+	public void drawMysteryScreen(Renderer renderer) {
+		renderer.drawString(font, Integer.toString(mysteryCrateCost), (int)(173*4.5), (int)(117*4.5), 1.0f, Colour.BLACK);
 	}
 	public void update(double dt) {
 		if (clickCounter > 0) {

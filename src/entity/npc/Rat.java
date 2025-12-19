@@ -1,14 +1,14 @@
 package entity.npc;
 
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
-import entity.buildings.Door;
-import entity.buildings.EscapeHole;
 import entity.buildings.Fridge;
 import entity.items.Food;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.RoomHelperMethods;
 
 public class Rat extends NPC {
@@ -42,7 +42,7 @@ public class Rat extends NPC {
 		importImages();
 	}
 	private void importImages() {
-		animations = new BufferedImage[5][10][10];
+		animations = new TextureRegion[5][10][10];
 		animations[0][0][0] = importImage("/npcs/mannequin.png").getSubimage(16, 0, 16, 32);
 		
 		name = "Rat";
@@ -112,7 +112,7 @@ public class Rat extends NPC {
             }
         }
 	}	
-	  public void drawCurrentItem(Graphics2D g2, int xDiff, int yDiff) {
+	  public void drawCurrentItem(Renderer renderer) {
 	    	if(currentItem == null) {
 	    		return;
 	    	}
@@ -140,25 +140,25 @@ public class Rat extends NPC {
 	    	break;
 	    	}
 	    	
-	    	BufferedImage img = currentItem.animations[0][0][0];
+	    	TextureRegion img = currentItem.animations[0][0][0];
 	    	if(currentItem instanceof Food) {
 	    		Food f = (Food)currentItem;
 	    		img = f.getImage();
 	    	}
-  		g2.drawImage(img, (int)(hitbox.x - xDiff- + xOffset), (int)(hitbox.y - yDiff + yOffset), (int)(48), (int)(48), null);
+  		renderer.draw(img, (int)(hitbox.x - + xOffset), (int)(hitbox.y  + yOffset), (int)(48), (int)(48));
 
 	    }
 	  private void pickUpItem() {
 		  currentItem = fridge.getRandomItem();
 	  }
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
         if(direction == "Up") {
         	//drawCurrentItem(g2);
         }
-        drawCurrentItem(g2, xDiff, yDiff);
+        drawCurrentItem(renderer);
         if(animations != null) {
             
-            BufferedImage img = animations[0][currentAnimation][animationCounter];
+            TextureRegion img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {
 	    	  switch(direction) {
@@ -180,7 +180,7 @@ public class Rat extends NPC {
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  renderer.draw(img, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y - yDrawOffset ), (int)(drawWidth), (int)(drawHeight));
         }
         if(direction != "Up") {
         	//drawCurrentItem(g2);

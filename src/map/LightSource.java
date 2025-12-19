@@ -1,37 +1,24 @@
 package map;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RadialGradientPaint;
-import java.awt.MultipleGradientPaint.CycleMethod;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Ellipse2D.Double;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Random;
 
-import javax.imageio.ImageIO;
-
-import entity.Entity;
-import main.GamePanel;
+import main.renderer.Colour;
 
 public class LightSource {
 	public enum Type { NORMAL, BLOOM_ONLY }
 	
     public int x, y, radius;
-    private Color color;
+    private Colour color;
     private float intensity = 1f;
     private Type type = Type.NORMAL;
 
-    public LightSource(int x, int y, Color color, int radius) {
+    public LightSource(int x, int y, Colour color, int radius) {
         this.x = x;
         this.y = y;
         this.color = color;
         this.radius = radius;
     }
-    public LightSource(int x, int y, Color color, int radius, Type type) {
+    public LightSource(int x, int y, Colour color, int radius, Type type) {
         this(x, y, color, radius);
         this.type = type;
     }
@@ -41,7 +28,7 @@ public class LightSource {
         this.y = y;
     }
 
-    public void setColor(Color color) {
+    public void setColor(Colour color) {
         this.color = color;
     }
 
@@ -57,5 +44,5 @@ public class LightSource {
     public int getX() { return x; }
     public int getY() { return y; }
     public int getRadius() { return radius; }
-    public Color getColor() { return color; }
+    public Colour getColor() { return color; }
 }

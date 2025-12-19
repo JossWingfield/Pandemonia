@@ -1,15 +1,15 @@
 package utility;
 
-import java.awt.image.BufferedImage;
-
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.Shelf;
 import entity.buildings.TipJar;
 import entity.buildings.Turntable;
 import entity.buildings.WallDecor_Building;
 import main.GamePanel;
-import utility.ProgressManager.RewardType;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import map.WallPaper;
+import utility.ProgressManager.RewardType;
 
 public class Upgrade {
 	
@@ -19,10 +19,10 @@ public class Upgrade {
 	private String description;
 	private int tier;
     private RewardType category;  
-	private BufferedImage img;
+	private TextureRegion img;
 	public int xOffset = 0, yOffset = 0;
 	
-	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, int tier, RewardType category) {
+	public Upgrade(GamePanel gp, String name, String description, TextureRegion image, int tier, RewardType category) {
 		this.gp = gp;
 		this.name = name;
 	    this.tier = tier;
@@ -30,7 +30,7 @@ public class Upgrade {
 	    this.description = description;
 	    img = image;
 	}
-	public Upgrade(GamePanel gp, String name, String description, BufferedImage image, int tier, RewardType category, int xOffset, int yOffset) {
+	public Upgrade(GamePanel gp, String name, String description, TextureRegion image, int tier, RewardType category, int xOffset, int yOffset) {
 		this.gp = gp;
 		this.name = name;
 	    this.tier = tier;
@@ -130,7 +130,7 @@ public class Upgrade {
 	public String getDescription() {
 		return description;
 	}
-	public BufferedImage getImage() {
+	public TextureRegion getImage() {
 		return img;
 	}
 	public int getTier() {

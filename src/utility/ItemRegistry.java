@@ -1,7 +1,5 @@
 package utility;
 
-import java.awt.image.BufferedImage;
-
 import entity.items.Asparagus;
 import entity.items.Aubergine;
 import entity.items.Basil;
@@ -34,6 +32,7 @@ import entity.items.Steak;
 import entity.items.Thyme;
 import entity.items.Tomato;
 import main.GamePanel;
+import main.renderer.TextureRegion;
 
 public class ItemRegistry {
 	
@@ -100,14 +99,14 @@ public class ItemRegistry {
 		i.hitbox.y = y;
 		return i;
 	}
-	public BufferedImage getRawIngredientImage(String name) {
+	public TextureRegion getRawIngredientImage(String name) {
 		Item item = getRawIngredientFromName(name, 0);
 		if (item != null && item.animations != null && item.animations.length > 0 && item.animations[0].length > 0 && item.animations[0][0].length > 0) {
 			return item.animations[0][0][0]; // Adjust if your image indexing is different
 		}
 		return null;
 	}
-	public BufferedImage getImageFromName(String name) {
+	public TextureRegion getImageFromName(String name) {
 		Item item = getItemFromName(name, 0);
 		if (item != null && item.animations != null && item.animations.length > 0 && item.animations[0].length > 0 && item.animations[0][0].length > 0) {
 			return item.animations[0][0][0]; // Adjust if your image indexing is different

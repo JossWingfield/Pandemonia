@@ -1,8 +1,7 @@
 package entity.items;
 
-import java.awt.image.BufferedImage;
-
 import main.GamePanel;
+import main.renderer.TextureRegion;
 
 public class Fish extends Food {
 	
@@ -14,9 +13,9 @@ public class Fish extends Food {
 	}
 	
 	private void importImages() {
-		animations = new BufferedImage[1][1][4];
+		animations = new TextureRegion[1][1][4];
 		
-		animations[0][0][0] = importImage("/food/fish/Fish.png");
+		animations[0][0][0] = importImage("/food/fish/Fish.png").toTextureRegion();;
 		//animations[0][0][1] = importImage("/food/drumstick/CookedMeat.png");
 		animations[0][0][2] = importImage("/food/food.png").getSubimage(16, 96, 16, 16);
 		animations[0][0][3] = importImage("/food/food.png").getSubimage(16, 96+16, 16, 16);

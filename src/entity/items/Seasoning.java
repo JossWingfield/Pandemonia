@@ -1,5 +1,7 @@
 package entity.items;
 
+import org.lwjgl.glfw.GLFW;
+
 import main.GamePanel;
 
 public class Seasoning extends Food {
@@ -22,7 +24,7 @@ public class Seasoning extends Food {
 
             if (table != null && table.currentItem instanceof Plate plate) {
                 // If player presses E to apply seasoning
-                if (gp.keyI.ePressed && !miniGameStarted && gp.player.clickCounter == 0) {
+                if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && !miniGameStarted && gp.player.clickCounter == 0) {
                     miniGameStarted = true;
                     gp.minigameM.startSeasoningMiniGame(plate, this);
                     gp.player.currentItem = null;

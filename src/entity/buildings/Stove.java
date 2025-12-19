@@ -2,11 +2,10 @@ package entity.buildings;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Taskbar.State;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
-import entity.items.Cheese;
+import org.lwjgl.glfw.GLFW;
+
 import entity.items.CookingItem;
 import entity.items.Food;
 import entity.items.FoodState;
@@ -15,13 +14,15 @@ import entity.items.Item;
 import entity.items.Plate;
 import entity.items.SmallPan;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import map.LightSource;
-import net.packets.Packet03PickupItem;
 import net.packets.Packet08PickUpFromStove;
 import net.packets.Packet09PlaceItemOnStove;
 import net.packets.Packet13ClearPlayerHand;
 import net.packets.Packet16StartCookingOnStove;
-import net.packets.Packet20AddFoodToPlateOnTable;
 
 public class Stove extends Building {
 	
@@ -40,13 +41,13 @@ public class Stove extends Building {
 	
 	private boolean destroyed = false;
 	
-	private BufferedImage leftCooking, rightCooking;
+	private TextureRegion leftCooking, rightCooking;
 	
 	public Stove(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 96, 48);
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 48*3;
 		drawHeight = 48*3;
 		xDrawOffset = 24;
@@ -55,9 +56,9 @@ public class Stove extends Building {
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
 		
-		leftLight = new LightSource((int)(hitbox.x + 13*3 - xDrawOffset), (int)(hitbox.y + 36*3 - yDrawOffset), Color.RED, 10);
+		leftLight = new LightSource((int)(hitbox.x + 13*3 - xDrawOffset), (int)(hitbox.y + 36*3 - yDrawOffset), Colour.RED, 10);
 		leftLight.setIntensity(0.2f);
-		rightLight = new LightSource((int)(hitbox.x + 33*3 - xDrawOffset), (int)(hitbox.y + 36*3 - yDrawOffset), Color.RED, 10);
+		rightLight = new LightSource((int)(hitbox.x + 33*3 - xDrawOffset), (int)(hitbox.y + 36*3 - yDrawOffset), Colour.RED, 10);
 		rightLight.setIntensity(0.2f);
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*6);
 	}
@@ -73,7 +74,7 @@ public class Stove extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		
 		name = "Stove";
     	animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(0, 128, 48, 48);
@@ -125,7 +126,7 @@ public class Stove extends Building {
 	public void setDestroyed(boolean destroyed) {
 		this.destroyed = destroyed;
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			leftSlot = new SmallPan(gp, hitbox.x, hitbox.y);
@@ -136,17 +137,17 @@ public class Stove extends Building {
 		}
 		
 		if(canBePlaced) {
-			if(hitbox.contains(gp.mouseI.mouseX + xDiff, gp.mouseI.mouseY + yDiff)) {
-				if(gp.keyI.shiftPressed) {
+			if(hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 					openDestructionUI();
 				}
 			}
 			
-			if(!hitbox.contains(gp.mouseI.mouseX + xDiff, gp.mouseI.mouseY + yDiff)) {
+			if(!hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
 				closeDestructionUI();
 			}
 			if(destructionUIOpen) {
-				if(gp.mouseI.rightClickPressed) {
+				if(gp.mouseL.mouseButtonDown(1)) {
 					gp.customiser.addToInventory(this);
 					gp.buildingM.destroyBuilding(this);
 				}
@@ -158,12 +159,12 @@ public class Stove extends Building {
 		//g2.drawRect((int)rightHitbox.x, (int)rightHitbox.y, (int)rightHitbox.width, (int)rightHitbox.height);
 		 
 		if(destroyed) {
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {
-			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} 
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 		
 		if(clickCooldown > 0) {
@@ -171,28 +172,28 @@ public class Stove extends Building {
 		}
 		
 		if(leftSlot != null) {
-			g2.drawImage(leftSlot.animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff + 18, (int) (hitbox.y - yDiff)-yDrawOffset+48+10, 48, 48, null);
+			renderer.draw(leftSlot.animations[0][0][0], (int) hitbox.x - xDrawOffset  + 18, (int) (hitbox.y )-yDrawOffset+48+10, 48, 48);
 			if(leftHitbox.intersects(gp.player.hitbox)) {
-				g2.drawImage(leftSlot.animations[0][0][2], (int) hitbox.x - xDrawOffset - xDiff + 18, (int) (hitbox.y - yDiff)-yDrawOffset+48+10, 48, 48, null);
+				renderer.draw(leftSlot.animations[0][0][2], (int) hitbox.x - xDrawOffset  + 18, (int) (hitbox.y )-yDrawOffset+48+10, 48, 48);
 				if(leftSlot.getName().equals("Small Pan")) {
 					SmallPan pan = (SmallPan)leftSlot;
 					if(pan.cookingItem != null) {
-						g2.drawImage(leftSlot.animations[0][0][4], (int) hitbox.x - xDrawOffset - xDiff + 18, (int) (hitbox.y - yDiff)-yDrawOffset+48+10, 48, 48, null);
+						renderer.draw(leftSlot.animations[0][0][4], (int) hitbox.x - xDrawOffset  + 18, (int) (hitbox.y )-yDrawOffset+48+10, 48, 48);
 					}
 				}
 				if(leftSlot.getName().equals("Frying Pan")) {
 					FryingPan pan = (FryingPan)leftSlot;
 					if(pan.isCooking()) {
-						g2.drawImage(leftSlot.animations[0][0][9], (int) hitbox.x - xDrawOffset - xDiff + 24, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+						renderer.draw(leftSlot.animations[0][0][9], (int) hitbox.x - xDrawOffset  + 24, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 					}
 					if(pan.cookingItem != null) {
-						g2.drawImage(leftSlot.animations[0][0][9], (int) hitbox.x - xDrawOffset - xDiff + 24, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+						renderer.draw(leftSlot.animations[0][0][9], (int) hitbox.x - xDrawOffset  + 24, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 						if(pan.cookingItem.foodState.equals(FoodState.BURNT)) {
-							g2.drawImage(leftSlot.animations[0][0][11], (int) hitbox.x - xDrawOffset - xDiff + 24, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+							renderer.draw(leftSlot.animations[0][0][11], (int) hitbox.x - xDrawOffset  + 24, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 						}
 					}
 				}
-				if(gp.keyI.ePressed && clickCooldown == 0) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 					if(gp.player.currentItem == null) {
 						gp.player.currentItem = leftSlot;
 						gp.player.resetAnimation(4);
@@ -319,7 +320,7 @@ public class Stove extends Building {
 			}
 		} else {
 			if(gp.player.currentItem != null) {
-				if(clickCooldown == 0 && gp.keyI.ePressed) {
+				if(clickCooldown == 0 && gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 					if(leftHitbox.intersects(gp.player.hitbox)) {
 						if(gp.player.currentItem.getName().equals("Small Pan") || gp.player.currentItem.getName().equals("Frying Pan")) {
 							leftSlot = (CookingItem)gp.player.currentItem;
@@ -355,28 +356,28 @@ public class Stove extends Building {
 			}
 		}
 		if(rightSlot != null) {
-			g2.drawImage(rightSlot.animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+			renderer.draw(rightSlot.animations[0][0][0], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 			if(rightHitbox.intersects(gp.player.hitbox)) {
-				g2.drawImage(rightSlot.animations[0][0][2], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+				renderer.draw(rightSlot.animations[0][0][2], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 				if(rightSlot.getName().equals("Small Pan")) {
 					SmallPan pan = (SmallPan)rightSlot;
 					if(pan.cookingItem != null) {
-						g2.drawImage(rightSlot.animations[0][0][4], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+						renderer.draw(rightSlot.animations[0][0][4], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 					}
 				}
 				if(rightSlot.getName().equals("Frying Pan")) {
 					FryingPan pan = (FryingPan)rightSlot;
 					if(pan.isCooking() || drawCooking) {
-						g2.drawImage(rightSlot.animations[0][0][9], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+						renderer.draw(rightSlot.animations[0][0][9], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 					}
 					if(pan.cookingItem != null) {
-						g2.drawImage(rightSlot.animations[0][0][9], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+						renderer.draw(rightSlot.animations[0][0][9], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 						if(pan.cookingItem.foodState.equals(FoodState.BURNT)) {
-							g2.drawImage(rightSlot.animations[0][0][11], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
+							renderer.draw(rightSlot.animations[0][0][11], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 						}
 					}
 				}
-				if(gp.keyI.ePressed && clickCooldown == 0) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 					if(gp.player.currentItem == null) {
 						gp.player.resetAnimation(4);
 						gp.player.currentItem = rightSlot;
@@ -503,7 +504,7 @@ public class Stove extends Building {
 			}
 		} else {
 			if(gp.player.currentItem != null) {
-				if(clickCooldown == 0 && gp.keyI.ePressed) {
+				if(clickCooldown == 0 && gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 					if(rightHitbox.intersects(gp.player.hitbox)) {
 						if(gp.player.currentItem.getName().equals("Small Pan") || gp.player.currentItem.getName().equals("Frying Pan")) {
 							rightSlot = (CookingItem)gp.player.currentItem;
@@ -542,24 +543,24 @@ public class Stove extends Building {
 		if (leftSlot instanceof SmallPan pan && pan.isCooking()) {
 			if(pan.cookingItem != null) {
 				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(g2, hitbox.x + 16, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime(), xDiff, yDiff);
+					drawCookingBar(renderer, hitbox.x + 16, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
 				} else {
-					pan.drawCookingWarning(g2, (int)(hitbox.x), xDiff, yDiff);
+					pan.drawCookingWarning(renderer, (int)(hitbox.x));
 				}
 			}
-			g2.drawImage(leftCooking, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(leftCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 		}
 		if (leftSlot instanceof FryingPan pan && pan.isCooking()) {
 			if(pan.cookingItem != null) {
 				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(g2, hitbox.x + 16, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime(), xDiff, yDiff);
+					drawCookingBar(renderer, hitbox.x + 16, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
 				} else {
-					pan.drawCookingWarning(g2, (int)(hitbox.x), xDiff, yDiff);
+					pan.drawCookingWarning(renderer, (int)(hitbox.x));
 				}
 			}
-			g2.drawImage(leftSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset - xDiff + 24, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
-			g2.drawImage(leftCooking, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(leftSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset  + 24, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
+			renderer.draw(leftCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 		}
 
@@ -567,41 +568,41 @@ public class Stove extends Building {
 		if (rightSlot instanceof SmallPan pan && pan.isCooking()) {
 			if(pan.cookingItem != null) {
 				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(g2, hitbox.x + 48 + 30, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime(), xDiff, yDiff);
+					drawCookingBar(renderer, hitbox.x + 48 + 30, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
 				} else {
-					pan.drawCookingWarning(g2, (int)(hitbox.x + 56), xDiff, yDiff);
+					pan.drawCookingWarning(renderer, (int)(hitbox.x + 56));
 				}
 			}
-			g2.drawImage(rightCooking, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(rightCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 		}
 		if (rightSlot instanceof FryingPan pan && pan.isCooking()) {
 			if(pan.cookingItem != null) {
 				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(g2, hitbox.x + 48 + 30, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime(), xDiff, yDiff);
+					drawCookingBar(renderer, hitbox.x + 48 + 30, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
 				} else {
-					pan.drawCookingWarning(g2, (int)(hitbox.x + 56), xDiff, yDiff);
+					pan.drawCookingWarning(renderer, (int)(hitbox.x + 56));
 				}
 			}
-			g2.drawImage(rightSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
-			g2.drawImage(rightCooking, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(rightSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
+			renderer.draw(rightCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 		}
 		
 		if(drawCooking) {
 			if(rightSlot instanceof SmallPan pan) {
-				g2.drawImage(rightCooking, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				renderer.draw(rightCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 			} else if(rightSlot instanceof FryingPan pan) {
-				g2.drawImage(rightSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset - xDiff + 48 + 30, (int) (hitbox.y - yDiff)-yDrawOffset+48+16, 48, 48, null);
-				g2.drawImage(rightCooking, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				renderer.draw(rightSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
+				renderer.draw(rightCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 			}
 		}
 		
 	}
 	
-	private void drawCookingBar(Graphics2D g2, float worldX, float worldY, int cookTime, int maxCookTime, int xDiff, int yDiff) {
-	    float screenX = worldX - xDrawOffset - xDiff;
-	    float screenY = worldY - yDrawOffset - yDiff;
+	private void drawCookingBar(Renderer renderer, float worldX, float worldY, int cookTime, int maxCookTime) {
+	    float screenX = worldX - xDrawOffset ;
+	    float screenY = worldY - yDrawOffset ;
 
 	    int barWidth = 48;
 	    int barHeight = 6;
@@ -615,11 +616,9 @@ public class Stove extends Building {
 	    int g = (int) (progress * 255);
 
 	    // Optional: draw a border
-	    g2.setColor(Color.BLACK);
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight, Colour.BLACK);
 	    
-	    g2.setColor(new Color(r, g, 0));
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 
 	}
 }

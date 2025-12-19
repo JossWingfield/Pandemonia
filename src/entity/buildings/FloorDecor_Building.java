@@ -1,15 +1,12 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
-import entity.buildings.Building;
-import entity.items.Food;
 import entity.items.Item;
-import entity.items.Plate;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.CollisionMethods;
 
 public class FloorDecor_Building extends Building {
@@ -27,7 +24,7 @@ public class FloorDecor_Building extends Building {
 		this.type = type;
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 16*3;
 		
@@ -46,7 +43,7 @@ public class FloorDecor_Building extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][1];
+		animations = new TextureRegion[1][1][1];
 		buildHitbox = hitbox;
 		
         switch(type) {
@@ -1432,7 +1429,7 @@ public class FloorDecor_Building extends Building {
 			break;
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			switch(type) {
@@ -1448,19 +1445,19 @@ public class FloorDecor_Building extends Building {
 		}
 		
 		if(invisHitbox == null) {
-			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {
 			if(gp.player.hitbox.intersects(invisHitbox)) {
-				BufferedImage img = animations[0][0][0];
-				img = CollisionMethods.reduceImageAlpha(img, 0.25f);
-				g2.drawImage(img, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+				TextureRegion img = animations[0][0][0];
+				//img = CollisionMethods.reduceImageAlpha(img, 0.25f);
+				renderer.draw(img, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 			} else {
-			     g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 			}
 		}
 	     
 		 if(destructionUIOpen) {
-		     g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		     renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		 }
 	        
 	}

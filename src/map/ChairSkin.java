@@ -1,18 +1,16 @@
 package map;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class ChairSkin {
 
 	GamePanel gp;
 	
 	public int preset;
-	private BufferedImage img;
+	private TextureRegion img;
     public int cost = 0;
     public String name = "Chair";
     public String description = ""; 
@@ -90,18 +88,12 @@ public class ChairSkin {
 		
 	}
 
-	public BufferedImage getImage() {
+	public TextureRegion getImage() {
 		return img;
 	}
-    protected BufferedImage importImage(String filePath) { //Imports and stores the image
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-            //BufferedImage scaledImage = new BufferedImage(width, height, original.getType());
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
+	 public Texture importImage(String filePath) {
+			Texture texture = AssetPool.getTexture(filePath);
+		    return texture;
+		}
 	
 }

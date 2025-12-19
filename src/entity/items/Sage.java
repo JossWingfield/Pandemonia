@@ -1,8 +1,7 @@
 package entity.items;
 
-import java.awt.image.BufferedImage;
-
 import main.GamePanel;
+import main.renderer.TextureRegion;
 
 public class Sage extends Seasoning {
 	
@@ -13,13 +12,13 @@ public class Sage extends Seasoning {
 	}
 		
 	private void importImages() {
-		animations = new BufferedImage[1][1][5];
+		animations = new TextureRegion[1][1][5];
 		
 		animations[0][0][0] = importImage("/food/seasoning/sage.png").getSubimage(0, 16, 16, 16);
-		animations[0][0][1] = importImage("/food/seasoning/Seasoning.png");
-		animations[0][0][2] = importImage("/food/seasoning/Seasoning.png");
-		animations[0][0][3] = importImage("/food/seasoning/Seasoning.png");
-		animations[0][0][4] = importImage("/food/seasoning/Seasoning.png");
+		animations[0][0][1] = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
+		animations[0][0][2] = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
+		animations[0][0][3] = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
+		animations[0][0][4] = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
 	}
 
 }

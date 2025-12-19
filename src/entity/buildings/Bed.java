@@ -1,11 +1,11 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import main.GamePanel;
+import main.renderer.TextureRegion;
 import utility.DayPhase;
 
 public class Bed extends Building{
@@ -18,7 +18,6 @@ public class Bed extends Building{
 		super(gp, xPos, yPos, 48*2, 48*2);
 		
 		isSolid = true;
-		blueprint = false;
 		drawWidth = 32*3;
 		drawHeight = 48*3;
 		yDrawOffset = 24;
@@ -41,7 +40,7 @@ public class Bed extends Building{
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][1];
+		animations = new TextureRegion[1][1][1];
 		
 		name = "Bed";
     	animations[0][0][0] = importImage("/decor/bed.png").getSubimage(160, 96, 32, 48);
@@ -56,7 +55,7 @@ public class Bed extends Building{
 		}
 	    if(hitbox.intersects(gp.player.interactHitbox)) {
 	    	if(gp.world.getCurrentPhase() == DayPhase.AFTER_HOURS) {
-	    		if(gp.keyI.ePressed && cooldown == 0) {
+	    		if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && cooldown == 0) {
 	    			gp.world.sleep();
 	    			cooldown = 1;
 	    		}

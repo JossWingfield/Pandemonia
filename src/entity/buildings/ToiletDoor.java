@@ -1,10 +1,10 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class ToiletDoor extends Building {
 	
@@ -17,7 +17,7 @@ public class ToiletDoor extends Building {
 		this.preset = presetNum;
 		
 		isSolid = false;
-		blueprint = false;
+		
 		drawWidth = 32*3;
 		drawHeight = 48*3;
 		yDrawOffset = 24+8;
@@ -38,17 +38,17 @@ public class ToiletDoor extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		
 		name = "Toilet Door 1";
 		switch(preset) {
 		case 0:
 			animations[0][0][0] = importImage("/decor/door.png").getSubimage(96, 48, 32, 48);
-        	animations[0][0][1] = importImage("/decor/OpenDoor.png");
+        	animations[0][0][1] = importImage("/decor/OpenDoor.png").toTextureRegion();
 	    	break;
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			doorHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48+28, 48, 64);
@@ -57,13 +57,13 @@ public class ToiletDoor extends Building {
 		}  
 		
 		if(!gp.player.interactHitbox.intersects(doorHitbox) && gp.npcM.entityCheck(npcVisualHitbox)) {
-			g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {
-			g2.drawImage(animations[0][0][1], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 		
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	        
 	}

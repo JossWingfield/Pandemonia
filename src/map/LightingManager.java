@@ -1,59 +1,50 @@
 package map;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RadialGradientPaint;
-import java.awt.RenderingHints;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import main.Camera;
 import main.GamePanel;
-import utility.CollisionMethods;
-import utility.Settings;
+import main.renderer.Colour;
+import main.renderer.GLSLCamera;
+import main.renderer.Texture;
 
 public class LightingManager {
 
     GamePanel gp;
-    Camera camera;
+    GLSLCamera camera;
     private List<LightSource> lights; // List of light sources
 
-    private Color ambientColor = new Color(255, 244, 214); // Default sunlight
-    private float ambientIntensity = 1f; // Adjust from 0 (dark) to 1 (full daylight)
+    public Colour ambientColor; // Default sunlight
+    public float ambientIntensity = 1f; // Adjust from 0 (dark) to 1 (full daylight)
     private boolean firstUpdate = true;
     private boolean powerOff = false;
 
     // Cache kernels by radius
     private final Map<Integer, float[]> falloffCache = new HashMap<>();
 
-    private BufferedImage litImageUnscaled; // reused per frame
+    private Texture litImageUnscaled; // reused per frame
     private int[] litData;                  // Premultiplied light colors (optimization #7)
     private float[] premulR;
     private float[] premulG;
     private float[] premulB;
 
     //Bloom Settings
-    private BufferedImage bloomSmall;   // downscaled + bright
-    private BufferedImage bloomBlurred; // blurred, same size as bloomSmall
-    public int bloomThreshold = 140;     // Only really bright pixels bloom
+    private Texture bloomSmall;   // downscaled + bright
+    private Texture bloomBlurred; // blurred, same size as bloomSmall
+    public float bloomThreshold = 150 / 255f;     // Only really bright pixels bloom
     public int bloomStrength = 6;        // Softer blur radius
-    public float bloomIntensity = 0.15f;   // was 1.5 → much stronger additive blend
+    public float bloomIntensity = 0.12f; //0.15f
     private int[] bloomSmallData;
     private int[] bloomBlurredData;
     
     
     //Light Occlusion Settings
-    private final Map<Integer, BufferedImage> roomOcclusionCache = new HashMap<>();
-    private BufferedImage occlusion, lowRes;
+    private final Map<Integer, Texture> roomOcclusionCache = new HashMap<>();
+    private Texture occlusion, lowRes;
     Graphics2D gLowRes;
     private int[] pixelData;
 
@@ -64,19 +55,21 @@ public class LightingManager {
     private byte[][] lightPassable;
     private byte[][] visibleMask;
 
-    private Color morning = new Color(255, 200, 150); // 6h
-    private Color noon    = new Color(255, 255, 255); // 12h
-    private Color evening = new Color(255, 180, 120); // 18h
-    private Color night   = new Color(20, 20, 40);    // 0h / 24h
+    private Colour morning = Colour.from255(255, 200, 150); // 6h
+    private Colour noon    = Colour.from255(255, 255, 255); // 12h
+    private Colour evening = Colour.from255(255, 180, 120); // 18h
+    private Colour night   = Colour.from255(20, 20, 40);    // 0h / 24h
     
 
-    public LightingManager(GamePanel gp, Camera camera) {
+    public LightingManager(GamePanel gp, GLSLCamera camera) {
         this.gp = gp;
         this.camera = camera;
         lights = new ArrayList<>();
-        computeOcclusionLUT();
-        computeOcclusionARGBTable();
-        getRoomOcclusion();
+        ambientColor = Colour.from255(255, 244, 214);
+        
+        //computeOcclusionLUT();
+        //computeOcclusionARGBTable();
+        //getRoomOcclusion();
     }
 
     private void startLights() {
@@ -85,24 +78,24 @@ public class LightingManager {
         // lights.add(new LightSource(9*48, 6*48, Color.RED, 100*3));
         // lights.add(new LightSource(9*48, 9*48, Color.YELLOW, 100*4));
     }
-    private Color lerpColor(Color a, Color b, float t) {
-        int r = Math.round(a.getRed() + (b.getRed() - a.getRed()) * t);
-        int g = Math.round(a.getGreen() + (b.getGreen() - a.getGreen()) * t);
-        int bC = Math.round(a.getBlue() + (b.getBlue() - a.getBlue()) * t);
-        return new Color(r, g, bC);
+    private Colour lerpColor(Colour a, Colour b, float t) {
+        float r = a.r + (b.r - a.r) * t;
+        float g = a.g + (b.g - a.g) * t;
+        float bC = a.b + (b.b - a.b) * t;
+        return new Colour(r, g, bC);
     }
     // --- Light management ---
-    public void addLight(int x, int y, Color color, int radius, int layer) {
+    public void addLight(int x, int y, Colour color, int radius, int layer) {
         lights.add(new LightSource(x, y, color, radius));
     }
     public void addLight(LightSource light) {
         lights.add(light);
     }
     public void setDay() {
-        setAmbientLight(new Color(255, 255, 255), 1f); // DAY
+        setAmbientLight(Colour.from255(255, 255, 255), 1f); // DAY
     }
     public void setNight() {
-        setAmbientLight(new Color(20, 20, 25), 1f); // NIGHT
+        setAmbientLight(Colour.from255(20, 20, 25), 1f); // NIGHT
     }
     public void clearLights() {
         lights.clear();
@@ -143,13 +136,13 @@ public class LightingManager {
         }
     }
 
-    public void updateLightColor(int index, Color color) {
+    public void updateLightColor(int index, Colour color) {
         if (index >= 0 && index < lights.size()) {
             lights.get(index).setColor(color);
         }
     }
 
-    public void updateLightColor(int roomIndex, LightSource light, Color color) {
+    public void updateLightColor(int roomIndex, LightSource light, Colour color) {
         if (gp.mapM.isInRoom(roomIndex)) {
             lights.get(lights.indexOf(light)).setColor(color);
         } else {
@@ -160,7 +153,9 @@ public class LightingManager {
             }
         }
     }
-
+    public void getRoomOcclusion() {
+        gp.renderer.lightPassable = null;
+    }
     public void setPowerOff() {
         powerOff = true;
     }
@@ -170,12 +165,13 @@ public class LightingManager {
     }
 
     // --- Ambient lighting ---
-    public void setAmbientLight(Color color, float intensity) {
+    public void setAmbientLight(Colour color, float intensity) {
         this.ambientColor = color;
         this.ambientIntensity = Math.max(0, Math.min(1, intensity));
     }
 
-    public BufferedImage applyLighting(BufferedImage colorBuffer, BufferedImage emissiveBuffer, int xDiff, int yDiff) {
+    /*
+    public Texture applyLighting(Texture colorBuffer, Texture emissiveBuffer, int xDiff, int yDiff) {
         int width = colorBuffer.getWidth();
         int height = colorBuffer.getHeight();
         int scale = 3;
@@ -190,7 +186,7 @@ public class LightingManager {
         if (litImageUnscaled == null ||
             litImageUnscaled.getWidth() != unscaledWidth ||
             litImageUnscaled.getHeight() != unscaledHeight) {
-            litImageUnscaled = new BufferedImage(unscaledWidth, unscaledHeight, BufferedImage.TYPE_INT_ARGB);
+            litImageUnscaled = new Texture(unscaledWidth, unscaledHeight, Texture.TYPE_INT_ARGB);
             litData = ((DataBufferInt) litImageUnscaled.getRaster().getDataBuffer()).getData();
         }
 
@@ -198,9 +194,9 @@ public class LightingManager {
         int[] emissiveData = ((DataBufferInt) emissiveBuffer.getRaster().getDataBuffer()).getData();
 
         // Precompute ambient multiplier
-        int ambR255 = Math.round(ambientColor.getRed() * ambientIntensity);
-        int ambG255 = Math.round(ambientColor.getGreen() * ambientIntensity);
-        int ambB255 = Math.round(ambientColor.getBlue() * ambientIntensity);
+        int ambR255 = Math.round(ambientColor.r * ambientIntensity);
+        int ambG255 = Math.round(ambientColor.g * ambientIntensity);
+        int ambB255 = Math.round(ambientColor.b * ambientIntensity);
 
         // Fill ambient
         for (int y = 0; y < unscaledHeight; y++) {
@@ -247,8 +243,8 @@ public class LightingManager {
             int hSmall = Math.max(1, Math.round(height * downscale));
 
             if (bloomSmall == null || bloomSmall.getWidth() != wSmall || bloomSmall.getHeight() != hSmall) {
-                bloomSmall = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
-                bloomBlurred = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
+                bloomSmall = new Texture(wSmall, hSmall, Texture.TYPE_INT_ARGB);
+                bloomBlurred = new Texture(wSmall, hSmall, Texture.TYPE_INT_ARGB);
                 bloomSmallData = new int[wSmall * hSmall];
                 bloomBlurredData = new int[wSmall * hSmall];
             } else {
@@ -269,8 +265,8 @@ public class LightingManager {
                 continue;
             }
 
-            int lx = (light.getX() - xDiff) / scale;
-            int ly = (light.getY() - yDiff) / scale;
+            int lx = (light.getX() ) / scale;
+            int ly = (light.getY() ) / scale;
             int radius = Math.max(1, light.getRadius() / scale);
 
             // Skip lights completely offscreen
@@ -344,7 +340,7 @@ public class LightingManager {
         float fracX = xDiff % scale;
         float fracY = yDiff % scale;
 
-        BufferedImage litImageScaled = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Texture litImageScaled = new Texture(width, height, Texture.TYPE_INT_ARGB);
         Graphics2D gScaled = litImageScaled.createGraphics();
         gScaled.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         gScaled.drawImage(
@@ -392,7 +388,7 @@ public class LightingManager {
             }
         }
     }
-    private void blendAdditive(BufferedImage base, BufferedImage emissive) {
+    private void blendAdditive(Texture base, Texture emissive) {
         int w = base.getWidth();
         int h = base.getHeight();
 
@@ -423,12 +419,12 @@ public class LightingManager {
         if (bloomSmall == null) return; // ensure bloom buffers exist
 
         int scale = 3;
-        int lx = (light.getX() - xDiff) / scale;
-        int ly = (light.getY() - yDiff) / scale;
+        int lx = (light.getX() ) / scale;
+        int ly = (light.getY() ) / scale;
         int radius = Math.max(1, light.getRadius() / scale);
-        float r = light.getColor().getRed() / 255f;
-        float g = light.getColor().getGreen() / 255f;
-        float b = light.getColor().getBlue() / 255f;
+        float r = light.getColor().r / 255f;
+        float g = light.getColor().g / 255f;
+        float b = light.getColor().b / 255f;
 
         float intensity = light.getIntensity(); // base intensity
         float bloomMultiplier = 2f;          
@@ -475,9 +471,10 @@ public class LightingManager {
             }
         }
     }
+    
     public void drawOcclusionDebug(Graphics2D g) {
 
-        BufferedImage occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
+        Texture occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
         if (occlusion == null) return;
 
         // --- CONFIG ---
@@ -499,7 +496,7 @@ public class LightingManager {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
         // Draw scaled occlusion image
-        g.drawImage(occlusion, drawX, drawY, drawW, drawH, null);
+        renderer.draw(occlusion, drawX, drawY, drawW, drawH, null);
 
         // White border
         g.setComposite(AlphaComposite.SrcOver);
@@ -513,7 +510,7 @@ public class LightingManager {
         // Reset composite
         g.setComposite(AlphaComposite.SrcOver);
     }
-    private void applyPlayerLOS(BufferedImage occlusion, int playerX, int playerY) {
+    private void applyPlayerLOS(Texture occlusion, int playerX, int playerY) {
         if (occlusion == null) return;
 
         // --- Setup ---
@@ -524,7 +521,7 @@ public class LightingManager {
         int lowH = Math.max(1, height / scale);
 
         if (lowRes == null || lowRes.getWidth() != lowW || lowRes.getHeight() != lowH) {
-            lowRes = new BufferedImage(lowW, lowH, BufferedImage.TYPE_INT_ARGB);
+            lowRes = new Texture(lowW, lowH, Texture.TYPE_INT_ARGB);
             pixelData = ((DataBufferInt) lowRes.getRaster().getDataBuffer()).getData();
         }
 
@@ -596,7 +593,7 @@ public class LightingManager {
         gMain.dispose();
 
     }
-    private void applyOcclusionMaskOptimized(BufferedImage lightBuffer, BufferedImage occlusionLowRes,int xDiff, int yDiff) {
+    private void applyOcclusionMaskOptimized(Texture lightBuffer, Texture occlusionLowRes,int xDiff, int yDiff) {
 		int[] lightData = ((DataBufferInt) lightBuffer.getRaster().getDataBuffer()).getData();
 		int[] occData   = ((DataBufferInt) occlusionLowRes.getRaster().getDataBuffer()).getData();
 		
@@ -661,12 +658,12 @@ public class LightingManager {
 		}
 		}
 	}
-    private BufferedImage getOcclusionForRoom(int roomId, int width, int height) {
+    private Texture getOcclusionForRoom(int roomId, int width, int height) {
         // Return cached if exists
         if (roomOcclusionCache.containsKey(roomId)) return roomOcclusionCache.get(roomId);
 
         int tileSize = gp.tileSize;
-        occlusion = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        occlusion = new Texture(width, height, Texture.TYPE_INT_ARGB);
         Graphics2D g = occlusion.createGraphics();
 
         // Fill with white (no occlusion)
@@ -691,13 +688,13 @@ public class LightingManager {
         g.dispose();
 
         // Pre-blur
-        BufferedImage blurred = blurImage(occlusion, 3);
+        Texture blurred = blurImage(occlusion, 3);
         roomOcclusionCache.put(roomId, blurred);
         return blurred;
     }
     public void getRoomOcclusion() {
         int roomId = gp.mapM.currentRoom.preset;
-        BufferedImage occlusion = getOcclusionForRoom(roomId, gp.frameWidth, gp.frameHeight);
+        Texture occlusion = getOcclusionForRoom(roomId, gp.frameWidth, gp.frameHeight);
         roomOcclusionCache.put(roomId, occlusion);
         lightPassable = null; 
         lowRes = null;
@@ -721,9 +718,9 @@ public class LightingManager {
             }
 
             Color c = light.getColor();
-            premulR[i] = c.getRed() / 255f;
-            premulG[i] = c.getGreen() / 255f;
-            premulB[i] = c.getBlue() / 255f;
+            premulR[i] = c.r / 255f;
+            premulG[i] = c.g / 255f;
+            premulB[i] = c.b / 255f;
         }
     }
 
@@ -750,8 +747,8 @@ public class LightingManager {
 
         // Create buffers if needed
         if (bloomSmall == null || bloomSmall.getWidth() != wSmall || bloomSmall.getHeight() != hSmall) {
-            bloomSmall = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
-            bloomBlurred = new BufferedImage(wSmall, hSmall, BufferedImage.TYPE_INT_ARGB);
+            bloomSmall = new Texture(wSmall, hSmall, Texture.TYPE_INT_ARGB);
+            bloomBlurred = new Texture(wSmall, hSmall, Texture.TYPE_INT_ARGB);
         }
 
         if (bloomSmallData == null || bloomSmallData.length != wSmall * hSmall) {
@@ -974,7 +971,7 @@ public class LightingManager {
     private int clamp(int v, int min, int max) {
         return (v < min) ? min : (v > max ? max : v);
     }
-    private BufferedImage blurImage(BufferedImage src, int radius) {
+    private Texture blurImage(Texture src, int radius) {
         if (radius <= 0) return src;
 
         int w = src.getWidth();
@@ -1008,7 +1005,7 @@ public class LightingManager {
             occlusionLUT[i] = minBrightness255 + (i * (255 - minBrightness255)) / 255;
         }
     }
-
+     */
     public void update(double dt) {
         if (firstUpdate) {
             firstUpdate = false;
@@ -1016,7 +1013,7 @@ public class LightingManager {
         }
 
         float time = gp.world.getRawTime(); // 0–24h
-        Color ambient;
+        Colour ambient;
         float intensity;
 
         if (!powerOff) {
@@ -1049,15 +1046,12 @@ public class LightingManager {
             setAmbientLight(night, 0.6f);
         }
     }
-    private Color darkenColor(Color color, float factor) {
+    private Colour darkenColor(Colour color, float factor) {
         // factor = 0.5f means 50% darker
-        int r = (int) (color.getRed() * factor);
-        int g = (int) (color.getGreen() * factor);
-        int b = (int) (color.getBlue() * factor);
-        return new Color(
-            Math.max(0, Math.min(255, r)),
-            Math.max(0, Math.min(255, g)),
-            Math.max(0, Math.min(255, b))
+        return new Colour(
+            Math.max(0f, Math.min(1f, color.r * factor)),
+            Math.max(0f, Math.min(1f, color.g * factor)),
+            Math.max(0f, Math.min(1f, color.b * factor))
         );
     }
 }

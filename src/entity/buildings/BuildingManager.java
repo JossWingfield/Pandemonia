@@ -8,6 +8,7 @@ import java.util.List;
 
 import entity.items.Item;
 import main.GamePanel;
+import main.renderer.Renderer;
 
 public class BuildingManager {
 	
@@ -479,11 +480,11 @@ public class BuildingManager {
             }
         }
     }
-    public void draw(Graphics2D g, int xDiff, int yDiff) {
+    public void draw(Renderer renderer) {
     	
         for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
-            	i.draw(g, xDiff, yDiff); //Draws the item
+            	i.draw(renderer); //Draws the item
             }
         }
 

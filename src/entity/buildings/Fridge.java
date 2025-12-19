@@ -1,21 +1,19 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import entity.items.Bread;
-import entity.items.Cheese;
-import entity.items.Chicken;
+import org.lwjgl.glfw.GLFW;
+
 import entity.items.Food;
 import entity.items.Item;
-import entity.items.Steak;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import net.packets.Packet03PickupItem;
-import net.packets.Packet12AddItemToChoppingBoard;
 import net.packets.Packet13ClearPlayerHand;
 import net.packets.Packet17AddItemToFridge;
 import net.packets.Packet18RemoveItemFromFridge;
@@ -30,7 +28,7 @@ public class Fridge extends Building {
     private boolean firstUpdate = true;
     private double clickCooldown = 0;
     private boolean uiOpen = false;
-    private BufferedImage ui1, ui2, ui3;
+    private Texture ui1, ui2, ui3;
     public List<Food> contents = new ArrayList<>();
     private List<Rectangle2D.Float> itemHitboxes = new ArrayList<>();
 
@@ -38,7 +36,7 @@ public class Fridge extends Building {
         super(gp, xPos, yPos, 48, 96);
 
         isSolid = true;
-        blueprint = false;
+        
         drawWidth = 16*3;
         drawHeight = 32*3;
         importImages();
@@ -68,7 +66,7 @@ public class Fridge extends Building {
     	}
     }
     private void importImages() {
-        animations = new BufferedImage[1][1][2];
+        animations = new TextureRegion[1][1][2];
 
         name = "Fridge";
         animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(112, 136, 8*2, 8*4);
@@ -101,7 +99,7 @@ public class Fridge extends Building {
 		    }
 		}
     }
-    public void draw(Graphics2D g2, int xDiff, int yDiff) {
+    public void draw(Renderer renderer) {
         if(firstUpdate) {
             firstUpdate = false;
             fridgeHitbox = new Rectangle2D.Float(hitbox.x + 18, hitbox.y + hitbox.height, 14, 16);
@@ -114,15 +112,15 @@ public class Fridge extends Building {
         	}
         }
 
-		g2.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null); 
+		renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight); 
 
         if(fridgeHitbox.intersects(gp.player.hitbox)) {
-            g2.drawImage(animations[0][0][1], 
-                (int) hitbox.x - xDrawOffset - xDiff, 
-                (int) (hitbox.y - yDiff) - yDrawOffset, 
-                drawWidth, drawHeight, null);
+            renderer.draw(animations[0][0][1], 
+                (int) hitbox.x - xDrawOffset , 
+                (int) (hitbox.y ) - yDrawOffset, 
+                drawWidth, drawHeight);
 
-            if(gp.keyI.ePressed && clickCooldown == 0) {
+            if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
                 // If player is holding food, try to put it straight in the fridge
                 if (gp.player.currentItem instanceof Food f) {
                     if (contents.size() < MAX_CAPACITY) {
@@ -151,24 +149,24 @@ public class Fridge extends Building {
 
 
         if(destructionUIOpen) {
-            g2.drawImage(destructionImage, 
-                (int) hitbox.x - xDrawOffset - xDiff, 
-                (int) (hitbox.y - yDiff) - yDrawOffset, 
-                gp.tileSize, gp.tileSize, null);
+            renderer.draw(destructionImage, 
+                (int) hitbox.x - xDrawOffset , 
+                (int) (hitbox.y ) - yDrawOffset, 
+                gp.tileSize, gp.tileSize);
         }
     }
 
-    public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {
+    public void drawOverlayUI(Renderer renderer) {
         if (uiOpen) {
             int baseX = (int)(hitbox.x - (112 * 1.5));
             int baseY = (int)hitbox.y;
 
-            g2.drawImage(ui1, baseX, baseY, 112 * 3, 112 * 3, null);
+            renderer.draw(ui1, baseX, baseY, 112 * 3, 112 * 3);
 
             itemHitboxes.clear();
 
-            float mouseX = gp.mouseI.mouseX;
-            float mouseY = gp.mouseI.mouseY;
+            float mouseX = gp.mouseL.getWorldX();
+            float mouseY = gp.mouseL.getWorldY();
 
             int slotSize = 16 * 3;
             int padding = 1 * 3;
@@ -186,20 +184,20 @@ public class Fridge extends Building {
                 Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, slotSize, slotSize);
                 itemHitboxes.add(hitbox);
 
-                g2.drawImage(ui2, x, y, slotSize, slotSize, null);
+                renderer.draw(ui2, x, y, slotSize, slotSize);
 
-                BufferedImage itemImage = contents.get(i).animations[0][0][0];
+                TextureRegion itemImage = contents.get(i).animations[0][0][0];
                 if(contents.get(i) instanceof Food food) {
                 	itemImage = food.getImage();
                 }
                 int iconSize = 16 * 3;
                 int offset = (slotSize - iconSize) / 2;
-                g2.drawImage(itemImage, x + offset, y + offset, iconSize, iconSize, null);
+                renderer.draw(itemImage, x + offset, y + offset, iconSize, iconSize);
 
                 if (hitbox.contains(mouseX, mouseY)) {
-                    g2.drawImage(ui3, x, y, slotSize, slotSize, null);
+                    renderer.draw(ui3, x, y, slotSize, slotSize);
 
-                    if(gp.mouseI.leftClickPressed && clickCooldown == 0) {
+                    if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
                         if(gp.player.currentItem == null) {
                             // TAKE OUT ITEM
                             Food food = contents.remove(i);

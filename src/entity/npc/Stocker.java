@@ -1,18 +1,15 @@
 package entity.npc;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
-import entity.buildings.Door;
 import entity.buildings.Fridge;
 import entity.buildings.StorageFridge;
 import entity.items.Food;
-import entity.items.Item;
-import entity.items.Plate;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.Recipe;
 import utility.RoomHelperMethods;
 
@@ -46,7 +43,7 @@ public class Stocker extends Employee {
 	}
 	
 	private void importImages() {
-		 animations = new BufferedImage[5][20][15];
+		 animations = new TextureRegion[5][20][15];
 		 importPlayerSpriteSheet("/player/idle", 4, 1, 0, 0, 0, 80, 80); //IDLE
 	     importPlayerSpriteSheet("/player/run", 8, 1, 1, 0, 0, 80, 80); //RUN
 	        
@@ -148,7 +145,7 @@ public class Stocker extends Employee {
             }
         }
 	}	
-	public void drawCurrentItem(Graphics2D g2, int xDiff, int yDiff) {
+	public void drawCurrentItem(Renderer renderer) {
 	    	if(currentItem == null) {
 	    		return;
 	    	}
@@ -171,12 +168,12 @@ public class Stocker extends Employee {
 		    	yOffset = baseOffset + (finalOffset - baseOffset) * currentStage / totalStages;
 	    	}
 	    	
-	    	BufferedImage img = currentItem.animations[0][0][0];
+	    	TextureRegion img = currentItem.animations[0][0][0];
 	    	if(currentItem instanceof Food) {
 	    		Food f = (Food)currentItem;
 	    		img = f.getImage();
 	    	}
-    		g2.drawImage(img, (int)(hitbox.x - xDiff- xDrawOffset + xOffset), (int)(hitbox.y - yDiff - yDrawOffset + yOffset), (int)(48), (int)(48), null);
+    		renderer.draw(img, (int)(hitbox.x - xDrawOffset + xOffset), (int)(hitbox.y  - yDrawOffset + yOffset), (int)(48), (int)(48));
 
 	    }
     private void pickUpItem() {
@@ -192,14 +189,14 @@ public class Stocker extends Employee {
     	}
 		
     }
-    public void draw(Graphics2D g2, int xDiff, int yDiff) {
+    public void draw(Renderer renderer) {
         if(direction == "Up") {
-        	drawCurrentItem(g2, xDiff, yDiff);
+        	drawCurrentItem(renderer);
         }
 
         if(animations != null) {
             
-            BufferedImage img = animations[0][currentAnimation][animationCounter];
+            TextureRegion img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {
 	    	  switch(direction) {
@@ -221,13 +218,13 @@ public class Stocker extends Employee {
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }   
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  renderer.draw(img, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y - yDrawOffset ), (int)(drawWidth), (int)(drawHeight));
         }
         if(talking) {
         	//gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2- gp.player.xDiff, (int)hitbox.y - 48*3- gp.player.yDiff, dialogues[dialogueIndex], this);
         }
         if(direction != "Up") {
-        	drawCurrentItem(g2, xDiff, yDiff);
+        	drawCurrentItem(renderer);
         }
     }
 }

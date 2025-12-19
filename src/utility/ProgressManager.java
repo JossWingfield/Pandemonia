@@ -1,17 +1,15 @@
 package utility;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
-
 import entity.buildings.WallDecor_Building;
 import main.GamePanel;
+import main.renderer.AssetPool;
+import main.renderer.Colour;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.save.ProgressSaveData;
 import utility.save.StatisticsSaveData;
 
@@ -61,9 +59,9 @@ public class ProgressManager {
     public float roadmapOffsetX = 0; // current offset for smooth scrolling
     public final int roadmapNodeSpacing = 60; // space between level nodes
     public final int roadmapY = 100; // vertical position of roadmap
-    public BufferedImage[][] levelRewards; // assign rewards for each level
-    private BufferedImage basicReward, kitchenReward, cosmeticReward, emptyReward;
-    private BufferedImage basicReward2, kitchenReward2, cosmeticReward2, emptyReward2;
+    public TextureRegion[][] levelRewards; // assign rewards for each level
+    private TextureRegion basicReward, kitchenReward, cosmeticReward, emptyReward;
+    private TextureRegion basicReward2, kitchenReward2, cosmeticReward2, emptyReward2;
     public int totalLevels = 100; // total number of levels
     public int currentPhase = 1;
     
@@ -105,7 +103,7 @@ public class ProgressManager {
         totalLevels = maxLevel;
 
         // build levelRewards for every level 1..maxLevel
-        levelRewards = new BufferedImage[totalLevels][2];
+        levelRewards = new TextureRegion[totalLevels][2];
         for (int i = 1; i <= totalLevels; i++) {
             RewardType reward = rewardMap.get(i); // direct lookup
             if (reward == null) {
@@ -145,7 +143,7 @@ public class ProgressManager {
 
     	a.setOnUnlock(() -> {
     		gp.player.wealth +=5;
-    		gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+    		gp.gui.addMessage("Earned +5 coins!", Colour.YELLOW);
     	});
     	achievements.put(a.getId(), a);
     	
@@ -158,7 +156,7 @@ public class ProgressManager {
 
         	a.setOnUnlock(() -> {
         		gp.player.wealth +=10;
-        		gp.gui.addMessage("Earned +10 coins!", Color.yellow);
+        		gp.gui.addMessage("Earned +10 coins!", Colour.YELLOW);
         	});
         	
         	achievements.put(a.getId(), a);
@@ -171,7 +169,7 @@ public class ProgressManager {
 
             	a.setOnUnlock(() -> {
             		gp.player.wealth +=20;
-            		gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+            		gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
             	});
             	achievements.put(a.getId(), a);
     	
@@ -183,7 +181,7 @@ public class ProgressManager {
     		   );
         a.setOnUnlock(() -> {
     	   gp.player.wealth +=30;
-    	   gp.gui.addMessage("Earned +30 coins!", Color.yellow);
+    	   gp.gui.addMessage("Earned +30 coins!", Colour.YELLOW);
     	   });
         achievements.put(a.getId(), a);    	
         
@@ -195,7 +193,7 @@ public class ProgressManager {
      		   );
          a.setOnUnlock(() -> {
      	   gp.player.wealth +=40;
-     	   gp.gui.addMessage("Earned +40 coins!", Color.yellow);
+     	   gp.gui.addMessage("Earned +40 coins!", Colour.YELLOW);
      	   });
          achievements.put(a.getId(), a);  
          
@@ -207,7 +205,7 @@ public class ProgressManager {
        		   );
            a.setOnUnlock(() -> {
        	   gp.player.wealth +=50;
-       	   gp.gui.addMessage("Earned +50 coins!", Color.yellow);
+       	   gp.gui.addMessage("Earned +50 coins!", Colour.YELLOW);
        	   });
            achievements.put(a.getId(), a);  
        
@@ -220,7 +218,7 @@ public class ProgressManager {
     	);
    		
     	a.setOnUnlock(() -> {
-    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
     	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
     	});
     	achievements.put(a.getId(), a);
@@ -232,7 +230,7 @@ public class ProgressManager {
    	    	);
    	   		
    	    	a.setOnUnlock(() -> {
-   	    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
    	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
    	    	});
    	    	achievements.put(a.getId(), a);
@@ -243,7 +241,7 @@ public class ProgressManager {
    	   	    	    emptyReward
    	   	    	);
    	   	    	a.setOnUnlock(() -> {
-   	   	    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+   	   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
    	   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
    	   	    	});
    	   	    achievements.put(a.getId(), a);
@@ -254,7 +252,7 @@ public class ProgressManager {
    	   	    	    emptyReward
    	   	    	);
    	   	    	a.setOnUnlock(() -> {
-   	   	    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+   	   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
    	   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
    	   	    	});
    	   	    achievements.put(a.getId(), a);
@@ -266,7 +264,7 @@ public class ProgressManager {
    	   	    	    emptyReward
    	   	    	);
    	   	    	a.setOnUnlock(() -> {
-   	   	    		gp.gui.addMessage("Random recipe unlocked!", Color.yellow);
+   	   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
    	   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
    	   	    	});
    	   	    achievements.put(a.getId(), a);
@@ -279,7 +277,7 @@ public class ProgressManager {
    	        	);
 
    	        	a.setOnUnlock(() -> {
-   	        		gp.gui.addMessage("Cat paintings added to catalogue!", Color.yellow);
+   	        		gp.gui.addMessage("Cat paintings added to catalogue!", Colour.YELLOW);
    	    			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 0));
    	    			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 1));
    	        	});
@@ -293,7 +291,7 @@ public class ProgressManager {
    	        	);
 
    	        	a.setOnUnlock(() -> {
-   	        		gp.gui.addMessage("Cat hat unlocked!", Color.yellow);
+   	        		gp.gui.addMessage("Cat hat unlocked!", Colour.YELLOW);
    	    			//TODO add some sort of cat thing(possibly a hat)
    	        	});
    	       achievements.put(a.getId(), a);
@@ -306,7 +304,7 @@ public class ProgressManager {
    	   	    );
    	   	   a.setOnUnlock(() -> {
    	   		   gp.player.wealth +=5;
-   	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+   	       	   gp.gui.addMessage("Earned +5 coins!", Colour.YELLOW);
    	       	   //TODO change this reward
    	   	    });
    	   	   achievements.put(a.getId(), a);
@@ -319,7 +317,7 @@ public class ProgressManager {
   	   	    );
   	   	   a.setOnUnlock(() -> {
   	   		   gp.player.wealth +=5;
-  	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+  	       	   gp.gui.addMessage("Earned +5 coins!", Colour.YELLOW);
   	       	   //TODO change this reward
   	   	    });
   	   	   achievements.put(a.getId(), a);
@@ -332,7 +330,7 @@ public class ProgressManager {
  	   	    );
  	   	   a.setOnUnlock(() -> {
  	   		   gp.player.wealth +=5;
- 	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+ 	       	   gp.gui.addMessage("Earned +5 coins!", Colour.YELLOW);
  	       	   //TODO change this reward
  	   	    });
  	   	   achievements.put(a.getId(), a);
@@ -345,7 +343,7 @@ public class ProgressManager {
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	   		   gp.player.wealth +=5;
-	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+	       	   gp.gui.addMessage("Earned +5 coins!", Colour.YELLOW);
 	       	   //TODO change this reward
 	   	    });
 	   	   achievements.put(a.getId(), a);
@@ -358,7 +356,7 @@ public class ProgressManager {
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	   		   gp.player.wealth +=5;
-	       	   gp.gui.addMessage("Earned +5 coins!", Color.yellow);
+	       	   gp.gui.addMessage("Earned +5 coins!", Colour.YELLOW);
 	       	   //TODO change this reward
 	   	    });
 	   	   achievements.put(a.getId(), a);
@@ -371,7 +369,7 @@ public class ProgressManager {
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	   		   gp.player.wealth +=10;
-	       	   gp.gui.addMessage("Earned +10 coins!", Color.yellow);
+	       	   gp.gui.addMessage("Earned +10 coins!", Colour.YELLOW);
 	   	    });
 	   	   achievements.put(a.getId(), a);
 	   	   
@@ -379,11 +377,11 @@ public class ProgressManager {
 	   	    	    "sweet_talk",
 	   	    	    "Sweet Talk",
 	   	    	    "Earn 200% more than the base value for an order.",
-	   	 		    importImage("/UI/coin.png")
+	   	 		    importImage("/UI/coin.png").toTextureRegion()
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	   		   gp.player.wealth +=20;
-	       	   gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	       	   gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
 	   	    });
 	   	   achievements.put(a.getId(), a);
 	   	   
@@ -394,7 +392,7 @@ public class ProgressManager {
 	   	 		    importImage("/decor/turntable.png").getSubimage(0, 0, 48, 48)
 	   	    );
 	   	   a.setOnUnlock(() -> {
-	       	   //gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
 	   		   //TODO change this reward
 	   	    });
 	   	   achievements.put(a.getId(), a);
@@ -406,7 +404,7 @@ public class ProgressManager {
 	   	 		    kitchenReward
 	   	    );
 	   	   a.setOnUnlock(() -> {
-	       	   //gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
 	   		   //TODO change this reward
 	   	    });
 	   	   achievements.put(a.getId(), a);
@@ -418,7 +416,7 @@ public class ProgressManager {
 	   	 		    kitchenReward
 	   	    );
 	   	   a.setOnUnlock(() -> {
-	       	   //gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
 	   		   //TODO change this reward
 	   	    });
 	   	   achievements.put(a.getId(), a);
@@ -430,7 +428,7 @@ public class ProgressManager {
 	   	    	 importImage("/decor/plants.png").getSubimage(16, 64, 16, 32)
 	   	    );
 	   	   a.setOnUnlock(() -> {
-	       	   //gp.gui.addMessage("Earned +20 coins!", Color.yellow);
+	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
 	   		   //TODO change this reward
 	   	    });
 	   	   achievements.put(a.getId(), a);
@@ -529,15 +527,10 @@ public class ProgressManager {
     public Upgrade[] getUpgradeChoices() {
         return upgradeChoices;
     }
-    protected BufferedImage importImage(String filePath) { //Imports and stores the image
-        BufferedImage importedImage = null;
-        try {
-            importedImage = ImageIO.read(getClass().getResourceAsStream(filePath));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return importedImage;
-    }
+    protected Texture importImage(String filePath) {
+		Texture texture = AssetPool.getTexture(filePath);
+	    return texture;
+	}
     public ProgressSaveData saveData() {
     	ProgressSaveData data = new ProgressSaveData();
     	data.fridgeUpgradeI = fridgeUpgradeI;

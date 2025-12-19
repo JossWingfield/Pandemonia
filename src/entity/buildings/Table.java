@@ -1,10 +1,9 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import main.renderer.TextureRegion;
 
 public class Table extends Building {
 	
@@ -12,7 +11,7 @@ public class Table extends Building {
 		super(gp, xPos, yPos, 48, 48*2);
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 40*3;
 		//xDrawOffset = 16;
@@ -36,7 +35,7 @@ public class Table extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][1];
+		animations = new TextureRegion[1][1][1];
 		
 		name = "Table 1";
     	animations[0][0][0] = importImage("/decor/table.png").getSubimage(48, 24, 16, 40);

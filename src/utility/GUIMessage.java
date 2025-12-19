@@ -1,15 +1,15 @@
 package utility;
 
-import java.awt.Color;
+import main.renderer.Colour;
 
 public class GUIMessage {
 
 	   String text;
 	   int lifetime;
 	   int maxLifetime;
-	   Color color;
+	   Colour color;
 
-	   public GUIMessage(String text, int lifetime, Color color) {
+	   public GUIMessage(String text, int lifetime, Colour color) {
 	        this.text = text;
 	        this.lifetime = lifetime;
 	        this.maxLifetime = lifetime;

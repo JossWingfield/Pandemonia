@@ -1,9 +1,8 @@
 package utility;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.TextureRegion;
 
 public class Achievement {
 
@@ -11,12 +10,12 @@ public class Achievement {
     private final String id;    // unique identifier for saving
     private final String name;            // display name
     private final String description;     // description shown to player
-    private final BufferedImage icon;     // image to display
+    private final TextureRegion icon;     // image to display
     
     private boolean unlocked;             // unlocked state
     private Runnable onUnlock;            // optional callback
 
-    public Achievement(GamePanel gp, String id, String name, String description, BufferedImage icon) {
+    public Achievement(GamePanel gp, String id, String name, String description, TextureRegion icon) {
         this.gp = gp;
     	this.id = id;
         this.name = name;
@@ -39,7 +38,7 @@ public class Achievement {
         return description;
     }
 
-    public BufferedImage getIcon() {
+    public TextureRegion getIcon() {
         return icon;
     }
 
@@ -56,7 +55,7 @@ public class Achievement {
                 onUnlock.run(); // trigger reward, cosmetic, etc.
                 if (gp.progressM != null) {
                     gp.gui.showAchievementNotification(this);
-                    gp.gui.addMessage("New Achievement Unlocked!", Color.YELLOW);
+                    gp.gui.addMessage("New Achievement Unlocked!", Colour.YELLOW);
                 }
             }
         }

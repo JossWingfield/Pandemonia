@@ -1,6 +1,5 @@
 package utility;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,8 +9,9 @@ import java.util.Random;
 import entity.buildings.Breaker;
 import entity.buildings.Building;
 import entity.buildings.Parcel;
-import entity.items.Food;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
 import map.Beam;
 import map.ChairSkin;
 import map.FloorPaper;
@@ -20,7 +20,6 @@ import map.Room;
 import map.TableSkin;
 import map.WallPaper;
 import utility.save.OrderSaveData;
-import utility.save.PlayerSaveData;
 import utility.save.SettingsSaveData;
 import utility.save.WorldSaveData;
 
@@ -72,7 +71,7 @@ public class World {
     private LightSource lightningLight;
     
     //Event Stuff
-    private Color darkColour;
+    private Colour darkColour;
     private Breaker breaker;
     private boolean queueSpecialCustomer = false;
     private boolean spawnRats = false;
@@ -102,7 +101,7 @@ public class World {
         random = new Random();
         currentSeason = Season.SUMMER;
         gp.mapM.setSeason(currentSeason);
-        darkColour = new Color(51, 60, 58, 200);
+        darkColour = new Colour(51, 60, 58, 200);
         
         boughtItems = new ArrayList<Object>();
         
@@ -229,26 +228,26 @@ public class World {
         switch (eventId) {
             case 0: //Powercut
             	powerCut();
-                gp.gui.addMessage("PowerCut!", Color.red);
+                gp.gui.addMessage("PowerCut!", Colour.RED);
                 break;
             case 1, 2, 3: // Special customer
                 queueSpecialCustomer = true;
                 break;
             case 4:
             	spill();
-                gp.gui.addMessage("Spillage!", Color.red);
+                gp.gui.addMessage("Spillage!", Colour.RED);
             	break;
             case 5:
             	clogToilet();
-                gp.gui.addMessage("The Toilet is Clogged!", Color.red);
+                gp.gui.addMessage("The Toilet is Clogged!", Colour.RED);
             	break;
             case 6:
             	spawnRats();
-                gp.gui.addMessage("Rats!!!!", Color.red);
+                gp.gui.addMessage("Rats!!!!", Colour.RED);
             	break;
             case 7:
             	spawnDuck();
-                gp.gui.addMessage("A wild duck just walked in!", Color.red);
+                gp.gui.addMessage("A wild duck just walked in!", Colour.RED);
             	break;
         }
     }
@@ -293,7 +292,7 @@ public class World {
 	                    if(queueSpecialCustomer) {
 	                    	queueSpecialCustomer = false;
 	                    	gp.mapM.getRoom(0).addSpecialCustomer();
-	                    	gp.gui.addMessage("A special customer has arrived!", Color.MAGENTA);
+	                    	gp.gui.addMessage("A special customer has arrived!", Colour.MAGENTA);
 	                    } else {
 	                    	gp.mapM.getRoom(0).addCustomer();
 	                    }
@@ -307,7 +306,7 @@ public class World {
 	                    if(queueSpecialCustomer) {
 	                    	queueSpecialCustomer = false;
 	                     	gp.npcM.addSpecialCustomer();
-	                     	gp.gui.addMessage("A special customer has arrived!", Color.MAGENTA);
+	                     	gp.gui.addMessage("A special customer has arrived!", Colour.MAGENTA);
 	                    } else {
 	                    	gp.npcM.addCustomer();
 	                    }
@@ -354,9 +353,9 @@ public class World {
      // Phase change check
      if (currentPhase != lastPhase) {
          if (currentPhase == DayPhase.SERVICE) {
-             gp.gui.addMessage("The restaurant is now OPEN!", Color.YELLOW);
+             gp.gui.addMessage("The restaurant is now OPEN!", Colour.YELLOW);
          } else if (lastPhase == DayPhase.SERVICE) {
-             gp.gui.addMessage("The restaurant is now CLOSED.", Color.YELLOW);
+             gp.gui.addMessage("The restaurant is now CLOSED.", Colour.YELLOW);
              
              // Either trigger instantly OR wait
              if (gp.mapM.isRoomEmpty(0)) {
@@ -511,7 +510,7 @@ public class World {
                 // Switch the day here, once it's fully black
                 advanceDay();
                 this.time = dayStart;
-                gp.gui.addMessage("A new day begins!", Color.YELLOW);
+                gp.gui.addMessage("A new day begins!", Colour.YELLOW);
             }
         } else {
             fadeAlpha -= fadeSpeed*dt;
@@ -561,16 +560,16 @@ public class World {
             if(currentWeather != oldWeather) {
 	            // Display message
 	            switch (currentWeather) {
-	                case SUNNY -> gp.gui.addMessage("The sun is shining!", Color.ORANGE);
-	                case RAIN -> gp.gui.addMessage("It's raining!", Color.CYAN);
+	                case SUNNY -> gp.gui.addMessage("The sun is shining!", Colour.YELLOW);
+	                case RAIN -> gp.gui.addMessage("It's raining!", Colour.CYAN);
 	                case THUNDERSTORM -> {
-	                    gp.gui.addMessage("A thunderstorm begins!", Color.BLUE);
+	                    gp.gui.addMessage("A thunderstorm begins!", Colour.BLUE);
 	                }
 	            }
             }
         }
     }
-    public void drawWeather(Graphics2D g2) {
+    public void drawWeather(Renderer renderer) {
         switch (currentWeather) {
             case RAIN -> {
                 
@@ -592,7 +591,7 @@ public class World {
         		lightningCounter = 0;
         		lightningSpawned = false;
         		gp.lightingM.removeLight(lightningLight);
-        	   	gp.screenShake(10, 5);
+        	   	//gp.screenShake(10, 5);
         	}
         }
     }
@@ -602,7 +601,7 @@ public class World {
     }
     public void addLightning() {
     	lightningSpawned = true;
-    	lightningLight = new LightSource(0, gp.frameHeight/2, Color.WHITE, 48*8*4);
+    	lightningLight = new LightSource(0, gp.frameHeight/2, Colour.WHITE, 48*8*4);
     	gp.lightingM.addLight(lightningLight);
     }
     public void removeLightning() {
@@ -630,7 +629,7 @@ public class World {
     private void addParcel() {
 		Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));
         gp.buildingM.addBuilding(parcel);
-        gp.gui.addMessage("A Parcel has arrived!", Color.MAGENTA);
+        gp.gui.addMessage("A Parcel has arrived!", Colour.MAGENTA);
         
         boughtItems.addAll(orderList);
     	
@@ -639,7 +638,7 @@ public class World {
     private void addCrate() {
 		Parcel parcel = new Parcel(gp, 9*48, 9*48, crateNum);
         gp.buildingM.addBuilding(parcel);
-        gp.gui.addMessage("A Mystery Crate has arrived!", Color.MAGENTA);
+        gp.gui.addMessage("A Mystery Crate has arrived!", Colour.MAGENTA);
         
         crateOrdered = false;
         crateNum = -1;
@@ -753,16 +752,15 @@ public class World {
             addCrate();
     	}
     }
-    public void drawFilters(Graphics2D g2) {
+    public void drawFilters(Renderer renderer) {
     	if(breaker != null) {
 	    	if(breaker.isPowerOff()) {
-	    		gp.lightingM.setPowerOff();
+	    		//p.lightingM.setPowerOff();
 	    	}
     	}
     	  if (fadeAlpha > 0f) {
-    	        Color c = new Color(0, 0, 0, Math.min(1f, fadeAlpha));
-    	        g2.setColor(c);
-    	        g2.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
+    	        Colour c = new Colour(0, 0, 0, Math.min(1f, fadeAlpha));
+    	        renderer.fillRect(0, 0, gp.frameWidth, gp.frameHeight, c);
     	    }
     	
     }

@@ -1,13 +1,10 @@
 package entity.items;
 
-import entity.Entity;
-import entity.PlayerMP;
-import entity.buildings.Building;
-import main.GamePanel;
-import utility.CollisionMethods;
-
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
+
+import entity.Entity;
+import main.GamePanel;
+import main.renderer.Renderer;
 
 public abstract class Item extends Entity {
 
@@ -53,8 +50,8 @@ public abstract class Item extends Entity {
 
     public void update(double dt) {}
 
-    public void draw(Graphics2D g, int xDiff, int yDiff) {
-        g.drawImage(animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+    public void draw(Renderer renderer) {
+        renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
     }
     public String getDescription() {
     	return description;

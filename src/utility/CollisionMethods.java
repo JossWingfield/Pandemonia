@@ -1,13 +1,11 @@
 package utility;
 
 import java.awt.Color;
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import entity.buildings.Building;
 import main.GamePanel;
+import main.renderer.Texture;
 
 public class CollisionMethods {
 	
@@ -297,62 +295,6 @@ public class CollisionMethods {
         }
 
     }
-    
-	public static BufferedImage getMaskedImage(Color c, BufferedImage img) {
-		
-		BufferedImage displayImage = new BufferedImage((int)img.getWidth(), (int)img.getHeight(), 2);
-		
-		int argb = c.getRGB();
-		displayImage = new BufferedImage((int)img.getWidth(), (int)img.getHeight(), 2);
-		for(int i = 0; i < displayImage.getWidth(); i++) {
-			for(int j = 0; j < displayImage.getHeight(); j++) {
-				if(img.getRGB(i, j) != 0) {
-					int x = img.getRGB(i, j);
-					int y = mediateARGB(x, argb);
-					displayImage.setRGB(i, j, y);
-				}
-			}
-		}
-		return displayImage;
-	}
-	
-	public static BufferedImage replaceImageColour(Color c, BufferedImage img) {
-		
-		BufferedImage displayImage = new BufferedImage((int)img.getWidth(), (int)img.getHeight(), 2);
-		
-		int argb = c.getRGB();
-		displayImage = new BufferedImage((int)img.getWidth(), (int)img.getHeight(), 2);
-		for(int i = 0; i < displayImage.getWidth(); i++) {
-			for(int j = 0; j < displayImage.getHeight(); j++) {
-				if(img.getRGB(i, j) != 0) {
-					int x = img.getRGB(i, j);
-					displayImage.setRGB(i, j, argb);
-				}
-			}
-		}
-		return displayImage;
-	}
-	private static int mediateARGB(int c1, int c2){
-	    int a1 = (c1 & 0xFF000000) >>> 24;
-	    int r1 = (c1 & 0x00FF0000) >> 16;
-	    int g1 = (c1 & 0x0000FF00) >> 8;
-	    int b1 = (c1 & 0x000000FF) ;
-
-	    int a2 = (c2 & 0xFF000000) >>> 24;
-	    int r2 = (c2 & 0x00FF0000) >> 16;
-	    int g2 = (c2 & 0x0000FF00) >> 8;
-	    int b2 = (c2 & 0x000000FF) ;
-
-	    int am = (a1 + a2) / 2;
-	    int rm = (r1 + r2) / 2;
-	    int gm = (g1 + g2) / 2;
-	    int bm = (b1 + b2) / 2;
-
-	    int m = (am << 24) + (rm << 16) + (gm << 8) + bm; 
-
-
-	    return m;
-	}
 	
 	public static boolean inLineOfSight(GamePanel gp, Rectangle2D.Float hitbox, Rectangle2D.Float playerHitbox) {
 		
@@ -419,10 +361,10 @@ public class CollisionMethods {
 	        int tileSize = gp.tileSize;
 	        int[][] grid = gp.mapM.currentRoom.mapGrid[1];
 
-	        int startX = (int)(building.hitbox.x / tileSize) - 1;
-	        int startY = (int)(building.hitbox.y / tileSize);
-	        int endX = (int)((building.hitbox.x + building.hitbox.width) / tileSize);
-	        int endY = (int)((building.hitbox.y + building.hitbox.height) / tileSize);
+	        int startX = (int) Math.floor(x / tileSize);
+	        int startY = (int) Math.floor(y / tileSize);
+	        int endX   = (int) Math.ceil((x + width  / tileSize));
+	        int endY   = (int) Math.ceil((y + height / tileSize));
 	        
 	        //System.out.println(startX + "  " + startY + " " + endX + "  " + endY);
 
@@ -519,8 +461,8 @@ public class CollisionMethods {
 	        // Floor items must NOT be on walls
 	        int startX = (int) x / tileSize;
 	        int startY = (int) y / tileSize;
-	        int endX = (int) (x + width) / tileSize;
-	        int endY = (int) (y + height) / tileSize;
+	        int endX = (int) Math.ceil((x + width) / tileSize);
+	        int endY = (int) Math.ceil((y + height) / tileSize);
 
 	        for (int ix = startX; ix < endX; ix++) {
 	            for (int iy = startY; iy < endY; iy++) {
@@ -532,6 +474,29 @@ public class CollisionMethods {
 	        return true;
 	    }
 	    
+	 // ---------------- Wall-only placement ----------------
+	    if (building.mustBePlacedOnWall) {
+	        for (Building b : gp.buildingM.getBuildings()) {
+	            if (b != null && b.hitbox.intersects(buildHitbox)) {
+	                return false;
+	            }
+	        }
+
+	        int startX = (int) Math.floor(x / tileSize);
+	        int startY = (int) Math.floor(y / tileSize);
+	        int endX   = (int) Math.ceil((x + width)  / tileSize);
+	        int endY   = (int) Math.ceil((y + height) / tileSize);
+
+	        for (int ix = startX; ix < endX; ix++) {
+	            for (int iy = startY; iy < endY; iy++) {
+	                if (!gp.mapM.tiles[grid[ix][iy]].isWall) {
+	                    return false;
+	                }
+	            }
+	        }
+
+	        return true; // ⬅ hard exit
+	    }
 	    // ---------------- Unified shelf / table logic ----------------
 	    if (building.mustBePlacedOnTable || building.canBePlacedOnShelf || building.canBePlacedOnTable) {
 	        boolean onShelf = false;
@@ -585,8 +550,8 @@ public class CollisionMethods {
 	        // Not on table or shelf -> allow floor, forbid walls
 	        int startX = (int) x / gp.tileSize;
 	        int startY = (int) y / gp.tileSize;
-	        int endX = (int) (x + width) / gp.tileSize;
-	        int endY = (int) (y + height) / gp.tileSize;
+	        int endX = (int) Math.ceil((x + width) / gp.tileSize);
+	        int endY = (int) Math.ceil((y + height) / gp.tileSize);
 
 	        for (int ix = startX; ix < endX; ix++) {
 	            for (int iy = startY; iy < endY; iy++) {
@@ -599,52 +564,7 @@ public class CollisionMethods {
 	        return true; // valid on floor only
 	    }
 
-
-	    // ---------------- Wall-only placement ----------------
-	    if (building.mustBePlacedOnWall) {
-	        for (Building b : gp.buildingM.getBuildings()) {
-	            if (b != null && b.hitbox.intersects(buildHitbox)) {
-	                return false;
-	            }
-	        }
-
-	        int startX = (int) x / tileSize;
-	        int startY = (int) y / tileSize;
-	        int endX = (int) (x + width) / tileSize;
-	        int endY = (int) (y + height) / tileSize;
-
-	        for (int ix = startX; ix < endX; ix++) {
-	            for (int iy = startY; iy < endY; iy++) {
-	                if (!gp.mapM.tiles[grid[ix][iy]].isWall) {
-	                    return false;
-	                }
-	            }
-	        }
-	        return true;
-	    }
-
 	    return false;
-	}
-	public static BufferedImage reduceImageAlpha(BufferedImage img, float alphaReductionFactor) {
-	    BufferedImage displayImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-	    for (int i = 0; i < displayImage.getWidth(); i++) {
-	        for (int j = 0; j < displayImage.getHeight(); j++) {
-	            int pixel = img.getRGB(i, j);
-	            int alpha = (pixel >> 24) & 0xFF; // Extract alpha
-	            int red = (pixel >> 16) & 0xFF;
-	            int green = (pixel >> 8) & 0xFF;
-	            int blue = pixel & 0xFF;
-
-	            // Reduce alpha
-	            alpha = Math.max(0, (int) (alpha * alphaReductionFactor));
-
-	            // Reconstruct ARGB value with modified alpha
-	            int modifiedPixel = (alpha << 24) | (red << 16) | (green << 8) | blue;
-	            displayImage.setRGB(i, j, modifiedPixel);
-	        }
-	    }
-	    return displayImage;
 	}
 	public static float getDistance(float x1, float y1, float x2, float y2) {
 

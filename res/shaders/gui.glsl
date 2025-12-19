@@ -1,0 +1,44 @@
+#type vertex
+#version 330 core
+
+layout(location = 0) in vec2 aPos;
+layout(location = 1) in vec2 aTexCoord;
+layout(location = 2) in float aTexId;
+layout(location = 3) in vec4 aColor;
+
+uniform mat4 u_MVP;
+
+out vec2 vTexCoord;
+out vec4 vColor;
+out float vTexId;
+
+void main() {
+    vTexCoord = aTexCoord;
+    vColor = aColor;
+    vTexId = aTexId;
+
+    gl_Position = u_MVP * vec4(aPos, 0.0, 1.0);
+}
+#type fragment
+#version 330 core
+
+in vec4 vColor;
+in vec2 vTexCoord;
+in float vTexId;
+
+out vec4 outColor;
+
+uniform sampler2D uTextures[1];
+uniform sampler2D uEmissive;
+
+void main() {
+    vec4 baseCol = vColor * texture(uTextures[0], vTexCoord);
+    vec4 emisCol = texture(uEmissive, vTexCoord);
+
+    // If emissive is present, show full base color
+    if (emisCol.a > 0.0) {
+        outColor = baseCol;
+    } else {
+        outColor = baseCol;
+    }
+}

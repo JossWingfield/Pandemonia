@@ -1,10 +1,9 @@
 package entity.items;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
 
 import main.GamePanel;
+import main.renderer.TextureRegion;
 
 public class FryingPan extends CookingItem {
 	
@@ -18,7 +17,7 @@ public class FryingPan extends CookingItem {
 	}
 	
 	private void importImages() {
-		animations = new BufferedImage[1][1][12];
+		animations = new TextureRegion[1][1][12];
 		
 		animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(112+16, 16, 16, 16);
 		animations[0][0][2] = importImage("/decor/Pan.png").getSubimage(16, 0, 16, 16);

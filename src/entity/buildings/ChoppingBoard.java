@@ -3,15 +3,17 @@ package entity.buildings;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
+
 import entity.items.Food;
 import entity.items.FoodState;
-import entity.items.FryingPan;
-import entity.items.Item;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import net.packets.Packet03PickupItem;
 import net.packets.Packet12AddItemToChoppingBoard;
 import net.packets.Packet13ClearPlayerHand;
@@ -34,7 +36,7 @@ public class ChoppingBoard extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 16*3;
 		importImages();
@@ -58,7 +60,7 @@ public class ChoppingBoard extends Building {
 		System.out.println("arrayCounter++;");
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][3];
+		animations = new TextureRegion[1][1][3];
 		
 		name = "Chopping Board 1";
     	animations[0][0][0] = importImage("/decor/ChoppingBoard.png").getSubimage(0, 0, 16, 16);
@@ -77,7 +79,7 @@ public class ChoppingBoard extends Building {
 		}
 		
 		   if(hitbox.intersects(gp.player.hitbox)) {
-			    if(gp.keyI.ePressed) {
+			    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 			    	if(clickCooldown == 0) {
 				    	if(gp.player.currentItem != null) {
 				    		if(canChop(gp.player.currentItem.getName())) {
@@ -146,31 +148,31 @@ public class ChoppingBoard extends Building {
 			    }
 			}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		
 		 
-		g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
       		 
 	    if(hitbox.intersects(gp.player.hitbox)) {
-		    g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    renderer.draw(animations[0][0][1], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    }
 	    
 	    if(currentItem != null) {
-		    g2.drawImage(animations[0][0][2], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    renderer.draw(animations[0][0][2], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    if(currentItem.foodState == FoodState.RAW) {
-		    	g2.drawImage(currentItem.animations[0][0][0], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    	renderer.draw(currentItem.animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    } else {
-		    	g2.drawImage(currentItem.animations[0][0][4], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		    	renderer.draw(currentItem.animations[0][0][4], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    }
 	    }
 	    
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 		if(currentItem != null) {
 			if(currentItem.foodState == FoodState.RAW && canChop(currentItem.getName())) {
-				drawChoppingBar(g2, (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, chopCount, maxChopCount, xDiff, yDiff);
+				drawChoppingBar(renderer, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, chopCount, maxChopCount);
 			}
 		}
 	}
@@ -194,9 +196,9 @@ public class ChoppingBoard extends Building {
 		}
 	}
 
-	private void drawChoppingBar(Graphics2D g2, float worldX, float worldY, double cookTime, double maxCookTime, int xDiff, int yDiff) {
-	    float screenX = worldX - xDrawOffset - xDiff;
-	    float screenY = worldY - yDrawOffset - yDiff;
+	private void drawChoppingBar(Renderer renderer , float worldX, float worldY, double cookTime, double maxCookTime) {
+	    float screenX = worldX - xDrawOffset ;
+	    float screenY = worldY - yDrawOffset ;
 
 	    int barWidth = 48;
 	    int barHeight = 6;
@@ -210,11 +212,9 @@ public class ChoppingBoard extends Building {
 	    int g = (int) (progress * 255);
 
 	    // Optional: draw a border
-	    g2.setColor(Color.BLACK);
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight, Colour.BLACK);
 	    
-	    g2.setColor(new Color(r, g, 0));
-	    g2.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight);
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 
 	}
 	 private void setupRecipes() {

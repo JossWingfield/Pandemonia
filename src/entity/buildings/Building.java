@@ -1,22 +1,18 @@
 package entity.buildings;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import entity.Entity;
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
 
 public class Building extends Entity {
 	
 	protected GamePanel gp;
-	
-	private transient Color blueprintColour;
-	protected boolean blueprint = true;
-	private transient BufferedImage displayImage;
-	protected int[] resourceCount;
-	public boolean lightSourceActive = true;
 	
 	public boolean isTileable = false;
 	public boolean isFloor = false;
@@ -32,7 +28,7 @@ public class Building extends Entity {
 	public boolean isBottomLayer = false;
 	protected int presetNum = -1;
 	protected boolean destructionUIOpen = false;
-	protected transient BufferedImage destructionImage;
+	protected transient Texture destructionImage;
 	public boolean isDecor = false;
 	public boolean isKitchenBuilding = false;
 	public boolean isStoreBuilding = false;
@@ -76,7 +72,7 @@ public class Building extends Entity {
 	}
 	public void drawBuildHitbox(Graphics2D g, float xDiff, float yDiff) {
 	    //FOR COLLISION TESTING
-		g.drawRect((int)(buildHitbox.x - xDiff), (int)(buildHitbox.y - yDiff), (int)buildHitbox.width, (int)buildHitbox.height);
+		g.drawRect((int)(buildHitbox.x ), (int)(buildHitbox.y ), (int)buildHitbox.width, (int)buildHitbox.height);
 	}
 	public Building clone() {
         try {
@@ -99,43 +95,6 @@ public class Building extends Entity {
         makeHitbox(x, y, w, h);
 	 }
 	
-	protected void getBlueprintImage() {
-		blueprintColour = new Color(197, 198, 198, 150);
-		int argb = blueprintColour.getRGB();
-		displayImage = new BufferedImage((int)animations[0][0][0].getWidth(), (int)animations[0][0][0].getHeight(), 2);
-		for(int i = 0; i < displayImage.getWidth(); i++) {
-			for(int j = 0; j < displayImage.getHeight(); j++) {
-				if(animations[0][0][0].getRGB(i, j) != 0) {
-					int x = animations[0][0][0].getRGB(i, j);
-					int y = mediateARGB(x, argb);
-					displayImage.setRGB(i, j, y);
-				}
-			}
-		}
-	}
-	
-	private int mediateARGB(int c1, int c2){
-	    int a1 = (c1 & 0xFF000000) >>> 24;
-	    int r1 = (c1 & 0x00FF0000) >> 16;
-	    int g1 = (c1 & 0x0000FF00) >> 8;
-	    int b1 = (c1 & 0x000000FF) ;
-
-	    int a2 = (c2 & 0xFF000000) >>> 24;
-	    int r2 = (c2 & 0x00FF0000) >> 16;
-	    int g2 = (c2 & 0x0000FF00) >> 8;
-	    int b2 = (c2 & 0x000000FF) ;
-
-	    int am = (a1 + a2) / 2;
-	    int rm = (r1 + r2) / 2;
-	    int gm = (g1 + g2) / 2;
-	    int bm = (b1 + b2) / 2;
-
-	    int m = (am << 24) + (rm << 16) + (gm << 8) + bm; 
-
-
-	    return m;
-	}
-	
 	public void setData(GamePanel gp, float xPos, float yPos, float width, float height) {
 	    this.gp = gp;
 
@@ -145,29 +104,24 @@ public class Building extends Entity {
 	public Rectangle2D getHitbox() {
 		return hitbox;
 	}
-	public int[] getResourceCount() {
-		return resourceCount;
-	}
 	public void checkTilableTiles(Rectangle2D.Float h, boolean original) {}
 	public int getPresetNum() {
 		return presetNum;
 	}
 	
 	public void update(double dt) {
-		int xDiff = gp.camera.getXDiff();
-		int yDiff = gp.camera.getYDiff();
 		if(canBePlaced) {
-			if(hitbox.contains(gp.mouseI.mouseX + xDiff, gp.mouseI.mouseY + yDiff)) {
-				if(gp.keyI.shiftPressed) {
+			if(hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 					openDestructionUI();
 				}
 			}
 			
-			if(!hitbox.contains(gp.mouseI.mouseX + xDiff, gp.mouseI.mouseY + yDiff)) {
+			if(!hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
 				closeDestructionUI();
 			}
 			if(destructionUIOpen) {
-				if(gp.mouseI.rightClickPressed) {
+				if(gp.mouseL.mouseButtonDown(1)) {
 					destroy();
 					gp.customiser.addToInventory(this);
 					gp.buildingM.destroyBuilding(this);
@@ -196,17 +150,19 @@ public class Building extends Entity {
 	}
 	public void interact() {}
 
-	public void drawOverlayUI(Graphics2D g2, int xDiff, int yDiff) {}
+	public void drawOverlayUI(Renderer renderer) {}
 	
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		
-	     g2.drawImage(animations[0][0][0], (int) (hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		renderer.draw(animations[0][0][0], (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, drawWidth, drawHeight);
 		 
 		 if(destructionUIOpen) {
-		     g2.drawImage(destructionImage, (int) (hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+			renderer.draw(destructionImage, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, drawWidth, drawHeight);
 		 }
 	        
 	}
-	public void drawEmissive(Graphics2D g2, int xDiff, int yDiff) {
+	public void drawEmissive(Renderer renderer) {
+	}
+	public void drawGodRay(Renderer renderer) {
 	}
 }

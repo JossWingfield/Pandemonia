@@ -1,11 +1,11 @@
 package entity.npc;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import utility.RoomHelperMethods;
 
 public class Pet extends NPC{
@@ -36,7 +36,7 @@ public class Pet extends NPC{
 		importImages();
 	}
 	private void importImages() {
-		animations = new BufferedImage[5][10][10];
+		animations = new TextureRegion[5][10][10];
 		
 		switch(petType) {
 		case 0:
@@ -117,9 +117,9 @@ public class Pet extends NPC{
 	        }
     }
 	   
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
         if(animations != null) {
-            BufferedImage img = animations[0][currentAnimation][animationCounter];
+            TextureRegion img = animations[0][currentAnimation][animationCounter];
 	    	  int a = 0;
 	    	  if(direction != null) {
 	    	  switch(direction) {
@@ -142,10 +142,10 @@ public class Pet extends NPC{
 		          	img = createHorizontalFlipped(img);
 		          }
 	    	  }
-	    	  g2.drawImage(img, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDrawOffset - yDiff), (int)(drawWidth), (int)(drawHeight), null);
+	    	  renderer.draw(img, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y - yDrawOffset ), (int)(drawWidth), (int)(drawHeight));
         }
 	      
         //g2.setColor(new Color(255, 0, 0, 50)); // red transparent
-        //g2.fillOval((int)((hitbox.x + hitbox.width / 2f) - ALERT_DISTANCE - xDiff),(int)((hitbox.y + hitbox.height / 2f) - ALERT_DISTANCE - yDiff),ALERT_DISTANCE * 2,ALERT_DISTANCE * 2);
+        //g2.fillOval((int)((hitbox.x + hitbox.width / 2f) - ALERT_DISTANCE ),(int)((hitbox.y + hitbox.height / 2f) - ALERT_DISTANCE ),ALERT_DISTANCE * 2,ALERT_DISTANCE * 2);
 	  }
 }

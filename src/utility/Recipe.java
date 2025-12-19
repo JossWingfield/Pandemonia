@@ -1,16 +1,18 @@
 package utility;
 
-import java.util.List;
-import java.util.Map;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class Recipe {
     private String name;
     private List<String> requiredIngredients;
     private boolean orderMatters;
-    public BufferedImage finishedPlate, dirtyPlate;
+    public TextureRegion finishedPlate, dirtyPlate;
     private List<String> cookingStates, secondaryCookingStates;
     private int baseCost;
     public boolean isCursed = false;
@@ -29,7 +31,7 @@ public class Recipe {
     private int star3Threshold = 100;
     private int masteryThreshold = 500;
 
-    public Recipe(String name, List<String> requiredIngredients, List<String> cookingStates, List<String> secondaryCookingStates, boolean orderMatters, BufferedImage finishedImage, BufferedImage dirtyImage, int cost, int phase) {
+    public Recipe(String name, List<String> requiredIngredients, List<String> cookingStates, List<String> secondaryCookingStates, boolean orderMatters, TextureRegion finishedImage, TextureRegion dirtyImage, int cost, int phase) {
         this.name = name;
         this.phase = phase;
         

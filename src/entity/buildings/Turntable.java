@@ -1,10 +1,10 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 
 public class Turntable extends Building {
 	
@@ -14,7 +14,7 @@ public class Turntable extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		
 		isSolid = false;
-		blueprint = false;
+		
 		hitbox.width = 32;
 		hitbox.height = 32;
 		drawWidth = 48*3;
@@ -41,7 +41,7 @@ public class Turntable extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][10];
+		animations = new TextureRegion[1][1][10];
 		
 		name = "Turntable";
 		importFromSpriteSheet("/decor/turntable.png", 8, 1, 0, 0, 0, 48, 48, 0);
@@ -66,12 +66,12 @@ public class Turntable extends Building {
             animationCounter = 0;
         }	
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {	
+	public void draw(Renderer renderer) {	
         
-	    g2.drawImage(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset - xDiff, (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+	    renderer.draw(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
         
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int) hitbox.x - xDiff, (int) (hitbox.y - yDiff), gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int) hitbox.x , (int) (hitbox.y ), gp.tileSize, gp.tileSize);
 		}
 	        
 	}

@@ -1,9 +1,8 @@
 package map.particles;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
 
 public abstract class Particle {
 	
@@ -13,9 +12,9 @@ public abstract class Particle {
     protected float vx, vy;
     protected float lifetime, maxLifetime; // seconds remaining
     protected float size;
-    protected Color color;
+    protected Colour colour;
     
-    public Particle(GamePanel gp, float x, float y, float vx, float vy, float lifetime, float size, Color color) {
+    public Particle(GamePanel gp, float x, float y, float vx, float vy, float lifetime, float size, Colour color) {
         this.gp = gp;
     	this.x = x;
         this.y = y;
@@ -23,14 +22,14 @@ public abstract class Particle {
         this.vy = vy;
         this.lifetime = lifetime;
         this.size = size;
-        this.color = color;
+        this.colour = color;
         maxLifetime = lifetime;
     }
     
     public abstract void update();
     
-    public abstract void draw(Graphics2D g, int xDiff, int yDiff);
-    public abstract void drawEmissive(Graphics2D g, int xDiff, int yDiff);
+    public abstract void draw(Renderer renderer);
+    public abstract void drawEmissive(Renderer renderer);
     
     public boolean isDead() {
         return lifetime <= 0;

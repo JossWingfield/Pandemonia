@@ -3,6 +3,8 @@ package map.particles;
 import java.awt.*;
 import java.util.Random;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
 import map.LightSource;
 
 public class EmberParticle extends Particle {
@@ -31,7 +33,7 @@ public class EmberParticle extends Particle {
             fadeSpeed = 1.0f / lifetime;        
         lightRadius = 9;
         
-        light = new LightSource((int)x, (int)y, color, lightRadius);
+        light = new LightSource((int)x, (int)y, colour, lightRadius);
         
         gp.lightingM.addLight(light); 
     }
@@ -52,12 +54,12 @@ public class EmberParticle extends Particle {
             fadeSpeed = 1.0f / lifetime;        
     }
     
-    private static Color generateEmberColor() {
+    private static Colour generateEmberColor() {
         // Bright fiery tones that vary subtly between orange and red
         int r = 230 + rand.nextInt(25);
         int g = 100 + rand.nextInt(80);
         int b = 20 + rand.nextInt(30);
-        return new Color(r, g, b);
+        return new Colour(r, g, b);
     }
     
     //@Override
@@ -85,33 +87,31 @@ public class EmberParticle extends Particle {
     }
     
     //@Override
-    public void draw(Graphics2D g, int xDiff, int yDiff) {
+    public void draw(Renderer renderer) {
         // Convert world position to screen position
         float alpha = Math.max(0f, lifetime / maxLifetime);
-        int screenX = (int)(x - xDiff);
-        int screenY = (int)(y - yDiff);
+        int screenX = (int)(x );
+        int screenY = (int)(y );
 
         // Snap to nearest pixel grid (scaled)
         screenX = (screenX / (int)SCALE) * (int)SCALE;
         screenY = (screenY / (int)SCALE) * (int)SCALE;
 
         // Draw a solid pixel rectangle
-        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(alpha * 255)));
 
-        g.fillRect(screenX, screenY, (int)SCALE, (int)SCALE);
+        renderer.fillRect(screenX, screenY, (int)SCALE, (int)SCALE, new Colour(colour.r, colour.g, colour.b, (int)(alpha * 255)));
     }
-    public void drawEmissive(Graphics2D g, int xDiff, int yDiff) {
+    public void drawEmissive(Renderer renderer) {
         // Convert world position to screen position
-        int screenX = (int)(x - xDiff);
-        int screenY = (int)(y - yDiff);
+        int screenX = (int)(x );
+        int screenY = (int)(y );
 
         // Snap to nearest pixel grid (scaled)
         screenX = (screenX / (int)SCALE) * (int)SCALE;
         screenY = (screenY / (int)SCALE) * (int)SCALE;
 
         // Draw a solid pixel rectangle
-        g.setColor(color);
-        g.fillRect(screenX, screenY, (int)SCALE, (int)SCALE);
+        renderer.fillRect(screenX, screenY, (int)SCALE, (int)SCALE, colour);
     }
 }
 

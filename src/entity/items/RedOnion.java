@@ -1,8 +1,7 @@
 package entity.items;
 
-import java.awt.image.BufferedImage;
-
 import main.GamePanel;
+import main.renderer.TextureRegion;
 
 public class RedOnion extends Food {
 	
@@ -14,7 +13,7 @@ public class RedOnion extends Food {
 	}
 	
 	private void importImages() {
-		animations = new BufferedImage[1][1][5];
+		animations = new TextureRegion[1][1][5];
 		
 		animations[0][0][0] = importImage("/food/crops/RedOnion.png").getSubimage(16, 16, 16, 16);
 	}

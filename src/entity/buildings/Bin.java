@@ -1,16 +1,15 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import entity.Player;
 import entity.items.CookingItem;
-import entity.items.Food;
 import entity.items.Plate;
 import main.GamePanel;
-import net.packets.Packet02Move;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import net.packets.Packet03PickupItem;
 import net.packets.Packet06BinItem;
 
@@ -25,7 +24,7 @@ public class Bin extends Building {
 		super(gp, xPos, yPos, 48, 48);
 		
 		isSolid = true;
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 16*3;
 		importImages();
@@ -46,7 +45,7 @@ public class Bin extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][2];
+		animations = new TextureRegion[1][1][2];
 		
         name = "Bin 1";
     	animations[0][0][0] = importImage("/decor/trapdoor.png").getSubimage(0, 32, 32, 32);
@@ -62,7 +61,7 @@ public class Bin extends Building {
 		super.update(dt);
 		if(binHitbox != null) {
 			if(binHitbox.intersects(gp.player.interactHitbox)) {
-				if(gp.keyI.ePressed) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 					if(gp.player.currentItem != null) {
 						if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {
 							gp.player.currentItem = null;
@@ -88,7 +87,7 @@ public class Bin extends Building {
 			}
 		}
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		
 		if(firstUpdate) {
 			firstUpdate = false;
@@ -96,9 +95,9 @@ public class Bin extends Building {
 		}
 		
 		if(!binHitbox.intersects(gp.player.interactHitbox)) {
-		     g2.drawImage(animations[0][0][0], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+		     renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {
-			g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+			renderer.draw(animations[0][0][1], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 		
 		if(gp.multiplayer) {
@@ -106,7 +105,7 @@ public class Bin extends Building {
 				if(p.getUsername() != gp.player.getUsername()) {
 					if(p.currentRoomIndex == gp.player.currentRoomIndex) {
 						if(binHitbox.intersects(p.interactHitbox)) {
-							g2.drawImage(animations[0][0][1], (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, drawWidth, drawHeight, null);
+							renderer.draw(animations[0][0][1], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 						}
 					}
 				}
@@ -114,7 +113,7 @@ public class Bin extends Building {
 		}
 	    
 		if(destructionUIOpen) {
-		    g2.drawImage(destructionImage, (int)(hitbox.x - xDrawOffset - xDiff), (int) (hitbox.y - yDiff)-yDrawOffset, gp.tileSize, gp.tileSize, null);
+		    renderer.draw(destructionImage, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
 		}
 	        
 	}

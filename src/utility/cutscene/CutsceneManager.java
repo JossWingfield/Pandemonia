@@ -22,6 +22,8 @@ import entity.npc.Pet;
 import entity.npc.SpecialCustomer;
 import entity.npc.StoryCharacter;
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
 
 public class CutsceneManager {
 
@@ -627,11 +629,9 @@ public class CutsceneManager {
 
         startCutscene(events);
     }
-    public void draw(Graphics2D g2, int xDiff, int yDiff) {
+    public void draw(Renderer renderer) {
     	if(drawHighlight) {
-    		g2.setStroke(highlightStroke);
-    		g2.setColor(Color.RED);
-    		g2.drawRect((int)highlightArea.x - xDiff, (int)highlightArea.y - yDiff, (int)highlightArea.width, (int)highlightArea.height);
+    		renderer.fillRect((int)highlightArea.x , (int)highlightArea.y , (int)highlightArea.width, (int)highlightArea.height, Colour.RED);
     	}
     }
     

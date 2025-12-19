@@ -1,11 +1,11 @@
 package entity.npc;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.GamePanel;
+import main.renderer.Colour;
+import main.renderer.Renderer;
+import main.renderer.TextureRegion;
 import map.LightSource;
 import utility.RecipeManager;
 import utility.RoomHelperMethods;
@@ -36,7 +36,7 @@ public class SpecialCustomer extends Customer {
 	}
 	
 	private void getImages() {
-		animations = new BufferedImage[4][10][10];
+		animations = new TextureRegion[4][10][10];
 		orderSign = importImage("/UI/Warning.png").getSubimage(16, 0, 16, 16);
 		warningOrderSign = importImage("/UI/Warning.png").getSubimage(0, 0, 16, 16);
 		name = "Special Customer";
@@ -53,9 +53,9 @@ public class SpecialCustomer extends Customer {
 		case 0: //Rich, pays double
 			importPlayerSpriteSheet("/npcs/special/Idle", 4, 1, 0, 0, 0, 80, 80);
 		    importPlayerSpriteSheet("/npcs/special/Run", 8, 1, 1, 0, 0, 80, 80);
-		    faceIcon = importImage("/npcs/special/BasicFaceIcon.png");
+		    faceIcon = importImage("/npcs/special/BasicFaceIcon.png").toTextureRegion();
 			moneyMultiplier = 2.0f;
-			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.BLUE, 48);
+			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.BLUE, 48);
 			gp.lightingM.addLight(ghostLight);
 			break;
 		case 1: //Impatient but pays slightly more
@@ -63,7 +63,7 @@ public class SpecialCustomer extends Customer {
 			patienceFactor = 2;
 			importPlayerSpriteSheet("/npcs/special/Idle", 4, 1, 0, 0, 0, 80, 80);
 		    importPlayerSpriteSheet("/npcs/special/Run", 8, 1, 1, 0, 0, 80, 80);
-		    faceIcon = importImage("/npcs/special/BasicFaceIcon.png");
+		    faceIcon = importImage("/npcs/special/BasicFaceIcon.png").toTextureRegion();
 			break;
 		case 2: //Celebrity, slows down others patience, but pays more
 			moneyMultiplier = 1.8f;
@@ -71,7 +71,7 @@ public class SpecialCustomer extends Customer {
 			
 			 importPlayerSpriteSheet("/npcs/special/Idle", 4, 1, 0, 0, 0, 80, 80);
 		     importPlayerSpriteSheet("/npcs/special/Run", 8, 1, 1, 0, 0, 80, 80);
-		     faceIcon = importImage("/npcs/special/BasicFaceIcon.png");
+		     faceIcon = importImage("/npcs/special/BasicFaceIcon.png").toTextureRegion();
 			
 			if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(0))) {
 				RoomHelperMethods.setCelebrityPresent(gp.npcM.npcs, true);
@@ -85,13 +85,13 @@ public class SpecialCustomer extends Customer {
 			
 			 importPlayerSpriteSheet("/npcs/special/Idle", 4, 1, 0, 0, 0, 80, 80);
 		     importPlayerSpriteSheet("/npcs/special/Run", 8, 1, 1, 0, 0, 80, 80);
-		     faceIcon = importImage("/npcs/special/BasicFaceIcon.png");
+		     faceIcon = importImage("/npcs/special/BasicFaceIcon.png").toTextureRegion();
 			break;
 		case 4: //Rich, pays double
 			importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
 		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
-		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png");
-			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Color.BLUE, 48);
+		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
+			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.BLUE, 48);
 			gp.lightingM.addLight(ghostLight);
 			isGhost = true;
 			break;
@@ -145,11 +145,11 @@ public class SpecialCustomer extends Customer {
 		}
 		super.setCelebrityPresent(isPresent);
 	}
-	public void draw(Graphics2D g2, int xDiff, int yDiff) {
+	public void draw(Renderer renderer) {
 		if(isGhost) {
 			gp.lightingM.moveLight(ghostLight, (int)(hitbox.x + hitbox.width/2 - 8), (int)(hitbox.y +  hitbox.height/2));
 		}
-		super.draw(g2, xDiff, yDiff);
+		super.draw(renderer);
         
 	}
 	

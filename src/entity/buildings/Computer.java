@@ -1,16 +1,18 @@
 package entity.buildings;
 
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+
+import org.lwjgl.glfw.GLFW;
 
 import main.GamePanel;
+import main.renderer.TextureRegion;
 
 public class Computer extends Building {
 	
 	public Computer(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
 		
-		blueprint = false;
+		
 		drawWidth = 16*3;
 		drawHeight = 32*3;
 		yDrawOffset = 24;
@@ -34,16 +36,16 @@ public class Computer extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new BufferedImage[1][1][1];
+		animations = new TextureRegion[1][1][1];
 		
 		name = "Computer";
-    	animations[0][0][0] = importImage("/decor/Computer.png");
+    	animations[0][0][0] = importImage("/decor/Computer.png").toTextureRegion();
 
 	}
 	public void update(double dt) {
 		super.update(dt);
 		if(hitbox.intersects(gp.player.interactHitbox)) {
-			if(gp.keyI.ePressed) {
+			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
             	gp.currentState = gp.catalogueState;
             	gp.gui.resetComputerAnimations();
 			}
