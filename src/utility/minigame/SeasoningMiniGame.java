@@ -151,7 +151,7 @@ public class SeasoningMiniGame {
         if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
             clickCooldown = 0.1;
             Beat closest = null;
-            float closestDist = Float.MAX_VALUE;
+            float closestDist = 1000000f;
 
             for (Beat beat : beats) {
                 float diff = Math.abs(beat.x - hitZoneCenter);

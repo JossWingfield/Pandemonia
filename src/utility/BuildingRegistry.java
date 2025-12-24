@@ -18,13 +18,13 @@ import entity.buildings.CornerTable;
 import entity.buildings.CursedDecor;
 import entity.buildings.Door;
 import entity.buildings.EscapeHole;
+import entity.buildings.Fireplace;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
 import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.HerbBasket;
 import entity.buildings.Lantern;
-import entity.buildings.Leak;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
@@ -229,6 +229,7 @@ public class BuildingRegistry {
 			case "Chef Portrait" -> i = new ChefPortrait(gp, x, y);
 			case "Torch" -> i = new Torch(gp, x, y);
 			case "Computer" -> i = new Computer(gp, x, y);
+			case "Fireplace" -> i = new Fireplace(gp, x, y);
 		}
 
 		return i;

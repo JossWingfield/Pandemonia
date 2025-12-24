@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entity.buildings.Building;
+import entity.buildings.Fireplace;
 import entity.buildings.Shelf;
+import entity.buildings.WallDecor_Building;
 import main.GamePanel;
 import main.renderer.AssetPool;
 import main.renderer.BitmapFont;

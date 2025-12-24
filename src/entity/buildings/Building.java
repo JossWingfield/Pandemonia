@@ -70,9 +70,9 @@ public class Building extends Entity {
 	public String getDescription() {
 		return description;
 	}
-	public void drawBuildHitbox(Graphics2D g, float xDiff, float yDiff) {
+	public void drawBuildHitbox(Renderer renderer) {
 	    //FOR COLLISION TESTING
-		g.drawRect((int)(buildHitbox.x ), (int)(buildHitbox.y ), (int)buildHitbox.width, (int)buildHitbox.height);
+		renderer.fillRect((int)(buildHitbox.x ), (int)(buildHitbox.y ), (int)buildHitbox.width, (int)buildHitbox.height);
 	}
 	public Building clone() {
         try {

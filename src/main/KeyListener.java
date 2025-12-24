@@ -4,6 +4,13 @@ import java.util.Arrays;
 
 import org.lwjgl.glfw.GLFW;
 
+import entity.buildings.Fireplace;
+import entity.buildings.WallDecor_Building;
+import map.ChairSkin;
+import map.FloorPaper;
+import map.TableSkin;
+import map.WallPaper;
+
 public class KeyListener {
 
     GamePanel gp;
@@ -11,8 +18,8 @@ public class KeyListener {
     private boolean keyPressed[] = new boolean[350];
     private boolean keyBeginPress[] = new boolean[350];
     
-    private boolean showHitboxes = false;
-    private boolean debugMode = false;
+    public boolean showHitboxes = false;
+    public boolean debugMode = false;
 
     public KeyListener(GamePanel gp) {
         this.gp = gp;
@@ -118,6 +125,16 @@ public class KeyListener {
                 } else {
                     gp.currentState = gp.playState;
                 }
+            }
+            if(keyBeginPress(GLFW.GLFW_KEY_L)) {
+            	
+        		gp.customiser.addToInventory(new WallDecor_Building(gp, 0, 0, 17));
+        		gp.customiser.addToInventory(new WallPaper(gp, 31));
+        		gp.customiser.addToInventory(new Fireplace(gp, 0, 0));
+           		gp.customiser.addToInventory(new FloorPaper(gp, 4));
+           		gp.customiser.addToInventory(new TableSkin(gp, 2));
+           		gp.customiser.addToInventory(new ChairSkin(gp, 13));
+        		
             }
         }
         // ----- CATALOGUE STATE -----

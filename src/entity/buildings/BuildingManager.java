@@ -1,13 +1,12 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import entity.items.Item;
 import main.GamePanel;
+import main.renderer.Colour;
 import main.renderer.Renderer;
 
 public class BuildingManager {
@@ -36,16 +35,16 @@ public class BuildingManager {
     	}
     }
     //Draw the item hit boxes
-    public void drawHitboxes(Graphics2D g, float xDiff, float yDiff) {
+    public void drawHitboxes(Renderer renderer) {
         for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
-                i.drawHitbox(g, xDiff, yDiff);
+                i.drawHitbox(renderer);
             }
         }
-        g.setColor(Color.YELLOW);
+        renderer.setColour(Colour.YELLOW);
         for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
-                i.drawBuildHitbox(g, xDiff, yDiff);
+                i.drawBuildHitbox(renderer);
             }
         }
     }

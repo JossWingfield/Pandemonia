@@ -23,7 +23,7 @@ public abstract class Entity implements Cloneable {
     public int currentAnimation; //The index for the current animation
     protected int animationCounter = 0; //The index for the current frame of the animation
     protected double animationSpeed; //The counter which counts down to the next frame
-    protected double animationSpeedFactor = 6;
+    protected double animationSpeedFactor = 0.1;
     public int xDrawOffset, yDrawOffset, drawWidth, drawHeight;
     protected int drawScale = 3;
 
@@ -43,9 +43,9 @@ public abstract class Entity implements Cloneable {
         hitbox = new Rectangle2D.Float(xPos, yPos, width, height);
     }
     //Draws the hitbox, so collisions can be seen
-    public void drawHitbox(Graphics2D g) {
+    public void drawHitbox(Renderer renderer) {
         //FOR COLLISION TESTING
-        g.drawRect((int)(hitbox.x), (int)(hitbox.y), (int)hitbox.width, (int)hitbox.height);
+        renderer.fillRect((int)(hitbox.x), (int)(hitbox.y), (int)hitbox.width, (int)hitbox.height);
     }
     public void drawHitbox(Graphics2D g, float xDiff, float yDiff) {
         //FOR COLLISION TESTING
@@ -111,32 +111,36 @@ public abstract class Entity implements Cloneable {
 
         return new TextureRegion(original.texture, u0, v0, u1, v1);
     }
-    protected void importFromSpriteSheet(String filePath, int columnNumber, int rowNumber,int currentAnimation, int startX, int startY,int width, int height, int direction) {
+    protected void importFromSpriteSheet(String filePath,int columnNumber,int rowNumber,int currentAnimation,int startX,int startY,int width, int height,int direction) {
 
-    	Texture sheetTexture = AssetPool.getTexture(filePath);
-		int sheetWidth = sheetTexture.getWidth();
-		int sheetHeight = sheetTexture.getHeight();
-		
-		int arrayIndex = 0;
-		
-		for (int j = 0; j < rowNumber; j++) {         // Y first (rows)
-			for (int i = 0; i < columnNumber; i++) {  // X second (columns)
-				int px = i * width + startX;
-				int py = j * height + startY;
-				
-				// Convert pixel rect → UV coords (0..1)
-				float u0 = px / (float) sheetWidth;
-				float v0 = py / (float) sheetHeight;
-				float u1 = (px + width) / (float) sheetWidth;
-				float v1 = (py + height) / (float) sheetHeight;
-				
-				animations[direction][currentAnimation][arrayIndex] =
-				new TextureRegion(sheetTexture, u0, v0, u1, v1);
-				
-				arrayIndex++;
-			}
-		}
-	}
+        Texture sheetTexture = AssetPool.getTexture(filePath);
+        int sheetWidth  = sheetTexture.getWidth();
+        int sheetHeight = sheetTexture.getHeight();
+
+        int arrayIndex = 0;
+
+        for (int j = 0; j < rowNumber; j++) {          // rows (top → bottom in pixels)
+            for (int i = 0; i < columnNumber; i++) {  // columns (left → right)
+
+                int px = startX + i * width;
+                int py = startY + j * height;
+
+                // Pixel → UV (top-left origin)
+                float u0 = px / (float) sheetWidth;
+                float u1 = (px + width) / (float) sheetWidth;
+
+                float vTop    = py / (float) sheetHeight;
+                float vBottom = (py + height) / (float) sheetHeight;
+
+                // Flip V ONCE for OpenGL bottom-left origin
+                float v0 = 1f - vBottom;
+                float v1 = 1f - vTop;
+
+                animations[direction][currentAnimation][arrayIndex++] =
+                        new TextureRegion(sheetTexture, u0, v0, u1, v1);
+            }
+        }
+    }
     
     public void draw(Renderer renderer) {}
 

@@ -23,7 +23,6 @@ public class TableSkin {
 		importImages();
 	}
 	public void importImages() {
-		
 		switch(preset) {
 		case 0:
 	        img = importImage("/decor/connected table 2.png").toTextureRegion();
@@ -38,6 +37,9 @@ public class TableSkin {
 			break;
 		case 3:
 	        img = importImage("/decor/destroyed/OldTable.png").toTextureRegion();
+			break;
+		case 4:
+	        img = importImage("/decor/CabinTable.png").toTextureRegion();
 			break;
 		}
 		

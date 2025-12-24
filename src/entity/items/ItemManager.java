@@ -21,10 +21,10 @@ public class ItemManager {
     	this.items = items;
     }
     //Draw the item hitboxes
-    public void drawItemHitboxes(Graphics2D g, float xDiff, float yDiff) {
+    public void drawItemHitboxes(Renderer renderer) {
         for(Item i: items) { //Loops through the items on the current map
             if(i != null) {
-                i.drawHitbox(g, xDiff, yDiff);
+                i.drawHitbox(renderer);
             }
         }
     }

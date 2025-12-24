@@ -699,23 +699,21 @@ public class Player extends Entity{
         //g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)interactHitbox.x, (int)interactHitbox.y, (int)interactHitbox.width, (int)interactHitbox.height);
         
-        /*
-        if(gp.keyI.showHitboxes) {
-            g2.setColor(Color.RED);
-            g2.drawRect((int) hitbox.x , (int) (hitbox.y) , (int) hitbox.width, (int) hitbox.height);
-            g2.setColor(Color.BLUE);
-            gp.buildingM.drawHitboxes(g2, xDiff, yDiff);
-            g2.setColor(Color.YELLOW);
-            gp.itemM.drawItemHitboxes(g2, xDiff, yDiff);
-            g2.setColor(Color.GREEN);
-            gp.npcM.drawNPCHitboxes(g2);
+        if(gp.keyL.showHitboxes) {
+            renderer.setColour(Colour.RED);
+            renderer.fillRect((int) hitbox.x , (int) (hitbox.y) , (int) hitbox.width, (int) hitbox.height);
+            renderer.setColour(Colour.BLUE);
+            gp.buildingM.drawHitboxes(renderer);
+            renderer.setColour(Colour.YELLOW);
+            gp.itemM.drawItemHitboxes(renderer);
+            renderer.setColour(Colour.GREEN);
+            gp.npcM.drawNPCHitboxes(renderer);
         }
         
         
         if (keyI.debugMode) {
         	//handleDebugMode(xDiff, yDiff);
         }
-        */
     }
 
 }

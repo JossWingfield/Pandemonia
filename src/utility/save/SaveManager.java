@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 
 import org.lwjgl.stb.STBImageWrite;
 
@@ -31,6 +33,7 @@ public class SaveManager {
 	public SaveManager(GamePanel gp) {
 		this.gp = gp;
 		loadMeta(); // load slot states on startup
+		//System.out.println("Liadung meta");
 	}
 	// --- META HANDLING ---
 	private File getMetaFile() {
@@ -78,31 +81,66 @@ public class SaveManager {
 	    STBImageWrite.stbi_write_png(path, w, h, 4, pixels, w * 4);
 	}
 	private void savePreview(int slot) {
-	    //Texture framebuffer = gp.colorBuffer;
-		/*
 
-	    int fbW = framebuffer.getWidth();
-	    int fbH = framebuffer.getHeight();
+	    // --- Final framebuffer size (what's actually on screen) ---
+	    int fbW = gp.sizeX;
+	    int fbH = gp.sizeY;
+
+	    // --- Read back the final rendered frame ---
+	    ByteBuffer full = ByteBuffer.allocateDirect(fbW * fbH * 4);
+
+	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	    glReadBuffer(GL_FRONT);
+	    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+	    glFinish();
+	    glReadPixels(
+	            0, 0,
+	            fbW, fbH,
+	            GL_RGBA,
+	            GL_UNSIGNED_BYTE,
+	            full
+	    );
+
+	    // --- Flip vertically (OpenGL origin -> image origin) ---
+	    ByteBuffer flipped = ByteBuffer.allocateDirect(fbW * fbH * 4);
+	    int stride = fbW * 4;
+
+	    for (int y = 0; y < fbH; y++) {
+	        int srcY = fbH - 1 - y;
+	        for (int x = 0; x < stride; x++) {
+	            flipped.put(y * stride + x, full.get(srcY * stride + x));
+	        }
+	    }
 
 	    // --- Player screen position ---
-	    int px = (int)(gp.player.hitbox.x + gp.player.hitbox.width / 2f);
-	    int py = (int)(gp.player.hitbox.y + gp.player.hitbox.height / 2f);
+	    float playerWorldX = gp.player.hitbox.x + gp.player.hitbox.width  * 0.5f;
+	    float playerWorldY = gp.player.hitbox.y + gp.player.hitbox.height * 0.5f;
 
-	    // region size (world screenshot area)
-	    int viewW = 180;
-	    int viewH = 110;
+	    // --- Camera WORLD position (center of view) ---
+	    float camX = gp.camera.position.x;
+	    float camY = gp.camera.position.y;
+
+	    // --- Convert to SCREEN space ---
+	    int px = (int)(playerWorldX - camX + fbW * 0.5f);
+	    int py = (int)(playerWorldY - camY + fbH * 0.5f);
+	    
+	    px = fbW / 2;
+	    py = fbH / 2;
+
+	    // --- World preview capture size ---
+	    int viewW = 180*4;
+	    int viewH = 110*4;
+	    
 
 	    int cropX = px - viewW / 2;
 	    int cropY = py - viewH / 2;
 
-	    // clamp
+	    // Clamp crop region
 	    cropX = Math.max(0, Math.min(fbW - viewW, cropX));
 	    cropY = Math.max(0, Math.min(fbH - viewH, cropY));
 
-	    // --- Read full framebuffer pixels ---
-	    ByteBuffer full = readTexture(framebuffer);  // from earlier
-
-	    // --- Crop into new buffer ---
+	    // --- Crop around player ---
 	    ByteBuffer cropped = ByteBuffer.allocateDirect(viewW * viewH * 4);
 
 	    for (int y = 0; y < viewH; y++) {
@@ -114,21 +152,21 @@ public class SaveManager {
 	            int srcIndex = (srcY * fbW + srcX) * 4;
 	            int dstIndex = (y * viewW + x) * 4;
 
-	            cropped.put(dstIndex    , full.get(srcIndex    ));
-	            cropped.put(dstIndex + 1, full.get(srcIndex + 1));
-	            cropped.put(dstIndex + 2, full.get(srcIndex + 2));
-	            cropped.put(dstIndex + 3, full.get(srcIndex + 3));
+	            cropped.put(dstIndex    , flipped.get(srcIndex    ));
+	            cropped.put(dstIndex + 1, flipped.get(srcIndex + 1));
+	            cropped.put(dstIndex + 2, flipped.get(srcIndex + 2));
+	            cropped.put(dstIndex + 3, flipped.get(srcIndex + 3));
 	        }
 	    }
 
-	    // --- Scale to preview size 200x150 ---
+	    // --- Scale to preview size ---
 	    int previewW = 200;
 	    int previewH = 150;
 
 	    ByteBuffer scaled = ByteBuffer.allocateDirect(previewW * previewH * 4);
 
-	    float sx = viewW / (float)previewW;
-	    float sy = viewH / (float)previewH;
+	    float sx = viewW / (float) previewW;
+	    float sy = viewH / (float) previewH;
 
 	    for (int y = 0; y < previewH; y++) {
 	        for (int x = 0; x < previewW; x++) {
@@ -146,12 +184,10 @@ public class SaveManager {
 	        }
 	    }
 
-	    // --- Save the PNG ---
+	    // --- Save PNG ---
 	    String path = "save/preview" + slot + ".png";
 	    savePNG(path, scaled, previewW, previewH);
 
-	    System.out.println("Saved preview: " + path);
-	    */
 	}
 	public boolean isSlotEmpty(int slot) {
 	    return !saveSlots.getOrDefault(slot, false);
@@ -232,6 +268,7 @@ public class SaveManager {
 	    loadFromFile("save/upgrades" + save + ".json", UpgradeSaveData.class);
 	    loadFromFile("save/catalogue" + save + ".json", CatalogueSaveData.class);
 
+		//System.out.println("Liadung roosm");
 	    int counter = 0;
 	    for (Room r : gp.mapM.getRooms()) {
 	        if (r != null) {

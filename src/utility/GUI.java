@@ -52,12 +52,13 @@ public class GUI {
     private Colour orderTextColour;
 	
 	//FONTS
-	BitmapFont font;
+	BitmapFont font, fancyFont;
 	
 	//COUNTERS
 	private int timeAnimationCounter, timeAnimationSpeed, currentTimeAnimation;
 	private double clickCooldown = 0;
-	private int titleAnimationCounter, titleAnimationSpeed, currentTitleAnimation, titleAnimationSpeedFactor;
+	private int titleAnimationCounter, titleAnimationSpeed, currentTitleAnimation;
+	private double titleAnimationSpeedFactor;
 	private int titlePageNum = -1;
 	private int computerAnimationCounter;
 	private double computerAnimationSpeed;
@@ -130,9 +131,10 @@ public class GUI {
         //orderTextColour = new Colour(145, 102, 91);
 	    orderTextColour = Colour.BLACK;
         //titleAnimationSpeedFactor = 4;
-        titleAnimationSpeedFactor = 30;
+        titleAnimationSpeedFactor = 3.0;
         
         font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
+        fancyFont = AssetPool.getBitmapFont("/UI/monogram-extended-italic.ttf", 32);
         
 		importImages();
 	}
@@ -312,9 +314,9 @@ public class GUI {
 			
 			int x = 110;
 			int y = 240;
-			renderer.drawString(font, text, x, y, 1.0f, titleColour1);
+			renderer.drawString(fancyFont, text, x, y, 1.0f, titleColour1);
 			
-			renderer.fillRect(x, y+ 20, getTextWidth(text, font), 10, titleColour1);
+			renderer.fillRect(x, y+ 20, getTextWidth(text, fancyFont), 10, titleColour1);
 			
 			//PLAY
 
@@ -326,7 +328,7 @@ public class GUI {
 			x = 120;
 		    y = 360;
 			Colour c = titleColour1;
-			if(isHovering(text, x, y-24, font)) {
+			if(isHovering(text, x, y-24, fancyFont)) {
 				c = titleColour2;
 				if(gp.mouseL.mouseButtonDown(0)) {
 					if(clickCooldown == 0) {
@@ -337,10 +339,10 @@ public class GUI {
 						titleAnimationSpeed = 0;
 					}
 				}
-				renderer.fillRect(x, y+ 14, getTextWidth(text, font), 6, c);
+				renderer.fillRect(x, y+ 14, getTextWidth(text, fancyFont), 6, c);
 			}
 			
-			renderer.drawString(font, text, x, y, 1.0f, c);
+			renderer.drawString(fancyFont, text, x, y, 1.0f, c);
 		
 			//SETTINGS
 			text = "Settings";
@@ -348,7 +350,7 @@ public class GUI {
 			x = 120;
 			y = 450;
 			c = titleColour1;
-			if(isHovering(text,x, y-24, font)) {
+			if(isHovering(text,x, y-24, fancyFont)) {
 				c = titleColour1;
 				if(gp.mouseL.mouseButtonDown(0)) {
 					if(clickCooldown == 0) {
@@ -357,10 +359,10 @@ public class GUI {
 						clickCooldown = 0.33;
 					}
 				}
-				renderer.fillRect(x, y+ 14, getTextWidth(text, font), 6, c);
+				renderer.fillRect(x, y+ 14, getTextWidth(text, fancyFont), 6, c);
 			}
 			
-			renderer.drawString(font, text, x, y, 1.0f, c);
+			renderer.drawString(fancyFont, text, x, y, 1.0f, c);
 	
 			//QUIT
 			text = "Quit";
@@ -368,7 +370,7 @@ public class GUI {
 			x = 120;
 			y = 450+90;
 			c = titleColour1;
-			if(isHovering(text,x, y-24, font)) {
+			if(isHovering(text,x, y-24, fancyFont)) {
 				c  = (titleColour2);
 				if(gp.mouseL.mouseButtonDown(0)) {
 					if(clickCooldown == 0) {
@@ -376,10 +378,10 @@ public class GUI {
 						System.exit(0);
 					}
 				}
-				renderer.fillRect(x, y+ 14, getTextWidth(text, font), 6, c);
+				renderer.fillRect(x, y+ 14, getTextWidth(text, fancyFont), 6, c);
 			}
 			
-			renderer.drawString(font, text, x, y, 1.0f, c);
+			renderer.drawString(fancyFont, text, x, y, 1.0f, c);
 		}
 		
 	}
@@ -482,10 +484,10 @@ public class GUI {
 		    // ------------------------------------
 		    if(isUnlocked) {
 			    String name = recipe.getName();
-			    int textWidth = (int)font.getTextWidth(name);
+			    int textWidth = (int)fancyFont.getTextWidth(name);
 			    int textX = x + (borderSize - textWidth) / 2;
 			    int textY = y - 6;
-			    renderer.drawString(font, name, textX, textY, 1.0f, titleColour1);
+			    renderer.drawString(fancyFont, name, textX, textY, 1.0f, titleColour1);
 		    }
 
 		    // ------------------------------------
@@ -564,16 +566,16 @@ public class GUI {
 			
 			int x = 110;
 			int y = 220;
-			renderer.drawString(font, text, x, y, 1.0f, titleColour1);
+			renderer.drawString(fancyFont, text, x, y, 1.0f, titleColour1);
 			
-			renderer.fillRect(x, y+ 20, getTextWidth(text, font), 10, titleColour1);
+			renderer.fillRect(x, y+ 20, getTextWidth(text, fancyFont), 10, titleColour1);
 			text = "Settings";
 					
 		    x = 110;
 		    y = 230+80;
-			renderer.drawString(font, text, x, y, 1.0f, titleColour1);
+			renderer.drawString(fancyFont, text, x, y, 1.0f, titleColour1);
 					
-			renderer.fillRect(x, y+20, getTextWidth(text, font), 10, titleColour1);
+			renderer.fillRect(x, y+20, getTextWidth(text, fancyFont), 10, titleColour1);
 		
 		//HOST
 		Colour c = (titleColour1);
@@ -582,7 +584,7 @@ public class GUI {
 		x = 120;
 		y = 390;
 			
-		if(isHovering(text,x, y-24, font)) {
+		if(isHovering(text,x, y-24, fancyFont)) {
 			c = (titleColour2);
 			if(gp.mouseL.mouseButtonDown(0)) {
 				if(clickCooldown == 0) {
@@ -593,11 +595,11 @@ public class GUI {
 					clickCooldown = 0.16;
 				}
 			}
-			renderer.fillRect(x, y+ 14, getTextWidth(text, font), 6, c);
+			renderer.fillRect(x, y+ 14, getTextWidth(text, fancyFont), 6, c);
 
 		}
 			
-			renderer.drawString(font, text, x, y, 1.0f, c);
+			renderer.drawString(fancyFont, text, x, y, 1.0f, c);
 			
 			//MULTIPLAYER
 			c = titleColour1;
@@ -606,7 +608,7 @@ public class GUI {
 			x = 120;
 			y = 480;
 			
-			if(isHovering(text,x, y-24, font)) {
+			if(isHovering(text,x, y-24, fancyFont)) {
 				c = (titleColour2);
 				if(gp.mouseL.mouseButtonDown(0)) {
 					//ENTER MULTIPLAYER
@@ -616,11 +618,11 @@ public class GUI {
 						clickCooldown = 0.16;
 					}
 				}
-				renderer.fillRect(x, y+ 14, getTextWidth(text, font), 6, c);
+				renderer.fillRect(x, y+ 14, getTextWidth(text, fancyFont), 6, c);
 
 			}
 			
-			renderer.drawString(font, text, x, y, 1.0f, c);
+			renderer.drawString(fancyFont, text, x, y, 1.0f, c);
 
 			//QUIT
 			c = (titleColour1);
@@ -629,7 +631,7 @@ public class GUI {
 			x = 100;
 			y = 660;
 			
-			if(isHovering(text,x, y-24, font)) {
+			if(isHovering(text,x, y-24, fancyFont)) {
 				c = (titleColour2);
 				if(gp.mouseL.mouseButtonDown(0)) {
 					//QUIT GAME
@@ -641,10 +643,10 @@ public class GUI {
 						titleAnimationSpeed = 0;
 					}
 				}
-				renderer.fillRect(x, y+ 14, getTextWidth(text, font), 6, c);
+				renderer.fillRect(x, y+ 14, getTextWidth(text, fancyFont), 6, c);
 
 			}
-			renderer.drawString(font, text, x, y, 1.0f, c);
+			renderer.drawString(fancyFont, text, x, y, 1.0f, c);
 
 		}
 	}
@@ -673,9 +675,9 @@ public class GUI {
 	    if (titleAnimationCounter > 6) {
 	        // Title
 	        String text = "Available LAN Worlds";
-	        int x = gp.frameWidth/2 - getTextWidth(text, font)/2;
+	        int x = gp.frameWidth/2 - getTextWidth(text, fancyFont)/2;
 	        int y = 200;
-	        renderer.drawString(font, text, x, y, 1.0f, titleColour1);
+	        renderer.drawString(fancyFont, text, x, y, 1.0f, titleColour1);
 	        renderer.fillRect(x, y+20, getTextWidth(text, font), 10, titleColour1);
 
 	        // Server list
@@ -691,7 +693,7 @@ public class GUI {
 	                y = startY + index * 60;
 
 	                Colour c = titleColour1;
-	                if (isHovering(text, x, y-24, font)) {
+	                if (isHovering(text, x, y-24, fancyFont)) {
 	                    c = (titleColour2);
 	                    if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	                        // Select this server
@@ -701,13 +703,13 @@ public class GUI {
 	                        joinSelected = true;
 	                        clickCooldown = 0.25;
 	                    }
-	                    renderer.fillRect(x, y+14, getTextWidth(text, font), 6, c);
+	                    renderer.fillRect(x, y+14, getTextWidth(text, fancyFont), 6, c);
 	                }
-	                renderer.drawString(font, text, x, y, 1.0f, c);
+	                renderer.drawString(fancyFont, text, x, y, 1.0f, c);
 	                index++;
 	            }
 	        } else {
-	            renderer.drawString(font, "Searching for games on LAN...", 140, 320, 1.0f, Colour.BLACK);
+	            renderer.drawString(fancyFont, "Searching for games on LAN...", 140, 320, 1.0f, Colour.BLACK);
 	        }
 
 	        // Back button
@@ -715,7 +717,7 @@ public class GUI {
 	        x = 100;
 	        y = 660;
 	        Colour c = titleColour1;
-	        if (isHovering(text, x, y-24, font)) {
+	        if (isHovering(text, x, y-24, fancyFont)) {
 	            c = (titleColour2);
 	            if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	                gp.currentState = gp.multiplayerSettingsState;
@@ -725,9 +727,9 @@ public class GUI {
 	                titleAnimationSpeed = 0;
 	                gp.stopDiscovery();
 	            }
-	            renderer.fillRect(x, y+14, getTextWidth(text, font), 6, c);
+	            renderer.fillRect(x, y+14, getTextWidth(text, fancyFont), 6, c);
 	        }
-	        renderer.drawString(font, text, x, y, 1.0f, c);
+	        renderer.drawString(fancyFont, text, x, y, 1.0f, c);
 	    }
 	}
 	public void drawGameSettingsScreen(Renderer renderer) {

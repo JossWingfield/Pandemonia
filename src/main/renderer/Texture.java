@@ -148,9 +148,10 @@ public class Texture {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int argb = pixelsRaw[y * width + x];
+                // Flip y
+                int flippedY = height - 1 - y;
+                int argb = pixelsRaw[flippedY * width + x];
 
-                // Extract components
                 byte a = (byte) ((argb >> 24) & 0xFF);
                 byte r = (byte) ((argb >> 16) & 0xFF);
                 byte g = (byte) ((argb >> 8) & 0xFF);

@@ -135,24 +135,7 @@ public class Stove extends Building {
 			leftHitbox = new Rectangle2D.Float(hitbox.x - xDrawOffset + 24 + hitboxWidth/2, (int) (hitbox.y)-yDrawOffset+48+16, hitboxWidth, 64);
 			rightHitbox = new Rectangle2D.Float((int) hitbox.x - xDrawOffset + 48 + 30 + hitboxWidth/2, (int) (hitbox.y)-yDrawOffset+48+16, hitboxWidth, 64);
 		}
-		
-		if(canBePlaced) {
-			if(hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
-				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-					openDestructionUI();
-				}
-			}
-			
-			if(!hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
-				closeDestructionUI();
-			}
-			if(destructionUIOpen) {
-				if(gp.mouseL.mouseButtonDown(1)) {
-					gp.customiser.addToInventory(this);
-					gp.buildingM.destroyBuilding(this);
-				}
-			}
-		}
+
 		
 		//g2.setColor(Color.YELLOW);
 		//g2.drawRect((int)leftHitbox.x, (int)leftHitbox.y, (int)leftHitbox.width, (int)leftHitbox.height);

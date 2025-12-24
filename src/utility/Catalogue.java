@@ -1,6 +1,5 @@
 package utility;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -10,6 +9,7 @@ import java.util.Set;
 
 import entity.buildings.Building;
 import entity.buildings.Candle;
+import entity.buildings.Fireplace;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.Lantern;
 import entity.buildings.WallDecor_Building;
@@ -80,11 +80,13 @@ public class Catalogue {
 		List<Object> contents = new ArrayList<Object>();
 		contents.add(new WallDecor_Building(gp, 0, 0, 17));
 		contents.add(new WallPaper(gp, 31));
+		contents.add(new Fireplace(gp, 0, 0));
+		contents.add(new FloorPaper(gp, 4));
 		catalogue.setContents(contents);
 		addCatalogue(catalogue);
 		
-		 font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
-		 addBuildings();
+		font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
+		addBuildings();
 	}
     public int getRandomCatalogue() {
 
@@ -169,7 +171,7 @@ public class Catalogue {
 		for(TableSkin b: tableSkinInventory) {
 			tables.add(b.preset);
 		}
-		data.tableSkinInventory = chairs;
+		data.tableSkinInventory = tables;
 		return data;
 	}
 	public void applySaveData(CatalogueSaveData data) {
@@ -226,7 +228,6 @@ public class Catalogue {
 		addToInventory(new FloorPaper(gp, 1));
 		addToInventory(new FloorPaper(gp, 2));
 		addToInventory(new FloorPaper(gp, 3));
-		addToInventory(new FloorPaper(gp, 4));
 		addToInventory(new FloorPaper(gp, 5));
 		addToInventory(new FloorPaper(gp, 6));
 		addToInventory(new FloorPaper(gp, 7));
