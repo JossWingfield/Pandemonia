@@ -47,8 +47,8 @@ public class Gate extends Building {
     	animations[0][0][1] = importImage("/decor/connected table 2.png").getSubimage(96, 64, 32, 32);
 	}
 	public void refreshImages() {
-       	animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(64, 64, 32, 32);
-       	animations[0][0][1] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(96, 64, 32, 32);
+       	animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(64, 64, 32, 32);
+       	animations[0][0][1] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(96, 64, 32, 32);
 	}
 	public void draw(Renderer renderer) {
 		

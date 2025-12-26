@@ -43,7 +43,7 @@ public abstract class Item extends Entity {
     public String getName() {
     	return name;
     }
-    
+    public void refreshImages() {}
     public void createNewHitbox(float xPos, float yPos, float width, float height) {
         hitbox = new Rectangle2D.Float(xPos, yPos, width, height);
     }

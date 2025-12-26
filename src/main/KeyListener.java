@@ -7,7 +7,10 @@ import org.lwjgl.glfw.GLFW;
 import entity.buildings.Fireplace;
 import entity.buildings.WallDecor_Building;
 import map.ChairSkin;
+import map.CounterSkin;
+import map.DoorSkin;
 import map.FloorPaper;
+import map.PanSkin;
 import map.TableSkin;
 import map.WallPaper;
 
@@ -132,8 +135,11 @@ public class KeyListener {
         		gp.customiser.addToInventory(new WallPaper(gp, 31));
         		gp.customiser.addToInventory(new Fireplace(gp, 0, 0));
            		gp.customiser.addToInventory(new FloorPaper(gp, 4));
-           		gp.customiser.addToInventory(new TableSkin(gp, 2));
-           		gp.customiser.addToInventory(new ChairSkin(gp, 13));
+           		gp.customiser.addToInventory(new CounterSkin(gp, 4));
+          		gp.customiser.addToInventory(new ChairSkin(gp, 13));
+          		gp.customiser.addToInventory(new TableSkin(gp, 1));
+          		gp.customiser.addToInventory(new DoorSkin(gp, 1));
+          		gp.customiser.addToInventory(new PanSkin(gp, 1));
         		
             }
         }

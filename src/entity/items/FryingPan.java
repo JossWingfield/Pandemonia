@@ -19,16 +19,19 @@ public class FryingPan extends CookingItem {
 	private void importImages() {
 		animations = new TextureRegion[1][1][12];
 		
-		animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(112+16, 16, 16, 16);
-		animations[0][0][2] = importImage("/decor/Pan.png").getSubimage(16, 0, 16, 16);
-		animations[0][0][3] = importImage("/decor/PanCooking.png").getSubimage(0, 0, 16, 16);
-		animations[0][0][4] = importImage("/decor/PanCooking.png").getSubimage(0, 0, 16, 16);
-		animations[0][0][5] = importImage("/decor/PanCooking.png").getSubimage(16, 0, 16, 16);
-		animations[0][0][6] = importImage("/decor/PanCooking.png").getSubimage(32, 0, 16, 16);
-		animations[0][0][8] = importImage("/decor/kitchen props.png").getSubimage(112+16, 16, 16, 16);
-		animations[0][0][9] = importImage("/decor/Pan.png").getSubimage(16, 16, 16, 16);
-		animations[0][0][10] = importImage("/decor/PanBurnt.png").getSubimage(0, 0 ,16, 16);
-		animations[0][0][11] = importImage("/decor/PanBurnt.png").getSubimage(16, 0 ,16, 16);
+		animations[0][0][0] = importImage("/decor/CookingPots.png").getSubimage(32, 0, 16, 16);
+		animations[0][0][2] = importImage("/decor/CookingPots.png").getSubimage(16, 32, 16, 16);
+		animations[0][0][3] = importImage("/decor/CookingPots.png").getSubimage(0, 64, 16, 16);
+		animations[0][0][4] = importImage("/decor/CookingPots.png").getSubimage(0, 64, 16, 16);
+		animations[0][0][5] = importImage("/decor/CookingPots.png").getSubimage(16, 64, 16, 16);
+		animations[0][0][6] = importImage("/decor/CookingPots.png").getSubimage(32, 64, 16, 16);
+		animations[0][0][8] = importImage("/decor/CookingPots.png").getSubimage(32, 0, 16, 16);
+		animations[0][0][9] = importImage("/decor/CookingPots.png").getSubimage(16, 48, 16, 16);
+		animations[0][0][10] = importImage("/decor/CookingPots.png").getSubimage(32, 32 ,16, 16);
+		animations[0][0][11] = importImage("/decor/CookingPots.png").getSubimage(48, 0 ,16, 16);
+	}
+	public void refreshImages() {
+		animations = gp.mapM.currentRoom.getPanSkin().getFryingPanAnimations();
 	}
 	public void updateCooking() {
 	    if (cooking) {

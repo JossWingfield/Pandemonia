@@ -1401,31 +1401,31 @@ public class FloorDecor_Building extends Building {
 	public void refreshImages() {
 		switch(type) {
 		case 4:
-           	animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(0, 0, 16, 32);
+           	animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 0, 16, 32);
 			break;
 		case 5:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(16, 0, 16, 32);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(16, 0, 16, 32);
 			break;
 		case 6:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(32, 0, 16, 32);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 0, 16, 32);
 			break;
 		case 7:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(0, 32, 32, 16);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 32, 32, 16);
 			break;
 		case 8:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(0, 48, 32, 16);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 48, 32, 16);
 			break;
 		case 9:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(0, 64, 32, 16);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 64, 32, 16);
 			break;
 		case 10:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(32, 32, 32, 16);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 32, 32, 16);
 			break;
 		case 11:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(32, 48, 32, 16);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 48, 32, 16);
 			break;
 		case 12:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(32, 64, 32, 16);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 64, 32, 16);
 			break;
 		}
 	}

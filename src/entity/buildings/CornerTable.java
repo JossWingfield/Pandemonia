@@ -102,16 +102,16 @@ public class CornerTable extends Building {
 	public void refreshImages() {
 		switch(presetNum) {
 		case 0:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(64, 0, 32, 32);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(64, 0, 32, 32);
 			break;
 		case 1:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(96, 0, 32, 32);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(96, 0, 32, 32);
 			break;
 		case 2:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(64, 32, 32, 32);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(64, 32, 32, 32);
 			break;
 		case 3:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getTableImage(96, 32, 32, 32);
+			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(96, 32, 32, 32);
 			break;
 		}	
 	}

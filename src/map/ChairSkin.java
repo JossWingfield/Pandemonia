@@ -82,7 +82,7 @@ public class ChairSkin {
 			break;
 		case 15:
 	        img = importImage("/decor/chair.png").getSubimage(2+96, 73+32, 16, 16);
-	        cost = 100;
+	        cost = 40;
 			break;
 		}
 		

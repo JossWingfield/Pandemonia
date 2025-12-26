@@ -476,7 +476,7 @@ public abstract class NPC extends Entity {
     	walking = true;
     	if(door.npcHitbox != null) {
     		if(door.npcHitbox.intersects(hitbox)) {
-    			changeRoom(door.roomNum, door.facing);
+    			changeRoom(door.doorRoomNum, door.facing);
     			return true;
     		}
     	}

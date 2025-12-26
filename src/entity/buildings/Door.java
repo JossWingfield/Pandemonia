@@ -12,7 +12,7 @@ public class Door extends Building {
 	
 	private Rectangle2D.Float doorHitbox, entryHitbox, npcVisualHitbox;
 	private boolean firstUpdate = true;
-	public int roomNum = 1;
+	public int doorRoomNum = 1;
 	public int facing;
 	public int preset = 0;
 	public double doorCooldown = 0;
@@ -61,7 +61,7 @@ public class Door extends Building {
 		//System.out.println("arrayCounter++;");
 	}
 	public void setDoorNum(int num) {
-		roomNum = num;
+		doorRoomNum = num;
 	}
 	public void setDoorLight(boolean doorLight) {
 		this.drawLight = doorLight;
@@ -89,6 +89,9 @@ public class Door extends Building {
 	    	} else if(facing == 0){ //0
 	        	animations[0][0][0] = importImage("/decor/door.png").getSubimage(0, 48, 32, 48);
 	        	animations[0][0][1] = importImage("/decor/door.png").getSubimage(32, 0, 32, 48);
+	        	if(gp.mapM != null) {
+					animations[0][0][0] = gp.mapM.getRooms()[doorRoomNum].getDoorSkin().getImage();
+	        	}
 	    	} else if(facing == 2 || facing == 3) {
 	    		animations[0][0][0] = importImage("/decor/door.png").getSubimage(128, 48, 16, 48);
 	        	animations[0][0][1] = animations[0][0][0];
@@ -116,15 +119,21 @@ public class Door extends Building {
 			break;
 		}
 	}
+	public void refreshImages() {
+		if(preset == 0) {
+			if(facing == 0) {
+				animations[0][0][0] = gp.mapM.getRooms()[roomNum].getDoorSkin().getImage();
+			}
+		}
+	}
 	public void update(double dt) {
 		super.update(dt);
-		
 		
 		if(entryHitbox != null) {
 			if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
 				if(doorCooldown == 0) {
-					if(roomNum != 2) {
-						gp.mapM.changeRoom(roomNum, this);
+					if(doorRoomNum != 2) {
+						gp.mapM.changeRoom(doorRoomNum, this);
 					}
 				}
 			}
@@ -184,6 +193,7 @@ public class Door extends Building {
 		
 		//g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)gp.player.interactHitbox.x, (int)gp.player.interactHitbox.y, (int)gp.player.interactHitbox.width, (int)gp.player.interactHitbox.height);
+		
 		
 		if(drawLight && animations[0][0][2] != null) {
 			renderer.draw(animations[0][0][2], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		

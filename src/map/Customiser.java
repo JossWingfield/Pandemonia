@@ -1,16 +1,13 @@
 package map;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
+
 import entity.buildings.Building;
-import entity.buildings.Fireplace;
 import entity.buildings.Shelf;
-import entity.buildings.WallDecor_Building;
 import main.GamePanel;
 import main.renderer.AssetPool;
 import main.renderer.BitmapFont;
@@ -30,8 +27,8 @@ public class Customiser {
 	BitmapFont font;
 	
 	private TextureRegion frame, buildFrame, buildFrameHighlight, buildFrameHighlight2, border;
-	private TextureRegion decorTab, kitchenTab, floorTab, wallTab, storeTab, bathroomTab, beamTab, chairTab, tableTab;
-	private TextureRegion decorTab2, kitchenTab2, floorTab2, wallTab2, storeTab2, bathroomTab2, beamTab2, chairTab2, tableTab2;
+	private TextureRegion decorTab, kitchenTab, floorTab, wallTab, storeTab, bathroomTab, beamTab, chairTab, counterTab, tableTab, panTab, doorTab;
+	private TextureRegion decorTab2, kitchenTab2, floorTab2, wallTab2, storeTab2, bathroomTab2, beamTab2, chairTab2, counterTab2, tableTab2, panTab2, doorTab2;
 	
 	private int ySize = 126*3;
 	int yStart;
@@ -50,10 +47,14 @@ public class Customiser {
 	private List<Building> storeBuildingInventory = new ArrayList<Building>();
 	private List<Building> bathroomBuildingInventory = new ArrayList<Building>();
 	private List<ChairSkin> chairSkinInventory = new ArrayList<ChairSkin>();
+	private List<CounterSkin> counterSkinInventory = new ArrayList<CounterSkin>();
 	private List<TableSkin> tableSkinInventory = new ArrayList<TableSkin>();
+	private List<PanSkin> panSkinInventory = new ArrayList<PanSkin>();
+	private List<DoorSkin> doorSkinInventory = new ArrayList<DoorSkin>();
 	public Building selectedBuilding;
 	
 	private int prevX, prevY;
+	private int tabDisplayNum = 0;
 	
 	public Customiser(GamePanel gp) {
 		this.gp = gp;
@@ -70,7 +71,10 @@ public class Customiser {
 		storeTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*6, 0, 34, 25);
 		bathroomTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*7, 0, 34, 25);
 		chairTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*8, 0, 34, 25);
-		tableTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 0, 34, 25);
+		counterTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 0, 34, 25);
+		tableTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*10, 0, 34, 25);
+		panTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*11, 0, 34, 25);
+		doorTab = importImage("/UI/customise/BuildTab.png").getSubimage(34*12, 0, 34, 25);
 		
 		decorTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34, 25, 34, 25);
 		kitchenTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*2, 25, 34, 25);
@@ -80,7 +84,10 @@ public class Customiser {
 		storeTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*6, 25, 34, 25);
 		bathroomTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*7, 25, 34, 25);
 		chairTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*8, 25, 34, 25);
-		tableTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 25, 34, 25);
+		counterTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*9, 25, 34, 25);
+		tableTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*10, 25, 34, 25);
+		panTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*11, 25, 34, 25);
+		doorTab2 = importImage("/UI/customise/BuildTab.png").getSubimage(34*12, 25, 34, 25);
 		
 		border = importImage("/UI/customise/WallBorder.png").toTextureRegion();
 		
@@ -95,7 +102,10 @@ public class Customiser {
 		storeBuildingInventory.clear();
 		bathroomBuildingInventory.clear();
 		chairSkinInventory.clear();
+		counterSkinInventory.clear();
 		tableSkinInventory.clear();
+		doorSkinInventory.clear();
+		panSkinInventory.clear();
 		
 		selectedBuilding = null;
 	}
@@ -127,11 +137,31 @@ public class Customiser {
 		}
 		data.chairSkinInventory = chairs;
 		
+		List<Integer> counters = new ArrayList<>();
+		for(CounterSkin b: counterSkinInventory) {
+			counters.add(b.preset);
+		}
+		data.counterSkinInventory = counters;
+		
 		List<Integer> tables = new ArrayList<>();
 		for(TableSkin b: tableSkinInventory) {
 			tables.add(b.preset);
 		}
 		data.tableSkinInventory = tables;
+		
+		List<Integer> pans = new ArrayList<>();
+		for(PanSkin b: panSkinInventory) {
+			pans.add(b.preset);
+		}
+		data.panSkinInventory = pans;
+		
+		List<Integer> doors = new ArrayList<>();
+		for(DoorSkin b: doorSkinInventory) {
+			doors.add(b.preset);
+		}
+		data.doorSkinInventory = doors;
+		
+		
 		return data;
 	}
 	public void applySaveData(CustomiserSaveData data) {
@@ -158,9 +188,24 @@ public class Customiser {
 			chairSkinInventory.add(new ChairSkin(gp, i));
 		}
 		
+		counterSkinInventory.clear();
+		for(Integer i: data.counterSkinInventory) {
+			counterSkinInventory.add(new CounterSkin(gp, i));
+		}
+		
 		tableSkinInventory.clear();
 		for(Integer i: data.tableSkinInventory) {
 			tableSkinInventory.add(new TableSkin(gp, i));
+		}
+		
+		panSkinInventory.clear();
+		for(Integer i: data.panSkinInventory) {
+			panSkinInventory.add(new PanSkin(gp, i));
+		}
+		
+		doorSkinInventory.clear();
+		for(Integer i: data.doorSkinInventory) {
+			doorSkinInventory.add(new DoorSkin(gp, i));
 		}
 	}
 	private Texture importImage(String filePath) {
@@ -189,7 +234,13 @@ public class Customiser {
 				addToInventory(w);
 			} else if(o instanceof ChairSkin w) {
 				addToInventory(w);
+			} else if(o instanceof CounterSkin w) {
+				addToInventory(w);
 			} else if(o instanceof TableSkin w) {
+				addToInventory(w);
+			} else if(o instanceof PanSkin w) {
+				addToInventory(w);
+			} else if(o instanceof DoorSkin w) {
 				addToInventory(w);
 			}
 		}
@@ -217,8 +268,17 @@ public class Customiser {
 	public void addToInventory(ChairSkin b) {
 		chairSkinInventory.add(b);
 	}
+	public void addToInventory(CounterSkin b) {
+		counterSkinInventory.add(b);
+	}
 	public void addToInventory(TableSkin b) {
 		tableSkinInventory.add(b);
+	}
+	public void addToInventory(PanSkin b) {
+		panSkinInventory.add(b);
+	}
+	public void addToInventory(DoorSkin b) {
+		doorSkinInventory.add(b);
 	}
 	public void update(double dt) {
 		if (clickCounter > 0) {
@@ -226,6 +286,21 @@ public class Customiser {
 		    if (clickCounter < 0) {
 		    	clickCounter = 0;      // clamp to zero
 		    }
+		}
+		if(clickCounter == 0) {
+			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
+				tabDisplayNum--;
+				clickCounter = 0.2;
+				if(tabDisplayNum <= 0) {
+					tabDisplayNum = 0;
+				}
+			} else if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_RIGHT)) {
+				tabDisplayNum++;
+				clickCounter = 0.2;
+				if(tabDisplayNum >= 1) {
+					tabDisplayNum = 1;
+				}
+			}
 		}
 		/*
 		if(gp.currentState == gp.customiseRestaurantState) {
@@ -248,7 +323,7 @@ public class Customiser {
 			yStart = gp.frameHeight-ySize+4 - 20 + yOffset;
 			
 			
-			int xTabStart = 40;
+			int xTabStart = -34*3 * tabDisplayNum;
 			float fontScale = 1.0f;
 			
 			if(pageNum == 1) {
@@ -337,14 +412,47 @@ public class Customiser {
 				renderer.draw(chairTab, xTabStart + 7*(34*3), yStart-25*3, 34*3, 25*3);
 			}
 			if(pageNum == 9) {
-				renderer.draw(tableTab2, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3);
+				renderer.draw(counterTab2, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3);
 			} else {
 				if(containsMouse(xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3)) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 						pageNum = 9;
 					}
 				}
-				renderer.draw(tableTab, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3);
+				renderer.draw(counterTab, xTabStart + 8*(34*3), yStart-25*3, 34*3, 25*3);
+			}
+			
+			if(pageNum == 10) {
+				renderer.draw(tableTab2, xTabStart + 9*(34*3), yStart-25*3, 34*3, 25*3);
+			} else {
+				if(containsMouse(xTabStart + 9*(34*3), yStart-25*3, 34*3, 25*3)) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
+						pageNum = 10;
+					}
+				}
+				renderer.draw(tableTab, xTabStart + 9*(34*3), yStart-25*3, 34*3, 25*3);
+			}
+			
+			if(pageNum == 11) {
+				renderer.draw(panTab2, xTabStart + 10*(34*3), yStart-25*3, 34*3, 25*3);
+			} else {
+				if(containsMouse(xTabStart + 10*(34*3), yStart-25*3, 34*3, 25*3)) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
+						pageNum = 11;
+					}
+				}
+				renderer.draw(panTab, xTabStart + 10*(34*3), yStart-25*3, 34*3, 25*3);
+			}
+			
+			if(pageNum == 12) {
+				renderer.draw(doorTab2, xTabStart + 11*(34*3), yStart-25*3, 34*3, 25*3);
+			} else {
+				if(containsMouse(xTabStart + 11*(34*3), yStart-25*3, 34*3, 25*3)) {
+					if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
+						pageNum = 12;
+					}
+				}
+				renderer.draw(doorTab, xTabStart + 11*(34*3), yStart-25*3, 34*3, 25*3);
 			}
 				
 			if(pageNum == 1) {
@@ -698,6 +806,48 @@ public class Customiser {
 				
 				int startDraw = 0;
 				
+				if(counterSkinInventory.size() == 0) {
+					renderer.drawString(font, "No Counters!", xStart + 50, yPos+50, fontScale, c);
+				}
+				
+				int index = 0;
+				for(CounterSkin b: new ArrayList<CounterSkin>(counterSkinInventory)) {
+					if(index >= startDraw) {
+						if(b != null) {
+			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
+			    					gp.mapM.currentRoom.setCounterSkin(b);
+			    					counterSkinInventory.remove(b);
+			    					clickCounter = 0.33;
+			    					gp.buildingM.refreshBuildings();
+			    				}
+			    			} else {
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
+			    			}
+			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
+
+			    			xStart+= 37*3;
+			    			counter++;
+			    			if(counter >= 10) {
+			    				xStart = originalXStart;
+			    				yPos += 37*3;
+			    				counter = 0;
+			    			}
+						}
+					} else {
+						counter = 0;
+					}
+	    			index++;
+				}
+			} else if(pageNum == 10) {
+				int counter = 0;
+				xStart = 8*3;
+				int originalXStart = xStart;
+				int yPos = yStart+(30);
+				
+				int startDraw = 0;
+				
 				if(tableSkinInventory.size() == 0) {
 					renderer.drawString(font, "No Tables!", xStart + 50, yPos+50, fontScale, c);
 				}
@@ -711,6 +861,90 @@ public class Customiser {
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 			    					gp.mapM.currentRoom.setTableSkin(b);
 			    					tableSkinInventory.remove(b);
+			    					clickCounter = 0.33;
+			    					gp.buildingM.refreshBuildings();
+			    				}
+			    			} else {
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
+			    			}
+			    			renderer.draw(b.getImage2(), xStart+(55) - 24, yPos+28, 48, 48);
+
+			    			xStart+= 37*3;
+			    			counter++;
+			    			if(counter >= 10) {
+			    				xStart = originalXStart;
+			    				yPos += 37*3;
+			    				counter = 0;
+			    			}
+						}
+					} else {
+						counter = 0;
+					}
+	    			index++;
+				}
+			} else if(pageNum == 11) {
+				int counter = 0;
+				xStart = 8*3;
+				int originalXStart = xStart;
+				int yPos = yStart+(30);
+				
+				int startDraw = 0;
+				
+				if(panSkinInventory.size() == 0) {
+					renderer.drawString(font, "No Pans!", xStart + 50, yPos+50, fontScale, c);
+				}
+				
+				int index = 0;
+				for(PanSkin b: new ArrayList<PanSkin>(panSkinInventory)) {
+					if(index >= startDraw) {
+						if(b != null) {
+			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
+			    					gp.mapM.currentRoom.setPanSkin(b);
+			    					panSkinInventory.remove(b);
+			    					clickCounter = 0.33;
+			    					gp.buildingM.refreshStove();
+			    				}
+			    			} else {
+								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
+			    			}
+			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
+
+			    			xStart+= 37*3;
+			    			counter++;
+			    			if(counter >= 10) {
+			    				xStart = originalXStart;
+			    				yPos += 37*3;
+			    				counter = 0;
+			    			}
+						}
+					} else {
+						counter = 0;
+					}
+	    			index++;
+				}
+			} else if(pageNum == 12) {
+				int counter = 0;
+				xStart = 8*3;
+				int originalXStart = xStart;
+				int yPos = yStart+(30);
+				
+				int startDraw = 0;
+				
+				if(doorSkinInventory.size() == 0) {
+					renderer.drawString(font, "No Doors!", xStart + 50, yPos+50, fontScale, c);
+				}
+				
+				int index = 0;
+				for(DoorSkin b: new ArrayList<DoorSkin>(doorSkinInventory)) {
+					if(index >= startDraw) {
+						if(b != null) {
+			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
+								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
+			    					gp.mapM.currentRoom.setDoorSkin(b);
+			    					doorSkinInventory.remove(b);
 			    					clickCounter = 0.33;
 			    					gp.buildingM.refreshBuildings();
 			    				}
@@ -735,6 +969,8 @@ public class Customiser {
 			}
 			
 		}
+		
+		
 		if(selectedBuilding != null) {
 			if(mouseY < gp.frameHeight-ySize || !showBuildings) {
 				int size = 4*3;
@@ -824,7 +1060,7 @@ public class Customiser {
 						}
 						if(kitchenBuildingInventory.contains(selectedBuilding)) {
 							kitchenBuildingInventory.remove(selectedBuilding);
-						} 
+						}
 						if(storeBuildingInventory.contains(selectedBuilding)) {
 							storeBuildingInventory.remove(selectedBuilding);
 						} 

@@ -22,7 +22,10 @@ import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import map.Beam;
 import map.ChairSkin;
+import map.CounterSkin;
+import map.DoorSkin;
 import map.FloorPaper;
+import map.PanSkin;
 import map.TableSkin;
 import map.WallPaper;
 import utility.save.CatalogueSaveData;
@@ -55,7 +58,10 @@ public class Catalogue {
 	private List<WallPaper> wallpaperInventory = new ArrayList<WallPaper>();
 	private List<Beam> beamInventory = new ArrayList<Beam>();
 	private List<ChairSkin> chairSkinInventory = new ArrayList<ChairSkin>();
+	private List<CounterSkin> counterSkinInventory = new ArrayList<CounterSkin>();
 	private List<TableSkin> tableSkinInventory = new ArrayList<TableSkin>();
+	private List<PanSkin> panSkinInventory = new ArrayList<PanSkin>();
+	private List<DoorSkin> doorSkinInventory = new ArrayList<DoorSkin>();
 	private List<Building> storeBuildingInventory = new ArrayList<Building>();
 	private List<Building> bathroomBuildingInventory = new ArrayList<Building>();
 	
@@ -82,6 +88,10 @@ public class Catalogue {
 		contents.add(new WallPaper(gp, 31));
 		contents.add(new Fireplace(gp, 0, 0));
 		contents.add(new FloorPaper(gp, 4));
+		contents.add(new CounterSkin(gp, 4));
+		contents.add(new ChairSkin(gp, 13));
+		contents.add(new PanSkin(gp, 1));
+		contents.add(new TableSkin(gp, 1));
 		catalogue.setContents(contents);
 		addCatalogue(catalogue);
 		
@@ -167,11 +177,29 @@ public class Catalogue {
 		}
 		data.chairSkinInventory = chairs;
 		
+		List<Integer> counters = new ArrayList<>();
+		for(CounterSkin b: counterSkinInventory) {
+			counters.add(b.preset);
+		}
+		data.counterSkinInventory = counters;
+		
 		List<Integer> tables = new ArrayList<>();
 		for(TableSkin b: tableSkinInventory) {
 			tables.add(b.preset);
 		}
 		data.tableSkinInventory = tables;
+		
+		List<Integer> pans = new ArrayList<>();
+		for(PanSkin b: panSkinInventory) {
+			pans.add(b.preset);
+		}
+		data.panSkinInventory = pans;
+		
+		List<Integer> doors = new ArrayList<>();
+		for(DoorSkin b: doorSkinInventory) {
+			doors.add(b.preset);
+		}
+		data.doorSkinInventory = doors;
 		return data;
 	}
 	public void applySaveData(CatalogueSaveData data) {
@@ -197,9 +225,23 @@ public class Catalogue {
 		for(Integer i: data.chairSkinInventory) {
 			chairSkinInventory.add(new ChairSkin(gp, i));
 		}
+		counterSkinInventory.clear();
+		for(Integer i: data.counterSkinInventory) {
+			counterSkinInventory.add(new CounterSkin(gp, i));
+		}
+		
 		tableSkinInventory.clear();
 		for(Integer i: data.tableSkinInventory) {
 			tableSkinInventory.add(new TableSkin(gp, i));
+		}
+		
+		panSkinInventory.clear();
+		for(Integer i: data.panSkinInventory) {
+			panSkinInventory.add(new PanSkin(gp, i));
+		}
+		doorSkinInventory.clear();
+		for(Integer i: data.doorSkinInventory) {
+			doorSkinInventory.add(new DoorSkin(gp, i));
 		}
 	}
 	private void addBuildings() {
@@ -251,9 +293,8 @@ public class Catalogue {
 		addToInventory(new ChairSkin(gp, 7));
 		addToInventory(new ChairSkin(gp, 10));
 		addToInventory(new ChairSkin(gp, 11));
-		addToInventory(new ChairSkin(gp, 13));
 		addToInventory(new ChairSkin(gp, 14));
-		addToInventory(new TableSkin(gp, 1));
+		addToInventory(new CounterSkin(gp, 1));
 	}
 	 private Texture importImage(String filePath) {
 			Texture texture = AssetPool.getTexture(filePath);
@@ -298,8 +339,17 @@ public class Catalogue {
 	public void addToInventory(ChairSkin b) {
 		chairSkinInventory.add(b);
 	}
+	public void addToInventory(CounterSkin b) {
+		counterSkinInventory.add(b);
+	}
 	public void addToInventory(TableSkin b) {
 		tableSkinInventory.add(b);
+	}
+	public void addToInventory(PanSkin b) {
+		panSkinInventory.add(b);
+	}
+	public void addToInventory(DoorSkin b) {
+		doorSkinInventory.add(b);
 	}
 	private void addToBasket(Object o, int cost) {
 		basket.add(o);
@@ -318,8 +368,8 @@ public class Catalogue {
 	}
 	public void rightPage() {
 		pageNum++;
-		if(pageNum >= 10) {
-			pageNum = 9;
+		if(pageNum >= 13) {
+			pageNum = 12;
 		}
 		layer = 0;
 	}
@@ -381,9 +431,24 @@ public class Catalogue {
 				large = chairSkinInventory.size() > 4;
 				break;
 			case 9:
+				max = counterSkinInventory.size() / 4;
+				remainder = counterSkinInventory.size() % 4;
+				large = counterSkinInventory.size() > 4;
+				break;
+			case 10:
 				max = tableSkinInventory.size() / 4;
 				remainder = tableSkinInventory.size() % 4;
 				large = tableSkinInventory.size() > 4;
+				break;
+			case 11:
+				max = panSkinInventory.size() / 4;
+				remainder = panSkinInventory.size() % 4;
+				large = panSkinInventory.size() > 4;
+				break;
+			case 12:
+				max = doorSkinInventory.size() / 4;
+				remainder = doorSkinInventory.size() % 4;
+				large = doorSkinInventory.size() > 4;
 				break;
 			}
 		} else {
@@ -772,7 +837,136 @@ public class Catalogue {
 				int startDraw = 0;
 				
 				int index = 0;
+				for(CounterSkin b: counterSkinInventory) {
+					if(index >= startDraw) {
+						if(b != null) {
+							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
+			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+		    					showDescription = true;
+		    					selectedItem = b;
+		    					if(yPos >= yStart +37*3) {
+		    						selectedRow = 1;
+		    					} else {
+		    						selectedRow = 0;
+		    					}
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
+			    					clickCounter = 0.17;
+			    					addToBasket(b, b.cost);
+			    				}
+			    			}
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
+
+							renderer.draw(b.getImage(), xStart+(55) - 24, yPos+30 - 24, 48, 48);
+							}
+							xStart+= 40*3;
+			    			if(counter >= 3) {
+			    				xStart = originalXStart;
+			    				yPos += 37*3;
+			    				counter = -1;
+			    			}
+						}
+					} else {
+						counter = 0;
+					}
+	    			counter++;
+	    			index++;
+				}
+			} else if(pageNum == 10) {
+				int counter = 0;
+				int originalXStart = xStart;
+				int yPos = yStart - 37*3 *layer;
+				
+				int startDraw = 0;
+				
+				int index = 0;
 				for(TableSkin b: tableSkinInventory) {
+					if(index >= startDraw) {
+						if(b != null) {
+							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
+			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+		    					showDescription = true;
+		    					selectedItem = b;
+		    					if(yPos >= yStart +37*3) {
+		    						selectedRow = 1;
+		    					} else {
+		    						selectedRow = 0;
+		    					}
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
+			    					clickCounter = 0.17;
+			    					addToBasket(b, b.cost);
+			    				}
+			    			}
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
+
+							renderer.draw(b.getImage2(), xStart+(55) - 24, yPos+30 - 24, 48, 48);
+							}
+							xStart+= 40*3;
+			    			if(counter >= 3) {
+			    				xStart = originalXStart;
+			    				yPos += 37*3;
+			    				counter = -1;
+			    			}
+						}
+					} else {
+						counter = 0;
+					}
+	    			counter++;
+	    			index++;
+				}
+			} else if(pageNum == 11) {
+				int counter = 0;
+				int originalXStart = xStart;
+				int yPos = yStart - 37*3 *layer;
+				
+				int startDraw = 0;
+				
+				int index = 0;
+				for(PanSkin b: panSkinInventory) {
+					if(index >= startDraw) {
+						if(b != null) {
+							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
+			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
+								//renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
+		    					showDescription = true;
+		    					selectedItem = b;
+		    					if(yPos >= yStart +37*3) {
+		    						selectedRow = 1;
+		    					} else {
+		    						selectedRow = 0;
+		    					}
+			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
+			    					clickCounter = 0.17;
+			    					addToBasket(b, b.cost);
+			    				}
+			    			}
+							renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
+
+							renderer.draw(b.getImage(), xStart+(55) - 24, yPos+30 - 24, 48, 48);
+							}
+							xStart+= 40*3;
+			    			if(counter >= 3) {
+			    				xStart = originalXStart;
+			    				yPos += 37*3;
+			    				counter = -1;
+			    			}
+						}
+					} else {
+						counter = 0;
+					}
+	    			counter++;
+	    			index++;
+				}
+			} else if(pageNum == 12) {
+				int counter = 0;
+				int originalXStart = xStart;
+				int yPos = yStart - 37*3 *layer;
+				
+				int startDraw = 0;
+				
+				int index = 0;
+				for(DoorSkin b: doorSkinInventory) {
 					if(index >= startDraw) {
 						if(b != null) {
 							if(yPos ==  yStart || yPos ==  yStart + 37*3 *1) {
@@ -820,7 +1014,6 @@ public class Catalogue {
 		}
 		renderer.drawString(font, Integer.toString(basketCost), (int)(153*4.5), 484, 1.0f, c);
 		//renderer.draw(coinImage,  (int)(153*4.5) + 28, 450, 32, 32);
-		
 		
 		if(showDescription) {
 			drawBuildingDescription(renderer, selectedItem, xStart);
@@ -875,7 +1068,19 @@ public class Catalogue {
 							img = wall.getImage();
 							cost = wall.cost;
 							//xDrawOffset = 24;
+						} else if(o instanceof CounterSkin wall) {
+							img = wall.getImage();
+							cost = wall.cost;
+							//xDrawOffset = 24;
 						} else if(o instanceof TableSkin wall) {
+							img = wall.getImage2();
+							cost = wall.cost;
+							//xDrawOffset = 24;
+						} else if(o instanceof PanSkin wall) {
+							img = wall.getImage();
+							cost = wall.cost;
+							//xDrawOffset = 24;
+						} else if(o instanceof DoorSkin wall) {
 							img = wall.getImage();
 							cost = wall.cost;
 							//xDrawOffset = 24;
@@ -929,7 +1134,6 @@ public class Catalogue {
 		renderer.drawString(font, Integer.toString(basketCost), (int)(153*4.5), 484, 1.0f, c);
 		//renderer.draw(coinImage,  (int)(153*4.5) + 28, 450, 32, 32);
 		
-		
 		if(showDescription) {
 			drawBuildingDescription(renderer, selectedItem, xStart);
 		}
@@ -972,7 +1176,22 @@ public class Catalogue {
 			name = chair.name;
 			description = chair.description;
 			cost = chair.cost;
+		} else if(b instanceof CounterSkin chair) {
+			img = chair.getImage();
+			name = chair.name;
+			description = chair.description;
+			cost = chair.cost;
 		} else if(b instanceof TableSkin chair) {
+			img = chair.getImage2();
+			name = chair.name;
+			description = chair.description;
+			cost = chair.cost;
+		} else if(b instanceof PanSkin chair) {
+			img = chair.getImage();
+			name = chair.name;
+			description = chair.description;
+			cost = chair.cost;
+		} else if(b instanceof DoorSkin chair) {
 			img = chair.getImage();
 			name = chair.name;
 			description = chair.description;
@@ -1063,7 +1282,25 @@ public class Catalogue {
 						description = wall.description;
 						cost = wall.cost;
 						//xDrawOffset = 24;
+					} else if(b instanceof CounterSkin wall) {
+						img = wall.getImage();
+						name = wall.name;
+						description = wall.description;
+						cost = wall.cost;
+						//xDrawOffset = 24;
 					} else if(b instanceof TableSkin wall) {
+						img = wall.getImage2();
+						name = wall.name;
+						description = wall.description;
+						cost = wall.cost;
+						//xDrawOffset = 24;
+					} else if(b instanceof PanSkin wall) {
+						img = wall.getImage();
+						name = wall.name;
+						description = wall.description;
+						cost = wall.cost;
+						//xDrawOffset = 24;
+					} else if(b instanceof DoorSkin wall) {
 						img = wall.getImage();
 						name = wall.name;
 						description = wall.description;

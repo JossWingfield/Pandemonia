@@ -18,11 +18,14 @@ public class SmallPan extends CookingItem {
 	private void importImages() {
 		animations = new TextureRegion[1][1][5];
 		
-		animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(112, 16, 16, 16);
-		animations[0][0][1] = importImage("/decor/kitchen props.png").getSubimage(112, 32, 16, 16);
-		animations[0][0][2] = importImage("/decor/Pan.png").getSubimage(0, 0, 16, 16);
-		animations[0][0][3] = importImage("/decor/kitchen props.png").getSubimage(112, 16, 16, 16);
-		animations[0][0][4] = importImage("/decor/Pan.png").getSubimage(0, 16, 16, 16);
+		animations[0][0][0] = importImage("/decor/CookingPots.png").getSubimage(16, 0, 16, 16);
+		animations[0][0][1] = importImage("/decor/CookingPots.png").getSubimage(16, 16, 16, 16);
+		animations[0][0][2] = importImage("/decor/CookingPots.png").getSubimage(0, 32, 16, 16);
+		animations[0][0][3] = importImage("/decor/CookingPots.png").getSubimage(16, 0, 16, 16);
+		animations[0][0][4] = importImage("/decor/CookingPots.png").getSubimage(0, 48, 16, 16);
+	}
+	public void refreshImages() {
+		animations = gp.mapM.currentRoom.getPanSkin().getSmallPanAnimations();
 	}
 	public void setupRecipes() {
 		rawIngredients = new ArrayList<>();

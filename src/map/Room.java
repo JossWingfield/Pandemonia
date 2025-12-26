@@ -76,7 +76,10 @@ public class Room {
 	public FloorPaper floorpaper = null;
 	public Beam beam = null;
 	public ChairSkin chairSkin = null;
+	public CounterSkin counterSkin = null;
 	public TableSkin tableSkin = null;
+	public PanSkin panSkin = null;
+	public DoorSkin doorSkin = null;
 	
 	public boolean darkerRoom = false;
 	
@@ -95,6 +98,9 @@ public class Room {
 		if(gp.progressM != null) {
 			phase = gp.progressM.currentPhase;
 		}
+		setTableSkin(0);
+		setPanSkin(0);
+		setDoorSkin(0);
 		switch(preset) {
 		case 0:
 			roomType = "Main";
@@ -106,7 +112,7 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(0);
 			setChairSkin(0);
-			setTableSkin(3);
+			setCounterSkin(0);
 			break;
 		case 1:
 			roomType = "Stores";
@@ -118,7 +124,7 @@ public class Room {
 			setFloorpaper(1);
 			setBeam(1);
 			setChairSkin(0);
-			setTableSkin(0);
+			setCounterSkin(0);
 			break;
 		case 2:
 			roomType = "Outdoors";
@@ -140,7 +146,7 @@ public class Room {
 			setFloorpaper(2);
 			setBeam(2);
 			setChairSkin(0);
-			setTableSkin(0);
+			setCounterSkin(0);
 			break;
 		case 4:
 			roomType = "Toilets";
@@ -152,7 +158,7 @@ public class Room {
 			setFloorpaper(3);
 			setBeam(0);
 			setChairSkin(0);
-			setTableSkin(0);
+			setCounterSkin(0);
 			break;
 		case 5:
 			roomType = "Bedroom";
@@ -164,7 +170,7 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(4);
 			setChairSkin(0);
-			setTableSkin(0);
+			setCounterSkin(0);
 			break;
 		case 6:
 			roomType = "Basement";
@@ -176,7 +182,7 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(4);
 			setChairSkin(0);
-			setTableSkin(0);
+			setCounterSkin(0);
 			break;
 		case 7:
 			roomType = "Abandonded Corridor";
@@ -188,7 +194,7 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(0);
 			setChairSkin(0);
-			setTableSkin(0);
+			setCounterSkin(0);
 			break;
 		case 8:
 			roomType = "Corridor 1";
@@ -200,7 +206,7 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(0);
 			setChairSkin(0);
-			setTableSkin(0);
+			setCounterSkin(0);
 			break;
 		case 9:
 			roomType = "Old Kitchen";
@@ -212,7 +218,7 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(0);
 			setChairSkin(0);
-			setTableSkin(0);
+			setCounterSkin(0);
 			break;
 		}
 		setBuildings(preset);
@@ -243,7 +249,7 @@ public class Room {
 	
 	public void setDestroyed() {
 		if(preset == 0) {
-			setTableSkin(3);
+			setCounterSkin(3);
 			setWallpaper(30);
 			setFloorpaper(12);
 			setBeam(5);
@@ -258,7 +264,7 @@ public class Room {
 			Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
 			lantern.turnOff();
 		} else if(preset == 9) {
-			setTableSkin(3);
+			setCounterSkin(3);
 			darkerRoom = true;
 			//setWallpaper(30);
 			//setFloorpaper(12);
@@ -297,7 +303,7 @@ public class Room {
 	}
 	public void setRestored() {
 		if(preset == 0) {
-			setTableSkin(0);
+			setCounterSkin(0);
 			setWallpaper(0);
 			setFloorpaper(0);
 			setBeam(0);
@@ -307,7 +313,7 @@ public class Room {
 		
 		} else if(preset == 9) {
 			setBeam(0);
-			setTableSkin(0);
+			setCounterSkin(0);
 			darkerRoom = false;
 			List<Building> torches = gp.buildingM.findBuildingsWithName("Lantern");
     	    for (Building b: torches) {
@@ -2487,7 +2493,10 @@ public class Room {
 		data.floorpaper = floorpaper.preset;
 		data.beam = beam.preset;
 		data.chairSkin = chairSkin.preset;
+		data.counterSkin = counterSkin.preset;
 		data.tableSkin = tableSkin.preset;
+		data.panSkin = panSkin.preset;
+		data.doorSkin = doorSkin.preset;
 		List<Building> buildList = new ArrayList<>();
 		for(Building b: buildings) {
 			if(b != null) {
@@ -2506,7 +2515,10 @@ public class Room {
 		floorpaper = new FloorPaper(gp, data.floorpaper);
 		beam = new Beam(gp, data.beam);
 		chairSkin = new ChairSkin(gp, data.chairSkin);
+		counterSkin = new CounterSkin(gp, data.counterSkin);
 		tableSkin = new TableSkin(gp, data.tableSkin);
+		panSkin = new PanSkin(gp, data.panSkin);
+		doorSkin = new DoorSkin(gp, data.doorSkin);
 		List<Building> buildList = gp.buildingRegistry.unpackSavedBuildings(data.buildings);
 		Building[] newBuilds = new Building[250];
 		int counter = 0;
@@ -2538,13 +2550,33 @@ public class Room {
     	this.chairSkin = chairSkin;
     	
     }
+    public void setCounterSkin(int preset) {
+    	this.counterSkin = new CounterSkin(gp, preset);
+    }
+    public void setCounterSkin(CounterSkin counterSkin) {
+    	gp.customiser.addToInventory(this.counterSkin);
+    	this.counterSkin = counterSkin;
+    }
     public void setTableSkin(int preset) {
     	this.tableSkin = new TableSkin(gp, preset);
     }
     public void setTableSkin(TableSkin tableSkin) {
     	gp.customiser.addToInventory(this.tableSkin);
     	this.tableSkin = tableSkin;
-    	
+    }
+    public void setPanSkin(int preset) {
+    	this.panSkin = new PanSkin(gp, preset);
+    }
+    public void setPanSkin(PanSkin panSkin) {
+    	gp.customiser.addToInventory(this.panSkin);
+    	this.panSkin = panSkin;
+    }
+    public void setDoorSkin(int preset) {
+    	this.doorSkin = new DoorSkin(gp, preset);
+    }
+    public void setDoorSkin(DoorSkin doorSkin) {
+    	gp.customiser.addToInventory(this.doorSkin);
+    	this.doorSkin = doorSkin;
     }
     public void setFloorpaper(int preset) {
     	this.floorpaper = new FloorPaper(gp, preset);
@@ -2572,8 +2604,17 @@ public class Room {
     public ChairSkin getChairSkin() {
     	return chairSkin;
     }
+    public CounterSkin getCounterSkin() {
+    	return counterSkin;
+    }
     public TableSkin getTableSkin() {
     	return tableSkin;
+    }
+    public PanSkin getPanSkin() {
+    	return panSkin;
+    }
+    public DoorSkin getDoorSkin() {
+    	return doorSkin;
     }
 	private void importMap(String fileName, int mapWidth, int mapHeight) {
     	
@@ -2795,7 +2836,7 @@ public class Room {
 			if(b != null) {
 				if(b.getName().equals("Door 1")) {
 					Door door = (Door)b;
-					if(door.roomNum == roomNum) {
+					if(door.doorRoomNum == roomNum) {
 						return door;
 					}
 				}	

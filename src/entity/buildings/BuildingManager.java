@@ -4,7 +4,9 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import entity.items.FryingPan;
 import entity.items.Item;
+import entity.items.SmallPan;
 import main.GamePanel;
 import main.renderer.Colour;
 import main.renderer.Renderer;
@@ -233,6 +235,37 @@ public class BuildingManager {
 		}
 		return null;
 	}
+	public Stove refreshStove() {
+		if(gp.player.currentItem != null) {
+			if(gp.player.currentItem instanceof FryingPan f) {
+				f.refreshImages();
+			} else if(gp.player.currentItem instanceof SmallPan f) {
+				f.refreshImages();
+			}
+		}
+		
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Stove")) {
+					Stove table = (Stove)b;
+					if(table.leftSlot != null) {
+						table.leftSlot.refreshImages();
+					}
+					if(table.rightSlot != null) {
+						table.rightSlot.refreshImages();
+					}
+				} else if(b.getName().equals("Table Piece")) {
+					FloorDecor_Building t = (FloorDecor_Building)b;
+					if(t.currentItem instanceof FryingPan f) {
+						f.refreshImages();
+					} else if(t.currentItem instanceof SmallPan f) {
+						f.refreshImages();
+					}
+				}
+			}
+		}
+		return null;
+	}
 	public Chair isFreeChair() {
 		for(Building b: buildings) {
 			if(b != null) {
@@ -276,7 +309,7 @@ public class BuildingManager {
 			if(b != null) {
 				if(b.getName().equals("Door 1")) {
 					Door door = (Door)b;
-					if(door.roomNum == roomNum) {
+					if(door.doorRoomNum == roomNum) {
 						return door;
 					}
 				}	

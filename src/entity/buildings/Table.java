@@ -34,6 +34,9 @@ public class Table extends Building {
 		System.out.println("buildings[arrayCounter] = new Table(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
 		System.out.println("arrayCounter++;");	
 	}
+	public void refreshImages() {
+		animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getImage1();
+	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][1];
 		

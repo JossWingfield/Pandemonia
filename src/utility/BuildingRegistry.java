@@ -112,7 +112,7 @@ public class BuildingRegistry {
 				} else if(b instanceof Door d) {
 					data.preset = d.preset;
 					data.attribute1 = d.facing;
-					data.attribute2 = d.roomNum;
+					data.attribute2 = d.doorRoomNum;
 				} else if(b instanceof Fridge d) {
 					data.fridgeType = 0;
 					for(Food f: d.getContents()) {

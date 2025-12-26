@@ -12,7 +12,10 @@ public class RoomSaveData extends SaveData {
 	public int floorpaper;
 	public int beam;
 	public int chairSkin;
+	public int counterSkin;
 	public int tableSkin;
+	public int doorSkin;
+	public int panSkin;
 	public List<BuildingSaveData> buildings = new ArrayList<BuildingSaveData>();
 	//public List<NPC> npcs = new ArrayList<>();
 	//public List<Item> items = new ArrayList<>(); 
