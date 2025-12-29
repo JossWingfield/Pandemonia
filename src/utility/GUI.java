@@ -2054,6 +2054,7 @@ public class GUI {
 						clickCooldown = 0.5;
 						gp.catalogue.onMysteryScreen = true;
 						gp.catalogue.layer = 0;
+						gp.catalogue.pageNum = 1;
 					}
 				}
 				
@@ -2063,6 +2064,7 @@ public class GUI {
 						clickCooldown = 0.5;
 						gp.catalogue.onCatalogueScreen = true;
 						gp.catalogue.layer = 0;
+						gp.catalogue.pageNum = 1;
 					}
 				}
 				
@@ -2119,6 +2121,7 @@ public class GUI {
 						clickCooldown = 0.5;
 						gp.catalogue.onCatalogueScreen = false;
 						gp.catalogue.layer = 0;
+						gp.catalogue.pageNum = 1;
 					}
 				}
 				

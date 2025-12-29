@@ -13,6 +13,7 @@ import entity.buildings.Fireplace;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.Lantern;
 import entity.buildings.WallDecor_Building;
+import entity.buildings.Window;
 import main.GamePanel;
 import main.renderer.AssetPool;
 import main.renderer.BitmapFont;
@@ -70,6 +71,10 @@ public class Catalogue {
 	//CATALOGUES
     public final List<ShopCatalogue> allCatalogues = new ArrayList<>();
     private final Set<Integer> unlockedIds = new HashSet<>();
+    
+    public TextureRegion cabinImage, fishingImage, farmImage;
+    
+    private int maxPages = 13;
 
 	public Catalogue(GamePanel gp) {
 		this.gp = gp;
@@ -81,8 +86,11 @@ public class Catalogue {
 		overlay2 = importImage("/UI/catalogue/Overlay2.png").toTextureRegion();
 		mysteryIcon = importImage("/UI/catalogue/MysteryCrateUI.png").toTextureRegion();
 		coinImage = importImage("/UI/Coin.png").toTextureRegion();
+		cabinImage = importImage("/UI/catalogue/CabinIcon.png").toTextureRegion();
+		fishingImage = importImage("/UI/catalogue/FishingIcon.png").toTextureRegion();
+		farmImage = importImage("/UI/catalogue/FarmIcon.png").toTextureRegion();
 		
-		ShopCatalogue catalogue = new ShopCatalogue(0, "Cabin");
+		ShopCatalogue catalogue1 = new ShopCatalogue(0, "Cabin");
 		List<Object> contents = new ArrayList<Object>();
 		contents.add(new WallDecor_Building(gp, 0, 0, 17));
 		contents.add(new WallPaper(gp, 31));
@@ -92,8 +100,55 @@ public class Catalogue {
 		contents.add(new ChairSkin(gp, 13));
 		contents.add(new PanSkin(gp, 1));
 		contents.add(new TableSkin(gp, 1));
-		catalogue.setContents(contents);
-		addCatalogue(catalogue);
+		contents.add(new DoorSkin(gp, 1));
+		contents.add(new WallDecor_Building(gp, 0, 0, 32));
+		contents.add(new WallDecor_Building(gp, 0, 0, 33));
+		contents.add(new WallDecor_Building(gp, 0, 0, 34));
+		contents.add(new WallDecor_Building(gp, 0, 0, 35));
+		contents.add(new WallDecor_Building(gp, 0, 0, 22));
+		catalogue1.setContents(contents);
+		catalogue1.setIcon(cabinImage);
+		addCatalogue(catalogue1);
+		
+		ShopCatalogue catalogue2 = new ShopCatalogue(1, "Fishing Shack");
+		contents = new ArrayList<Object>();
+		contents.add(new WallPaper(gp, 32));
+		contents.add(new FloorPaper(gp, 5));
+		contents.add(new Window(gp, 0, 0, 1));
+		contents.add(new FloorDecor_Building(gp, 0, 0, 105));
+		contents.add(new FloorDecor_Building(gp, 0, 0, 106));
+		contents.add(new DoorSkin(gp, 2));
+		contents.add(new PanSkin(gp, 2));
+		contents.add(new TableSkin(gp, 2));
+		contents.add(new CounterSkin(gp, 5));
+		contents.add(new WallDecor_Building(gp, 0, 0, 22));
+		contents.add(new WallDecor_Building(gp, 0, 0, 36));
+		contents.add(new WallDecor_Building(gp, 0, 0, 37));
+		contents.add(new FloorDecor_Building(gp, 0, 0, 107));
+		contents.add(new FloorDecor_Building(gp, 0, 0, 17));
+		catalogue2.setContents(contents);
+		catalogue2.setIcon(fishingImage);
+		addCatalogue(catalogue2);
+		
+		ShopCatalogue catalogue3 = new ShopCatalogue(2, "Farm");
+		contents = new ArrayList<Object>();
+		contents.add(new Beam(gp, 6));
+		contents.add(new WallPaper(gp, 33));
+		contents.add(new FloorPaper(gp, 7));
+		contents.add(new DoorSkin(gp, 3));
+		contents.add(new ChairSkin(gp, 6));
+		contents.add(new TableSkin(gp, 3));
+		contents.add(new Window(gp, 0, 0, 2));
+		contents.add(new FloorDecor_Building(gp, 0, 0, 108));
+		contents.add(new FloorDecor_Building(gp, 0, 0, 109));
+		contents.add(new WallDecor_Building(gp, 0, 0, 38));
+		catalogue3.setContents(contents);
+		catalogue3.setIcon(farmImage);
+		addCatalogue(catalogue3);
+		
+		unlockById(0);
+		unlockById(1);
+		unlockById(2);
 		
 		font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
 		addBuildings();
@@ -121,7 +176,6 @@ public class Catalogue {
         List<Integer> list = new ArrayList<>(unlockedIds);
         Collections.sort(list);
 
-        System.out.println(index);
         if (index < 0 || index >= list.size()) {
             return null;
         }
@@ -141,6 +195,60 @@ public class Catalogue {
     }
     public void addCatalogue(ShopCatalogue catalogue) {
         allCatalogues.add(catalogue);
+    }
+    public TextureRegion getCatalogueIconFor(Object target) {
+        if (target == null) return null;
+        
+        String targetName = "";
+    	if(target instanceof Building build) {
+    		targetName = build.getName();
+		} else if(target instanceof WallPaper wall) {
+			targetName = wall.name;
+		} else if(target instanceof FloorPaper wall) {
+			targetName = wall.name;
+		} else if(target instanceof Beam wall) {
+			targetName = wall.name;
+		} else if(target instanceof ChairSkin chair) {
+			targetName = chair.name;
+		} else if(target instanceof CounterSkin chair) {
+			targetName = chair.name;
+		} else if(target instanceof TableSkin chair) {
+			targetName = chair.name;
+		} else if(target instanceof PanSkin chair) {
+			targetName = chair.name;
+		} else if(target instanceof DoorSkin chair) {
+			targetName = chair.name;
+		}
+
+        for (ShopCatalogue catalogue : allCatalogues) {
+            for (Object b : catalogue.getContents()) {
+            	String name = "";
+            	if(b instanceof Building build) {
+        			name = build.getName();
+        		} else if(b instanceof WallPaper wall) {
+        			name = wall.name;
+        		} else if(b instanceof FloorPaper wall) {
+        			name = wall.name;
+        		} else if(b instanceof Beam wall) {
+        			name = wall.name;
+        		} else if(b instanceof ChairSkin chair) {
+        			name = chair.name;
+        		} else if(b instanceof CounterSkin chair) {
+        			name = chair.name;
+        		} else if(b instanceof TableSkin chair) {
+        			name = chair.name;
+        		} else if(b instanceof PanSkin chair) {
+        			name = chair.name;
+        		} else if(b instanceof DoorSkin chair) {
+        			name = chair.name;
+        		}
+                if (name.equals(targetName)) {
+                    return catalogue.getIcon();
+                }
+            }
+        }
+
+        return null; // Not found in any catalogue
     }
     public void unlockById(int id) {
         unlockedIds.add(id);
@@ -270,9 +378,7 @@ public class Catalogue {
 		addToInventory(new FloorPaper(gp, 1));
 		addToInventory(new FloorPaper(gp, 2));
 		addToInventory(new FloorPaper(gp, 3));
-		addToInventory(new FloorPaper(gp, 5));
 		addToInventory(new FloorPaper(gp, 6));
-		addToInventory(new FloorPaper(gp, 7));
 		addToInventory(new FloorPaper(gp, 8));
 		addToInventory(new FloorPaper(gp, 9));
 		addToInventory(new FloorPaper(gp, 10));
@@ -285,11 +391,9 @@ public class Catalogue {
 		addToInventory(new Lantern(gp, 0, 0));
 		addToInventory(new Candle(gp, 0, 0, 0));
 		addToInventory(new Candle(gp, 0, 0, 1));
-		addToInventory(new FloorDecor_Building(gp, 0, 0, 17));
 		addToInventory(new ChairSkin(gp, 1));
 		addToInventory(new ChairSkin(gp, 2));
 		addToInventory(new ChairSkin(gp, 5));
-		addToInventory(new ChairSkin(gp, 6));
 		addToInventory(new ChairSkin(gp, 7));
 		addToInventory(new ChairSkin(gp, 10));
 		addToInventory(new ChairSkin(gp, 11));
@@ -313,7 +417,7 @@ public class Catalogue {
 	public void resetBasket() {
 		basket.clear();
 		layer = 0;
-		pageNum = 1;
+		pageNum = 0;
 		basketCost = 0;
 	}
 	public void addToInventory(Building b) {
@@ -368,8 +472,12 @@ public class Catalogue {
 	}
 	public void rightPage() {
 		pageNum++;
-		if(pageNum >= 13) {
-			pageNum = 12;
+		int max = maxPages;
+		if(onCatalogueScreen) {
+			max = unlockedIds.size()+1;
+		}
+		if(pageNum >= max) {
+			pageNum = max-1;
 		}
 		layer = 0;
 	}
@@ -378,17 +486,22 @@ public class Catalogue {
 	    return (int)(gp.frameWidth / 2f - textWidth / 2f);
 	}
 	public void upLayer() {
-		layer--;
-		if(layer < 0) {
-			layer = 0;
+		if(clickCounter == 0) {
+			clickCounter = 0.2;
+			layer--;
+			if(layer < 0) {
+				layer = 0;
+			}
 		}
 	}
 	public void downLayer() {
+		if(clickCounter == 0) {
+			clickCounter = 0.2;
 		layer++;
 		int max = 1;
 		int remainder = 0;
 		boolean large = false;
-		if(!checkingOut) {
+		if(!checkingOut && !onCatalogueScreen) {
 			switch(pageNum) {
 			case 1:
 				max = decorBuildingInventory.size() / 4;
@@ -451,6 +564,11 @@ public class Catalogue {
 				large = doorSkinInventory.size() > 4;
 				break;
 			}
+		} else if(onCatalogueScreen) {
+			ShopCatalogue cat = getUnlockedByIndex(pageNum-1);
+			max = cat.getContents().size() / 4;
+			remainder = cat.getContents().size() % 4;
+			large = cat.getContents().size() > 4;
 		} else {
 			max = basket.size() / 4;
 			remainder = basket.size() % 4;
@@ -462,6 +580,7 @@ public class Catalogue {
 		
 		if(layer > max) {
 			layer = max;
+		}
 		}
 	}
 	public void drawCatalogue(Renderer renderer) {
@@ -479,6 +598,10 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				
+				if(decorBuildingInventory.size() == 0) {
+					renderer.drawString(font, "No Decorations.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(Building b: decorBuildingInventory) {
 					if(index >= startDraw) {
@@ -520,6 +643,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(kitchenBuildingInventory.size() == 0) {
+					renderer.drawString(font, "No Kitchen installations.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(Building b: kitchenBuildingInventory) {
 					if(index >= startDraw) {
@@ -567,6 +693,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(floorpaperInventory.size() == 0) {
+					renderer.drawString(font, "No Flooring.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(FloorPaper b: floorpaperInventory) {
 					if(index >= startDraw) {
@@ -613,6 +742,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(wallpaperInventory.size() == 0) {
+					renderer.drawString(font, "No Wallpapers.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(WallPaper b: wallpaperInventory) {
 					if(index >= startDraw) {
@@ -659,6 +791,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(beamInventory.size() == 0) {
+					renderer.drawString(font, "No Beams.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(Beam b: beamInventory) {
 					if(index >= startDraw) {
@@ -704,7 +839,10 @@ public class Catalogue {
 				int yPos = yStart - 37*3 *layer;
 				
 				int startDraw = 0;
-				
+
+				if(storeBuildingInventory.size() == 0) {
+					renderer.drawString(font, "No Store room items.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(Building b: storeBuildingInventory) {
 					if(index >= startDraw) {
@@ -750,6 +888,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(bathroomBuildingInventory.size() == 0) {
+					renderer.drawString(font, "No bathroom items.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(Building b: bathroomBuildingInventory) {
 					if(index >= startDraw) {
@@ -793,6 +934,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(chairSkinInventory.size() == 0) {
+					renderer.drawString(font, "No chairs.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(ChairSkin b: chairSkinInventory) {
 					if(index >= startDraw) {
@@ -836,6 +980,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(counterSkinInventory.size() == 0) {
+					renderer.drawString(font, "No kitchen counters.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(CounterSkin b: counterSkinInventory) {
 					if(index >= startDraw) {
@@ -879,6 +1026,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(tableSkinInventory.size() == 0) {
+					renderer.drawString(font, "No tables.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(TableSkin b: tableSkinInventory) {
 					if(index >= startDraw) {
@@ -922,6 +1072,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(panSkinInventory.size() == 0) {
+					renderer.drawString(font, "No pans.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(PanSkin b: panSkinInventory) {
 					if(index >= startDraw) {
@@ -965,6 +1118,9 @@ public class Catalogue {
 				
 				int startDraw = 0;
 				
+				if(doorSkinInventory.size() == 0) {
+					renderer.drawString(font, "No doors.", xStart + 50, yPos+50, 1.0f , Colour.BLACK);
+				}
 				int index = 0;
 				for(DoorSkin b: doorSkinInventory) {
 					if(index >= startDraw) {
@@ -1034,7 +1190,7 @@ public class Catalogue {
 			int startDraw = 0;
 			
 			ShopCatalogue cat = getUnlockedByIndex(pageNum-1);
-			
+						
 			if(cat != null) {
 			int index = 0;
 			for(Object o: cat.getContents()) {
@@ -1042,8 +1198,8 @@ public class Catalogue {
 					if(o != null) {
 						TextureRegion img = null;
 						int cost = 0;
-						int drawWidth = 0;
-						int drawHeight = 0;
+						int drawWidth = 48;
+						int drawHeight = 48;
 						int xDrawOffset = 0;
 						int yDrawOffset = 0;
 						if(o instanceof Building build) {
@@ -1120,6 +1276,8 @@ public class Catalogue {
 			String text = cat.getName();
 			int x =getXforCenteredText(text, font);
 			renderer.drawString(font, text, x, (int)(38*4.5), 1.0f, Colour.WHITE);
+			
+			renderer.draw(cat.getIcon(), xStart+180, (int)(38*4.5) - 30, 16*3, 16*3);
 		} 
 		
 		renderer.draw(overlay, 0, 0, (int)(260*4.5), (int)(190*4.5));

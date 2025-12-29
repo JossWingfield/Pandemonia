@@ -15,6 +15,7 @@ public class PanSkin {
     public int cost = 0;
     public String name = "Pan";
     public String description = ""; 
+	public TextureRegion catalogueIcon;
 
 	public PanSkin(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -22,6 +23,9 @@ public class PanSkin {
 		cost = 20;
 		description = "New Cooking untensils for your restaurant.";
 		importImages();
+	}
+	public void setCatalogueIcon(TextureRegion icon) {
+		this.catalogueIcon = icon;
 	}
 	public void importImages() {
 		
@@ -33,13 +37,17 @@ public class PanSkin {
 			importPanAnimations("/decor/CookingPots.png");
 			break;
 		case 1:
+			name = "Cabin Pots";
 			importPanAnimations("/decor/catalogue/cabin/CabinPots.png");
+			break;
+		case 2:
+			name = "Fishing Pots";
+			importPanAnimations("/decor/catalogue/fishingshack/FishingPots.png");
 			break;
 		}
 		
 	}
 	private void importPanAnimations(String fileName) {
-		
 		fryingPan = importImage(fileName).getSubimage(32, 0, 16, 16);
 		smallPan = importImage(fileName).getSubimage(16, 0, 16, 16);
 		

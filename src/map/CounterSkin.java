@@ -14,6 +14,7 @@ public class CounterSkin {
     public int cost = 0;
     public String name = "Counter";
     public String description = ""; 
+	public TextureRegion catalogueIcon;
 
 	public CounterSkin(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -21,6 +22,9 @@ public class CounterSkin {
 		cost = 36;
 		description = "Give your kitchen counters a fresh look.";
 		importImages();
+	}
+	public void setCatalogueIcon(TextureRegion icon) {
+		this.catalogueIcon = icon;
 	}
 	public void importImages() {
 		switch(preset) {
@@ -40,6 +44,10 @@ public class CounterSkin {
 			break;
 		case 4:
 	        img = importImage("/decor/catalogue/cabin/CabinTableCloth.png").toTextureRegion();
+	        cost = 50;
+			break;
+		case 5:
+	        img = importImage("/decor/catalogue/fishingshack/FishingCounters.png").toTextureRegion();
 	        cost = 50;
 			break;
 		}

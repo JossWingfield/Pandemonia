@@ -15,6 +15,7 @@ public class WallPaper {
     public int cost = 0;
     public String name = "Wallpaper";
     public String description = "";
+	public TextureRegion catalogueIcon;
 
 	public WallPaper(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -23,6 +24,9 @@ public class WallPaper {
 		description = "Give your restaurant a new look.";
 		cost = 35;
 		importImages();
+	}
+	public void setCatalogueIcon(TextureRegion icon) {
+		this.catalogueIcon = icon;
 	}
 	public void importImages() {
 		
@@ -142,7 +146,20 @@ public class WallPaper {
 		case 31:
 		    importWallFromSpriteSheet("/tiles/walls/CabinWall", 6, 4, 64*8, 0, true);
 		    cost = 30;
+		    name = "Log Walls";
 			description = "Cosy cabin vibes.";
+			break;
+		case 32:
+		    importWallFromSpriteSheet("/decor/catalogue/fishingshack/FishShackWall", 6, 4, 64*8, 0, true);
+		    cost = 30;
+		    name = "Shack Walls";
+			description = "Smells like fish.";
+			break;
+		case 33:
+		    importWallFromSpriteSheet("/decor/catalogue/farm/FarmWall", 6, 4, 64*8, 0, true);
+		    cost = 30;
+		    name = "Barn Walls";
+			description = "Needs a repaint.";
 			break;
 		}
 		

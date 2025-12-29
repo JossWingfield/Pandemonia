@@ -91,6 +91,7 @@ public class Door extends Building {
 	        	animations[0][0][1] = importImage("/decor/door.png").getSubimage(32, 0, 32, 48);
 	        	if(gp.mapM != null) {
 					animations[0][0][0] = gp.mapM.getRooms()[doorRoomNum].getDoorSkin().getImage();
+					animations[0][0][1] = gp.mapM.getRooms()[doorRoomNum].getDoorSkin().getOpenImage();
 	        	}
 	    	} else if(facing == 2 || facing == 3) {
 	    		animations[0][0][0] = importImage("/decor/door.png").getSubimage(128, 48, 16, 48);
@@ -123,6 +124,7 @@ public class Door extends Building {
 		if(preset == 0) {
 			if(facing == 0) {
 				animations[0][0][0] = gp.mapM.getRooms()[roomNum].getDoorSkin().getImage();
+				animations[0][0][1] = gp.mapM.getRooms()[roomNum].getDoorSkin().getOpenImage();
 			}
 		}
 	}

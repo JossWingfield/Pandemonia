@@ -15,6 +15,7 @@ public class Beam {
     public int cost = 0;
     public String name = "Beam";
     public String description = ""; 
+	public TextureRegion catalogueIcon;
 
 	public Beam(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -23,6 +24,9 @@ public class Beam {
 		cost = 35;
 		description = "A new set of beams for the room.";
 		importImages();
+	}
+	public void setCatalogueIcon(TextureRegion icon) {
+		this.catalogueIcon = icon;
 	}
 	public void importImages() {
 		
@@ -44,6 +48,10 @@ public class Beam {
 			break;
 		case 5:
 	        importBeamFromSpriteSheet("/decor/destroyed/OldBeam", 3, 6, true);
+			break;
+		case 6:
+			name = "Farm Beams";
+	        importBeamFromSpriteSheet("/decor/catalogue/farm/FarmBeam", 3, 6, true);
 			break;
 		}
 		

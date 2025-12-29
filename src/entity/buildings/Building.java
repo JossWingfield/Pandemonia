@@ -1,6 +1,5 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.glfw.GLFW;
@@ -9,6 +8,7 @@ import entity.Entity;
 import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class Building extends Entity {
 	
@@ -44,6 +44,7 @@ public class Building extends Entity {
 	public int cost = 0;
 	private int arrayCounter = 0;
 	public int roomNum;
+	public TextureRegion catalogueIcon;
 	
 	protected String name = "";
 	protected String description = "No Description"; 
@@ -69,6 +70,9 @@ public class Building extends Entity {
 	}
 	public String getDescription() {
 		return description;
+	}
+	public void setCatalogueIcon(TextureRegion icon) {
+		this.catalogueIcon = icon;
 	}
 	public void drawBuildHitbox(Renderer renderer) {
 	    //FOR COLLISION TESTING
@@ -157,7 +161,7 @@ public class Building extends Entity {
 		renderer.draw(animations[0][0][0], (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, drawWidth, drawHeight);
 		 
 		 if(destructionUIOpen) {
-			renderer.draw(destructionImage, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, drawWidth, drawHeight);
+			renderer.draw(destructionImage, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, 48, 48);
 		 }
 	        
 	}

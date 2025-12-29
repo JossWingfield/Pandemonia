@@ -14,6 +14,7 @@ public class TableSkin {
     public int cost = 0;
     public String name = "Table Skin";
     public String description = ""; 
+	public TextureRegion catalogueIcon;
 
 	public TableSkin(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -21,6 +22,9 @@ public class TableSkin {
 		cost = 20;
 		description = "New tables for your restaurant.";
 		importImages();
+	}
+	public void setCatalogueIcon(TextureRegion icon) {
+		this.catalogueIcon = icon;
 	}
 	public void importImages() {
 		
@@ -30,8 +34,19 @@ public class TableSkin {
 	        img2 = importImage("/decor/table.png").getSubimage(32, 0, 32, 24);
 			break;
 		case 1:
+			name = "Cabin Benches";
 		    img1 = importImage("/decor/table.png").getSubimage(16, 24+64, 16, 40);
 		    img2 = importImage("/decor/table.png").getSubimage(0, 0+64, 32, 24);
+			break;
+		case 2:
+			name = "Fishing Tables";
+		    img1 = importImage("/decor/catalogue/fishingshack/BoatTable.png").getSubimage(16, 24+64, 16, 40);
+		    img2 = importImage("/decor/catalogue/fishingshack/BoatTable.png").getSubimage(0, 0+64, 32, 24);
+			break;
+		case 3:
+			name = "Farm Tables";
+			img1 = importImage("/decor/table.png").getSubimage(48, 24+64, 16, 40);
+	        img2 = importImage("/decor/table.png").getSubimage(32, 0+64, 32, 24);
 			break;
 		}
 		

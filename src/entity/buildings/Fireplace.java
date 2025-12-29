@@ -58,7 +58,7 @@ public class Fireplace extends Building{
 	private void importImages() {
 		animations = new TextureRegion[1][3][10];
 		
-		name = "Lantern";
+		name = "Fireplace";
     	animations[0][0][0] = importImage("/decor/fireplace 1.png").getSubimage(0, 0, 32, 48);
 		importFromSpriteSheet("/decor/fireplace 1.png", 4, 1, 1, 0, 48, 32, 48, 0);
 		importFromSpriteSheet("/decor/fireplace 1.png", 4, 1, 2, 0, 96, 32, 48, 0);

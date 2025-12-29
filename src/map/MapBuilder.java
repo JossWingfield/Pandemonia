@@ -165,7 +165,7 @@ public class MapBuilder {
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Calendar(gp, 0, 0);
 		totalBuildingCount++;
-		buildings[totalBuildingCount] = new Window(gp, 0, 0);
+		buildings[totalBuildingCount] = new Window(gp, 0, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new EscapeHole(gp, 0, 0);
 		totalBuildingCount++;

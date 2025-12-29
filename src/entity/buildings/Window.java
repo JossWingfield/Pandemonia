@@ -16,8 +16,9 @@ public class Window extends Building {
 	private boolean lightsOn = true;
 	private LightSource light;
 	
-	public Window(GamePanel gp, float xPos, float yPos) {
+	public Window(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
+		this.presetNum = preset;
 		
 		isSolid = false;
 		
@@ -34,11 +35,11 @@ public class Window extends Building {
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, hitbox.width-3*2, hitbox.height-3*4);
 	}
 	public Building clone() {
-		Window calendar = new Window(gp, hitbox.x, hitbox.y);
+		Window calendar = new Window(gp, hitbox.x, hitbox.y, presetNum);
 		return calendar;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new Window(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
+		System.out.println("buildings[arrayCounter] = new Window(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + this.presetNum + ");");
 		System.out.println("arrayCounter++;");	
 	}
 	public void destroy() {
@@ -49,10 +50,28 @@ public class Window extends Building {
 	private void importImages() {
 		animations = new TextureRegion[1][1][2];
 		
-		name = "Window";
-     	animations[0][0][0] = importImage("/decor/window.png").getSubimage(32, 32, 32, 32);
-     	animations[0][0][1] = importImage("/decor/window.png").getSubimage(0, 32, 32, 32);
-     	glowImage = importImage("/decor/WindowGlow.png").getSubimage(32, 32, 32, 32);
+     	
+     	switch(presetNum) {
+     	case 0:
+    		name = "Window 1";
+         	animations[0][0][0] = importImage("/decor/window.png").getSubimage(32, 32, 32, 32);
+         	animations[0][0][1] = importImage("/decor/window.png").getSubimage(0, 32, 32, 32);
+         	glowImage = importImage("/decor/WindowGlow.png").getSubimage(32, 32, 32, 32);
+     		break;
+     	case 1:
+     		name = "Porthole";
+         	animations[0][0][0] = importImage("/decor/catalogue/fishingshack/FishShackWindow.png").getSubimage(32, 0, 32, 32);
+         	animations[0][0][1] = importImage("/decor/catalogue/fishingshack/FishShackWindow.png").getSubimage(0, 0, 32, 32);
+         	glowImage = importImage("/decor/catalogue/fishingshack/FishShackWindow.png").getSubimage(64, 0, 32, 32);
+     		break;
+    	case 2:
+     		name = "Farm Window";
+         	animations[0][0][0] = importImage("/decor/window.png").getSubimage(96, 32, 32, 32);
+         	animations[0][0][1] = importImage("/decor/window.png").getSubimage(64, 32, 32, 32);
+         	glowImage = importImage("/decor/WindowGlow.png").getSubimage(96, 32, 32, 32);
+     		break;
+     	}
+     	
 	}
 	public void draw(Renderer renderer) {
 		if(firstDraw) {

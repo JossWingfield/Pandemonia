@@ -3,10 +3,13 @@ package utility;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.renderer.TextureRegion;
+
 public class ShopCatalogue {
     private final int id;
     private final String name;
 	private List<Object> contents = new ArrayList<Object>();
+	private TextureRegion icon;
 
     public ShopCatalogue(int id, String name) {
         this.id = id;
@@ -26,4 +29,10 @@ public class ShopCatalogue {
     public void setContents(List<Object> contents) {
     	this.contents = contents;;
     }
+    public void setIcon(TextureRegion icon) {
+		this.icon = icon;
+	}
+    public TextureRegion getIcon() {
+		return icon;
+	}
 }

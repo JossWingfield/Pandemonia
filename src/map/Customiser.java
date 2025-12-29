@@ -484,8 +484,13 @@ public class Customiser {
 								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
 							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
-
-
+							
+							TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+							
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -528,6 +533,11 @@ public class Customiser {
 			    			}
 							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
+							TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+							
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -572,6 +582,11 @@ public class Customiser {
 							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
 			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 
+			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+			    			
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -615,6 +630,11 @@ public class Customiser {
 							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
 			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 
+			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+			    			
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -659,6 +679,11 @@ public class Customiser {
 							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
 			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 
+			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+			    			
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -701,6 +726,11 @@ public class Customiser {
 			    			}
 							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
+							TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+							
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -743,6 +773,11 @@ public class Customiser {
 			    			}
 							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
+							TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+							
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -785,6 +820,11 @@ public class Customiser {
 			    			}
 			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
+			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+			    			
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -827,6 +867,11 @@ public class Customiser {
 			    			}
 			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
+			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+			    			
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -869,6 +914,11 @@ public class Customiser {
 			    			}
 			    			renderer.draw(b.getImage2(), xStart+(55) - 24, yPos+28, 48, 48);
 
+			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+			    			
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -911,6 +961,11 @@ public class Customiser {
 			    			}
 			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
+			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+			    			
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {
@@ -953,6 +1008,11 @@ public class Customiser {
 			    			}
 			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
+			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							if(r != null) {
+								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
+							}
+			    			
 			    			xStart+= 37*3;
 			    			counter++;
 			    			if(counter >= 10) {

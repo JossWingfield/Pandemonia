@@ -4,13 +4,13 @@ import java.util.Arrays;
 
 import org.lwjgl.glfw.GLFW;
 
-import entity.buildings.Fireplace;
+import entity.buildings.FloorDecor_Building;
 import entity.buildings.WallDecor_Building;
+import entity.buildings.Window;
+import map.Beam;
 import map.ChairSkin;
-import map.CounterSkin;
 import map.DoorSkin;
 import map.FloorPaper;
-import map.PanSkin;
 import map.TableSkin;
 import map.WallPaper;
 
@@ -130,17 +130,17 @@ public class KeyListener {
                 }
             }
             if(keyBeginPress(GLFW.GLFW_KEY_L)) {
-            	
-        		gp.customiser.addToInventory(new WallDecor_Building(gp, 0, 0, 17));
-        		gp.customiser.addToInventory(new WallPaper(gp, 31));
-        		gp.customiser.addToInventory(new Fireplace(gp, 0, 0));
-           		gp.customiser.addToInventory(new FloorPaper(gp, 4));
-           		gp.customiser.addToInventory(new CounterSkin(gp, 4));
-          		gp.customiser.addToInventory(new ChairSkin(gp, 13));
-          		gp.customiser.addToInventory(new TableSkin(gp, 1));
-          		gp.customiser.addToInventory(new DoorSkin(gp, 1));
-          		gp.customiser.addToInventory(new PanSkin(gp, 1));
-        		
+         		gp.customiser.addToInventory(new Beam(gp, 6));
+         		gp.customiser.addToInventory(new WallPaper(gp, 33));
+         		gp.customiser.addToInventory(new FloorPaper(gp, 7));
+         		gp.customiser.addToInventory(new DoorSkin(gp, 3));
+         		gp.customiser.addToInventory(new ChairSkin(gp, 6));
+         		gp.customiser.addToInventory(new TableSkin(gp, 3));
+        		gp.customiser.addToInventory(new Window(gp, 0, 0, 2));
+        		gp.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 108));
+        		gp.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 109));
+        		gp.customiser.addToInventory(new WallDecor_Building(gp, 0, 0, 38));
+         		
             }
         }
         // ----- CATALOGUE STATE -----

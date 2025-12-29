@@ -14,6 +14,7 @@ public class ChairSkin {
     public int cost = 0;
     public String name = "Chair";
     public String description = ""; 
+	public TextureRegion catalogueIcon;
 
 	public ChairSkin(GamePanel gp, int preset) {
 		this.gp = gp;
@@ -21,6 +22,9 @@ public class ChairSkin {
 		cost = 20;
 		description = "New Seating for your restaurant.";
 		importImages();
+	}
+	public void setCatalogueIcon(TextureRegion icon) {
+		this.catalogueIcon = icon;
 	}
 	public void importImages() {
 		
@@ -73,6 +77,7 @@ public class ChairSkin {
 	        cost = 50;
 			break;
 		case 13: //OTHER SHAPES
+			name = "Cabin Chairs";
 	        img = importImage("/decor/chair.png").getSubimage(2, 73+32, 16, 16);
 	        cost = 40;
 			break;

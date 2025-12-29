@@ -1395,6 +1395,68 @@ public class FloorDecor_Building extends Building {
             cost = 10;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
+        case 105:
+            name = "Fish Net";
+         	cost = 10;
+        	description = "A shark was once caught with this.";
+        	animations[0][0][0] = importImage("/decor/catalogue/fishingshack/Netting.png").getSubimage(0, 0, 32, 32);
+            yDrawOffset = 32;
+            drawHeight = 96;
+            drawWidth = 96;
+            xDrawOffset = 24;
+            hitbox.width = 48;
+            hitbox.height = 32;
+            mustBePlacedOnFloor = true;
+            isDecor = true;
+            cost = 10;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+        	break;
+        case 106:
+            name = "Sailing Boat";
+        	animations[0][0][0] = importImage("/decor/ship decor.png").getSubimage(48, 0, 16, 32);
+        	isSolid = true;
+        	drawHeight = 48*2;
+        	isFourthLayer = true;
+        	isDecor = true;
+        	mustBePlacedOnTable = true;
+          	canBePlacedOnShelf = true;
+          	yDrawOffset = 48;
+          	cost = 20;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
+        case 107:
+            name = "Lobster Cage";
+        	cost = 20;
+        	description = "Catch some lobsters.";
+        	animations[0][0][0] = importImage("/decor/catalogue/fishingshack/LobsterCage.png").getSubimage(0, 0, 16, 32);
+        	drawHeight = 48*2;
+        	isThirdLayer = true;
+        	yDrawOffset = 24;
+        	isDecor = true;
+    		canBePlacedOnTable = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*3);
+        	break;
+        case 108:
+            name = "Hay Bale 1";
+        	cost = 15;
+        	description = "Feed the animals.";
+        	animations[0][0][0] = importImage("/decor/catalogue/farm/FarmHouses.png").getSubimage(96, 160, 16, 32);
+        	drawHeight = 48*2;
+        	yDrawOffset = 48;
+        	isDecor = true;
+        	isSolid = false;
+        	mustBePlacedOnTable = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
+        case 109:
+            name = "Hay Bale 2";
+        	animations[0][0][0] = importImage("/decor/catalogue/farm/FarmHouses.png").getSubimage(96+16, 160+16, 16, 16);
+        	isSolid = false;
+        	isDecor = true;
+    		mustBePlacedOnTable = true;
+          	cost = 15;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
         }
 		
 	}

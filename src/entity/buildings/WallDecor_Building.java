@@ -227,7 +227,7 @@ public class WallDecor_Building extends Building {
 			buildHitbox = new Rectangle2D.Float(0, 0, 1, 1);
 	         break;
 		 case 22:
-	         name = "Painting 5";
+	         name = "Mountain View";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(0, 16, 32, 16);
 	         isSolid = false;
 	         isFourthLayer = true;
@@ -236,7 +236,7 @@ public class WallDecor_Building extends Building {
 	 		 xDrawOffset = 12;
 	 		 yDrawOffset = -12;
 	 	   	 cost = 40;
-	      	 description = "Artwork to be hung on the wall.";
+	      	 description = "A scenic landscape for all to see.";
 	    	 buildHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+3*4, hitbox.width, hitbox.height-3*5);
 	         break;
 		 case 23:
@@ -328,6 +328,80 @@ public class WallDecor_Building extends Building {
 	      	 description = "Artwork to be hung on the wall.";
 	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y, hitbox.width-3*3, hitbox.height-3*2);
 
+	         break;
+		 case 32:
+			 name = "Cabin Hanging Plant 1";
+	         animations[0][0][0] = importImage("/decor/catalogue/cabin/CabinPlants.png").getSubimage(0, 0, 16, 32);
+	         isDecor = true;
+	         drawHeight = 96;
+	         hitbox.height = 80;
+	         cost = 20;
+	    	 description = "Rustic cabin plants.";
+	 		 buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
+	         break;
+		 case 33:
+			 name = "Cabin Hanging Plant 2";
+	         animations[0][0][0] = importImage("/decor/catalogue/cabin/CabinPlants.png").getSubimage(16, 0, 16, 32);
+	         isDecor = true;
+	         drawHeight = 96;
+	         hitbox.height = 80;
+	         cost = 20;
+	    	 description = "Rustic cabin plants.";
+	 		 buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
+	         break;
+		 case 34:
+			 name = "Cabin Hanging Plant 3";
+	         animations[0][0][0] = importImage("/decor/catalogue/cabin/CabinPlants.png").getSubimage(32, 0, 16, 32);
+	         isDecor = true;
+	         drawHeight = 96;
+	         hitbox.height = 80;
+	         cost = 20;
+	    	 description = "Rustic cabin plants.";
+	 		 buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
+	         break;
+		 case 35:
+			 name = "Cabin Hanging Plant 4";
+	         animations[0][0][0] = importImage("/decor/catalogue/cabin/CabinPlants.png").getSubimage(48, 0, 16, 32);
+	         isDecor = true;
+	         drawHeight = 96;
+	         hitbox.height = 80;
+	         cost = 20;
+	    	 description = "Rustic cabin plants.";
+	 		 buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
+	         break;
+		 case 36:
+			 name = "Life Ring";
+	         animations[0][0][0] = importImage("/decor/catalogue/fishingshack/LifeRing.png").toTextureRegion();
+	         isDecor = true;
+	      	 cost = 20;
+	      	 description = "Could save a life potentially.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+	         break;
+		 case 37:
+			 name = "Wall Netting";
+	         animations[0][0][0] = importImage("/decor/catalogue/fishingshack/WallNetting.png").toTextureRegion();
+	         isDecor = true;
+	      	 cost = 20;
+	      	 drawWidth = 48*3;
+	     	 drawHeight = 48*2;
+	     	 hitbox.width = 48*3;
+	     	 hitbox.height = 48*2;
+	      	 description = "Completely false, never used.";
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+	         break;
+		 case 38:
+			 name = "Tool Rack";
+	         animations[0][0][0] = importImage("/decor/catalogue/farm/ToolRack.png").toTextureRegion();
+	         isDecor = true;
+	      	 cost = 20;
+	      	 drawWidth = 48*3;
+	     	 drawHeight = 32*3;
+	      	 description = "Never been used.";
+	      	 hitbox.width = 96;
+	      	 hitbox.height = 48;
+	      	 xDrawOffset = 20;
+	       	 yDrawOffset = 24;
+	    	 buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
 	         break;
         }
 		

@@ -16,7 +16,8 @@ public class FloorPaper {
     public int cost = 0;
     public String name = "Flooring";
     public String description = "";
-
+	public TextureRegion catalogueIcon;
+    
 	public FloorPaper(GamePanel gp, int preset) {
 		this.gp = gp;
 		this.preset = preset;
@@ -24,6 +25,9 @@ public class FloorPaper {
 	    cost = 35;
 		description = "New Flooring for your restaurant.";
 		importImages();
+	}
+	public void setCatalogueIcon(TextureRegion icon) {
+		this.catalogueIcon = icon;
 	}
 	public void importImages() {
 		
@@ -41,15 +45,18 @@ public class FloorPaper {
 			importFloorFromSpriteSheet("/tiles/flooring/Floor8", 8, 7, false);
 			break;
 		case 4:
+			name = "Cabin Floor";
 			importFloorFromSpriteSheet("/tiles/flooring/Floor2", 8, 7, false);
 			break;
 		case 5:
+			name = "Shack Floor";
 			importFloorFromSpriteSheet("/tiles/flooring/Floor3", 8, 7, false);
 			break;
 		case 6:
 			importFloorFromSpriteSheet("/tiles/flooring/Floor4", 8, 7, false);
 			break;
 		case 7:
+			name = "Farm Floor";
 			importFloorFromSpriteSheet("/tiles/flooring/Floor6", 8, 7, false);
 			break;
 		case 8:

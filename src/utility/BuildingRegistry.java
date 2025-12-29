@@ -65,6 +65,7 @@ public class BuildingRegistry {
 		presetBuildingNames.add("Toilet Door 1");
 		presetBuildingNames.add("Trapdoor 1");
 		presetBuildingNames.add("Shelf");
+		presetBuildingNames.add("Window");
 	}
 	
 	public List<BuildingSaveData> saveBuildings(List<Building> buildings) {
@@ -220,7 +221,6 @@ public class BuildingRegistry {
 			case "Stove" -> i = new Stove(gp, x, y);
 			case "Table 1" -> i = new Table(gp, x, y);
 			case "Table 2" -> i = new Table2(gp, x, y);
-			case "Window" -> i = new Window(gp, x, y);
 			case "Chopping Board 1" -> i = new ChoppingBoard(gp, x, y);
 			case "Turntable" -> i = new Turntable(gp, x, y);
 			case "Tip Jar" -> i = new TipJar(gp, x, y);
@@ -244,6 +244,7 @@ public class BuildingRegistry {
 			case "Toilet Door 1" -> i = new ToiletDoor(gp, x, y, preset);
 			case "Trapdoor 1" -> i = new Trapdoor(gp, x, y, preset);
 			case "Shelf" -> i = new Shelf(gp, x, y, preset);
+			case "Window" -> i = new Window(gp, x, y, preset);
 		}
 
 		return i;
