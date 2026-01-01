@@ -49,7 +49,6 @@ public class NPCMoveEvent extends CutsceneEvent {
             finished = true;
             return;
         }
-        
         npc.walking = true;
         
         if(targetBuilding != null) {

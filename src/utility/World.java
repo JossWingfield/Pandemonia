@@ -92,7 +92,7 @@ public class World {
     public boolean fadingOut = false;
     private float fadeAlpha = 0f;
     public boolean fadingIn = false;
-    private float fadeSpeed = 0.02f; // tweak for faster/slower fade
+    private float fadeSpeed = 0.7f; // tweak for faster/slower fade
 
     public World(GamePanel gp) {
         this.gp = gp;

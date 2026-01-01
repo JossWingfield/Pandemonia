@@ -633,12 +633,18 @@ public class Renderer {
         // Bind shader
         if (currentShader == null) currentShader = defaultShader;
         currentShader.use();
-
+        
         // Upload camera/projection matrix
         Matrix4f mvp = new Matrix4f();
         camera.getProjectionMatrix().mul(camera.getViewMatrix(), mvp);
         currentShader.uploadMat4f("u_MVP", mvp);
+        
+        Matrix4f guiOrtho = new Matrix4f()
+        	    .ortho(0.0f, gp.frameWidth, gp.frameHeight, 0.0f, -1.0f, 1.0f);
 
+        	currentShader.uploadMat4f("u_Ortho", guiOrtho);
+        
+        
         // Bind texture to texture unit 0
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, currentTexture.getTexId());

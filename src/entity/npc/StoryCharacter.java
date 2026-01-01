@@ -22,13 +22,13 @@ public class StoryCharacter extends NPC {
 
 	public StoryCharacter(GamePanel gp, float xPos, float yPos, int type) {
 		super(gp, xPos, yPos, 48, 48);
-		animationSpeedFactor = 3;
+		animationSpeedFactor = 0.09;
 		drawScale = 3;
 		drawWidth = 80*drawScale;
 	    drawHeight = 80*drawScale;
         xDrawOffset = 34*drawScale;
         yDrawOffset = 36*drawScale;
-		speed = 1*60;
+		speed = (float)(1.2*60);
 		npcType = "Story Character";
 		this.type = type;
 		
@@ -49,6 +49,7 @@ public class StoryCharacter extends NPC {
 	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
 	        break;
 		case 1:
+			name = "Builder";
 	        importPlayerSpriteSheet("/npcs/blacksmith/Idle", 4, 1, 0, 0, 0, 80, 80);
 	        importPlayerSpriteSheet("/npcs/blacksmith/Walk", 8, 1, 1, 0, 0, 80, 80);
 	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
@@ -84,6 +85,18 @@ public class StoryCharacter extends NPC {
 		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
 		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
 			break;
+		case 6:
+			name = "Flashback Chef";
+			importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
+		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
+		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
+			break;
+		case 7: //ALIVE IGNIS
+			name = "Ignis";
+			importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
+		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
+		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
+			break;
 		}
 		
 		portrait = faceIcon;
@@ -109,7 +122,7 @@ public class StoryCharacter extends NPC {
 	    } else {
 	    	currentAnimation = 0;
 	    }
-		
+	    
 		  animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
 	      if(animationSpeed >= animationSpeedFactor) {
 	    	  animationSpeed = 0;
@@ -123,7 +136,6 @@ public class StoryCharacter extends NPC {
 	      }
 	}
 	public void draw(Renderer renderer) {
-		this.g2 = g2;
 		if(firstDraw) {
 			if(hasLight) {
 				ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.BLUE, 48);

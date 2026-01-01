@@ -352,8 +352,15 @@ public class Player extends Entity{
     public void sendPacket(Packet packet) {
     	packet.writeData(gp.socketClient);
     }
-    private void handleDebugMode(int xDiff, int yDiff) {
-        //System.out.println((int)((mouseI.mouseX + xDiff) / gp.tileSize) + "   " + (int)((mouseI.mouseY + yDiff) / gp.tileSize));
+    private void handleDebugMode() {
+    	if(keyI.isKeyPressed(GLFW.GLFW_KEY_EQUAL)) {
+    		int mouseX = (int)gp.mouseL.getWorldX();
+    		int mouseY = (int)gp.mouseL.getWorldY();
+    		int tileX = (int) ((mouseX) / gp.tileSize);
+    		int tileY = (int) ((mouseY) / gp.tileSize);
+
+    		System.out.println(tileX + "   " + tileY);    	
+    	}
     }
     public void takeDamage(int damage) {
     	
@@ -575,6 +582,8 @@ public class Player extends Entity{
     		    }
     		}
     	}
+    	
+    	handleDebugMode();
     	
     	animationSpeed+=dt; //Updating animation frame
         if (animationSpeed >= animationSpeedFactor) {

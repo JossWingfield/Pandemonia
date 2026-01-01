@@ -17,19 +17,36 @@ public class CameraFollowEvent extends CutsceneEvent {
 	    }
 
 	    public void update(double dt) {
-	        // Camera will automatically lerp to target position and zoom
-	        gp.camera.setZoom(zoomTarget);
-	        float targetX = target.hitbox.x + target.hitbox.width / 2f;
-	        float targetY = target.hitbox.y + target.hitbox.height / 2f;
+	        gp.camera.setTarget(target);
+	        // --- Smooth zoom (optional but correct) ---
+	        float currentZoom = gp.camera.getZoom();
+	        float zoomLerp = 0.08f;
+	        gp.camera.setZoom(
+	            currentZoom + (zoomTarget - currentZoom) * zoomLerp
+	        );
 
-	        gp.camera.followEntityLerp(targetX, targetY, 0.12f);
+	        // --- Target center ---
+	        float targetCenterX = target.hitbox.x + target.hitbox.width * 0.5f;
+	        float targetCenterY = target.hitbox.y + target.hitbox.height * 0.5f;
 
-	        // Consider the event finished once camera is roughly at target
-	        float dx = (target.hitbox.x + target.hitbox.width / 2f) - gp.camera.position.x;
-	        float dy = (target.hitbox.y + target.hitbox.height / 2f) - gp.camera.position.y;
+	        // --- Follow ---
+	        gp.camera.followEntityLerp(targetCenterX, targetCenterY, 0.12f);
+
+	        // --- Compute desired camera position (top-left) ---
+	        float viewW = gp.camera.getWidth() / gp.camera.getZoom();
+	        float viewH = gp.camera.getHeight() / gp.camera.getZoom();
+
+	        float desiredX = targetCenterX - viewW * 0.5f;
+	        float desiredY = targetCenterY - viewH * 0.5f;
+
+	        // --- Compare camera to desired ---
+	        float dx = desiredX - gp.camera.position.x;
+	        float dy = desiredY - gp.camera.position.y;
 	        float dz = Math.abs(gp.camera.getZoom() - zoomTarget);
 
-	        if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && dz < 0.01f) {
+	        if (Math.abs(dx) < 0.5f && Math.abs(dy) < 0.5f && dz < 0.01f) {
+	            gp.camera.setPosition(desiredX, desiredY);
+	            gp.camera.setZoom(zoomTarget);
 	            finished = true;
 	        }
 	    }

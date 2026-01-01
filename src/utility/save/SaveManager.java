@@ -268,7 +268,6 @@ public class SaveManager {
 	    loadFromFile("save/upgrades" + save + ".json", UpgradeSaveData.class);
 	    loadFromFile("save/catalogue" + save + ".json", CatalogueSaveData.class);
 
-		//System.out.println("Liadung roosm");
 	    int counter = 0;
 	    for (Room r : gp.mapM.getRooms()) {
 	        if (r != null) {

@@ -40,6 +40,7 @@ import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
@@ -47,6 +48,8 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
@@ -58,6 +61,7 @@ import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_COMPLETE;
@@ -65,11 +69,10 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glCheckFramebufferStatus;
 import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.net.BindException;
 import java.nio.ByteBuffer;
@@ -88,7 +91,6 @@ import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
@@ -721,6 +723,7 @@ public class GamePanel {
 
         sizeX = px[0];
         sizeY = py[0];
+        
         // correct viewport (physical pixels)
         glViewport(0, 0, px[0], py[0]);
 
@@ -900,6 +903,53 @@ public class GamePanel {
 		}
 		
 	}
+    public void setFullScreen() {
+        GraphicsDevice gd =
+            GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice();
+
+        //window.dispose();
+        //window.setUndecorated(true);
+        //window.setResizable(false);
+        //gd.setFullScreenWindow(frame);
+
+        Settings.fullScreen = true;
+
+        //resize(
+            //frame.getWidth(),
+            //frame.getHeight()
+        //);
+    }
+    public void stopFullScreen() {
+        GraphicsDevice gd =
+            GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice();
+
+        gd.setFullScreenWindow(null);
+
+        Settings.fullScreen = false;
+        /*
+        frame.dispose();
+        frame.setUndecorated(false);
+        frame.setResizable(true);
+        frame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+
+        resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        */
+    }
+    public void resize(int width, int height) {
+        // Update OpenGL viewport
+        glViewport(0, 0, width, height);
+
+        // Update camera projection
+        //camera.resize(width, height);
+
+        // If you have a lightmap / FBO:
+        //renderer.resize(width, height);
+    }
 	public int getWidth() {
 		return frameWidth;
 	}
@@ -928,6 +978,7 @@ public class GamePanel {
     	}
     	
     	keyL.update();
+    	camera.update(dt);
     	
 
 	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState) {
@@ -1195,6 +1246,7 @@ public class GamePanel {
     }
     private void drawGUI() {
 		        //renderer.setGUI();
+    	renderer.setGUI();
 		        
 		        if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
 		            Building[] thirdLayer = buildingM.getThirdLayer();
@@ -1281,6 +1333,7 @@ public class GamePanel {
 		}
 		//renderer.setGUI();
 		
+    	renderer.setGUI();
 		minigameM.draw(renderer);
 		gui.draw(renderer);
     }

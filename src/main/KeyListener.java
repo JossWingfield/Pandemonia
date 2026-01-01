@@ -58,6 +58,8 @@ public class KeyListener {
     public void update() {
         // ----- PLAY STATE -----
         if (gp.currentState == gp.playState) {
+        	
+        	//if (keyBeginPress(GLFW.GLFW_KEY_L)) gp.cutsceneM.enterDestroyedRestaurant();
 
             if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
             if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);

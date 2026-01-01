@@ -1,11 +1,6 @@
 package map;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.io.IOException;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import entity.buildings.Building;
 import entity.buildings.Door;
@@ -17,6 +12,7 @@ import main.GamePanel;
 import main.renderer.AssetPool;
 import main.renderer.Renderer;
 import main.renderer.Texture;
+import main.renderer.TextureRegion;
 import net.packets.Packet05ChangeRoom;
 import utility.Season;
 
@@ -457,8 +453,58 @@ public class MapManager {
 	            gp.npcM.drawPaths(renderer);
 	        }
 	    }
-	    //Draws the selected level
 	    private void drawLayer(Renderer renderer, int layer) {
+	        int tileSize = gp.tileSize;
+
+	        // Camera position is in WORLD PIXELS
+	        float camX = gp.camera.position.x;
+	        float camY = gp.camera.position.y;
+
+	        // Convert camera bounds → tile indices (culling only)
+	        int startCol = Math.max(0, (int)(camX / tileSize));
+	        int startRow = Math.max(0, (int)(camY / tileSize));
+
+	        int endCol = Math.min(
+	            currentMapWidth,
+	            (int)((camX + gp.frameWidth) / tileSize) + 1
+	        );
+	        int endRow = Math.min(
+	            currentMapHeight,
+	            (int)((camY + gp.frameHeight) / tileSize) + 1
+	        );
+
+	        for (int i = startCol; i < endCol; i++) {
+	            for (int j = startRow; j < endRow; j++) {
+
+	                int tileIndex = currentRoom.mapGrid[layer][i][j];
+	                if (tileIndex < 0 || tileIndex >= tiles.length) continue;
+	                
+	                TextureRegion img;
+	                if (tileIndex == 0) {
+	                    img = tiles[tileIndex].image;
+	                } else if (tiles[tileIndex].isWall) {
+	                    img = currentRoom.getWallpaper().getImage(tileIndex);
+	                } else if (tiles[tileIndex].isFloor) {
+	                    img = currentRoom.getFloorpaper().getImage(tileIndex);
+	                } else if (tiles[tileIndex].isBeam) {
+	                    img = currentRoom.getBeam().getImage(tileIndex);
+	                } else {
+	                    img = tiles[tileIndex].image;
+	                }
+
+	                // 🔑 DRAW IN WORLD COORDINATES
+	                renderer.draw(
+	                    img,
+	                    i * tileSize,
+	                    j * tileSize,
+	                    tileSize,
+	                    tileSize
+	                );
+	            }
+	        }
+	    }
+	    //Draws the selected level
+	    /*private void drawLayer(Renderer renderer, int layer) {
 	        int tileSize = gp.tileSize;
 
 	        // Convert camera offset to tile indices
@@ -489,6 +535,7 @@ public class MapManager {
 	            }
 	        }
 	    }
+	    */
 	    public void drawBackground(Renderer renderer) {
 	        drawLayer(renderer, 0);
 	    }

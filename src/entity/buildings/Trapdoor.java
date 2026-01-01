@@ -69,22 +69,6 @@ public class Trapdoor extends Building {
 		}
 	}
 	public void update(double dt) {
-		if (cooldown > 0) {
-		    cooldown -= dt;        // subtract elapsed time in seconds
-		    if (cooldown < 0) {
-		        cooldown = 0;      // clamp to zero
-		    }
-		}
-		if(gp.player.hitbox.intersects(entryHitbox)) {
-			if(cooldown == 0) {
-				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
-					//gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) = false;
-					gp.mapM.changeRoom(roomNum, this);
-				}
-			}
-		}
-	}
-	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			entryHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, 48, 48);
@@ -95,7 +79,25 @@ public class Trapdoor extends Building {
 			doorHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, 48, 48);		
 			npcVisualHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48+28-48, 48, 80);
 			importImages();
-		}  
+		} 
+		if (cooldown > 0) {
+		    cooldown -= dt;        // subtract elapsed time in seconds
+		    if (cooldown < 0) {
+		        cooldown = 0;      // clamp to zero
+		    }
+		}
+		if(entryHitbox != null) {
+			if(gp.player.hitbox.intersects(entryHitbox)) {
+				if(cooldown == 0) {
+					if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+						//gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) = false;
+						gp.mapM.changeRoom(roomNum, this);
+					}
+				}
+			}
+		}
+	}
+	public void draw(Renderer renderer) { 
 		if(RecipeManager.areHauntedRecipesPresent() || type == 1) {
 			
 	        //g2.setColor(Color.YELLOW);

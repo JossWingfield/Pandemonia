@@ -12,14 +12,14 @@ public class AddNPCEvent extends CutsceneEvent {
 	    public AddNPCEvent(GamePanel gp, NPC npc) {
 	        this.gp = gp;
 	        this.npc = npc;
-	        npc.setAbleToUpdate(false);
+	        //npc.setAbleToUpdate(false);
 	    }
 	    public AddNPCEvent(GamePanel gp, NPC npc, int x, int y) {
 	        this.gp = gp;
 	        this.npc = npc;
 	        this.spawnX = x;
 	        this.spawnY = y;
-	        npc.setAbleToUpdate(false);
+	        //npc.setAbleToUpdate(false);
 	    }
 
 	    

@@ -1860,9 +1860,9 @@ public class GUI {
 			drawCheckBoxHover(renderer, x+boxOffset, y, 9*3, 9*3);
             if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
             	if(!Settings.fullScreen) {
-            		//gp.setFullScreen();
+            		gp.setFullScreen();
             	} else {
-            		//gp.stopFullScreen();
+            		gp.stopFullScreen();
             	}
                 clickCooldown = 0.33;
             }

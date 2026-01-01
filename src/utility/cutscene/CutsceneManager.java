@@ -154,6 +154,107 @@ public class CutsceneManager {
         events.add(new DialogueEvent(gp, playerNPC, "This looks like the restaurant's old kitchen."));
         events.add(new WaitEvent(0.33));
         
+        events.add(new StartFadeOutEvent(gp));
+        events.add(new ActionEvent(() -> gp.mapM.currentRoom.setRestored()));
+        NPC ignis = new StoryCharacter(gp, 48*13, 48*7, 7);
+        NPC chef1 = new StoryCharacter(gp, 48*13, 48*7, 6);
+        NPC chef2 = new StoryCharacter(gp, 48*13, 48*7, 6);
+        NPC chef3 = new StoryCharacter(gp, 48*13, 48*7, 6);
+        events.add(new AddNPCEvent(gp, ignis));
+        events.add(new AddNPCEvent(gp, chef1));
+        events.add(new AddNPCEvent(gp, chef2));
+        events.add(new AddNPCEvent(gp, chef3));
+        events.add(new ActionEvent(() -> {
+        	ignis.hitbox.x = 48*13;
+        	ignis.hitbox.y = 48*7;
+        	ignis.setDirection("Down");
+        	
+        	chef1.hitbox.x = 48*8;
+        	chef1.hitbox.y = 48*7;
+        	chef1.setDirection("Left");
+        	
+        	chef2.hitbox.x = 48*9;
+        	chef2.hitbox.y = 48*10;
+        	chef1.setDirection("Left");
+        	
+        	chef3.hitbox.x = 48*16;
+        	chef3.hitbox.y = 48*10;
+        	chef3.setDirection("Right");
+        }));
+        events.add(new CameraFollowEvent(gp, playerNPC, 1.7f));
+        
+        events.add(new StartFadeInEvent(gp));
+        
+        events.add(new WaitEvent(0.9));
+        
+        events.add(new ParallelEvent(
+        		new CameraPanEvent(gp,gp.tileSize*2, -8*gp.tileSize, 3),
+                new NPCMoveEvent(gp, ignis, 7, 8),
+                new NPCMoveEvent(gp, chef1, 15, 8),
+                new NPCMoveEvent(gp, chef2, 11, 7),
+                new NPCMoveEvent(gp, chef3, 10, 10)
+        ));
+        
+        events.add(new StartFadeOutEvent(gp));
+        events.add(new RemoveNPCEvent(gp, chef1));
+        events.add(new RemoveNPCEvent(gp, chef2));
+        events.add(new RemoveNPCEvent(gp, chef3));
+        events.add(new ActionEvent(() -> gp.mapM.currentRoom.setDestroyed()));
+        
+        events.add(new ActionEvent(() -> {
+        	ignis.hitbox.x = 48*10;
+        	ignis.hitbox.y = 48*7;
+        	ignis.setDirection("Down");
+        }));
+        
+        events.add(new CameraFollowEvent(gp, ignis, 1.4f));
+        events.add(new WaitEvent(0.33));        
+        events.add(new StartFadeInEvent(gp));
+        
+        events.add(new DialogueEvent(gp, ignis, "Who are you?"));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "You dont seem to be afraid of the heat."));
+        events.add(new WaitEvent(0.33));
+        events.add(new DialogueEvent(gp, ignis, "Careful. That's how it starts."));
+
+        
+        events.add(new WaitEvent(0.33));  
+        events.add(new NPCMoveEvent(gp, ignis, 14, 7));
+        events.add(new DialogueEvent(gp, ignis, "This place once fed laughter. Hands moved fast. Voices overlapped. The heat was comfort to them"));
+        events.add(new WaitEvent(0.33));  
+        events.add(new NPCMoveEvent(gp, ignis, 10, 7));
+        events.add(new ActionEvent(() -> {
+        	ignis.setDirection("Down");
+        }));
+        events.add(new DialogueEvent(gp, ignis, "And then..."));
+        events.add(new WaitEvent(0.33));  
+        events.add(new ActionEvent(() -> {
+        	ignis.setDirection("Up");
+        }));
+        events.add(new DialogueEvent(gp, ignis, "I did what I had to do."));
+        events.add(new WaitEvent(0.33)); 
+        
+        events.add(new DialogueEvent(gp, ignis, "And now you stand where they stood, looking at the ashes and wondering if you can fix it."));
+        events.add(new WaitEvent(2)); 
+        events.add(new ActionEvent(() -> {
+        	ignis.setDirection("Down");
+        }));
+        events.add(new WaitEvent(2)); 
+        events.add(new DialogueEvent(gp, ignis, "Tell me chef. Do you fear the flame... or do you intend to command it?"));
+        events.add(new WaitEvent(0.33)); 
+        events.add(new DialogueEvent(gp, ignis, "If you wish to bring the kitchen to its former glory you'll need me."));
+        
+        events.add(new WaitEvent(0.33)); 
+        events.add(new DialogueEvent(gp, ignis, "But the fire remembers."));
+
+        events.add(new WaitEvent(0.33)); 
+        events.add(new DialogueEvent(gp, ignis, "Show me you won't make the same mistake I did."));
+        events.add(new WaitEvent(0.33)); 
+
+        
+        events.add(new RemoveNPCEvent(gp, ignis));
+        
         events.add(new ActionEvent(() -> {
         	gp.player.isInvisible = false;
         	gp.player.hitbox.x = playerNPC.hitbox.x;
@@ -558,8 +659,12 @@ public class CutsceneManager {
         events.add(new AddNPCEvent(gp, builder1));
         events.add(new AddNPCEvent(gp, builder2));
         
-        events.add(new NPCMoveEvent(gp, builder1, 14, 9));
-        events.add(new NPCMoveEvent(gp, builder2, 9, 9));
+        //events.add(new NPCMoveEvent(gp, builder1, 14, 9));
+        //events.add(new NPCMoveEvent(gp, builder2, 9, 9));
+        events.add(new ParallelEvent(
+        	    new NPCMoveEvent(gp, builder1, 14, 9),
+        	    new NPCMoveEvent(gp, builder2, 9, 9)
+        	));
         
         events.add(new StartFadeOutEvent(gp));
         events.add(new ActionEvent(() -> gp.mapM.currentRoom.setRestored()));
@@ -576,7 +681,7 @@ public class CutsceneManager {
         events.add(new StartFadeInEvent(gp));
         
         events.add(new DialogueEvent(gp, owner, "Good as new! Let me show you around your new restaurant."));
-        events.add(new CameraFollowEvent(gp, owner, 1.2f));
+        events.add(new CameraFollowEvent(gp, owner, 1.6f));
         
         events.add(new ActionEvent(() -> {
         	playerNPC.setFollowNPC(owner);
