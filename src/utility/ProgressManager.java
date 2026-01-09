@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
+import entity.buildings.Building;
+import entity.buildings.Rubble;
 import entity.buildings.WallDecor_Building;
 import main.GamePanel;
 import main.renderer.AssetPool;
@@ -82,6 +84,8 @@ public class ProgressManager {
     
     //KITCHEN UNLOCKS
     public boolean seasoningUnlocked = false;
+    //ROOM UNLOCKS
+    public boolean unlockedKitchen = false;
     
     //ACHIEVEMENTS
     public Map<String, Achievement> achievements = new LinkedHashMap<>();
@@ -130,6 +134,7 @@ public class ProgressManager {
                 }
             }
         }
+        //unlockOldKitchen();
         setupAchievements();
     }
     private void setupAchievements() {
@@ -587,7 +592,40 @@ public class ProgressManager {
     public void moveToNextPhase() {
     	currentPhase++;
     	gp.mapM.enterNewPhase();
-    	
     }
-	
+	public void unlockOldKitchen() {
+		unlockedKitchen = true;
+		RoomHelperMethods.KITCHEN = RoomHelperMethods.OLDKITCHEN;
+		gp.gui.addMessage("Ignis has found peace.", Colour.GREEN);
+		if(gp.mapM.isInRoom(9)) {
+			gp.npcM.addCook();
+			Rubble b = (Rubble)gp.buildingM.findBuildingWithName("Barricade");
+	    	if(b != null) {
+	    		b.explode();
+	    	}
+	    	Building boxes = gp.buildingM.findBuildingWithName("Packages 1");
+	    	if(boxes != null) {
+	    		gp.buildingM.removeBuilding(boxes);
+	    	}
+	    	Building Packages = gp.buildingM.findBuildingWithName("Boxes 1");
+	    	if(Packages != null) {
+	    		gp.buildingM.removeBuilding(Packages);
+			}
+		} else {
+			gp.mapM.getRoom(9).addCook();
+			Rubble b = (Rubble)gp.mapM.getRoom(9).findBuildingWithName("Barricade");
+	    	if(b != null) {
+	    		b.explode();
+	    	}
+	    	Building boxes = gp.mapM.getRoom(9).findBuildingWithName("Packages 1");
+	    	if(boxes != null) {
+	    		gp.mapM.getRoom(9).removeBuilding(boxes);
+	    	}
+	    	Building Packages = gp.mapM.getRoom(9).findBuildingWithName("Boxes 1");
+	    	if(Packages != null) {
+	    		gp.mapM.getRoom(9).removeBuilding(Packages);
+			}
+		}
+		
+	}
 }

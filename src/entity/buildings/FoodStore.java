@@ -137,7 +137,10 @@ public class FoodStore extends Building {
 		
 	}
 	public void draw(Renderer renderer) {
-				
+		if(interactHitbox == null) {
+			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
+		}
+		
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {

@@ -92,7 +92,10 @@ public class CutsceneManager {
     	}
     	if(gp.player.currentRoomIndex == 9) {
     		if(!cutscenePlayed.contains("Enter Kitchen")) {
-    			enterKitchen();
+    			//enterKitchen();
+    		}
+    		if(!cutscenePlayed.contains("Post Ignis")  && cutsceneName.equals("Post Ignis")) {
+    			postIgnis();
     		}
     	}
     	
@@ -130,6 +133,82 @@ public class CutsceneManager {
     public List<String> getCutscenesWatched() {
 		return cutscenePlayed;
 	}
+    public void postIgnis() {
+    	cutscenePlayed.add("Post Ignis");
+
+        List<CutsceneEvent> events = new ArrayList<>();    	
+        
+        
+        events.add(new ActionEvent(() -> {
+        	gp.player.isInvisible = true;
+        }));
+        NPC playerNPC = new StoryCharacter(gp, gp.player.hitbox.x, gp.player.hitbox.y, 2);
+        events.add(new AddNPCEvent(gp, playerNPC));
+        NPC ignis = new StoryCharacter(gp, 48*13, 48*7, 8);
+        
+        events.add(new AddNPCEvent(gp, ignis, 13, 7));
+        
+        events.add(new DialogueEvent(gp, ignis, "Huh. All that fire... and I still couldn't keep it burning."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "Do you know why I stayed here chef?"));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "I told myself it was dedication. Passion. Pride in my station."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "But really..."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "I was afraid to stop."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "I kept pushing the heat higher, pushing myself further"));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "...In the end, I was the one who couldn’t take the heat."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "You did what I never could. You shut it down before it consumed everything."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "...Thank you"));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "Run this place better than we did."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "Let the fire serve the people… not the other way around."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "Now I'm freed you can use the old kitchen again."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "Here let me fix it up."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new StartFadeOutEvent(gp));
+        
+        events.add(new ActionEvent(() -> {
+        	gp.mapM.currentRoom.setRestored();
+        	gp.progressM.unlockOldKitchen();
+        }));
+        
+        events.add(new StartFadeInEvent(gp));
+        
+        events.add(new RemoveNPCEvent(gp, ignis));
+        events.add(new ActionEvent(() -> {
+        	gp.player.isInvisible = false;
+        	gp.player.hitbox.x = playerNPC.hitbox.x;
+        	gp.player.hitbox.y = playerNPC.hitbox.y;
+        	gp.player.setDirection(playerNPC.getDirection());
+        }));
+        events.add(new RemoveNPCEvent(gp, playerNPC));
+        
+        events.add(new EndCutscene(gp));
+
+        startCutscene(events);
+    }
     public void enterKitchen() {
     	cutscenePlayed.add("Enter Kitchen");
 
@@ -207,6 +286,11 @@ public class CutsceneManager {
         	ignis.setDirection("Down");
         }));
         
+        events.add(new ActionEvent(() -> {
+        	gp.particleM.roomEmbers = true;
+        	gp.particleM.randomShaking = true;
+        }));
+        
         events.add(new CameraFollowEvent(gp, ignis, 1.4f));
         events.add(new WaitEvent(0.33));        
         events.add(new StartFadeInEvent(gp));
@@ -260,6 +344,8 @@ public class CutsceneManager {
         	gp.player.hitbox.x = playerNPC.hitbox.x;
         	gp.player.hitbox.y = playerNPC.hitbox.y;
         	gp.player.setDirection(playerNPC.getDirection());
+        	gp.particleM.roomEmbers = false;
+           	gp.particleM.randomShaking = false;
         }));
         events.add(new RemoveNPCEvent(gp, playerNPC));
         

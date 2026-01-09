@@ -10,6 +10,8 @@ public class EmberPath {
     int currentIndex = 0;
     boolean withLight;
 
+    int emberCounter = 0;   // NEW
+
     public EmberPath(List<Node> path, boolean withLight) {
         this.path = path;
         this.withLight = withLight;
@@ -24,11 +26,9 @@ public class EmberPath {
 
         Node node = path.get(currentIndex);
         float cell = gp.tileSize / (float) gp.pathF.nodesPerTile;
-        float targetX = node.col * cell + cell * 0.5f;
-        float targetY = node.row * cell + cell * 0.5f;
 
-        float x = targetX;
-        float y = targetY;
+        float x = node.col * cell + cell * 0.5f;
+        float y = node.row * cell + cell * 0.5f;
 
         currentIndex++;
         return new float[]{x, y};

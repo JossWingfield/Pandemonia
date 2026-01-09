@@ -49,6 +49,8 @@ public class PlayerDustParticle extends Particle {
         //g.setColor(color);
         //g.fillOval((int)(screenX - size/2), (int)(screenY - size/2), (int)size, (int)size);
         //g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        renderer.setColour(colour);
+        renderer.fillRect((int)(screenX - size/2), (int)(screenY - size/2), (int)size, (int)size);
     }
 
 	//@Override

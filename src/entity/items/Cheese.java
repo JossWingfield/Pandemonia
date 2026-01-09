@@ -10,6 +10,7 @@ public class Cheese extends Food {
 		name = "Cheese";
 		importImages();
 		foodLayer = 3;
+		chopCount = 12;
 	}
 	
 	private void importImages() {

@@ -10,6 +10,7 @@ public class CursedGreens extends CursedFood {
 		name = "Cursed Greens";
 		importImages();
 		foodLayer = 2;
+		chopCount = 20;
 	}
 	
 	private void importImages() {

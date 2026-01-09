@@ -591,7 +591,7 @@ public class World {
         		lightningCounter = 0;
         		lightningSpawned = false;
         		gp.lightingM.removeLight(lightningLight);
-        	   	//gp.screenShake(10, 5);
+        	   	gp.screenShake(10, 5);
         	}
         }
     }

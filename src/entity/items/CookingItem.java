@@ -14,7 +14,7 @@ public class CookingItem extends Item {
     protected List<String> cookedResults;
     public Food cookingItem = null;
     protected int cookTime = 0;
-    protected  int maxCookTime = 60*24; //60*14
+    protected  int maxCookTime = 60*5;// 60*24;
     protected int flickerThreshold = 60*30;
     protected int maxBurnTime = 60*38; //60*28
     

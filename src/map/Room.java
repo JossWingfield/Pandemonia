@@ -49,6 +49,7 @@ import entity.buildings.outdoor.OutdoorDecor;
 import entity.buildings.outdoor.OutdoorWallDecor;
 import entity.buildings.outdoor.SeasonalDecoration;
 import entity.items.Item;
+import entity.npc.Cook;
 import entity.npc.Customer;
 import entity.npc.NPC;
 import entity.npc.Pet;
@@ -426,18 +427,6 @@ public class Room {
 			door.setDoorNum(9);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 432, 156, 6);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 480, 156, 7);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 528, 156, 7);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 576, 156, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 564, 132, 25);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 492, 144, 20);
-			arrayCounter++;
 			buildings[arrayCounter] = new FoodStore(gp, 648, 348, 0);
 			arrayCounter++;
 			buildings[arrayCounter] = new FoodStore(gp, 612, 348, 2);
@@ -451,18 +440,6 @@ public class Room {
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 444, 456, 34);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 504, 456, 35);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 432, 156, 6);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 480, 156, 7);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 528, 156, 7);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 576, 156, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 564, 132, 25);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 492, 144, 20);
 			arrayCounter++;
 			buildings[arrayCounter] = new FoodStore(gp, 648, 348, 0);
 			arrayCounter++;
@@ -482,7 +459,7 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 348, 17);
 			arrayCounter++;
-			buildings[arrayCounter] = new StorageFridge(gp, 564, 192, false);
+			buildings[arrayCounter] = new StorageFridge(gp, 564, 192,false);
 			arrayCounter++;
 			buildings[arrayCounter] = new FoodStore(gp, 444, 240, 1);
 			arrayCounter++;
@@ -502,13 +479,7 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new EscapeHole(gp, 420, 400);
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 456, 144, 33);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 528, 144, 26);
-			arrayCounter++;
 			buildings[arrayCounter] = new Bin(gp, 612, 228);
-			arrayCounter++;
-			buildings[arrayCounter] = new WallDecor_Building(gp, 624, 144, 17);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 624, 456, 40);
 			arrayCounter++;
@@ -2002,7 +1973,7 @@ public class Room {
 			arrayCounter++;
 			break;
 		case 9: //Old Kitchen
-			roomSpawn = new RoomSpawn(gp, 480-24, 552);
+			roomSpawn = new RoomSpawn(gp, 480-24, 552-48);
 			door =  new Door(gp, 456, 600, 1, 0);
 			door.setDoorNum(7);
 			buildings[arrayCounter] = door;
@@ -2065,11 +2036,11 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new ChoppingBoard(gp, 636, 396);
 			arrayCounter++;
-			buildings[arrayCounter] = new Stove(gp, 456, 300);
+			buildings[arrayCounter] = new Stove(gp, 456+48, 300);
 			arrayCounter++;
-			buildings[arrayCounter] = new Oven(gp, 564, 300);
+			buildings[arrayCounter] = new Oven(gp, 564+48, 300);
 			arrayCounter++;
-			buildings[arrayCounter] = new Fridge(gp, 624, 252);
+			buildings[arrayCounter] = new Fridge(gp, 624+48, 252);
 			arrayCounter++;
 			buildings[arrayCounter] = new Sink(gp, 300, 336);
 			arrayCounter++;
@@ -2790,6 +2761,10 @@ public class Room {
     	Customer customer = new Customer(gp, (int)getSpawnX(), (int)getSpawnY());
     	npcs.add(customer);
     }
+    public void addCook() {
+    	Cook cook = new Cook(gp, (int)getSpawnX(), (int)getSpawnY());
+    	npcs.add(cook);
+    }
 	public Chair findFreeChair() {
 		for(Building b: buildings) {
 			if(b != null) {
@@ -2817,6 +2792,17 @@ public class Room {
 			}
 		}
 		return null;
+	}
+	public void removeBuilding(Building building) {
+		int counter = 0;
+		for(Building b: buildings) {
+			if(b != null) {
+				if(building.equals(b)) {
+					buildings[counter] = null;
+				}
+			}
+			counter++;
+		}
 	}
 	public void addSpecialCustomer() {
 		npcs.add(new SpecialCustomer(gp, (int)getSpawnX(), (int)getSpawnY()));

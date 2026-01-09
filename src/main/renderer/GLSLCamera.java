@@ -18,6 +18,10 @@ public class GLSLCamera {
     private float targetCenterX;
     private float targetCenterY;
     
+    private float shakeDuration = 0f;   // remaining shake time
+    private float shakeIntensity = 0f;  // max displacement in pixels
+    private Vector2f shakeOffset = new Vector2f(); // current shake offset
+    
     public GLSLCamera(Vector2f position, float width, float height) {
         this.position = position;
         this.width = width;
@@ -42,8 +46,13 @@ public class GLSLCamera {
     
     public Matrix4f getViewMatrix() {
         viewMatrix.identity();
-        viewMatrix.translate(-position.x, -position.y, 0.0f);
+        // Apply shake offset
+        viewMatrix.translate(-position.x - shakeOffset.x, -position.y - shakeOffset.y, 0.0f);
         return viewMatrix;
+    }
+    public void shake(float intensity, float duration) {
+        this.shakeIntensity = intensity;
+        this.shakeDuration = duration;
     }
     public void followEntity(float targetX, float targetY) {
         float viewW = width / zoom;
@@ -120,11 +129,25 @@ public class GLSLCamera {
 		return zoom;
 	}
     public void update(double dt) {
-    	if(target != null) {
-        	targetCenterX = target.hitbox.x + target.hitbox.width * 0.5f;
-    	    targetCenterY = target.hitbox.y + target.hitbox.height * 0.5f;
-    		followEntityLerp(targetCenterX, targetCenterY, 0.12f);
-    	}
+        if(target != null) {
+            targetCenterX = target.hitbox.x + target.hitbox.width * 0.5f;
+            targetCenterY = target.hitbox.y + target.hitbox.height * 0.5f;
+            followEntityLerp(targetCenterX, targetCenterY, 0.12f);
+        }
+
+        // --- Update screen shake ---
+        if(shakeDuration > 0) {
+            shakeDuration -= dt;
+            // Random offset for shake
+            shakeOffset.x = (float)((Math.random() * 2 - 1) * shakeIntensity);
+            shakeOffset.y = (float)((Math.random() * 2 - 1) * shakeIntensity);
+
+            // Optionally decay intensity over time
+            float shakeProgress = (float)(shakeDuration / dt);
+            shakeIntensity *= 0.9f; // smooth decay
+        } else {
+            shakeOffset.set(0, 0);
+        }
     }
     public static Vector2f worldToScreen(Vector2f worldPos, Matrix4f view, Matrix4f proj, float screenWidth, float screenHeight) {
         Vector4f clipSpace = new Vector4f(worldPos.x, worldPos.y, 0, 1);

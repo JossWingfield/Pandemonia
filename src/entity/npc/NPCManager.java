@@ -34,6 +34,10 @@ public class NPCManager {
     	Server server = new Server(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
     	npcs.add(server);
     }
+    public void addCook() {
+    	Cook cook = new Cook(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    	npcs.add(cook);
+    }
     public void addDishWasher() {
     	DishWasher server = new DishWasher(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
     	npcs.add(server);

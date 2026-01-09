@@ -10,6 +10,7 @@ public class Greens extends Food {
 		name = "Greens";
 		importImages();
 		foodLayer = 2;
+		chopCount = 12;
 	}
 	
 	private void importImages() {

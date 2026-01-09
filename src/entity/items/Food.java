@@ -13,6 +13,7 @@ public class Food extends Item {
 	private Texture burntImage;
 	public boolean cutIntoNewItem = false;
 	public boolean notRawItem = false;
+	protected int chopCount = 12;
 
 	public Food(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos);
@@ -103,5 +104,9 @@ public class Food extends Item {
 		 }
 		 return img;
 	 }
+	 
+	 public int getChopCount() {
+		return chopCount;
+	}
 	
 }

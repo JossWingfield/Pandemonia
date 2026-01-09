@@ -11,6 +11,7 @@ public class Chicken extends Food {
 		importImages();
 		foodLayer = 0;
 		cutIntoNewItem = true;
+		chopCount = 16;
 	}
 	
 	private void importImages() {

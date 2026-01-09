@@ -94,6 +94,7 @@ public class Player extends Entity{
         
         interactHitbox = new Rectangle2D.Float(0, 0, 1, 1);
         
+        
         setUp();
     }
     

@@ -59,8 +59,10 @@ public class Lantern extends Building{
 		gp.lightingM.removeLight(light);
 	}
 	public void turnOn() {
+		if(!turnedOn) {
+			gp.lightingM.addLight(light);
+		}
 		turnedOn = true;
-		gp.lightingM.addLight(light);
 	}
 	public void destroy() {
 		gp.lightingM.removeLight(light);

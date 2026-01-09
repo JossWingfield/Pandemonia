@@ -10,6 +10,7 @@ public class Bread extends Food {
 		name = "Bread";
 		importImages();
 		foodLayer = 3;
+		chopCount = 12;
 	}
 	
 	private void importImages() {
@@ -18,6 +19,7 @@ public class Bread extends Food {
 		animations[0][0][0] = importImage("/food/food.png").getSubimage(48, 0, 16, 16);
 		animations[0][0][4] = importImage("/food/Bread.png").getSubimage(0, 0, 16, 16);
 		animations[0][0][2] = importImage("/food/Bread.png").getSubimage(0, 0, 16, 16);
+		
 	}
 	
 	

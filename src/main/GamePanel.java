@@ -13,7 +13,9 @@ import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -22,6 +24,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -71,8 +74,6 @@ import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.net.BindException;
 import java.nio.ByteBuffer;
@@ -91,7 +92,9 @@ import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 
 import org.joml.Vector2f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
@@ -224,8 +227,6 @@ public class GamePanel {
     public final int dialogueState = 16;
     public final int achievementState = 17;
     public final int recipeState = 18;
-
-    private final Random random = new Random(); // Random generator for shake offsets
     
     Queue<String> textureQueue = new LinkedList<>();
     Queue<String> fontQueue = new LinkedList<>();
@@ -244,6 +245,9 @@ public class GamePanel {
     public int bloomTex1, bloomTex2;
     public int godrayFbo, godrayTextureId;
     public int godrayProcessedFbo, godrayProcessedTextureId;
+    
+    private float shakeDuration = 0f;   // Remaining time for shake
+    private float shakeIntensity = 0f; 
     
     public GamePanel() {
     	this.camera = new GLSLCamera(new Vector2f(0, 0), frameWidth, frameHeight);
@@ -646,6 +650,18 @@ public class GamePanel {
             playSinglePlayer(0);
     }
 
+    public void screenShake(float duration, float intensity) {
+        this.shakeDuration = duration;
+        this.shakeIntensity = intensity;
+        camera.shake(shakeIntensity, shakeDuration);
+    }
+    private void applyScreenShake(double dt) {
+        // Reduce remaining shake time
+        if (shakeDuration > 0) {
+            shakeDuration -= dt;
+            // Camera handles the actual shake offsets internally
+        }
+    }
     public void init() {
         // -----------------------
         // GLFW Setup
@@ -664,6 +680,7 @@ public class GamePanel {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
         this.title = "Pandemonia";
         // Create the window
@@ -677,22 +694,18 @@ public class GamePanel {
         glfwSetScrollCallback(window, mouseL::mouseScrollCallback);
         glfwSetKeyCallback(window, keyL::keyCallback);
         
-        glfwSetWindowSizeCallback(window, (win, newWidth, newHeight) -> {
-            try {
-                setWidth(newWidth);
-                setHeight(newHeight);
+        GLFW.glfwSetFramebufferSizeCallback(window, (win, fbWidth, fbHeight) -> {
+            if (fbWidth == 0 || fbHeight == 0) return; // ignore minimized windows
 
-                // Update viewport
-                int[] fbW = new int[1];
-                int[] fbH = new int[1];
-                glfwGetFramebufferSize(window, fbW, fbH);
-                glViewport(0, 0, fbW[0], fbH[0]);
+            // Update OpenGL viewport to match physical framebuffer size
+            glViewport(0, 0, fbWidth, fbHeight);
 
-                // Update camera logical size
-                camera.setSize(newWidth, newHeight);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
+            // Update camera to use logical frame size, NOT physical pixels
+            camera.setSize(frameWidth, frameHeight);
+
+            // Recreate all FBOs at the new physical size
+            recreateBuffers(fbWidth, fbHeight);
+
         });
 
         // -----------------------
@@ -904,41 +917,21 @@ public class GamePanel {
 		
 	}
     public void setFullScreen() {
-        GraphicsDevice gd =
-            GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice();
-
-        //window.dispose();
-        //window.setUndecorated(true);
-        //window.setResizable(false);
-        //gd.setFullScreenWindow(frame);
-
-        Settings.fullScreen = true;
-
-        //resize(
-            //frame.getWidth(),
-            //frame.getHeight()
-        //);
+       
     }
+
     public void stopFullScreen() {
-        GraphicsDevice gd =
-            GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice();
+        
+    }
 
-        gd.setFullScreenWindow(null);
-
-        Settings.fullScreen = false;
-        /*
-        frame.dispose();
-        frame.setUndecorated(false);
-        frame.setResizable(true);
-        frame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-
-        resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        */
+    // Helper method to recreate FBOs at the new resolution
+    private void recreateBuffers(int width, int height) {
+        createEmissiveBuffer(width, height);
+        createSceneBuffer(width, height);
+        createLitBuffer(width, height);
+        createBloomBuffers(width, height);
+        createGodrayBuffer(width, height);
+        createGodrayProcessedBuffer(width, height);
     }
     public void resize(int width, int height) {
         // Update OpenGL viewport
@@ -977,6 +970,7 @@ public class GamePanel {
     		}
     	}
     	
+        applyScreenShake(dt);
     	keyL.update();
     	camera.update(dt);
     	

@@ -30,7 +30,7 @@ public class ChoppingBoard extends Building {
 	private double clickCooldown = 0;
 	private boolean chopping = false;
     private int chopCount = 0;
-    private int maxChopCount = 12;
+    private int currentChopCount = 12;
 	
 	public ChoppingBoard(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -75,7 +75,7 @@ public class ChoppingBoard extends Building {
 		super.update(dt);
 		
 		if(gp.progressM.choppingBoardUpgradeI) {
-			maxChopCount = 8;
+			currentChopCount = (int)(currentChopCount * 0.75);
 		}
 		
 		   if(hitbox.intersects(gp.player.hitbox)) {
@@ -88,6 +88,7 @@ public class ChoppingBoard extends Building {
 						    		currentItem = (Food)gp.player.currentItem;
 						    		gp.player.currentItem = null;
 						    		clickCooldown = 0.08;
+						    		currentChopCount = f.getChopCount();
 						    		if(gp.multiplayer) {
 						    			Food foodItem = (Food)currentItem;
 						    			Packet12AddItemToChoppingBoard packet = new Packet12AddItemToChoppingBoard(currentItem.getName(),getArrayCounter(), foodItem.getState());
@@ -106,7 +107,7 @@ public class ChoppingBoard extends Building {
 						    			Packet14UpdateChoppingProgress packet = new Packet14UpdateChoppingProgress(gp.player.getUsername(), getArrayCounter(), (int)chopCount);
 						    			packet.writeData(gp.socketClient); 
 						    		}
-						    		if(chopCount == maxChopCount) {
+						    		if(chopCount == currentChopCount) {
 						    			chopCount = 0;
 						    			Statistics.ingredientsChopped++;
 						    			if(Statistics.ingredientsChopped == 100) {
@@ -172,7 +173,7 @@ public class ChoppingBoard extends Building {
 		}
 		if(currentItem != null) {
 			if(currentItem.foodState == FoodState.RAW && canChop(currentItem.getName())) {
-				drawChoppingBar(renderer, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, chopCount, maxChopCount);
+				drawChoppingBar(renderer, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, chopCount, currentChopCount);
 			}
 		}
 	}
@@ -183,7 +184,7 @@ public class ChoppingBoard extends Building {
 	}
 	public void setChopCount(int chopCount) {
 	    this.chopCount = chopCount;
-	    if(chopCount == maxChopCount) {
+	    if(chopCount == currentChopCount) {
 			chopCount = 0;
 			currentItem.foodState = FoodState.CHOPPED;
 			if(currentItem.cutIntoNewItem) {

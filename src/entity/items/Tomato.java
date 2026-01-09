@@ -11,6 +11,7 @@ public class Tomato extends Food {
 		importImages();
 		foodLayer = 1;
 		cutIntoNewItem = true;
+		chopCount = 7;
 	}
 	
 	private void importImages() {

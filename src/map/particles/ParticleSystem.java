@@ -23,15 +23,27 @@ public class ParticleSystem {
     private List<EmberPath> activeEmberPaths = new ArrayList<>();
     
     private boolean firefliesActive = false;
+    public boolean roomEmbers = false;
     private boolean dustActive = true;
     private int dustTargetCount = 80;
     private float startX, startY, endX, endY;
     private int count;
     private boolean startEmbers = false;
     //SHAKING
-    private boolean randomShaking = false;
+    public boolean randomShaking = false;
     private int shakeCooldown = 0;
     private final Random rand = new Random();
+
+    
+    private static final int ROOM_EMBER_TARGET = 7000;
+    private static final int ROOM_EMBER_SPAWN_RATE = 1; // frames
+    private static final float ROOM_FLARE_CHANCE = 0.05f;
+    
+    private static final int ROOM_EMBER_BURST_MIN = 4;
+    private static final int ROOM_EMBER_BURST_MAX = 14;
+
+    private static final float CLUMP_RADIUS = 24f; // pixels
+    private static final float CLUMP_CHANCE = 0.35f;
     
     public ParticleSystem(GamePanel gp) {
     	this.gp = gp;
@@ -79,6 +91,48 @@ public class ParticleSystem {
 	            }
 	        }
         }
+        
+        if (roomEmbers) {
+            spawnCooldown--;
+
+            if (spawnCooldown <= 0) {
+                spawnCooldown = ROOM_EMBER_SPAWN_RATE;
+
+                int emberCount = 0;
+                for (Particle p : particles) {
+                    if (p instanceof EmberParticle) emberCount++;
+                }
+
+                if (emberCount < ROOM_EMBER_TARGET) {
+
+                    float baseX = rand.nextFloat() * gp.frameWidth;
+                    float baseY = rand.nextFloat() * gp.frameHeight;
+
+                    boolean clump = rand.nextFloat() < CLUMP_CHANCE;
+                    int burstCount = clump
+                        ? ROOM_EMBER_BURST_MIN + rand.nextInt(ROOM_EMBER_BURST_MAX)
+                        : 1;
+
+                    for (int i = 0; i < burstCount && emberCount < ROOM_EMBER_TARGET; i++) {
+
+                        float x = baseX;
+                        float y = baseY;
+
+                        if (clump) {
+                            float angle = rand.nextFloat() * (float)Math.PI * 2f;
+                            float radius = rand.nextFloat() * CLUMP_RADIUS;
+                            x += Math.cos(angle) * radius;
+                            y += Math.sin(angle) * radius;
+                        }
+
+                        boolean flare = rand.nextFloat() < ROOM_FLARE_CHANCE;
+                        addParticle(new EmberParticle(gp, x, y, flare));
+
+                        emberCount++;
+                    }
+                }
+            }
+        }
         if(startEmbers) {
         	spawnEmberAlongPath(startX, startY, endX, endY, count);
         }
@@ -92,8 +146,13 @@ public class ParticleSystem {
             }
             float[] pos = ep.getNextPosition(1.5f, gp); // speed can vary
             if (pos != null) {
-                EmberParticle ember = new EmberParticle(gp, pos[0], pos[1], ep.withLight);
-                addParticle(ember);
+
+            	float FLARE_CHANCE = 0.06f; // ~6% of embers
+
+            	boolean flare = ep.withLight &&
+            	                Math.random() < FLARE_CHANCE;
+
+                addParticle(new EmberParticle(gp, pos[0], pos[1], flare));
             }
         }
         if (randomShaking) {
@@ -101,7 +160,7 @@ public class ParticleSystem {
                 // Small random chance each frame to trigger a shake
                     int duration = 10 + rand.nextInt(15);   // random duration between 10–25 frames
                     int intensity = 1 + rand.nextInt(3) * 2; // random intensity between 1.5–3.5
-                    //gp.screenShake(duration, intensity);
+                    gp.screenShake(duration, intensity);
                 // Reset cooldown so we don’t trigger again too fast
                 shakeCooldown = 10 + rand.nextInt(30);
             } else {
@@ -125,34 +184,33 @@ public class ParticleSystem {
         activeEmberPaths.add(new EmberPath(pathCopy, true));
     }
     public void setSpawnEmbers(float startX, float startY, float endX, float endY, int count) {
-    	startEmbers = true;
-    	this.startX = startX;
-    	this.startY = startY;
-    	this.endX = endX;
-    	this.endY = endY;
-    	this.count = count;
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.count = count;
+
+        spawnEmberAlongPath(startX, startY, endX, endY, count);
+        //startEmbers = false; // IMPORTANT
+        startEmbers = true;
     }
     public void stopEmbers() {
     	startEmbers = false;
     }
     public void draw(Renderer renderer) {
-        List<Particle> copy = new ArrayList<>(particles);
-        for (Particle p : copy) {
-        	if(p != null) {
-        		p.draw(renderer);
-        	}
-        }
+    	for (int i = 0; i < particles.size(); i++) {
+    	    Particle p = particles.get(i);
+    	    if (p != null) p.draw(renderer);
+    	}
     }
     public void setRandomShaking(boolean isShaking) {
     	this.randomShaking = isShaking;
     }
     public void drawEmissive(Renderer renderer) {
-        List<Particle> copy = new ArrayList<>(particles);
-        for (Particle p : copy) {
-        	if(p != null) {
-        		p.drawEmissive(renderer);
-        	}
-        }
+    	for (int i = 0; i < particles.size(); i++) {
+    	    Particle p = particles.get(i);
+    	    if (p != null) p.drawEmissive(renderer);
+    	}
     }
     
     public void clear() {

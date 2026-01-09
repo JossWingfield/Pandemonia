@@ -18,40 +18,30 @@ public class EmberParticle extends Particle {
     private int lightRadius;
     private LightSource light;
     
-    public EmberParticle(GamePanel gp, float x, float y, boolean addLight) {
-        super(
-                gp,
-                x, y,
-                (rand.nextFloat() - 0.5f) * 1.0f,  // random horizontal drift
-                (rand.nextFloat() - 0.5f) * 1.0f,  // random vertical drift
-                30 + rand.nextInt(30),             // very short lifetime (30–60 frames)
-                (1.5f + rand.nextFloat() * 2.0f) * SCALE,  // smaller ember core
-                generateEmberColor()
-            );
-
-            alpha = 0.8f + rand.nextFloat() * 0.2f;          // initial transparency
-            fadeSpeed = 1.0f / lifetime;        
-        lightRadius = 9;
-        
-        light = new LightSource((int)x, (int)y, colour, lightRadius);
-        
-        gp.lightingM.addLight(light); 
-    }
+    private final boolean flare;
     
-    
-    public EmberParticle(GamePanel gp, float x, float y) {
+    public EmberParticle(GamePanel gp, float x, float y, boolean flare) {
         super(
-                gp,
-                x, y,
-                (rand.nextFloat() - 0.5f) * 1.0f,  // random horizontal drift
-                (rand.nextFloat() - 0.5f) * 1.0f,  // random vertical drift
-                30 + rand.nextInt(30),             // very short lifetime (30–60 frames)
-                (1.5f + rand.nextFloat() * 2.0f) * SCALE,  // smaller ember core
-                generateEmberColor()
-            );
+            gp,
+            x, y,
+            (rand.nextFloat() - 0.5f) * 1.2f,
+            (rand.nextFloat() - 0.5f) * 1.2f,
+            flare ? 20 + rand.nextInt(15) : 30 + rand.nextInt(30),
+            flare ? (3.0f + rand.nextFloat() * 2.0f) * SCALE
+                  : (1.5f + rand.nextFloat() * 2.0f) * SCALE,
+            generateEmberColor()
+        );
 
-            alpha = 0.8f + rand.nextFloat() * 0.2f;          // initial transparency
-            fadeSpeed = 1.0f / lifetime;        
+        this.flare = flare;
+
+        alpha = flare ? 1.0f : (0.8f + rand.nextFloat() * 0.2f);
+        fadeSpeed = 1.0f / lifetime;
+
+        if (flare) {
+            lightRadius = 9;
+            light = new LightSource((int)x, (int)y, colour, lightRadius);
+            gp.lightingM.addLight(light);
+        }
     }
     
     private static Colour generateEmberColor() {
