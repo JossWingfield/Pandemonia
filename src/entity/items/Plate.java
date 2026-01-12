@@ -220,6 +220,7 @@ public class Plate extends Item {
         ingredients.clear();
         ingredientImages.clear();
         matchedRecipe = null;
+        matchedRecipeImage = null;
         seasoningQuality = -1;
     }
 

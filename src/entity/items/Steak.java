@@ -12,6 +12,7 @@ public class Steak extends Food{
 		foodLayer = 1;
 		cutIntoNewItem = true;
 		chopCount = 12;
+		cookTime = 24;
 	}
 	
 	private void importImages() {

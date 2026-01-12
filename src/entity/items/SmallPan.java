@@ -48,10 +48,8 @@ public class SmallPan extends CookingItem {
 		animations[0][0][0] = animations[0][0][3];
 	}
 	public void setCooking(Item i) {
+		super.setCooking(i);
 		animations[0][0][0] = animations[0][0][1];
-	    cooking = true;
-	    cookTime = 0;
-	    cookingItem = (Food)i;
 	}
 	public void setCookingImage() {
 		animations[0][0][0] = animations[0][0][1];

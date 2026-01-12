@@ -118,7 +118,7 @@ public class StorageFridge extends Building {
 		}
     	if(fridgeHitbox != null) {
 	    	if(fridgeHitbox.intersects(gp.player.hitbox)) {
-			    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
+			    if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 			    	uiOpen = !uiOpen;
 			    	if(gp.player.currentItem != null) {
 			    		uiOpen = false;

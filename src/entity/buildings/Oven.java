@@ -83,7 +83,7 @@ public class Oven extends Building {
 			}
 		}
 		 if(hitbox.intersects(gp.player.interactHitbox)) {
-			    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+			    if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 			    	if(clickCooldown == 0) {
 				    	if(gp.player.currentItem != null) {
 				    		if(currentItem == null) { //IF EMTPY

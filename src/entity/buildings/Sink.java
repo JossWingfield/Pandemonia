@@ -21,7 +21,6 @@ public class Sink extends Building {
 	private Rectangle2D.Float sinkHitbox;
 	private boolean firstUpdate = true;
 	private Plate currentPlate = null;
-	private double clickCooldown = 0;
 	private double chopCount = 0;
 	private double maxWashCount = 8;
 	private int cleanedPlateCount = 3;
@@ -131,12 +130,6 @@ public class Sink extends Building {
 	}
 	public void update(double dt) {
 		super.update(dt);
-		if (clickCooldown > 0) {
-	    	clickCooldown -= dt;        // subtract elapsed time in seconds
-			if (clickCooldown < 0) {
-				clickCooldown = 0;      // clamp to zero
-			}
-		}
 		
 		if(gp.progressM.sinkUpgradeI) {
 			maxWashCount = 6;
@@ -147,13 +140,13 @@ public class Sink extends Building {
 				if(gp.player.currentItem instanceof Plate plate) {
 					if(plate.isDirty()) {
 						if(sinkHitbox.intersects(gp.player.hitbox)) {
-						    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
+						    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
 						    	if(currentPlate == null) {
-							    	clickCooldown = 0.1;
+							    	gp.player.clickCounter = 0.1;
 							    	currentPlate = (Plate)gp.player.currentItem;
 							    	gp.player.currentItem = null;
 						    	} else {
-						    		clickCooldown = 0.1;
+						    		gp.player.clickCounter = 0.1;
 							    	currentPlate.increasePlateStack();
 							    	gp.player.currentItem = null;
 						    	}
@@ -180,14 +173,14 @@ public class Sink extends Building {
 		}
 		if(cleanedPlateHitbox != null) {
 			if(cleanedPlateHitbox.intersects(gp.player.hitbox) && !sinkHitbox.intersects(gp.player.hitbox)) {
-				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
 					if(cleanedPlateCount > 0 && gp.player.currentItem == null) {
 						cleanedPlateCount--;
 						Plate plate = new Plate(gp, 0, 0);
 						plate.setClean();
 						plate.setCurrentStackCount(1);
 						gp.player.currentItem = plate;
-						clickCooldown = 0.1;
+						gp.player.clickCounter = 0.1;
 						gp.player.resetAnimation(4);
 						 if (gp.multiplayer) {
 							 int state = gp.player.currentItem instanceof Food f ? f.getState() : 0;

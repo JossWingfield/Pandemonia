@@ -71,7 +71,7 @@ public class HerbBasket extends Building {
 				
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
+			if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 				if(gp.player.currentItem == null) {
 					openUI = !openUI;
 					clickCooldown = 0.06;

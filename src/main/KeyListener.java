@@ -32,9 +32,12 @@ public class KeyListener {
         if (key < 0 || key >= 350) return;
 
         if (action == GLFW.GLFW_PRESS) {
+            if (!keyPressed[key]) {          // ← transition check
+                keyBeginPress[key] = true;   // only once
+            }
             keyPressed[key] = true;
-            keyBeginPress[key] = true;
-        } else if (action == GLFW.GLFW_RELEASE) {
+        }
+        else if (action == GLFW.GLFW_RELEASE) {
             keyPressed[key] = false;
             keyBeginPress[key] = false;
         }

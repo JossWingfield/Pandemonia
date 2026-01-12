@@ -74,12 +74,8 @@ public class ChoppingBoard extends Building {
 	public void update(double dt) {
 		super.update(dt);
 		
-		if(gp.progressM.choppingBoardUpgradeI) {
-			currentChopCount = (int)(currentChopCount * 0.75);
-		}
-		
 		   if(hitbox.intersects(gp.player.hitbox)) {
-			    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+			    if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 			    	if(clickCooldown == 0) {
 				    	if(gp.player.currentItem != null) {
 				    		if(canChop(gp.player.currentItem.getName())) {

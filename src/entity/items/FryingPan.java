@@ -28,14 +28,13 @@ public class FryingPan extends CookingItem {
 		animations[0][0][8] = importImage("/decor/CookingPots.png").getSubimage(32, 0, 16, 16);
 		animations[0][0][9] = importImage("/decor/CookingPots.png").getSubimage(16, 48, 16, 16);
 		animations[0][0][10] = importImage("/decor/CookingPots.png").getSubimage(32, 32 ,16, 16);
-		animations[0][0][11] = importImage("/decor/CookingPots.png").getSubimage(48, 0 ,16, 16);
+		animations[0][0][11] = importImage("/decor/CookingPots.png").getSubimage(48, 32 ,16, 16);
 	}
 	public void refreshImages() {
 		animations = gp.mapM.currentRoom.getPanSkin().getFryingPanAnimations();
 	}
-	public void updateCooking() {
-	    if (cooking) {
-	        cookTime++;
+	protected void animatePan(double dt) {
+		if (cooking) {
 	        animationCounter++;
 	        if(animationCounter >= 6) {
 	        	index++;
@@ -45,27 +44,17 @@ public class FryingPan extends CookingItem {
 	        	}
 	        	animations[0][0][3] = animations[0][0][index];
 	        }
-	        if (cookTime >= maxCookTime) {
-	        	if(cookingItem != null) {
-		            cookingItem.foodState = FoodState.COOKED;
-		            if(cookTime >= maxBurnTime) {
-		               	animations[0][0][0] = animations[0][0][10];
-			            cookTime = maxBurnTime;
-			            cookingItem.foodState = FoodState.BURNT;
-			            cooking = false;
-		            }
-	        	}
-	        }
-	    }
+		}
+	}
+	protected void setBurntImage() {
+    	animations[0][0][0] = animations[0][0][10];
 	}
 	public void resetImages() {
 		animations[0][0][0] = animations[0][0][8];
 	}
 	public void setCooking(Item i) {
+		super.setCooking(i);
 		animations[0][0][0] = animations[0][0][4];
-	    cooking = true;
-	    cookTime = 0;
-	    cookingItem = (Food)i;
 	}
 	public void setCookingImage() {
 		animations[0][0][0] = animations[0][0][4];

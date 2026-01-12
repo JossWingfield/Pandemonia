@@ -17,8 +17,6 @@ public class Bin extends Building {
 	
 	private Rectangle2D.Float binHitbox;
 	private boolean firstUpdate = true;
-	private int clickCooldown = 0;
-	private boolean open = false;
 	
 	public Bin(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -61,7 +59,7 @@ public class Bin extends Building {
 		super.update(dt);
 		if(binHitbox != null) {
 			if(binHitbox.intersects(gp.player.interactHitbox)) {
-				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 					if(gp.player.currentItem != null) {
 						if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {
 							gp.player.currentItem = null;
@@ -81,6 +79,8 @@ public class Bin extends Building {
 							        packet.writeData(gp.socketClient);
 					            }
 							}
+						} else if(gp.player.currentItem instanceof CookingItem pan) {
+							pan.bin();
 						}
 					}
 				}

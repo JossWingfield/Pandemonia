@@ -14,6 +14,7 @@ public class Food extends Item {
 	public boolean cutIntoNewItem = false;
 	public boolean notRawItem = false;
 	protected int chopCount = 12;
+	protected int cookTime = 24;
 
 	public Food(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos);
@@ -106,7 +107,20 @@ public class Food extends Item {
 	 }
 	 
 	 public int getChopCount() {
+		if(gp.progressM.choppingBoardUpgradeI) {
+			return (int)(chopCount * 0.75);
+		}
 		return chopCount;
 	}
+	 public int getMaxCookTime() {
+		 if(gp.progressM.stoveUpgradeI) {
+			return (int)(cookTime*0.75);
+		 } else if(gp.progressM.stoveUpgradeII) {
+			return (int)(cookTime*0.5);
+		 } else if(gp.progressM.stoveUpgradeIII) {
+			return (int)(cookTime*0.25);
+		 }
+		 return cookTime;
+	 } 
 	
 }

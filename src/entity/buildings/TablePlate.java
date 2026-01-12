@@ -155,7 +155,7 @@ public class TablePlate extends Building {
 		if(currentCustomer != null) {
 		    if(interactHitbox.intersects(gp.player.interactHitbox)) {
 			    renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-			    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+			    if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 				    if(currentCustomer != null) {
 				    	if(gp.player.currentItem != null) {
 				    		if(gp.player.currentItem instanceof Plate plate) {

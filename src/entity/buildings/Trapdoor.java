@@ -89,7 +89,7 @@ public class Trapdoor extends Building {
 		if(entryHitbox != null) {
 			if(gp.player.hitbox.intersects(entryHitbox)) {
 				if(cooldown == 0) {
-					if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+					if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 						//gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) = false;
 						gp.mapM.changeRoom(roomNum, this);
 					}

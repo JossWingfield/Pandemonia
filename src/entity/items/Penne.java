@@ -10,6 +10,7 @@ public class Penne extends Food {
 		name = "Penne";
 		importImages();
 		foodLayer = 0;
+		cookTime = 30;
 	}
 	
 	private void importImages() {

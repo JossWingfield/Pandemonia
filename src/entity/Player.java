@@ -399,7 +399,7 @@ public class Player extends Entity{
     private void handleItems(double dt) {
     	if(currentItem != null) {
     		currentItem.update(dt);
-	    	if(keyI.isKeyPressed(GLFW.GLFW_KEY_E) && clickCounter == 0) {
+	    	if(keyI.keyBeginPress(GLFW.GLFW_KEY_E) && clickCounter == 0) {
 	    		FloorDecor_Building b = gp.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {
 		    		if(gp.buildingM.intersectsKitchenBuilding(gp, b, b.interactHitbox)) {
@@ -424,20 +424,27 @@ public class Player extends Entity{
 					    	return;
 		    			} else {
 		    				if(currentItem.getName().equals("Plate")) {
-		    					if(table.currentItem instanceof Food food) {
-			    					Plate plate = (Plate)currentItem;
-			    					if(plate.canBePlated(food.getName(), food.foodState)) {
-			    						food.foodState = FoodState.PLATED;
-			    						plate.addIngredient(food);
-					    				table.currentItem = null;
-					    				currentItem = plate;
-					    				clickCounter = 0.1;
-					    				int num = table.getArrayCounter();
-					    				if(gp.multiplayer) {
-					    	                Packet19AddFoodToPlateInHand packet = new Packet19AddFoodToPlateInHand(getUsername(),food.getName(),food.getState(), num);
-					    	                packet.writeData(gp.socketClient);
-					    	            }
-			    					}
+		    					if (currentItem instanceof Plate plate) {
+			    					if(table.currentItem instanceof Food food) {
+				    					if(plate.canBePlated(food.getName(), food.foodState)) {
+				    						food.foodState = FoodState.PLATED;
+				    						plate.addIngredient(food);
+						    				table.currentItem = null;
+						    				currentItem = plate;
+						    				clickCounter = 0.1;
+						    				int num = table.getArrayCounter();
+						    				if(gp.multiplayer) {
+						    	                Packet19AddFoodToPlateInHand packet = new Packet19AddFoodToPlateInHand(getUsername(),food.getName(),food.getState(), num);
+						    	                packet.writeData(gp.socketClient);
+						    	            }
+				    					}
+			    					} else if (table.currentItem instanceof CookingItem pan) {
+			    				        if (tryPlateFromCookingItem(pan, plate)) {
+			    				            table.currentItem = pan; // pan stays on table
+			    				            currentItem = plate;
+			    				            clickCounter = 0.1;
+			    				        }
+			    				    }
 		    					}
 		    				} else if(currentItem instanceof Food food) {
 		    					if(table.currentItem instanceof Plate plate) {
@@ -463,13 +470,21 @@ public class Player extends Entity{
 		    							clickCounter = 0.1;
 		    						}
 		    					}
+		    				} else if (currentItem instanceof CookingItem pan) {
+		    					if (table.currentItem instanceof Plate plate) {
+		    					    if (tryPlateFromCookingItem(pan, plate)) {
+		    					        currentItem = pan;      // pan stays in hand
+		    					        table.currentItem = plate;
+		    					        clickCounter = 0.1;
+		    					    }
+		    					}
 		    				}
 		    			}
 		    		}
 	    		}
 	    	}
     	} else if(currentItem == null){
-    		if(keyI.isKeyPressed(GLFW.GLFW_KEY_E) && clickCounter == 0) {
+    		if(keyI.keyBeginPress(GLFW.GLFW_KEY_E) && clickCounter == 0) {
 	    		FloorDecor_Building b = gp.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {
 		    		if(gp.buildingM.intersectsKitchenBuilding(gp, b, interactHitbox)) {
@@ -501,6 +516,22 @@ public class Player extends Entity{
 		    	}
     		}
     	}
+    }
+    private boolean tryPlateFromCookingItem(CookingItem pan, Plate plate) {
+        if (pan.cookingItem == null) return false;
+
+        Food food = pan.cookingItem;
+        if (food.foodState != FoodState.COOKED && food.foodState != FoodState.BURNT)
+            return false;
+
+        food.foodState = FoodState.PLATED;
+        plate.addIngredient(food);
+
+        pan.cookingItem = null;
+        pan.stopCooking();
+        pan.resetImages();
+
+        return true;
     }
     private void sendPickupPacket(Building b) {
     	if(gp.multiplayer) {

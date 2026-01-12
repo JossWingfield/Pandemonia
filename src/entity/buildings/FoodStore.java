@@ -101,7 +101,7 @@ public class FoodStore extends Building {
 		
 		if(interactHitbox != null) {
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
-			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+			if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 				if (gp.player.currentItem == null) {
 				    String itemName = null;
 				    switch(foodType) {

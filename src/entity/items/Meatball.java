@@ -11,6 +11,7 @@ public class Meatball extends Food{
 		importImages();
 		foodLayer = 2;
 		notRawItem = true;
+		cookTime = 22;
 	}
 	
 	private void importImages() {

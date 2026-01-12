@@ -76,6 +76,8 @@ public class ProgressManager {
     public boolean fridgeUpgradeII = false;
     public boolean sinkUpgradeI = false;
     public boolean stoveUpgradeI = false;
+    public boolean stoveUpgradeII = false;
+    public boolean stoveUpgradeIII = false;
     public boolean choppingBoardUpgradeI = false;
     public boolean ovenUpgradeI = false;
     
@@ -134,6 +136,7 @@ public class ProgressManager {
                 }
             }
         }
+        stoveUpgradeIII = true;
         //unlockOldKitchen();
         setupAchievements();
     }

@@ -75,7 +75,7 @@ public class CookStation extends Building {
 	    }
 	    private void handleItemInteraction() {
 	        if (gp.player.clickCounter > 0) return;
-	        if (!gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) return;
+	        if (!gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) return;
 	        if (!interactHitbox.intersects(gp.player.interactHitbox)) return;
 
 	        // PLAYER PICKS UP ITEM

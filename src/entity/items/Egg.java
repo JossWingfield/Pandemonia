@@ -10,6 +10,7 @@ public class Egg extends Food {
 		name = "Egg";
 		importImages();
 		foodLayer = 1;
+		cookTime = 18;
 	}
 	
 	private void importImages() {

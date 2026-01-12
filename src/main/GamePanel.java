@@ -905,7 +905,6 @@ public class GamePanel {
 		            //drawLoadingScreen();
 		        }
 			
-			
 			keyL.endFrame();
 			mouseL.endFrame();
 			glfwSwapBuffers(window);

@@ -6,6 +6,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.glfw.GLFW;
 
+import entity.items.CookStyle;
 import entity.items.CookingItem;
 import entity.items.Food;
 import entity.items.FoodState;
@@ -110,6 +111,16 @@ public class Stove extends Building {
 	public void stopFlame() {
 		drawCooking = false;
 	}
+	private void checkBurnAndDisableLight(CookingItem item, LightSource light) {
+	    if (item == null || item.cookingItem == null) return;
+
+	    Food food = item.cookingItem;
+
+	    if (food.foodState == FoodState.BURNT) {
+	        item.stopCooking();
+	        gp.lightingM.removeLight(light);
+	    }
+	}
 	public void update(double dt) {
 		super.update(dt);
 		if(firstUpdate) {
@@ -117,53 +128,73 @@ public class Stove extends Building {
 			addCookStation();
 		}
 		
+		
 		if(gp.world.isPowerOn()) {
-			if (leftSlot instanceof SmallPan pan) {
-			    pan.updateCooking();
+			if (leftSlot instanceof CookingItem pan) {
+			    pan.updateCooking(dt);
+			    checkBurnAndDisableLight(pan, leftLight);
 			}
-			if (leftSlot instanceof FryingPan pan) {
-			    pan.updateCooking();
-			}
-			if (rightSlot instanceof FryingPan pan) {
-			    pan.updateCooking();
-			}
-			if (rightSlot instanceof SmallPan pan) {
-			    pan.updateCooking();
+			if (rightSlot instanceof CookingItem pan) {
+			    pan.updateCooking(dt);
+			    checkBurnAndDisableLight(pan, rightLight);
 			}
 		}
 		
 		if(leftSlot != null) {
 			if(leftHitbox.intersects(gp.player.hitbox)) {
-				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
+				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
 					if(gp.player.currentItem == null) {
-						gp.player.currentItem = leftSlot;
-						gp.player.resetAnimation(4);
-						gp.player.clickCounter = 0.1;
-						gp.lightingM.removeLight(leftLight);
-						String foodName = null;
-						String itemName = null;
-						int foodState = 0;
-						int cookTime = 0;
-						if(leftSlot != null) {
-							if(leftSlot.cookingItem != null) {
-								foodName = leftSlot.cookingItem.getName();
-								foodState = leftSlot.cookingItem.getState();
-								cookTime = leftSlot.getCookTime();
+						if(leftSlot.getCookStyle().equals(CookStyle.FLIP) && leftSlot.isCooking() && leftSlot.cookingItem.foodState.equals(FoodState.RAW)) {
+							
+							if (leftSlot.isCooking() && !leftSlot.flipped) {
+								leftSlot.tryFlip();
+							    gp.player.clickCounter = 0.1;
+							    return;
 							}
-							itemName = leftSlot.getName();
+						} else if(leftSlot.getCookStyle().equals(CookStyle.STIR) && leftSlot.isCooking() && leftSlot.cookingItem.foodState.equals(FoodState.RAW)) {
+							
+							if (leftSlot.isCooking()) {
+								leftSlot.stir();
+							    gp.player.clickCounter = 0.1;
+							    return;
+							}
+						} else if(leftSlot.getCookStyle().equals(CookStyle.SAUTE) && leftSlot.isCooking() && leftSlot.cookingItem.foodState.equals(FoodState.RAW)) {
+							
+							if (leftSlot.isCooking()) {
+								leftSlot.addHeat();
+							    gp.player.clickCounter = 0.1;
+							    return;
+							}
+						} else {
+							gp.player.currentItem = leftSlot;
+							gp.player.resetAnimation(4);
+							gp.player.clickCounter = 0.1;
+							gp.lightingM.removeLight(leftLight);
+							String foodName = null;
+							String itemName = null;
+							int foodState = 0;
+							int cookTime = 0;
+							if(leftSlot != null) {
+								if(leftSlot.cookingItem != null) {
+									foodName = leftSlot.cookingItem.getName();
+									foodState = leftSlot.cookingItem.getState();
+									cookTime = (int)leftSlot.getCookTime();
+								}
+								itemName = leftSlot.getName();
+							}
+							if(gp.multiplayer) {
+								Packet08PickUpFromStove packet = new Packet08PickUpFromStove(
+			    	                	gp.player.getUsername(),
+			    	                    foodName,
+			    	                    itemName,
+			    	                    0,
+			    	                    getArrayCounter(),
+			    	                    foodState,
+			    	                    cookTime);
+		    	                packet.writeData(gp.socketClient);
+		    	            }
+							leftSlot = null;
 						}
-						if(gp.multiplayer) {
-							Packet08PickUpFromStove packet = new Packet08PickUpFromStove(
-		    	                	gp.player.getUsername(),
-		    	                    foodName,
-		    	                    itemName,
-		    	                    0,
-		    	                    getArrayCounter(),
-		    	                    foodState,
-		    	                    cookTime);
-	    	                packet.writeData(gp.socketClient);
-	    	            }
-						leftSlot = null;
 					} else {
 						if(leftSlot.getName().equals("Small Pan")) {
 							SmallPan pan = (SmallPan)leftSlot;
@@ -261,7 +292,7 @@ public class Stove extends Building {
 			}
 		} else {
 			if(gp.player.currentItem != null) {
-				if(gp.player.clickCounter == 0 && gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+				if(gp.player.clickCounter == 0 && gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 					if(leftHitbox.intersects(gp.player.hitbox)) {
 						if(gp.player.currentItem.getName().equals("Small Pan") || gp.player.currentItem.getName().equals("Frying Pan")) {
 							leftSlot = (CookingItem)gp.player.currentItem;
@@ -273,7 +304,7 @@ public class Stove extends Building {
 								if(leftSlot.cookingItem != null) {
 									foodName = leftSlot.cookingItem.getName();
 									foodState = leftSlot.cookingItem.getState();
-									cookTime = leftSlot.getCookTime();
+									cookTime = (int)leftSlot.getCookTime();
 									gp.lightingM.addLight(leftLight);
 								}
 								itemName = leftSlot.getName();
@@ -298,36 +329,58 @@ public class Stove extends Building {
 		}
 		if(rightSlot != null) {
 			if(rightHitbox.intersects(gp.player.hitbox)) {
-				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
+				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
 					if(gp.player.currentItem == null) {
-						gp.player.resetAnimation(4);
-						gp.player.currentItem = rightSlot;
-						gp.player.clickCounter = 0.1;
-						String foodName = null;
-						String itemName = null;
-						int foodState = 0;
-						int cookTime = 0;
-						gp.lightingM.removeLight(rightLight);
-						if(rightSlot != null) {
-							if(rightSlot.cookingItem != null) {
-								foodName = rightSlot.cookingItem.getName();
-								foodState = rightSlot.cookingItem.getState();
-								cookTime = rightSlot.getCookTime();
+						if(rightSlot.getCookStyle().equals(CookStyle.FLIP) && rightSlot.isCooking() && rightSlot.cookingItem.foodState.equals(FoodState.RAW)) {
+							if (rightSlot.isCooking() && !rightSlot.flipped) {
+								rightSlot.tryFlip();
+							    gp.player.clickCounter = 0.1;
+							    return;
 							}
-							itemName = rightSlot.getName();
+						} else if(rightSlot.getCookStyle().equals(CookStyle.STIR) && rightSlot.isCooking() && rightSlot.cookingItem.foodState.equals(FoodState.RAW)) {
+							
+							if (rightSlot.isCooking()) {
+								rightSlot.stir();
+							    gp.player.clickCounter = 0.1;
+							    return;
+							}
+						} else if(rightSlot.getCookStyle().equals(CookStyle.SAUTE) && rightSlot.isCooking() && rightSlot.cookingItem.foodState.equals(FoodState.RAW)) {
+							
+							if (rightSlot.isCooking()) {
+								rightSlot.addHeat();
+							    gp.player.clickCounter = 0.1;
+							    return;
+							}
+						} else {
+							gp.player.resetAnimation(4);
+							gp.player.currentItem = rightSlot;
+							gp.player.clickCounter = 0.1;
+							String foodName = null;
+							String itemName = null;
+							int foodState = 0;
+							int cookTime = 0;
+							gp.lightingM.removeLight(rightLight);
+							if(rightSlot != null) {
+								if(rightSlot.cookingItem != null) {
+									foodName = rightSlot.cookingItem.getName();
+									foodState = rightSlot.cookingItem.getState();
+									cookTime = (int)rightSlot.getCookTime();
+								}
+								itemName = rightSlot.getName();
+							}
+							if(gp.multiplayer) {
+								Packet08PickUpFromStove packet = new Packet08PickUpFromStove(
+			    	                	gp.player.getUsername(),
+			    	                    foodName,
+			    	                    itemName,
+			    	                    1,
+			    	                    getArrayCounter(),
+			    	                    foodState,
+			    	                    cookTime);
+		    	                packet.writeData(gp.socketClient);
+		    	            }
+							rightSlot = null;
 						}
-						if(gp.multiplayer) {
-							Packet08PickUpFromStove packet = new Packet08PickUpFromStove(
-		    	                	gp.player.getUsername(),
-		    	                    foodName,
-		    	                    itemName,
-		    	                    1,
-		    	                    getArrayCounter(),
-		    	                    foodState,
-		    	                    cookTime);
-	    	                packet.writeData(gp.socketClient);
-	    	            }
-						rightSlot = null;
 					} else {
 						if(rightSlot.getName().equals("Small Pan")) {
 							SmallPan pan = (SmallPan)rightSlot;
@@ -425,7 +478,7 @@ public class Stove extends Building {
 			}
 		} else {
 			if(gp.player.currentItem != null) {
-				if(gp.player.clickCounter == 0 && gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+				if(gp.player.clickCounter == 0 && gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 					if(rightHitbox.intersects(gp.player.hitbox)) {
 						if(gp.player.currentItem.getName().equals("Small Pan") || gp.player.currentItem.getName().equals("Frying Pan")) {
 							rightSlot = (CookingItem)gp.player.currentItem;
@@ -437,7 +490,7 @@ public class Stove extends Building {
 								if(rightSlot.cookingItem != null) {
 									foodName = rightSlot.cookingItem.getName();
 									foodState = rightSlot.cookingItem.getState();
-									cookTime = rightSlot.getCookTime();
+									cookTime = (int)rightSlot.getCookTime();
 									gp.lightingM.addLight(rightLight);
 								}
 								itemName = rightSlot.getName();
@@ -484,7 +537,6 @@ public class Stove extends Building {
 	}
 	public void draw(Renderer renderer) {
 
-		
 		//g2.setColor(Color.YELLOW);
 		//g2.drawRect((int)leftHitbox.x, (int)leftHitbox.y, (int)leftHitbox.width, (int)leftHitbox.height);
 		//g2.drawRect((int)rightHitbox.x, (int)rightHitbox.y, (int)rightHitbox.width, (int)rightHitbox.height);
@@ -546,26 +598,13 @@ public class Stove extends Building {
 				}
 			}
 		}
+		
 		// Left slot cooking bar
 		if (leftSlot instanceof SmallPan pan && pan.isCooking()) {
-			if(pan.cookingItem != null) {
-				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(renderer, hitbox.x + 16, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
-				} else {
-					pan.drawCookingWarning(renderer, (int)(hitbox.x));
-				}
-			}
 			renderer.draw(leftCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 		}
 		if (leftSlot instanceof FryingPan pan && pan.isCooking()) {
-			if(pan.cookingItem != null) {
-				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(renderer, hitbox.x + 16, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
-				} else {
-					pan.drawCookingWarning(renderer, (int)(hitbox.x));
-				}
-			}
 			renderer.draw(leftSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset  + 24, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 			renderer.draw(leftCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
@@ -573,27 +612,20 @@ public class Stove extends Building {
 
 		// Right slot cooking bar
 		if (rightSlot instanceof SmallPan pan && pan.isCooking()) {
-			if(pan.cookingItem != null) {
-				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(renderer, hitbox.x + 48 + 30, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
-				} else {
-					pan.drawCookingWarning(renderer, (int)(hitbox.x + 56));
-				}
-			}
 			renderer.draw(rightCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 		}
 		if (rightSlot instanceof FryingPan pan && pan.isCooking()) {
-			if(pan.cookingItem != null) {
-				if(pan.cookingItem.foodState.equals(FoodState.RAW)) {
-					drawCookingBar(renderer, hitbox.x + 48 + 30, hitbox.y + 48 + 16, pan.getCookTime(), pan.getMaxCookTime());
-				} else {
-					pan.drawCookingWarning(renderer, (int)(hitbox.x + 56));
-				}
-			}
 			renderer.draw(rightSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 			renderer.draw(rightCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
+		}
+		
+		if(leftSlot != null) {
+			leftSlot.drawCookingUI(renderer, (int)hitbox.x, (int)hitbox.y, true);
+		}
+		if(rightSlot != null) {
+			rightSlot.drawCookingUI(renderer, (int)hitbox.x, (int)hitbox.y, false);
 		}
 		
 		if(drawCooking) {
@@ -605,27 +637,5 @@ public class Stove extends Building {
 			}
 		}
 		
-	}
-	
-	private void drawCookingBar(Renderer renderer, float worldX, float worldY, int cookTime, int maxCookTime) {
-	    float screenX = worldX - xDrawOffset ;
-	    float screenY = worldY - yDrawOffset ;
-
-	    int barWidth = 48;
-	    int barHeight = 6;
-	    int xOffset = 0;
-	    int yOffset = -10; // raise the bar above the pan
-
-	    float progress = Math.min(1.0f, cookTime / (float) maxCookTime);
-
-	    // Interpolate from red to green
-	    int r = (int) ((1 - progress) * 255);
-	    int g = (int) (progress * 255);
-
-	    // Optional: draw a border
-	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight, Colour.BLACK);
-	    
-	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
-
 	}
 }

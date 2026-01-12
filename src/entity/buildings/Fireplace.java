@@ -100,7 +100,7 @@ public class Fireplace extends Building{
         }	
         
         if(gp.player.hitbox.intersects(interactHitbox)) {
-        	if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
+        	if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
 	        	gp.player.clickCounter = 0.33;
 	        	if(turnedOn) {
 	        		turnedOn = false;

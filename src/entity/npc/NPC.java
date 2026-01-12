@@ -116,7 +116,7 @@ public abstract class NPC extends Entity {
 		}
 		
 		if(talking) {
-			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_Q) && cooldownCounter == 0) {
+			if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_Q) && cooldownCounter == 0) {
 		        nextDialogueLine();
 		        cooldownCounter = 0.05;
 			}

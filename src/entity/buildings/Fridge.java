@@ -120,7 +120,7 @@ public class Fridge extends Building {
                 (int) (hitbox.y ) - yDrawOffset, 
                 drawWidth, drawHeight);
 
-            if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
+            if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
                 // If player is holding food, try to put it straight in the fridge
                 if (gp.player.currentItem instanceof Food f) {
                     if (contents.size() < MAX_CAPACITY) {

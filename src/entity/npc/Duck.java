@@ -42,7 +42,7 @@ public class Duck extends NPC {
 		if(!leaving) {
 			fleeFromPlayer(dt);
 			if(hitbox.intersects(gp.player.hitbox)) {
-				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 					timesPetted++;
 					if(timesPetted >= 60) {
 						gp.world.animalPresent = false;

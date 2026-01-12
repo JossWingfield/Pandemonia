@@ -24,7 +24,7 @@ public class Seasoning extends Food {
 
             if (table != null && table.currentItem instanceof Plate plate) {
                 // If player presses E to apply seasoning
-                if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && !miniGameStarted && gp.player.clickCounter == 0) {
+                if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && !miniGameStarted && gp.player.clickCounter == 0) {
                     miniGameStarted = true;
                     gp.minigameM.startSeasoningMiniGame(plate, this);
                     gp.player.currentItem = null;

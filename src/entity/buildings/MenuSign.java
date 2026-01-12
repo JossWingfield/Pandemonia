@@ -107,7 +107,7 @@ public class MenuSign extends Building {
                     (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
             // Open UI on key press
-            if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && clickCooldown == 0 && !gp.cutsceneM.cutsceneActive) {
+            if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0 && !gp.cutsceneM.cutsceneActive) {
                 uiOpen = !uiOpen;
                 clickCooldown = 0.1;
                 if(uiOpen) {
