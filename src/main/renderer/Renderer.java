@@ -364,6 +364,9 @@ public class Renderer {
     public void drawString(String text, float x, float y) {
         drawString(currentFont, text, x, y, 1.0f, currentColour);
     }
+    public void drawString(BitmapFont font, String text, float x, float y, float scale) {
+        drawString(currentFont, text, x, y, scale, currentColour);
+    }
     /** Measure string pixel width (useful for alignment) */
     public float measureStringWidth(BitmapFont font, String text, float scale) {
         if (text == null || text.isEmpty()) return 0f;

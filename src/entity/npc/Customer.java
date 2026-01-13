@@ -336,7 +336,23 @@ public class Customer extends NPC {
 		                 atTable = true;
 		                 hitbox.x = currentChair.hitbox.x+16;
 		                 hitbox.y = currentChair.hitbox.y;
-		                 direction = "Right";
+		                 
+		                 switch(currentChair.facing) {
+		                 case 0:
+		                	 direction =  "Up";
+		                	 break;
+		                 case 1:
+		                	 direction =  "Left";
+		                	 break;
+		                 case 2:
+		                	 hitbox.x -= 6;
+		                	 direction =  "Right";
+		                	 break;
+		                 case 3:
+		                	 hitbox.x -= 6;
+		                	 direction =  "Down";
+		                	 break;
+		                 }
 	            	}
 	            }
 	        }

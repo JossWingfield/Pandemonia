@@ -37,7 +37,7 @@ public class World {
     private int dayStart = 6, openingTime = 6, closingTime = 19;
     private double timeSpeed = 30.0;
 
-    private int spawnTimer = 0;
+    private double spawnTimer = 0;
     private int customerSpawnTimer = 24;
     public int previousSoulsCollected = 0;
     private boolean waitingForLevelUp = false;

@@ -1133,6 +1133,8 @@ public class GamePanel {
 		        		item.draw(renderer);
 		        	}
 		        }
+		        
+		        player.drawOverlay(renderer);
 		    
 		        Building[] fourthLayer = buildingM.getFourthLayer();
 		        for(int i = 0; i < fourthLayer.length-1; i++) {

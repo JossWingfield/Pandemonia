@@ -32,13 +32,13 @@ public class MenuSign extends Building {
     private double clickCooldown = 0;
     private boolean uiOpen = false;
     private TextureRegion ui1;
-    private TextureRegion recipeBorder, coinImage, starLevel;
+    private TextureRegion recipeBorder, coinImage, starLevel, emptyStar;
 
     private Map<Recipe, RecipeRenderData> renderCache = new HashMap<>();
     private List<Recipe> selectedRecipes = new ArrayList<>();
     
     private Colour hoverColor = new Colour(172, 172, 170);
-    private Colour orderTextColour = new Colour(145, 102, 91);
+    private Colour orderTextColour = new Colour(51, 60, 58);
     private Colour specialColour = new Colour(137, 163, 80);
     private Colour specialHover = new Colour(169, 187, 102);
     
@@ -47,7 +47,7 @@ public class MenuSign extends Building {
     public MenuSign(GamePanel gp, float xPos, float yPos) {
         super(gp, xPos, yPos, 48, 48);
 
-        font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
+        font = AssetPool.getBitmapFont("/UI/monogram-extended-italic.ttf", 32);
         
         isSolid = false;
         
@@ -77,9 +77,10 @@ public class MenuSign extends Building {
         animations[0][0][0] = importImage("/decor/chalkboard.png").getSubimage(0, 32, 16, 32);
         animations[0][0][1] = importImage("/decor/HighlightedMenu.png").toTextureRegion();
         ui1 = importImage("/UI/menu/MenuFrame.png").toTextureRegion();
-		recipeBorder = importImage("/UI/recipe/orderBorder.png").toTextureRegion();
+		recipeBorder = importImage("/UI/recipe/MenuOrder.png").toTextureRegion();
 		coinImage = importImage("/UI/Coin.png").toTextureRegion();
-		starLevel = importImage("/UI/recipe/Star.png").toTextureRegion();
+		starLevel = importImage("/UI/recipe/Star.png").getSubimage(0, 0, 16, 16);
+		emptyStar = importImage("/UI/recipe/Star.png").getSubimage(32, 0, 16, 16);
     }
 	public void update(double dt) {
 		super.update(dt);
@@ -159,7 +160,7 @@ public class MenuSign extends Building {
 	    
 	    for (String line : recipe.getName().split(" ")) {
 	        data.nameLines.add(line);
-	        int offset = (int)((48 - gp.renderer.measureStringWidth(font, line, 1.0f) / 2));
+	        int offset = (int)(((48) - gp.renderer.measureStringWidth(font, line, 0.6f) / 2));
 	        data.nameLineOffsets.add(offset);
 	    }
 
@@ -331,12 +332,25 @@ public class MenuSign extends Building {
 	    // Name
 	    Colour c = orderTextColour;
 	    for (int i = 0; i < data.nameLines.size(); i++) {
-	        renderer.drawString(font, data.nameLines.get(i), x + data.nameLineOffsets.get(i), y + 84 + i*15, 1.0f, c);
+	        renderer.drawString(font, data.nameLines.get(i), x + data.nameLineOffsets.get(i), y + 84 + i*15, 0.6f, c);
 	    }
 	    
 	    for (int i = 0; i < data.starLevel; i++) {
-	        renderer.draw(starLevel, x +10 + i * 36, y + 50, 8*3, 8*3);
+	        //renderer.draw(starLevel, x +10 + i * 36, y + 50, 8*3, 8*3);
 	    }
+        renderer.draw(starLevel, x +10 + 0 * 36, y + 50, 8*3, 8*3);
+        if(data.starLevel > 2) {
+            renderer.draw(starLevel, x +10 + 1 * 36 - 11, y + 50, 8*3, 8*3);
+        } else {
+            renderer.draw(emptyStar, x +10 + 1 * 36 - 11, y + 50, 8*3, 8*3);
+        }
+        
+        if(data.starLevel > 3) {
+            renderer.draw(starLevel, x +10 + 1 * 36 - 11 + 8*3, y + 50, 8*3, 8*3);
+        } else {
+            renderer.draw(emptyStar, x +10 + 1 * 36 - 11 + 8*3, y + 50, 8*3, 8*3);
+        }
+
 
 	    // Plate
 	    renderer.draw(data.plateImage, x + 24, y + 94, 48, 48);

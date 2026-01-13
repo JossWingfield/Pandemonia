@@ -158,9 +158,13 @@ public class Sink extends Building {
 				if(sinkHitbox.intersects(gp.player.hitbox)) {
 				    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 				    	chopCount+=dt;
+				    	if(gp.player.currentAnimation != 5) {
+				    		gp.player.resetAnimation(5);
+				    	}
 				    	if(chopCount >= maxWashCount) {
 				    		chopCount = 0;
 				    		cleanedPlateCount++;
+				    		gp.player.resetAnimation(0);
 				    		if(currentPlate.getCurrentStackCount() > 1) {
 				    			currentPlate.decreasePlateStack();
 				    		} else {

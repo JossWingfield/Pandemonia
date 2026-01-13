@@ -31,7 +31,7 @@ public class GUI {
 	GamePanel gp;
 	
 	//IMAGES
-    private TextureRegion recipeBorder, timeBorder, timeHeader, timeFrame, coinImage, mysteryOrder, cursedRecipeBorder, starLevel;
+    private TextureRegion recipeBorder, timeBorder, timeHeader, timeFrame, coinImage, mysteryOrder, cursedRecipeBorder, starLevel, emptyStar;
     private TextureRegion[][] timeAnimations;
     private TextureRegion[][] titleBookAnimations;
     private TextureRegion titleBackground;
@@ -204,7 +204,8 @@ public class GUI {
 		rightProgress2 = importImage("/UI/levels/RightProgress.png").getSubimage(12, 0, 12, 20);	
 
 		cursedRecipeBorder = importImage("/UI/recipe/HauntedOrderBorder.png").toTextureRegion();
-		starLevel = importImage("/UI/recipe/Star.png").toTextureRegion();
+		starLevel = importImage("/UI/recipe/Star.png").getSubimage(0, 0, 16, 16);	
+		emptyStar = importImage("/UI/recipe/Star.png").getSubimage(32, 0, 16, 16);	
 		saveBorder = importImage("/UI/saves/SaveUI.png").toTextureRegion();
 		deleteSave = importImage("/UI/saves/DeleteSave.png").toTextureRegion();
 		
@@ -1360,27 +1361,29 @@ public class GUI {
 
 		int i = 0;
 		
+		int recipeScale = 2;
+		
 		for (Recipe recipe : currentOrders) {
 		    RecipeRenderData data = renderCache.get(recipe);
 		    if (data == null) continue;
 
-		    int x = 8 + i * (36*3);
+		    int x = 8 + i * (64*recipeScale);
 		    int y = 0;
 
 		    // BASE
-		    renderer.draw(data.borderImage, x, y, 96, 144);
+		    renderer.draw(data.borderImage, x, y, 64*recipeScale, 80*recipeScale);
 		    if (data.customer.hideOrder) {
 		        // Overlay the "mystery order" image
-		        renderer.draw(data.mysteryOrderImage, x, y, 96, 144);
+		        renderer.draw(data.mysteryOrderImage, x, y, 64*recipeScale, 80*recipeScale);
 		    } else {
 		        // Normal ingredient + text drawing
-		        for (int j = 0; j < data.ingredientImages.size(); j++) {
-		            int dx = x + j * (10*3) + 4;
-		            int dy = y + 4;
-		            renderer.draw(data.ingredientImages.get(j), dx, dy, 30, 30);
-		            renderer.draw(data.cookingStateIcons.get(j), dx, dy + 16, 30, 30);
-		            renderer.draw(data.secondaryCookingStateIcons.get(j), dx, dy + 40, 30, 30);
-		        }
+		    	 for (int j = 0; j < data.ingredientImages.size(); j++) {
+		 	        renderer.draw(data.ingredientImages.get(j), x + j*(19*recipeScale) + 5*recipeScale, y + 4*recipeScale, 16*recipeScale, 16*recipeScale);
+		 	        renderer.draw(data.cookingStateIcons.get(j), x + j*(19*recipeScale) + 5*recipeScale, y + 22*recipeScale, 16*recipeScale, 16*recipeScale);
+		 	        renderer.draw(data.secondaryCookingStateIcons.get(j), x + j*(19*recipeScale) + 5*recipeScale, y + 22*recipeScale+16*recipeScale, 16*recipeScale, 16*recipeScale);
+		 	    }
+		    	 
+		    	float textScale = 0.7f;
 
 		        if(!recipe.isCursed) {
 			        renderer.setColour(orderTextColour);
@@ -1389,31 +1392,35 @@ public class GUI {
 		        }
 
 		        renderer.setFont(font);
-		        int counter = 0;
-		        for (int l = 0; l < data.nameLines.size(); l++) {
-		            String line = data.nameLines.get(l);
-		            int offset = data.nameLineOffsets.get(l);
-		            renderer.drawString(line, x + offset, y + 84 + counter);
-		            counter += 15;
-		        }
-		        for (int j = 0; j < data.starLevel; j++) {
-			        renderer.draw(starLevel, x +10 + j * 36, y + 50, 8*3, 8*3);
+			    for (int j = 0; j < data.nameLines.size(); j++) {
+			        renderer.drawString(font, data.nameLines.get(j), x + data.nameLineOffsets.get(j), y + 57*recipeScale + j*15, textScale);
 			    }
+		        
+			    renderer.draw(starLevel, x +7*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+		        if(data.starLevel > 2) {
+		            renderer.draw(starLevel, x +7*recipeScale + 1 * 16*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+		        } else {
+		            renderer.draw(emptyStar, x +7*recipeScale + 1 * 16*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+		        }
+		        
+		        if(data.starLevel > 3) {
+		            renderer.draw(starLevel, x +7*recipeScale + 2 * 16*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+		        } else {
+		            renderer.draw(emptyStar, x +7*recipeScale + 2 * 16*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+		        }
 
-		        renderer.draw(data.plateImage, x + 24, y + 94, 48, 48);
+			    renderer.draw(data.plateImage, x + 23*recipeScale, y + 62*recipeScale, 16*recipeScale, 16*recipeScale);
 		    }
 
 		    // COIN + FACE
-		    renderer.draw(data.coinImage, x - 8, y + 142, 48, 48);
-		    renderer.draw(data.faceIcon, x + 32, y + 118, 96, 96);
+		    renderer.draw(data.coinImage, x, y + 82*recipeScale - 2, 16*recipeScale, 16*recipeScale);
+		    renderer.draw(data.faceIcon, x + 70, y + 70*recipeScale - 2 - 16*recipeScale, 32*recipeScale, 32*recipeScale);
 
 		    // COST
-		    renderer.setColour(Colour.WHITE);
-		    renderer.setFont(font);
-		    renderer.drawString(data.cost, x + 36, y + 174);
+		    renderer.drawString(font, data.cost, x + 19*recipeScale, y + 90*recipeScale - 2 + 8, 1.0f, Colour.WHITE);
 
 		    // PATIENCE
-		    drawPatienceBar(renderer, x, y + 208, (int)data.customer.getPatienceCounter(), (int)data.customer.getMaxPatienceTime());
+		    drawPatienceBar(renderer, x, y + 90*recipeScale - 2 + 16*recipeScale, (int)data.customer.getPatienceCounter(), (int)data.customer.getMaxPatienceTime());
 
 		    i++;
 		}
@@ -1505,6 +1512,9 @@ public class GUI {
 	    data.coinImage = coinImage;
 	    data.plateImage = recipe.finishedPlate;
 	    data.faceIcon = customer.faceIcon;
+	    
+	  	float textScale = 0.7f;
+	  	int scale = 2;
 
 	    // Cache ingredient + states
 	    List<String> ingredients = recipe.getIngredients();
@@ -1529,7 +1539,7 @@ public class GUI {
 	    renderer.setFont(font);
 	    for (String line : recipe.getName().split(" ")) {
 	        data.nameLines.add(line);
-	        int offset = (48 - getTextWidth(line, font) / 2);
+	        int offset = (int)((((64*scale)/2) - gp.renderer.measureStringWidth(font, line, textScale) / 2));
 	        data.nameLineOffsets.add(offset);
 	    }
 

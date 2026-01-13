@@ -189,6 +189,11 @@ public class Player extends Entity{
 
         importPlayerSpriteSheet("/player/pickup", 6, 1, 4, 0, 0, 80, 80); //Pick Up
         
+        importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 0); //Washing
+        importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 1); //Washing
+        importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 2); //Washing
+        importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 3); //Washing
+
 
         currentAnimation = 0;
     }
@@ -258,11 +263,15 @@ public class Player extends Entity{
     	boolean right = keyI.isKeyPressed(GLFW.GLFW_KEY_D);
     	boolean up = keyI.isKeyPressed(GLFW.GLFW_KEY_W);
     	boolean down = keyI.isKeyPressed(GLFW.GLFW_KEY_S);
-    		if (!(left || right || up || down) && currentAnimation != 4) {
+    		if (!(left || right || up || down) && currentAnimation != 4  && currentAnimation != 5) {
                 currentAnimation = 0;
                 if(currentItem != null) {
                 	currentAnimation = 2;
                 }
+            } else if(currentAnimation == 5) {
+            	if(!keyI.isKeyPressed(GLFW.GLFW_KEY_E)) {
+            		resetAnimation(0);
+            	}
             }
     		
 
@@ -755,6 +764,20 @@ public class Player extends Entity{
         if (keyI.debugMode) {
         	//handleDebugMode(xDiff, yDiff);
         }
+    }
+    public void drawOverlay(Renderer renderer) {
+    	if(currentAnimation == 5) {
+    	       TextureRegion frame = animations[direction][currentAnimation][animationCounter];
+    	        //The image is flipped
+    	        if(direction == 1) {
+    	        	frame = createHorizontalFlipped(frame);
+    	        }	    
+    	     
+
+    			if (frame != null) {
+    			    renderer.draw(frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+    			}   
+    	}
     }
 
 }
