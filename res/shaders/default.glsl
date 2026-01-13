@@ -31,9 +31,9 @@ out vec4 FragColor;
 void main() {
     vec4 texColor = texture(uTextures[0], vTexCoord);
 
-    // Premultiply RGB by alpha
-    vec3 rgb = texColor.rgb * texColor.a * vColor.rgb;
-    float alpha = texColor.a * vColor.a;
+    // Multiply RGB by alpha if your textures are not already premultiplied
+    texColor.rgb *= texColor.a;
 
-    FragColor = vec4(rgb, alpha);
+    // Multiply by vertex color (assumes vertex colors are already premultiplied)
+    FragColor = texColor * vColor;
 }

@@ -703,5 +703,5 @@ public abstract class NPC extends Entity {
 			gp.mapM.getRoom(npcToRemove.currentRoomNum).removeNPC(npcToRemove);
 		}
 	}
-    
+	public void drawOverlay(Renderer renderer) {}
 }

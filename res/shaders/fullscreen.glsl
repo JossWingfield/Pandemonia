@@ -36,35 +36,42 @@ struct Light {
 uniform Light uLights[64];
 
 void main() {
-    // Read buffers
     vec4 scene = texture(uScene, vUV);
-    vec4 emissive = texture(uEmissive, vUV);
-
-    // Convert UV -> screen pixel coordinates (Y-down)
-    vec2 fragPos = vec2(vUV.x * uScreenSize.x, (1.0 - vUV.y) * uScreenSize.y);
-
+    vec3 baseColor = scene.rgb;
     float alpha = scene.a;
 
-    // Start with ambient light, scaled by alpha
-    vec3 lighting = uAmbientColor * uAmbientIntensity * alpha;
+    // Early out for fully transparent pixels (optional optimization)
+    if (alpha <= 0.001) {
+        discard;
+    }
 
-    // Apply dynamic lights (alpha-weighted)
+    vec2 fragPos = vec2(
+        vUV.x * uScreenSize.x,
+        (1.0 - vUV.y) * uScreenSize.y
+    );
+
+    // Ambient light (NO alpha here)
+    vec3 lighting = uAmbientColor * uAmbientIntensity;
+
+    // Dynamic lights
     for (int i = 0; i < uNumLights; i++) {
         Light L = uLights[i];
         vec2 diff = L.position - fragPos;
         float dist = length(diff);
+
         if (dist < L.radius) {
             float falloff = 1.0 - (dist / L.radius);
-            lighting += L.color * falloff * L.intensity * alpha;
+            lighting += L.color * falloff * L.intensity;
         }
     }
 
-    // Multiply base color by lighting
-    vec3 litScene = scene.rgb * lighting;
+    // Apply lighting to color
+    vec3 litScene = baseColor * lighting;
 
-    // Add emissive contribution (scaled by sprite alpha)
-    vec3 litEmissive = emissive.rgb * alpha;
+    // Emissive adds light, NOT alpha-scaled
+    vec3 emissive = texture(uEmissive, vUV).rgb;
+    litScene += emissive;
 
-    // Output final color with original alpha
-    FragColor = vec4(litScene + litEmissive, alpha);
+    // Preserve original alpha
+    FragColor = vec4(litScene, alpha);
 }

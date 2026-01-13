@@ -32,36 +32,8 @@ uniform sampler2D uTextures[1];
 uniform sampler2D uEmissive;
 
 void main() {
-    vec4 baseCol = vColor * texture(uTextures[0], vTexCoord);
-    vec4 emisCol = texture(uEmissive, vTexCoord);
-
-    // If emissive is present, show full base color
-    if (emisCol.a > 0.0) {
-        outColor = baseCol;
-    } else {
-        outColor = baseCol;
-    }
-}
-#type fragment
-#version 330 core
-
-in vec4 vColor;
-in vec2 vTexCoord;
-in float vTexId;
-
-out vec4 outColor;
-
-uniform sampler2D uTextures[1];
-uniform sampler2D uEmissive;
-
-void main() {
-    vec4 baseCol = vColor * texture(uTextures[0], vTexCoord);
-    vec4 emisCol = texture(uEmissive, vTexCoord);
-
-    // If emissive is present, show full base color
-    if (emisCol.a > 0.0) {
-        outColor = baseCol;
-    } else {
-        outColor = baseCol;
-    }
+    vec4 texCol = texture(uTextures[0], vTexCoord);
+vec3 rgb = texCol.rgb * texCol.a * vColor.rgb; // account for tex alpha
+float a = texCol.a * vColor.a;
+outColor = vec4(rgb, a);
 }

@@ -24,13 +24,18 @@ void main() {
 
 in vec4 vColor;
 in vec2 vTexCoord;
-in float vTexId;
 
 uniform sampler2D uTextures[1];
 
 out vec4 FragColor;
 
 void main() {
+    // Sample the font texture (red channel)
     float alpha = texture(uTextures[0], vTexCoord).r;
-    FragColor = vec4(vColor.rgb, vColor.a * alpha);
+
+    // Premultiply RGB by both vertex alpha and sampled alpha
+    vec3 rgb = vColor.rgb * vColor.a * alpha;
+    float a = vColor.a * alpha;
+
+    FragColor = vec4(rgb, a);
 }

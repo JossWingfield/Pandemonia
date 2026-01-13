@@ -61,6 +61,8 @@ public class Customer extends NPC {
 	public TextureRegion faceIcon;
 	Renderer renderer;
 	
+	private TextureRegion[][] eatingAnimations;
+	
 	private Pet pet;
 
 	public Customer(GamePanel gp, float xPos, float yPos) {
@@ -85,12 +87,33 @@ public class Customer extends NPC {
 		importImages();
 	}
 	
+    protected void importEatingAnimation(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height, int direction) {
+
+	        int arrayIndex = 0;
+	
+	        Texture img = importImage(filePath + ".png");
+	
+	        for(int i = 0; i < columnNumber; i++) {
+	            for(int j = 0; j < rowNumber; j++) {
+	            	eatingAnimations[direction][arrayIndex] = img.getSubimage(i*width + startX, j*height + startY, width, height);
+	                arrayIndex++;
+	            }
+	        }
+
+    }
 	private void importImages() {
 		animations = new TextureRegion[5][10][10];
 		animations[0][0][0] = importImage("/npcs/mannequin.png").getSubimage(16, 0, 16, 32);
 		orderSign = importImage("/UI/Warning.png").getSubimage(16, 0, 16, 16);
 		warningOrderSign = importImage("/UI/Warning.png").getSubimage(0, 0, 16, 16);
 		name = "Customer";
+		
+		eatingAnimations = new TextureRegion[5][5];
+		importEatingAnimation("/npcs/Eating", 4, 1, 0, 80, 80, 80, 0);
+		importEatingAnimation("/npcs/Eating", 4, 1, 0, 0, 80, 80, 1);
+		importEatingAnimation("/npcs/Eating", 4, 1, 0, 0, 80, 80, 2);
+		importEatingAnimation("/npcs/Eating", 4, 1, 0, 160, 80, 80, 3);
+		
 		
 		switch(type) {
 		case 0:
@@ -350,6 +373,7 @@ public class Customer extends NPC {
 		                	 break;
 		                 case 3:
 		                	 hitbox.x -= 6;
+		                	 hitbox.y += 6;
 		                	 direction =  "Down";
 		                	 break;
 		                 }
@@ -381,6 +405,7 @@ public class Customer extends NPC {
 
 	        if(eating) {
 	            eatCounter+=dt;
+	            currentAnimation = 1;
 	            if(eatCounter >= eatTime) {
 	                eatCounter = 0;
 	                atTable = false;
@@ -408,11 +433,13 @@ public class Customer extends NPC {
 	      talkHitbox.x = hitbox.x - 16;
 	      talkHitbox.y = hitbox.y - 16;
 	      
-		    if(walking && !atTable) {
-		    	currentAnimation = 1;
-		    } else {
-		    	currentAnimation = 0;
-		    }
+	      if(!eating) {
+			    if(walking && !atTable) {
+			    	currentAnimation = 1;
+			    } else {
+			    	currentAnimation = 0;
+			    }
+	      }
 	      
 		  animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
 	      if(animationSpeed >= animationSpeedFactor) {
@@ -464,6 +491,11 @@ public class Customer extends NPC {
 	}
 	public void draw(Renderer renderer) {
 	    this.renderer = renderer;  
+	    
+	    if(eating && direction.equals("Up")) {
+	    	  drawEating(renderer);
+	      }
+	    
 		
 	      if(animations != null) {
 	    	  TextureRegion img = animations[0][currentAnimation][animationCounter];
@@ -521,5 +553,43 @@ public class Customer extends NPC {
 	      }
 	      
 	  }
+	public void drawOverlay(Renderer renderer) {
+		 if(eating && !direction.equals("Up")) {
+	    	  drawEating(renderer);
+	     }
+	}
+	private void drawEating(Renderer renderer) {
+		if(animations != null) {
+	    	  int eatCounter = animationCounter;
+	    	  if(animationCounter > 3) {
+	    		  eatCounter-=4;
+	    	  }
+	    	  TextureRegion img = eatingAnimations[0][eatCounter];
+	    	  int a = 0;
+	    	  if(direction != null) {
+	    	  switch(direction) {
+	    	  case "Left":
+	    		  a = 1;
+	    		  break;
+	    	  case "Right":
+	    		  a = 2;
+	    		  break;
+	    	  case "Up":
+	    		  a = 3;
+	    	  	  break;
+	    	  case "Down":
+	    		  a = 0;
+	    	  	  break;
+	    	  }
+	    	  	    	      	  
+	    	  img = eatingAnimations[a][eatCounter];
+		    	  if(direction.equals("Left")){
+		          	img = createHorizontalFlipped(img);
+		          }
+	    	  }
+	    	  
+	    	  renderer.draw(img, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y - yDrawOffset ), (int)(drawWidth), (int)(drawHeight));
+	      }
+	}
 	
 }

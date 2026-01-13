@@ -724,7 +724,7 @@ public class GamePanel {
         // OpenGL State
         // -----------------------
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         glDisable(GL_DEPTH_TEST); // Now safe to call
 
@@ -833,7 +833,7 @@ public class GamePanel {
 						
 						glBindFramebuffer(GL_FRAMEBUFFER, sceneFbo);
 						glViewport(0, 0, w, h);
-						glClearColor(0, 0, 0, 1);
+						glClearColor(0, 0, 0, 0);
 						glClear(GL_COLOR_BUFFER_BIT);
 				    	renderer.beginFrame();
 						draw();
@@ -850,6 +850,8 @@ public class GamePanel {
 			        	int finalTexture = sceneTextureId;
 			        	if (Settings.fancyLighting) {
 			        		glBindFramebuffer(GL_FRAMEBUFFER, litFbo);
+			        		glViewport(0, 0, w, h);
+			        		glClearColor(0, 0, 0, 0);
 			        		glClear(GL_COLOR_BUFFER_BIT);
 							renderer.updateLightsOncePerFrame();
 							renderer.renderLightingPass();
@@ -884,7 +886,7 @@ public class GamePanel {
 					        	glEnable(GL_BLEND);
 					        	glBlendFunc(GL_ONE, GL_ONE);
 					        	renderer.drawFullscreenTexture(godrayProcessedTextureId); // add god rays
-					        	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+					        	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 							}
 			        	} else {
 			        		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -892,7 +894,7 @@ public class GamePanel {
 			        		glClear(GL_COLOR_BUFFER_BIT);
 			        		renderer.drawFullscreenTexture(sceneTextureId);
 			        	}
-	
+			        	
 			        	//GUI
 			        	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		        		glViewport(0, 0, w, h);
@@ -1135,6 +1137,11 @@ public class GamePanel {
 		        }
 		        
 		        player.drawOverlay(renderer);
+		        for(NPC npc: copy) {
+		        	if(npc != null) {
+		        		npc.drawOverlay(renderer);
+		        	}
+		        }
 		    
 		        Building[] fourthLayer = buildingM.getFourthLayer();
 		        for(int i = 0; i < fourthLayer.length-1; i++) {
