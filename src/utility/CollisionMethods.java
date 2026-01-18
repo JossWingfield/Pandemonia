@@ -510,7 +510,7 @@ public class CollisionMethods {
 	                "Table Piece".equals(b.getName()) ||
 	                "Table Corner 1".equals(b.getName()) ||
 	                "Table 1".equals(b.getName()) ||
-	                "Table 2".equals(b.getName());
+	                "Large Table".equals(b.getName());
 
 	            if (b.buildHitbox.intersects(buildHitbox)) {
 	                if (isShelf) {

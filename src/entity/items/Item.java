@@ -53,6 +53,8 @@ public abstract class Item extends Entity {
     public void draw(Renderer renderer) {
         renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
     }
+    public void drawOverlay(Renderer renderer) {
+    }
     public String getDescription() {
     	return description;
     }

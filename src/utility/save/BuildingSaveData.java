@@ -12,6 +12,8 @@ public class BuildingSaveData extends SaveData {
 	public int preset = -1;
 	public String name;
 	public int decorType = -1;
+	public String string1;
+	public boolean boolean1 =false;
 	
 	public int attribute1 = -1;
 	public int attribute2 = -1;

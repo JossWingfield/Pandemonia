@@ -13,9 +13,7 @@ import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
-import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -24,8 +22,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -47,7 +43,6 @@ import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
@@ -77,6 +72,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import java.io.IOException;
 import java.net.BindException;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -86,12 +82,12 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
 import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
 
 import org.joml.Vector2f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -695,17 +691,16 @@ public class GamePanel {
         glfwSetKeyCallback(window, keyL::keyCallback);
         
         GLFW.glfwSetFramebufferSizeCallback(window, (win, fbWidth, fbHeight) -> {
-            if (fbWidth == 0 || fbHeight == 0) return; // ignore minimized windows
+            if (fbWidth == 0 || fbHeight == 0) return;
 
-            // Update OpenGL viewport to match physical framebuffer size
+            // 1. OpenGL renders in physical pixels
             glViewport(0, 0, fbWidth, fbHeight);
-
-            // Update camera to use logical frame size, NOT physical pixels
-            camera.setSize(frameWidth, frameHeight);
-
-            // Recreate all FBOs at the new physical size
+            
+            sizeX = fbWidth;
+            sizeY = fbHeight;
+            
+            // 3. FBOs must match framebuffer resolution
             recreateBuffers(fbWidth, fbHeight);
-
         });
 
         // -----------------------
@@ -776,6 +771,28 @@ public class GamePanel {
         createGodrayBuffer(px[0], py[0]);
         createGodrayProcessedBuffer(px[0], py[0]);
     }
+    public void applyGameViewport(int fbWidth, int fbHeight) {
+        float gameAspect = frameWidth / (float) frameHeight;
+        float screenAspect = fbWidth / (float) fbHeight;
+
+        int vpW, vpH, vpX, vpY;
+
+        if (screenAspect > gameAspect) {
+            // Pillarbox
+            vpH = fbHeight;
+            vpW = Math.round(fbHeight * gameAspect);
+            vpX = (fbWidth - vpW) / 2;
+            vpY = 0;
+        } else {
+            // Letterbox
+            vpW = fbWidth;
+            vpH = Math.round(fbWidth / gameAspect);
+            vpX = 0;
+            vpY = (fbHeight - vpH) / 2;
+        }
+
+        glViewport(vpX, vpY, vpW, vpH);
+    }
     public void loop() {
     	double beginTime = glfwGetTime();
     	double endTime;
@@ -832,7 +849,7 @@ public class GamePanel {
 						int h = fbh[0];
 						
 						glBindFramebuffer(GL_FRAMEBUFFER, sceneFbo);
-						glViewport(0, 0, w, h);
+						applyGameViewport(w, h);
 						glClearColor(0, 0, 0, 0);
 						glClear(GL_COLOR_BUFFER_BIT);
 				    	renderer.beginFrame();
@@ -840,7 +857,7 @@ public class GamePanel {
 						renderer.endFrame();
 						
 			        	glBindFramebuffer(GL_FRAMEBUFFER, emissiveFbo);
-			        	glViewport(0, 0, w, h);
+			        	applyGameViewport(w, h);
 			        	glClearColor(0, 0, 0, 0);
 			        	glClear(GL_COLOR_BUFFER_BIT);
 			        	renderer.beginFrame();
@@ -850,7 +867,7 @@ public class GamePanel {
 			        	int finalTexture = sceneTextureId;
 			        	if (Settings.fancyLighting) {
 			        		glBindFramebuffer(GL_FRAMEBUFFER, litFbo);
-			        		glViewport(0, 0, w, h);
+			        		applyGameViewport(w, h);
 			        		glClearColor(0, 0, 0, 0);
 			        		glClear(GL_COLOR_BUFFER_BIT);
 							renderer.updateLightsOncePerFrame();
@@ -861,7 +878,7 @@ public class GamePanel {
 							} else {
 							    // Just draw the finalTexture to screen without bloom
 							    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-							    glViewport(0, 0, w, h);
+							    applyGameViewport(w, h);
 							    glClear(GL_COLOR_BUFFER_BIT);
 							    
 							    // Draw fullscreen quad with finalTexture
@@ -870,7 +887,7 @@ public class GamePanel {
 							
 							if(Settings.godraysEnabled) {
 					        	glBindFramebuffer(GL_FRAMEBUFFER, godrayFbo);
-					        	glViewport(0, 0, sizeX, sizeY);
+					        	applyGameViewport(w, h);
 					        	glClearColor(0, 0, 0, 0);
 					        	glClear(GL_COLOR_BUFFER_BIT);
 	
@@ -881,7 +898,7 @@ public class GamePanel {
 					        	renderer.renderGodRays(godrayTextureId, godrayProcessedFbo, 0.4f, 0.95f, 1.3f);
 					        	
 					        	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-					        	glViewport(0, 0, w, h);
+					        	applyGameViewport(w, h);
 					        	//renderer.drawFullscreenTexture(finalTexture); // scene
 					        	glEnable(GL_BLEND);
 					        	glBlendFunc(GL_ONE, GL_ONE);
@@ -890,14 +907,14 @@ public class GamePanel {
 							}
 			        	} else {
 			        		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			        		glViewport(0, 0, w, h);
+			        		applyGameViewport(w, h);
 			        		glClear(GL_COLOR_BUFFER_BIT);
 			        		renderer.drawFullscreenTexture(sceneTextureId);
 			        	}
 			        	
 			        	//GUI
 			        	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		        		glViewport(0, 0, w, h);
+			        	applyGameViewport(w, h);
 		    	    	renderer.beginFrame();
 			        	drawGUI();
 				    	renderer.endFrame();
@@ -918,11 +935,36 @@ public class GamePanel {
 		
 	}
     public void setFullScreen() {
-       
+
+
+        // Get the primary monitor's resolution
+        long monitor = GLFW.glfwGetPrimaryMonitor();
+        GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
+
+        // Resize window to match monitor size (windowed fullscreen)
+        GLFW.glfwSetWindowAttrib(window, GLFW.GLFW_DECORATED, GLFW_TRUE); // Keep borders
+        GLFW.glfwSetWindowMonitor(window, 0, 0, 0, vidMode.width(), vidMode.height(), GLFW.GLFW_DONT_CARE);
+
+        // Update your stored viewport
+        sizeX = vidMode.width();
+        sizeY = vidMode.height();
+        mouseL.setGameViewportPos(new Vector2f(0, 0));
+        mouseL.setGameViewportSize(new Vector2f(sizeX, sizeY));
+
+        recreateBuffers(sizeX, sizeY);
+        Settings.fullScreen = true;
     }
 
     public void stopFullScreen() {
-        
+        int windowedWidth = frameWidth;   // your saved windowed size
+        int windowedHeight = frameHeight;
+        int windowPosX = 100;             // your saved windowed position
+        int windowPosY = 100;
+
+        GLFW.glfwSetWindowAttrib(window, GLFW.GLFW_DECORATED, GLFW_TRUE);
+        GLFW.glfwSetWindowPos(window, windowPosX, windowPosY);
+        GLFW.glfwSetWindowSize(window, windowedWidth, windowedHeight);
+        Settings.fullScreen = false;
     }
 
     // Helper method to recreate FBOs at the new resolution
@@ -944,24 +986,6 @@ public class GamePanel {
         // If you have a lightmap / FBO:
         //renderer.resize(width, height);
     }
-	public int getWidth() {
-		return frameWidth;
-	}
-	public int getHeight() {
-		return frameHeight;
-	}
-	public int getFullScreenWidth() {
-		return 2560;
-	}
-	public int getFullScreenHeight() {
-		return 1600;
-	}
-	public void setWidth(int newWidth) {
-		frameWidth = newWidth;
-	}
-	public void setHeight(int newHeight) {
-		frameHeight = newHeight;
-	}
     private void update(double dt) {
     	
     	if(errorCounter > 0) {
@@ -1004,7 +1028,7 @@ public class GamePanel {
 		    		customiser.update(dt);
 		    	}
 	    	} else if(currentState == mapBuildState) {
-	    		//mapB.update(dt);
+	    		mapB.update(dt);
 	    		buildingM.update(dt);
 	    	}
     		catalogue.update(dt);
@@ -1277,6 +1301,13 @@ public class GamePanel {
 		            if (builds[i] != null) {
 		                builds[i].drawOverlayUI(renderer);
 		            }
+		        }
+		        
+		        Item[] itemsInBuildings = buildingM.getBuildingItems();
+		        for(int i = 0; i < itemsInBuildings.length-1; i++) {
+		        	if(itemsInBuildings[i] != null) {
+		        		itemsInBuildings[i].drawOverlay(renderer);
+		        	}
 		        }
 		        
 		        world.drawFilters(renderer);

@@ -35,7 +35,7 @@ public class MouseListener {
         this.lastWorldY = 0.0;
     }
 
-    public  void endFrame() {
+    public void endFrame() {
         scrollY = 0.0;
         scrollX = 0.0;
         lastX = xPos;
@@ -44,7 +44,7 @@ public class MouseListener {
         lastWorldY = worldY;
     }
     
-    public  void clear() {
+    public void clear() {
     	scrollX = 0.0;
     	scrollY = 0.0;
     	xPos = 0.0;
@@ -56,34 +56,6 @@ public class MouseListener {
     	mouseButtonDown = 0;
     	isDragging = false;
     	Arrays.fill(mouseButtonPressed, false);
-    }
-    
-    public  Vector2f screenToWorld(Vector2f screenCoords) {
-        Vector2f normalizedScreenCords = new Vector2f(
-                screenCoords.x / gp.getFullScreenWidth(),
-                screenCoords.y / gp.getFullScreenHeight()
-        );
-        normalizedScreenCords.mul(2.0f).sub(new Vector2f(1.0f, 1.0f));
-        GLSLCamera camera = gp.camera;
-        Vector4f tmp = new Vector4f(normalizedScreenCords.x, normalizedScreenCords.y,
-                0, 1);
-        Matrix4f inverseView = new Matrix4f(camera.getInverseViewMatrix());
-        Matrix4f inverseProjection = new Matrix4f(camera.getInverseProjectionMatrix());
-        tmp.mul(inverseView.mul(inverseProjection));
-        return new Vector2f(tmp.x, tmp.y);
-    }
-
-    public  Vector2f worldToScreen(Vector2f worldCoords) {
-    	GLSLCamera camera = gp.camera;
-        Vector4f ndcSpacePos = new Vector4f(worldCoords.x, worldCoords.y, 0, 1);
-        Matrix4f view = new Matrix4f(camera.getViewMatrix());
-        Matrix4f projection = new Matrix4f(camera.getProjectionMatrix());
-        ndcSpacePos.mul(projection.mul(view));
-        Vector2f windowSpace = new Vector2f(ndcSpacePos.x, ndcSpacePos.y).mul(1.0f / ndcSpacePos.w);
-        windowSpace.add(new Vector2f(1.0f, 1.0f)).mul(0.5f);
-        windowSpace.mul(new Vector2f(gp.getFullScreenWidth(), gp.getFullScreenHeight()));
-
-        return windowSpace;
     }
 
     public void mousePosCallback(long window, double xpos, double ypos) {
@@ -202,9 +174,9 @@ public class MouseListener {
         return new Vector2f(currentX, currentY);
     }
 
-    public  void setGameViewportPos(Vector2f gameViewportPos) { this.gameViewportPos.set(gameViewportPos); }
+    public void setGameViewportPos(Vector2f gameViewportPos) { this.gameViewportPos.set(gameViewportPos); }
 
-    public  void setGameViewportSize(Vector2f gameViewportSize) {
+    public void setGameViewportSize(Vector2f gameViewportSize) {
         gameViewportSize.set(gameViewportSize);
     }
 }

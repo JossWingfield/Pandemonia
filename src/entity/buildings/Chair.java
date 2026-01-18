@@ -15,6 +15,8 @@ public class Chair extends Building {
 	public TablePlate tablePlate = null;
 	private boolean firstUpdate = true;
 	private int roomNum = 0;
+	public boolean groupChair = false;
+	public LargeTable table;
 	
 	public Chair(GamePanel gp, float xPos, float yPos, int direction) {
 		super(gp, xPos, yPos, 48, 48);
@@ -26,10 +28,16 @@ public class Chair extends Building {
 		drawHeight = 16*3;
 		importImages();
 		isSolid = false;
+		canBePlaced = false;
 		isBottomLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*6);
+	}
+	
+	public void setGroupChair(LargeTable table) {
+		this.table = table;
+		this.groupChair = true;
 	}
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*6);

@@ -580,7 +580,7 @@ public class Renderer {
 
         // 3. Combine scene + bloom in one pass to default framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0); //TODO change to finalFbo
-        glViewport(0, 0, gp.sizeX, gp.sizeY);
+		gp.applyGameViewport(gp.sizeX, gp.sizeY);
         bloomCombineShader.use();
 
         // Scene

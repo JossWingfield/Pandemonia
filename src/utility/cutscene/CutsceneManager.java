@@ -187,6 +187,12 @@ public class CutsceneManager {
         events.add(new DialogueEvent(gp, ignis, "Here let me fix it up."));
         events.add(new WaitEvent(0.33));
         
+        events.add(new DialogueEvent(gp, ignis, "I've also converted the old kitchen to a new dining room."));
+        events.add(new WaitEvent(0.33));
+        
+        events.add(new DialogueEvent(gp, ignis, "Through this door behind me are the food stores. From now on you will have to collect food from here and transport it to the kitchen fridge or cook it."));
+        events.add(new WaitEvent(0.33));
+        
         events.add(new StartFadeOutEvent(gp));
         
         events.add(new ActionEvent(() -> {

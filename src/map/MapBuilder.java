@@ -35,7 +35,6 @@ import entity.buildings.SoulLantern;
 import entity.buildings.StorageFridge;
 import entity.buildings.Stove;
 import entity.buildings.Table;
-import entity.buildings.Table2;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
 import entity.buildings.Torch;
@@ -66,7 +65,7 @@ public class MapBuilder {
 	int yStart;
 	private int currentLayer = 1;
 	private int totalBuildingCount = 0;
-	private int clickCounter = 0;
+	private double clickCounter = 0;
 	
 	public boolean showTiles = false;
 	private float scrollOffset = 0;
@@ -99,6 +98,10 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new FloorDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
+		buildings[totalBuildingCount] = new Bin(gp, 0, 0, 2);
+		totalBuildingCount++;
+		buildings[totalBuildingCount] = new Bin(gp, 0, 0, 1);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Computer(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new ChefPortrait(gp, 0, 0);
@@ -117,7 +120,7 @@ public class MapBuilder {
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Chair(gp, 0, 0, 0);
 		totalBuildingCount++;
-		buildings[totalBuildingCount] = new Table(gp, 0, 0);
+		buildings[totalBuildingCount] = new Table(gp, 0, 0, "Left", false);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new StorageFridge(gp, 0, 0, false);
 		totalBuildingCount++;
@@ -135,9 +138,7 @@ public class MapBuilder {
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new CornerTable(gp, 0, 0, 3);
 		totalBuildingCount++;
-		buildings[totalBuildingCount] = new Bin(gp, 0, 0);
-		totalBuildingCount++;
-		buildings[totalBuildingCount] = new Table2(gp, 0, 0);
+		buildings[totalBuildingCount] = new Bin(gp, 0, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Door(gp, 0, 0, 0, 0);
 		totalBuildingCount++;
@@ -319,16 +320,24 @@ public class MapBuilder {
 		}
 	}
 	
-	public void update(double dt, int xDiff, int yDiff) {
+	public void update(double dt) {
 		
 		int mouseX = (int)gp.mouseL.getWorldX();
 		int mouseY = (int)gp.mouseL.getWorldY();
 		
 		if(gp.mouseL.mouseButtonDown(0) && (mouseY < gp.frameHeight-ySize || !showTiles)) {
-			int xTile = (int)((mouseX+xDiff)/gp.tileSize);
-			int yTile = (int)((mouseY+yDiff)/gp.tileSize);
+			int xTile = (int)((mouseX)/gp.tileSize);
+			int yTile = (int)((mouseY)/gp.tileSize);
 			
 			writeToMap(xTile, yTile);
+		}
+		
+		
+		if(clickCounter > 0) {
+			clickCounter-=dt;
+			if(clickCounter < 0) {
+				clickCounter = 0;
+			}
 		}
 		
 	}
@@ -586,8 +595,8 @@ public class MapBuilder {
 				
 			} else if (pageNum == 3) {
 			    // --- Scroll state ---
-			    if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_KP_ADD)) scrollOffset -= 40;
-			    if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_KP_SUBTRACT)) scrollOffset += 40;
+			    if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_P)) scrollOffset -= 40;
+			    if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_O)) scrollOffset += 40;	    
 
 			    // Clamp scroll
 			    int totalBuildings = buildings.length;
@@ -971,13 +980,9 @@ public class MapBuilder {
 				renderer.draw(selectedBuilding.animations[0][0][0], xPos - selectedBuilding.xDrawOffset, yPos - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getPixelWidth()*3, selectedBuilding.animations[0][0][0].getPixelHeight()*3);
 				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 					gp.buildingM.addBuilding((Building)selectedBuilding.clone(), xPos, yPos);
-					clickCounter = 20;
+					clickCounter = 0.1;
 				}
 			}
-		}
-		
-		if(clickCounter > 0) {
-			clickCounter--;
 		}
 		
 		for(Building b: gp.buildingM.getBuildings()) {

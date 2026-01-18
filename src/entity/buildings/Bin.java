@@ -18,8 +18,11 @@ public class Bin extends Building {
 	private Rectangle2D.Float binHitbox;
 	private boolean firstUpdate = true;
 	
-	public Bin(GamePanel gp, float xPos, float yPos) {
+	private int preset;
+	
+	public Bin(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
+		this.preset = preset;
 		
 		isSolid = true;
 		
@@ -28,6 +31,7 @@ public class Bin extends Building {
 		importImages();
 		isSolid = false;
 		isKitchenBuilding = true;
+		canBePlaced = false;
 		mustBePlacedOnTable = true;
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3, hitbox.y+3, hitbox.width-6, hitbox.height-9);
 	}
@@ -35,19 +39,36 @@ public class Bin extends Building {
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3, hitbox.y+3, hitbox.width-6, hitbox.height-9);
 	}
 	public Building clone() {
-		Bin building = new Bin(gp, hitbox.x, hitbox.y);
+		Bin building = new Bin(gp, hitbox.x, hitbox.y, preset);
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new Bin(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
+		System.out.println("buildings[arrayCounter] = new Bin(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " +this.preset + ");");
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][2];
 		
         name = "Bin 1";
-    	animations[0][0][0] = importImage("/decor/trapdoor.png").getSubimage(0, 32, 32, 32);
-    	animations[0][0][1] = importImage("/decor/trapdoor.png").getSubimage(32, 32, 32, 32);
+ 
+    	
+    	switch(preset) {
+    	case 0:
+    	  	animations[0][0][0] = importImage("/decor/trapdoor.png").getSubimage(0, 32, 32, 32);
+        	animations[0][0][1] = importImage("/decor/trapdoor.png").getSubimage(32, 32, 32, 32);
+    		break;
+    	case 1:
+    	  	animations[0][0][0] = importImage("/decor/trapdoor.png").getSubimage(0, 0, 32, 32);
+        	animations[0][0][1] = importImage("/decor/trapdoor.png").getSubimage(32, 0, 32, 32);
+    		break;
+    	case 2:
+    	  	animations[0][0][0] = importImage("/decor/trapdoor.png").getSubimage(0, 0, 32, 32);
+        	animations[0][0][1] = importImage("/decor/trapdoor.png").getSubimage(32, 0, 32, 32);
+        	
+        	animations[0][0][0] = createHorizontalFlipped(animations[0][0][0]);
+           	animations[0][0][1] = createHorizontalFlipped(animations[0][0][1]);
+    		break;
+    	}
     	
     	isSolid = false;
     	drawHeight = 48*2;

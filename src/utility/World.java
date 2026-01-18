@@ -93,6 +93,8 @@ public class World {
     private float fadeAlpha = 0f;
     public boolean fadingIn = false;
     private float fadeSpeed = 0.7f; // tweak for faster/slower fade
+    
+    private int groupChance = 100;
 
     public World(GamePanel gp) {
         this.gp = gp;
@@ -289,13 +291,25 @@ public class World {
 	                spawnTimer+=dt;
 	                if (spawnTimer >= customerSpawnTimer) {
 	                    spawnTimer = 0;
-	                    if(queueSpecialCustomer) {
-	                    	queueSpecialCustomer = false;
-	                    	gp.mapM.getRoom(0).addSpecialCustomer();
-	                    	gp.gui.addMessage("A special customer has arrived!", Colour.MAGENTA);
+	                    
+	                    if (queueSpecialCustomer) {
+	                        queueSpecialCustomer = false;
+	                        gp.mapM.getRoom(0).addSpecialCustomer();
+	                        gp.gui.addMessage("A special customer has arrived!", Colour.MAGENTA);
 	                    } else {
-	                    	gp.mapM.getRoom(0).addCustomer();
+		                    // Decide WHAT to spawn first
+	                      	boolean tryGroup = random.nextInt(100) < groupChance;
+	                      	if (tryGroup && gp.mapM.getRoom(0).isGroupTable() != null) {
+		                        // Spawn a group if we got lucky AND a group table exists
+		                    	gp.mapM.getRoom(0).addGroup(random.nextInt(2) + 3);
+		                    } else {
+		                    	if(gp.mapM.getRoom(0).isFreeSingleChair() != null) {
+		                    		gp.mapM.getRoom(0).addCustomer();
+		                    	}
+		                    }
 	                    }
+	                    
+	                  
 	                }
 	            }
 	        } else {
@@ -308,11 +322,22 @@ public class World {
 	                     	gp.npcM.addSpecialCustomer();
 	                     	gp.gui.addMessage("A special customer has arrived!", Colour.MAGENTA);
 	                    } else {
-	                    	gp.npcM.addCustomer();
+	                    	boolean tryGroup = random.nextInt(100) < groupChance;
+	                    	if (tryGroup && gp.buildingM.isGroupTable() != null) {
+			                    // Spawn a group if we got lucky AND a group table exists
+                    			gp.npcM.addGroup(random.nextInt(2) + 3);
+			                } else {
+			                	if(gp.buildingM.isFreeSingleChair() != null) {
+			                		gp.npcM.addCustomer();
+			                	}
+			                }
 	                    }
+	                    
+	                    
 	                }
 	            }
 	        }
+        	
         }
         if (eventsOn) {
             if (currentPhase == DayPhase.SERVICE && menuChosen) {

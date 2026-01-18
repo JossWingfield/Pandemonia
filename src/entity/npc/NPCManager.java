@@ -25,6 +25,13 @@ public class NPCManager {
     	npcs.add(customer);
     	//gp.mapM.addNPCToRoom(customer, 0);
     }
+    public void addGroup(int num) {
+    	GroupCustomer customer = new GroupCustomer(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    	for(int i = 0; i < num; i++) {
+    		customer = new GroupCustomer(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+        	npcs.add(customer);
+    	}
+    }
     public void addStocker() {
     	Stocker stocker = new Stocker(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
     	npcs.add(stocker);

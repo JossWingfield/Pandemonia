@@ -27,9 +27,10 @@ public class Plate extends Item {
     private Set<String> platableFoods = new HashSet<>();
     private Set<String> bypassPlateFoods = new HashSet<>();
     private Recipe matchedRecipe;
-    private TextureRegion matchedRecipeImage;
+    private TextureRegion matchedRecipeImage, foodBorder;
     
     public float seasoningQuality = -1;
+    private int baseX, baseY;
 
     public Plate(GamePanel gp, float xPos, float yPos) {
         super(gp, xPos, yPos);
@@ -58,6 +59,7 @@ public class Plate extends Item {
         animations[0][0][3] = sheet.getSubimage(48, 48, 16, 16); 
         animations[0][0][4] = sheet.getSubimage(0, 48, 16, 16);
         dirtyImage = importImage("/food/food.png").getSubimage(0, 112, 16, 16);
+        foodBorder = importImage("/food/FoodBorder.png").toTextureRegion();
     }
     private void updatePlateStack(int count) {
     	if(count < 0 || count > maxPlateStack) {
@@ -148,23 +150,34 @@ public class Plate extends Item {
         return true;
     }
     public void addIngredient(Food foodItem) {
-        int layer = foodItem.getFoodLayer();
+        int preferredLayer = foodItem.getFoodLayer();
 
-        if (layer < 0 || layer >= MAX_LAYERS) return;
+        if (preferredLayer < 0) preferredLayer = 0;
+        if (preferredLayer >= MAX_LAYERS) return;
 
-        // Only insert if that layer index is not already taken
-        while (ingredients.size() <= layer) {
+        // Ensure list size
+        while (ingredients.size() < MAX_LAYERS) {
             ingredients.add(null);
             ingredientImages.add(null);
         }
 
-        if (ingredientImages.get(layer) != null) return;
+        // Find the next free layer starting from preferredLayer
+        int targetLayer = -1;
+        for (int i = preferredLayer; i < MAX_LAYERS; i++) {
+            if (ingredientImages.get(i) == null) {
+                targetLayer = i;
+                break;
+            }
+        }
 
-        // Add ingredient data
-        ingredientImages.set(layer, foodItem.getImage());
-        ingredients.set(layer, foodItem.name);
+        // No free slots → do nothing
+        if (targetLayer == -1) return;
 
-        // === Check if this ingredient stack matches a recipe ===
+        // Insert ingredient
+        ingredientImages.set(targetLayer, foodItem.getImage());
+        ingredients.set(targetLayer, foodItem.name);
+
+        // === Recipe check ===
         List<String> currentIngredients = new ArrayList<>();
         for (String ing : ingredients) {
             if (ing != null) currentIngredients.add(ing);
@@ -233,8 +246,8 @@ public class Plate extends Item {
         return matched != null ? matched.getName() : null;
     }
     public void draw(Renderer renderer) {
-        int baseX = (int) hitbox.x - xDrawOffset ;
-        int baseY = (int) hitbox.y - yDrawOffset ;
+        this.baseX = (int) hitbox.x - xDrawOffset ;
+        this.baseY = (int) hitbox.y - yDrawOffset ;
 
         if(isDirty) {
             renderer.draw(dirtyImage, baseX, baseY, drawWidth, drawHeight);
@@ -259,7 +272,39 @@ public class Plate extends Item {
         	TextureRegion seasoning = ingredientImages.get(ingredientImages.size()-1);
             renderer.draw(seasoning, baseX, baseY, drawWidth, drawHeight);
         }
-        
+
+    }
+    public void drawOverlay(Renderer renderer) {
+    	if(gp.player.interactHitbox.intersects(hitbox)) {
+	        int spacing  = 32;
+	
+	        // Count non-null ingredients
+	        int count = 0;
+	        for (String i : ingredients) {
+	            if (i != null) count++;
+	        }
+	
+	        // Total width of all items
+	        int totalWidth = count * spacing;
+	
+	        // Starting X so the row is centered on baseX
+	        float startX = (baseX+24) - totalWidth / 2f;
+	
+	        int index = 0;
+	        for (String i : ingredients) {
+	            if (i != null) {
+	                float x = startX + index * spacing;
+	
+	                renderer.draw(foodBorder, x - 4, baseY - 24, 32, 32);
+	
+	                TextureRegion img = gp.itemRegistry.getImageFromName(i);
+	                Food f = (Food)gp.itemRegistry.getItemFromName(i, 0);
+	                renderer.draw(img, x-f.xDrawOffset, baseY - 24, 32, 32);
+	
+	                index++;
+	            }
+	        }
+        }
     }
     public void drawAtPosition(Renderer renderer, int x, int y) {
         int baseX = x;

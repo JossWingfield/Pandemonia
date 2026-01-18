@@ -5,7 +5,12 @@ import java.util.Map;
 import java.util.Random;
 
 import entity.buildings.Building;
+import entity.buildings.Chair;
+import entity.buildings.LargeTable;
+import entity.buildings.MenuSign;
 import entity.buildings.Rubble;
+import entity.buildings.Stove;
+import entity.buildings.Table;
 import entity.buildings.WallDecor_Building;
 import main.GamePanel;
 import main.renderer.AssetPool;
@@ -137,7 +142,7 @@ public class ProgressManager {
             }
         }
         stoveUpgradeIII = true;
-        //unlockOldKitchen();
+
         setupAchievements();
     }
     private void setupAchievements() {
@@ -440,6 +445,18 @@ public class ProgressManager {
 	   		   //TODO change this reward
 	   	    });
 	   	   achievements.put(a.getId(), a);
+	   	   
+	       a = new Achievement(gp,
+	   	    	    "master_of_heat",
+	   	    	    "Master of Heat",
+	   	    	    "Free Ignis",
+	   	    	 importImage("/npcs/special/BasicFaceIcon.png").toTextureRegion()
+	   	    );
+	   	   a.setOnUnlock(() -> {
+	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
+	   		   //TODO change this reward
+	   	    });
+	   	   achievements.put(a.getId(), a);
     }
 
     public void handleLevelUp(int newLevel) {
@@ -600,7 +617,15 @@ public class ProgressManager {
 		unlockedKitchen = true;
 		RoomHelperMethods.KITCHEN = RoomHelperMethods.OLDKITCHEN;
 		gp.gui.addMessage("Ignis has found peace.", Colour.GREEN);
+		//achievements.get("master_of_heat").unlock();
+		
+		
 		if(gp.mapM.isInRoom(9)) {
+			Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+	    	if(stove != null) {
+	    		//stove.addCookStation();
+	    	}
+			
 			gp.npcM.addCook();
 			Rubble b = (Rubble)gp.buildingM.findBuildingWithName("Barricade");
 	    	if(b != null) {
@@ -615,6 +640,11 @@ public class ProgressManager {
 	    		gp.buildingM.removeBuilding(Packages);
 			}
 		} else {
+			Stove stove = (Stove)gp.mapM.getRoom(9).findBuildingWithName("Stove");
+	    	if(stove != null) {
+	    		//stove.addCookStation();
+	    	}
+			
 			gp.mapM.getRoom(9).addCook();
 			Rubble b = (Rubble)gp.mapM.getRoom(9).findBuildingWithName("Barricade");
 	    	if(b != null) {
@@ -628,6 +658,35 @@ public class ProgressManager {
 	    	if(Packages != null) {
 	    		gp.mapM.getRoom(9).removeBuilding(Packages);
 			}
+		}
+		
+		if(gp.mapM.isInRoom(0)) {
+	      	gp.buildingM.removeAllWithName("Chopping Board");
+			gp.buildingM.removeAllWithName("Stove");
+			gp.buildingM.removeAllWithName("Menu Sign");
+	    	gp.buildingM.removeAllWithName("Bin 1");
+	    	gp.buildingM.removeAllWithName("Sink 1");
+	      	gp.buildingM.removeAllWithName("Table Corner 1");
+	      	gp.buildingM.removeAllWithName("Storage Fridge");
+	      	gp.buildingM.removeAllWithName("Gate 1");
+	    	gp.buildingM.removeAllWithName("Table Piece");
+	    	
+	    	gp.buildingM.addBuilding(new MenuSign(gp, 636, 228));
+	    	gp.buildingM.addBuilding(new LargeTable(gp, 516, 288));
+	    	gp.buildingM.addBuilding(new Table(gp, 348, 264, "Left", false));
+		} else {
+			gp.mapM.getRoom(0).removeAllWithName("Stove");
+			gp.mapM.getRoom(0).removeAllWithName("Bin 1");
+			gp.mapM.getRoom(0).removeAllWithName("Sink 1");
+			gp.mapM.getRoom(0).removeAllWithName("Table Corner 1");
+			gp.mapM.getRoom(0).removeAllWithName("Storage Fridge");
+			gp.mapM.getRoom(0).removeAllWithName("Menu Sign");
+			gp.mapM.getRoom(0).removeAllWithName("Gate 1");
+			gp.mapM.getRoom(0).removeAllWithName("Table Piece");
+			
+			gp.mapM.getRoom(0).addBuilding(new MenuSign(gp, 636, 228));
+			gp.mapM.getRoom(0).addBuilding(new LargeTable(gp, 516, 288));
+			gp.mapM.getRoom(0).addBuilding(new Table(gp, 348, 264, "Left", false));
 		}
 		
 	}

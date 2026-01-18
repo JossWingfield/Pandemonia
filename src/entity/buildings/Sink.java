@@ -35,6 +35,7 @@ public class Sink extends Building {
 		drawHeight = 16*3;
 		importImages();
 		isSolid = false;
+		canBePlaced = false;
 		isBottomLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;
@@ -177,7 +178,7 @@ public class Sink extends Building {
 		}
 		if(cleanedPlateHitbox != null) {
 			if(cleanedPlateHitbox.intersects(gp.player.hitbox) && !sinkHitbox.intersects(gp.player.hitbox)) {
-				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
+				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
 					if(cleanedPlateCount > 0 && gp.player.currentItem == null) {
 						cleanedPlateCount--;
 						Plate plate = new Plate(gp, 0, 0);

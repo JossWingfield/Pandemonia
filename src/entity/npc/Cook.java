@@ -2,7 +2,7 @@ package entity.npc;
 
 import java.util.Random;
 
-import entity.buildings.CookStation;
+import entity.buildings.Bin;
 import entity.buildings.Stove;
 import entity.items.CookingItem;
 import entity.items.Food;
@@ -16,23 +16,21 @@ import utility.RoomHelperMethods;
 public class Cook extends Employee {
 
 	enum CookState {
-	    FETCHING_INGREDIENT,
+	    LOOKING_FOR_BURNED_FOOD,
 	    WALKING_TO_STOVE,
-	    START_COOKING,
-	    WAITING_FOR_COOK,
-	    PICKING_UP_FOOD,
-	    RETURNING_TO_STATION
+	    WALKING_TO_BIN,
+	    RETURNING_PAN_TO_STOVE
 	}
 	
 
-	private CookStation station;
 	private Stove stove;
 
 	private CookingItem pan;
 	private Item carriedItem;
+	private Bin bin;
 	
 	private int stoveSlot = 0; // 0 = left, 1 = right
-	private CookState state = CookState.FETCHING_INGREDIENT;
+	private CookState state = CookState.LOOKING_FOR_BURNED_FOOD;
 	
 	public Cook(GamePanel gp, int xPos, int yPos) {
 		super(gp, xPos, yPos);
@@ -64,8 +62,8 @@ public class Cook extends Employee {
 	     yDrawOffset = 36*drawScale;
 		 name = "Ignis";
 	}
-	private void findCookStation() {
-	    station = (CookStation) findBuildingInRoom("Cook Station", RoomHelperMethods.KITCHEN);
+	private void findBin() {
+	    bin = (Bin) findBuildingInRoom("Bin 1", RoomHelperMethods.KITCHEN);
 	}
 
 	private void findStove() {
@@ -89,84 +87,92 @@ public class Cook extends Employee {
 		
 		switch (state) {
 
-		case FETCHING_INGREDIENT -> {
-		    if (station == null) findCookStation();
+		case LOOKING_FOR_BURNED_FOOD -> {
+
 		    if (stove == null) findStove();
+		    if (stove == null) return;
 
-		    if (station == null || stove == null) return;
+		    // Check left slot
+		    if (stove.leftSlot != null &&
+		        stove.leftSlot.cookingItem != null &&
+		        stove.leftSlot.cookingItem.foodState == FoodState.BURNT) {
 
-		    // Do not move unless there's a valid cookable item
-		    if (!station.hasItem()) return;
-		    if (!(station.peekItem() instanceof Food food)) return;
-		    if (!isCookable(food)) return;
+		        pan = stove.leftSlot;
+		        stoveSlot = 0;
+		        state = CookState.WALKING_TO_STOVE;
+		        return;
+		    }
 
-		    // Only now do we walk
-		    if (walkToBuilding(dt, station)) {
-		    	carriedItem = station.takeItem();
+		    // Check right slot
+		    if (stove.rightSlot != null &&
+		        stove.rightSlot.cookingItem != null &&
+		        stove.rightSlot.cookingItem.foodState == FoodState.BURNT) {
+
+		        pan = stove.rightSlot;
+		        stoveSlot = 1;
 		        state = CookState.WALKING_TO_STOVE;
 		    }
 		}
 
 		case WALKING_TO_STOVE -> {
+
 		    if (stove == null) findStove();
+		    if (stove == null || pan == null) {
+		        state = CookState.LOOKING_FOR_BURNED_FOOD;
+		        return;
+		    }
 
 		    if (walkToBuilding(dt, stove)) {
-		        if (stove.leftSlot != null && stove.leftSlot.canCook(carriedItem.getName())) {
-		            pan = stove.leftSlot;
-		            stoveSlot = 0;
-		        } else if (stove.rightSlot != null && stove.rightSlot.canCook(carriedItem.getName())) {
-		            pan = stove.rightSlot;
-		            stoveSlot = 1;
+
+		        // Detach burned pan from stove
+		        if (stoveSlot == 0) {
+		            stove.leftSlot = null;
 		        } else {
-		            // No valid pan anymore → abort and return item
-		            state = CookState.RETURNING_TO_STATION;
-		            return;
+		            stove.rightSlot = null;
 		        }
-		        state = CookState.START_COOKING;
+
+		        carriedItem = pan;
+		        pan = null;
+
+		        state = CookState.WALKING_TO_BIN;
 		    }
 		}
 
-        case START_COOKING -> {
-        	if (pan != null && pan.cookingItem == null && carriedItem instanceof Food food) {
-        	    pan.setCooking(food);
-        	    carriedItem = null;
-        	    state = CookState.WAITING_FOR_COOK;
-        	}
-        }
+		case WALKING_TO_BIN -> {
 
-        case WAITING_FOR_COOK -> {
-            if (pan.cookingItem != null &&
-                pan.cookingItem.foodState == FoodState.COOKED) {
+		    if (bin == null) findBin();
+		    if (bin == null) return;
 
-                // Detach pan from stove
-                if (stoveSlot == 0) {
-                    stove.leftSlot = null;
-                } else {
-                    stove.rightSlot = null;
-                }
+		    if (walkToBuilding(dt, bin)) {
 
-                pan.stopCooking();
+		        if (carriedItem instanceof CookingItem cookingItem) {
+		            cookingItem.bin();   // Empties the burned contents
+		        }
 
-                // Carry the pan instead of the food
-                carriedItem = pan;
-                pan = null;
+		        state = CookState.RETURNING_PAN_TO_STOVE;
+		    }
+		}
 
-                state = CookState.RETURNING_TO_STATION;
-            }
-        }
+		case RETURNING_PAN_TO_STOVE -> {
 
-        case RETURNING_TO_STATION -> {
-            if (walkToBuilding(dt, station)) {
-                station.placeItem(carriedItem);
-                carriedItem = null;
+		    if (stove == null) findStove();
+		    if (stove == null) return;
 
-                // Reset loop
-                stove = null;
-                pan = null;
-                state = CookState.FETCHING_INGREDIENT;
-            }
-        }
-    }
+		    if (walkToBuilding(dt, stove)) {
+
+		        // Put the clean pan back
+		        if (stoveSlot == 0) {
+		            stove.leftSlot = (CookingItem) carriedItem;
+		        } else {
+		            stove.rightSlot = (CookingItem) carriedItem;
+		        }
+
+		        carriedItem = null;
+
+		        state = CookState.LOOKING_FOR_BURNED_FOOD;
+		    }
+		}
+		}
 		
         animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
         if(animationSpeed >= animationSpeedFactor) {

@@ -25,6 +25,7 @@ import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.HerbBasket;
 import entity.buildings.Lantern;
+import entity.buildings.LargeTable;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
@@ -35,7 +36,6 @@ import entity.buildings.SoulLantern;
 import entity.buildings.StorageFridge;
 import entity.buildings.Stove;
 import entity.buildings.Table;
-import entity.buildings.Table2;
 import entity.buildings.TipJar;
 import entity.buildings.Toilet;
 import entity.buildings.ToiletDoor;
@@ -66,6 +66,7 @@ public class BuildingRegistry {
 		presetBuildingNames.add("Trapdoor 1");
 		presetBuildingNames.add("Shelf");
 		presetBuildingNames.add("Window");
+		presetBuildingNames.add("Bin 1");
 	}
 	
 	public List<BuildingSaveData> saveBuildings(List<Building> buildings) {
@@ -129,7 +130,10 @@ public class BuildingRegistry {
 						data.fridgeContents.add(f.getName());
 						data.fridgeContentStates.add(f.getState());
 					}
-				}
+				} else if(b instanceof Table c) {
+					data.string1 = c.chairFacing;
+					data.boolean1 = c.doubleChaired;
+				} 
 				savedBuildings.add(data);
 			}
 		}
@@ -169,6 +173,9 @@ public class BuildingRegistry {
 						buildings.add(build);
 					}
 				}
+			} else if(b.name.equals("Table 1")) {
+				Table table = new Table(gp, b.x, b.y, b.string1, b.boolean1);
+				buildings.add(table);
 			} else if(b.fridgeType != -1) {
 				if(b.fridgeType == 0) {
 					Fridge build = new Fridge(gp, b.x, b.y);
@@ -205,7 +212,6 @@ public class BuildingRegistry {
 		Building i = null;
 		switch(name) {
 			case "Bed" -> i = new Bed(gp, x, y);
-			case "Bin 1" -> i = new Bin(gp, x, y);
 			case "Breaker" -> i = new Breaker(gp, x, y);
 			case "Calendar" -> i = new Calendar(gp, x, y);
 			case "Candle 1" -> i = new Candle(gp, x, y, 0);
@@ -219,8 +225,7 @@ public class BuildingRegistry {
 			case "Kitchen Sink 1" -> i = new Sink(gp, x, y);
 			case "Soul Lantern" -> i = new SoulLantern(gp, x, y);
 			case "Stove" -> i = new Stove(gp, x, y);
-			case "Table 1" -> i = new Table(gp, x, y);
-			case "Table 2" -> i = new Table2(gp, x, y);
+			case "Large Table" -> i = new LargeTable(gp, x, y);
 			case "Chopping Board 1" -> i = new ChoppingBoard(gp, x, y);
 			case "Turntable" -> i = new Turntable(gp, x, y);
 			case "Tip Jar" -> i = new TipJar(gp, x, y);
@@ -245,6 +250,7 @@ public class BuildingRegistry {
 			case "Trapdoor 1" -> i = new Trapdoor(gp, x, y, preset);
 			case "Shelf" -> i = new Shelf(gp, x, y, preset);
 			case "Window" -> i = new Window(gp, x, y, preset);
+			case "Bin 1" -> i = new Bin(gp, x, y, preset);
 		}
 
 		return i;

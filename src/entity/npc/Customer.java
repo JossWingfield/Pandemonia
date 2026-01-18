@@ -1,8 +1,7 @@
 package entity.npc;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -28,9 +27,10 @@ public class Customer extends NPC {
 	private boolean leaving = false;
 	public boolean waitingToOrder = false;
 	private boolean goingToToilet = false;
+	private boolean finishedMeal = false;
 	private boolean inToilet = false;
 	private boolean onToilet = false;
-	private Chair currentChair = null;
+	protected Chair currentChair = null;
 	private Toilet toilet = null;
 	public Recipe foodOrder = null;
 	private double eatTime = 5;
@@ -166,7 +166,13 @@ public class Customer extends NPC {
 		}
 		
 	}
-	
+	public List<Customer> getCustomersAtSameTable() {
+	    if (currentChair == null || currentChair.table == null) {
+	        return List.of(this); // fallback
+	    }
+
+	    return currentChair.table.getSeatedCustomers();
+	}
 	protected void findTable() {
 		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
 			currentChair = gp.buildingM.findFreeChair();
@@ -178,6 +184,26 @@ public class Customer extends NPC {
 			walking = true;
 		}
     }
+	private boolean isWholeTableFinishedEating() {
+	    for (Customer c : getCustomersAtSameTable()) {
+
+	        // Someone still hasn’t ordered
+	        if (!c.ordered) {
+	            return false;
+	        }
+
+	        // Someone is still actively eating
+	        if (c.eating) {
+	            return false;
+	        }
+
+	        // Someone hasn’t finished their meal yet
+	        if (!c.finishedMeal) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
 	protected void findToilet() {
 		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
 			toilet = gp.buildingM.findFreeToilet();
@@ -303,9 +329,11 @@ public class Customer extends NPC {
 		return eating;
 	}
 	public void takeOrder(double dt) {
-		orderTime+=dt;
+
+	    orderTime += dt;
+
 	    if (orderTime >= maxOrderTime) {
-	    	makeOrder();
+	        makeOrder();
 	        orderTime = 0;
 	        waitingToOrder = false;
 	    }
@@ -366,6 +394,7 @@ public class Customer extends NPC {
 		                	 break;
 		                 case 1:
 		                	 direction =  "Left";
+		                	 hitbox.x -= 6;
 		                	 break;
 		                 case 2:
 		                	 hitbox.x -= 6;
@@ -382,49 +411,94 @@ public class Customer extends NPC {
 	        }
 	    } else {
 	        // Waiting states
-	        if(!ordered) {
+	        if(!ordered && !finishedMeal) {
 	            if(!waitingToOrder) {
 	                waitForOrder();
 	            } else {
-	                if(hitbox.intersects(gp.player.interactHitbox)) {
-	                    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
-	                        takeOrder(dt);
-	                    }
-	                }
+	            	if (hitbox.intersects(gp.player.interactHitbox)) {
+	            	    if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+
+	            	        // Take orders for everyone at this table
+	            	        for (Customer c : getCustomersAtSameTable()) {
+	            	            if (!c.ordered) {
+	            	                c.takeOrder(dt);
+	            	            }
+	            	        }
+	            	    }
+	            	}
 	            }
 	        } 
 
 	        // If they have ordered but haven’t been served yet
 	        if((waitingToOrder && !ordered) || (ordered && !eating)) {
 	            float patienceIncrement = patienceFactor;
-	            if(gp.progressM.turntablePresent) {
+	            if(this instanceof GroupCustomer) {
+	            	patienceIncrement *= 0.6f;
+	            } else if(gp.progressM.turntablePresent) {
 	                patienceIncrement *= 0.8f; // 20% slower patience decrease
 	            }
+	         
 	            patienceCounter += patienceIncrement * dt;
 	        }
 
-	        if(eating) {
-	            eatCounter+=dt;
+	        if (eating) {
+	            eatCounter += dt;
 	            currentAnimation = 1;
-	            if(eatCounter >= eatTime) {
+
+	            if (eatCounter >= eatTime) {
+
 	                eatCounter = 0;
-	                atTable = false;
-	                currentChair.available = true;
-	                ordered = false;
-	                eating = false;
-	                goingToToilet = true;
+	                eating = false;        // this customer is done
+	                finishedMeal = true;
+
+	                // For groups, only trigger toilet when everyone is finished
+	                List<Customer> tableGroup = getCustomersAtSameTable();
+
+	                if (tableGroup.size() > 1) {
+
+	                    if (isWholeTableFinishedEating()) {
+	                        // Now the whole group can leave together
+	                        for (Customer c : tableGroup) {
+	                            c.atTable = false;
+	                            if (c.currentChair != null) {
+	                                c.currentChair.available = true;
+	                            }
+	                            c.goingToToilet = true;
+	                        }
+	                    }
+
+	                } else {
+	                    // Original single-customer behaviour
+	                    atTable = false;
+	                    if (currentChair != null) {
+	                        currentChair.available = true;
+	                    }
+	                    goingToToilet = true;
+	                }
 	            }
 	        }
 	    }
 	    
 	    // Global patience timeout check
-	    if(!eating && patienceCounter >= maxPatienceTime) {
-	        // ran out of patience before getting food
-	        leave(dt);
-	        RecipeManager.removeOrder(foodOrder);
-	        currentChair.available = true;
-	        unhappy = true;
-	        waitingToOrder = false;
+	    if (!eating && patienceCounter >= maxPatienceTime) {
+
+	        List<Customer> tableGroup = getCustomersAtSameTable();
+
+	        // If more than one person is at this table → group walkout
+	        if (tableGroup.size() > 1) {
+	            makeWholeTableLeave();
+	        } else {
+	            // Original single-customer behaviour
+	            leave(dt);
+	            RecipeManager.removeOrder(foodOrder);
+
+	            if (currentChair != null) {
+	                currentChair.available = true;
+	            }
+
+	            unhappy = true;
+	            waitingToOrder = false;
+	        }
 	    }
 	    flickerCounter+=dt;
 	    if (flickerCounter >= flickerSpeed) {
@@ -451,6 +525,23 @@ public class Customer extends NPC {
 	    		  animationCounter = 0; //Loops the animation
 	    	  }
 	      }
+	}
+	private void makeWholeTableLeave() {
+	    for (Customer c : getCustomersAtSameTable()) {
+
+	        // Cancel any active orders
+	        if (c.foodOrder != null) {
+	            RecipeManager.removeOrder(c.foodOrder);
+	        }
+
+	        if (c.currentChair != null) {
+	            c.currentChair.available = true;
+	        }
+
+	        c.unhappy = true;
+	        c.waitingToOrder = false;
+	        c.leaving = true;
+	    }
 	}
 	public void setCelebrityPresent(boolean isPresent) {
 		celebrityPresent = isPresent;

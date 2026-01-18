@@ -89,6 +89,19 @@ public class BuildingManager {
     public Building[] getBuildings() {
     	return buildings;
     }
+    public void removeAllWithName(String name) {
+        for (int i = 0; i < buildings.length; i++) {
+            Building b = buildings[i];
+            if (b != null && b.getName().equals(name)) {
+
+                // Clean up building state
+                b.destroy();
+
+                // Remove reference
+                buildings[i] = null;
+            }
+        }
+    }
     public void checkBuildingConnections() {
     	List<Building> shelves = gp.buildingM.findBuildingsWithName("Shelf");
 	    for (Building b: shelves) {
@@ -271,7 +284,65 @@ public class BuildingManager {
 			if(b != null) {
 				if(b.getName().equals("Chair 1")) {
 					Chair chair = (Chair)b;
-					if(chair.available) {
+					if(chair.available && !chair.tablePlate.showDirtyPlate) {
+						return chair;
+					}
+				}	
+			}
+		}
+		return null;
+	}
+	public Chair isFreeSingleChair() {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Chair 1")) {
+					Chair chair = (Chair)b;
+					if(chair.available && !chair.tablePlate.showDirtyPlate && !chair.groupChair) {
+						return chair;
+					}
+				}	
+			}
+		}
+		return null;
+	}
+	public Chair isGroupTable() {
+
+	    for (Building b : buildings) {
+	        if (b != null && b.getName().equals("Chair 1")) {
+
+	            Chair chair = (Chair) b;
+
+	            // Must be a group chair
+	            if (!chair.groupChair) continue;
+
+	            boolean tableFree = true;
+
+	            // Check ALL chairs on this table
+	            for (Chair c : chair.table.getChairs()) {
+
+	                // If any chair is occupied OR has a dirty plate, the table isn't free
+	                if (!c.available || c.tablePlate.showDirtyPlate) {
+	                    tableFree = false;
+	                    break;
+	                }
+	            }
+
+	            // Only return the chair if the whole table is free & clean
+	            if (tableFree) {
+	                return chair;
+	            }
+	        }
+	    }
+
+	    return null;
+	}
+	public Chair takeGroupChair() {
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.getName().equals("Chair 1")) {
+					Chair chair = (Chair)b;
+					if(chair.available && !chair.tablePlate.showDirtyPlate && chair.groupChair) {
+						chair.available = false;
 						return chair;
 					}
 				}	
@@ -295,7 +366,7 @@ public class BuildingManager {
 			if(b != null) {
 				if(b.getName().equals("Chair 1")) {
 					Chair chair = (Chair)b;
-					if(chair.available && !chair.tablePlate.showDirtyPlate) {
+					if(chair.available && !chair.tablePlate.showDirtyPlate && !chair.groupChair) {
 						chair.available = false;
 						return chair;
 					}

@@ -188,7 +188,7 @@ public class MenuSign extends Building {
 	    List<Recipe> specials = gp.world.getTodaysSpecials();
 	    unlocked.removeAll(specials);
 	    
-	    float fontScale = 1.0f;
+	    float fontScale = 0.7f;
 
 	    int startX = 120;
 	    int startY = 256;
@@ -225,7 +225,7 @@ public class MenuSign extends Building {
 	        for (int a = 0; a < recipe.getStarLevel(); a++) {
 	            text += " *";
 	        }
-	        renderer.drawString(font, text, textX, textY, 1.0f, c);
+	        renderer.drawString(font, text, textX, textY, fontScale, c);
 	    }
 
 	    // Specials list – use cached data too
@@ -258,7 +258,7 @@ public class MenuSign extends Building {
 	        for (int a = 0; a < recipe.getStarLevel(); a++) {
 	            text += " *";
 	        }
-	        renderer.drawString(font, text, textX, textY, 1.0f, c2);
+	        renderer.drawString(font, text, textX, textY, fontScale, c2);
 	    }
 
 	    // Draw chosen menu slots with cached data

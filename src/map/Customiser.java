@@ -1087,8 +1087,8 @@ public class Customiser {
 						    } else if (
 						        ("Table Piece".equals(name) ||
 						        "Table Corner 1".equals(name) ||
-						        "Table 1".equals(name) ||
-						        "Table 2".equals(name)) &&
+						        "Table 1".equals(name)) ||
+						        "Large Table".equals(name) &&
 						        b.buildHitbox.intersects(buildHitbox)
 						    ) {
 						        onTable = true;

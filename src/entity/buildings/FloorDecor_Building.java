@@ -1491,6 +1491,39 @@ public class FloorDecor_Building extends Building {
 			break;
 		}
 	}
+	public void destroy() {
+
+	    // Only tables clean up table-placed buildings
+	    if (name.equals("Table Piece")) {
+	    	
+	        BuildingManager bm = gp.buildingM;
+	        
+	        for (int i = 0; i < bm.getBuildings().length; i++) {
+	            Building b = bm.getBuildings()[i];
+
+	            if (b == null || b == this) continue;
+
+	            // If it was placed on a table
+	            if (b.mustBePlacedOnTable || b.canBePlacedOnTable) {
+
+	                // Optional: ensure it's actually on THIS table
+	                if (this.hitbox.intersects(b.hitbox)) {
+
+	                    // Return to customiser inventory
+	                	if(b.canBePlaced) {
+	                		gp.customiser.addToInventory(b);
+	                	}
+	                    
+	                    // Destroy & remove it
+	                    b.destroy();
+	                    bm.getBuildings()[i] = null;
+	                }
+	            }
+	        }
+	    }
+
+	    // Any other per-building cleanup here
+	}
 	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;

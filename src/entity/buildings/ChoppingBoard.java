@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFW;
 
 import entity.items.Food;
 import entity.items.FoodState;
+import entity.items.Plate;
 import main.GamePanel;
 import main.renderer.Colour;
 import main.renderer.Renderer;
@@ -42,6 +43,7 @@ public class ChoppingBoard extends Building {
 		importImages();
 		isSolid = false;
 		setupRecipes();
+		canBePlaced = false;
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;
 		//isSecondLayer = true;
@@ -93,6 +95,15 @@ public class ChoppingBoard extends Building {
 						    			packet2.writeData(gp.socketClient); 
 						    		}
 				    			}
+				    		} else if(gp.player.currentItem instanceof Plate p) {
+				    			if(currentItem != null) {
+					    			if(p.canBePlated(currentItem.getName(), currentItem.foodState)) {
+					    				currentItem.foodState = FoodState.PLATED;
+										p.addIngredient(currentItem);
+										currentItem = null;
+										clickCooldown = 0.333;
+					    			}
+				    			}
 				    		}
 				    	} else {
 				    		if(currentItem != null) {
@@ -128,7 +139,7 @@ public class ChoppingBoard extends Building {
 						    			packet2.writeData(gp.socketClient); 
 						    		}
 					    		}
-				    		} else {
+				    		}else {
 					    		gp.player.currentItem = currentItem;
 					    		currentItem = null;
 					    		clickCooldown = 0.333;
