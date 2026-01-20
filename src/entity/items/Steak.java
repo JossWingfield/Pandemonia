@@ -18,9 +18,8 @@ public class Steak extends Food{
 	private void importImages() {
 		animations = new TextureRegion[1][1][5];
 		
-		animations[0][0][0] = importImage("/food/Steak.png").getSubimage(0, 0, 16, 16);
-		animations[0][0][1] = importImage("/food/Steak.png").getSubimage(16, 0, 16, 16);
-		animations[0][0][3] = importImage("/food/Steak.png").getSubimage(16, 0, 16, 16);
+		rawImage = importImage("/food/Steak.png").getSubimage(0, 0, 16, 16);
+		panPlated = importImage("/food/Steak.png").getSubimage(16, 0, 16, 16);
 	}
 	
 	

@@ -16,11 +16,8 @@ public class Spaghetti extends Food {
 	private void importImages() {
 		animations = new TextureRegion[1][1][5];
 		
-		animations[0][0][0] = importImage("/food/pasta/Spaghetti.png").getSubimage(16, 0, 16, 16);
-		animations[0][0][1] = importImage("/food/pasta/Spaghetti.png").getSubimage(32, 0, 16, 16);
-		animations[0][0][2] = importImage("/food/pasta/Spaghetti.png").getSubimage(32, 0, 16, 16);
-		animations[0][0][3] = importImage("/food/pasta/Spaghetti.png").getSubimage(32, 0, 16, 16);
-		animations[0][0][4] = importImage("/food/pasta/Spaghetti.png").getSubimage(32, 0, 16, 16);
+		rawImage = importImage("/food/pasta/Spaghetti.png").getSubimage(16, 0, 16, 16);
+		potPlated = importImage("/food/pasta/Spaghetti.png").getSubimage(32, 0, 16, 16);
 	}
 	
 	

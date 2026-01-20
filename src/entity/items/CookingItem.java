@@ -93,6 +93,7 @@ public class CookingItem extends Item {
 		flickerThreshold = Math.round(maxCookTime * flickerFraction);
 		maxBurnTime = Math.round(maxCookTime * burnFraction);
 		cookStyle = CookStyleResolver.resolve(cookingItem, this, gp);
+		cookingItem.cookedBy = name;
 		
 		boolean requiresFlip = cookStyle == CookStyle.FLIP;
 
@@ -255,6 +256,7 @@ public class CookingItem extends Item {
 	    } else {
 	        // Bad flip timing
 	        cookingItem.foodState = FoodState.BURNT;
+	        setBurntImage();
 	        stopCooking();
 	    }
 	}

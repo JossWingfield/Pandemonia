@@ -10,7 +10,9 @@ public class Food extends Item {
 	public FoodState foodState;
 	
 	protected int foodLayer = 0;
-	private Texture burntImage;
+	protected TextureRegion burntImage;
+	public TextureRegion potPlated, panPlated, rawImage, choppedImage, generalPlated, ovenPlated;
+	public String cookedBy = "";
 	public boolean cutIntoNewItem = false;
 	public boolean notRawItem = false;
 	protected int chopCount = 12;
@@ -19,7 +21,7 @@ public class Food extends Item {
 	public Food(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos);
 		foodState = FoodState.RAW;
-		burntImage = importImage("/food/BurntFood.png");
+		burntImage = importImage("/food/BurntFood.png").toTextureRegion();
 	}
 	public void setState(int state) {
 		switch(state) {
@@ -35,9 +37,6 @@ public class Food extends Item {
 		case 3:
 			this.foodState = FoodState.PLATED;
 			break;
-		case 4:
-			this.foodState = FoodState.FINISHED;
-			break;
 		}
 	}
 	public int getState() {
@@ -50,8 +49,6 @@ public class Food extends Item {
 			return 2;
 		case PLATED:
 			return 3;
-		case FINISHED:
-			return 4;
 		}
 		return -1;
 	}
@@ -62,19 +59,30 @@ public class Food extends Item {
 		 TextureRegion img = animations[0][0][0];
 		 switch(foodState) {
 		 case RAW:
-			 img = animations[0][0][0];
+			 img = rawImage;
 			 break;
 		 case COOKED:
-			 img = animations[0][0][1];
+			 if(cookedBy.equals("Frying Pan")) {
+				 img = panPlated;
+			 } else if(cookedBy.equals("Small Pot")){
+				 img = potPlated;
+			 } else if(cookedBy.equals("Oven")){
+				 img = ovenPlated;
+			 }
 			 break;
 		 case PLATED:
-			 img = animations[0][0][2];
-			 break;
-		 case FINISHED:
-			 img = animations[0][0][3];
+			 if(cookedBy.equals("Frying Pan")) {
+				 img = panPlated;
+			 } else if(cookedBy.equals("Small Pot")){
+				 img = potPlated;
+			 } else if(cookedBy.equals("Oven")){
+				 img = ovenPlated;
+			 } else {
+				 img = generalPlated;
+			 }
 			 break;
 		 case CHOPPED:
-			 img = animations[0][0][4];
+			 img = choppedImage;
 			 break;
 		 }
 		 
@@ -85,22 +93,37 @@ public class Food extends Item {
 		 TextureRegion img = animations[0][0][0];
 		 switch(foodState) {
 		 case RAW:
-			 img = animations[0][0][0];
+			 //0
+			 img = rawImage;
 			 break;
 		 case COOKED:
-			 img = animations[0][0][1];
+			 //1
+			 if(cookedBy.equals("Frying Pan")) {
+				 img = panPlated;
+			 } else if(cookedBy.equals("Small Pot")){
+				 img = potPlated;
+			 } else if(cookedBy.equals("Oven")){
+				 img = ovenPlated;
+			 }
 			 break;
 		 case PLATED:
-			 img = animations[0][0][2];
-			 break;
-		 case FINISHED:
-			 img = animations[0][0][3];
+			 //2
+			 if(cookedBy.equals("Frying Pan")) {
+				 img = panPlated;
+			 } else if(cookedBy.equals("Small Pot")){
+				 img = potPlated;
+			 } else if(cookedBy.equals("Oven")){
+				 img = ovenPlated;
+			 } else {
+				 img = generalPlated;
+			 }
 			 break;
 		 case CHOPPED:
-			 img = animations[0][0][4];
+			 //4
+			 img = choppedImage;
 			 break;
 		 case BURNT:
-			 img = burntImage.toTextureRegion();
+			 img = burntImage;
 			 break;
 		 }
 		 return img;

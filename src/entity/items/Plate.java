@@ -23,6 +23,7 @@ public class Plate extends Item {
     public TextureRegion dirtyImage;
 
     private List<String> ingredients = new ArrayList<>();
+    private List<String> cookMethods = new ArrayList<>();
     private List<TextureRegion> ingredientImages = new ArrayList<>();
     private Set<String> platableFoods = new HashSet<>();
     private Set<String> bypassPlateFoods = new HashSet<>();
@@ -114,7 +115,7 @@ public class Plate extends Item {
     	this.isDirty = isDirty;
     	
     	 if(isDirty) {
-        	 Recipe matched = RecipeManager.getMatchingRecipe(getIngredients());
+        	 Recipe matched = RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods());
      		 this.dirtyImage = matched.dirtyPlate;
     	 }
     	 seasoningQuality = -1;
@@ -159,6 +160,7 @@ public class Plate extends Item {
         while (ingredients.size() < MAX_LAYERS) {
             ingredients.add(null);
             ingredientImages.add(null);
+            cookMethods.add(null);
         }
 
         // Find the next free layer starting from preferredLayer
@@ -176,37 +178,73 @@ public class Plate extends Item {
         // Insert ingredient
         ingredientImages.set(targetLayer, foodItem.getImage());
         ingredients.set(targetLayer, foodItem.name);
+        cookMethods.set(targetLayer, foodItem.cookedBy);
 
         // === Recipe check ===
         List<String> currentIngredients = new ArrayList<>();
         for (String ing : ingredients) {
             if (ing != null) currentIngredients.add(ing);
         }
+        List<String> currentMethods = new ArrayList<>();
+        for (String ing : cookMethods) {
+            if (ing != null) currentMethods.add(ing);
+        }
 
-        matchedRecipe = RecipeManager.getMatchingRecipe(currentIngredients);
+        matchedRecipe = RecipeManager.getMatchingRecipe(currentIngredients, currentMethods);
         matchedRecipeImage = getMatchingRecipeIgnoringSeasoning();
     }
     public TextureRegion getMatchingRecipeIgnoringSeasoning() {
-        for (Recipe recipe : RecipeManager.getAllRecipes()) {
-            // Skip recipes that don't match in ingredient count (excluding seasoning)
-            List<String> requiredIngredients = new ArrayList<>(recipe.getIngredients());
-            requiredIngredients.removeIf(this::isSeasoningIngredient); // remove all seasonings from the recipe
 
-            // Collect plate’s non-seasoning ingredients
-            List<String> plateIngredients = new ArrayList<>();
-            for (String ing : this.ingredients) {
-            	if(ing != null) {
-            		if (!isSeasoningIngredient(ing)) {
-                		plateIngredients.add(ing);
-                	}
-            	}
+        for (Recipe recipe : RecipeManager.getAllRecipes()) {
+
+            // ----- Build filtered ingredient list from recipe -----
+            List<String> requiredIngredients = new ArrayList<>(recipe.getIngredients());
+            List<String> requiredMethods = new ArrayList<>(recipe.getCookingStates());
+
+            // Remove seasoning entries from recipe side
+            for (int i = requiredIngredients.size() - 1; i >= 0; i--) {
+                if (isSeasoningIngredient(requiredIngredients.get(i))) {
+                    requiredIngredients.remove(i);
+                    requiredMethods.remove(i);
+                }
             }
 
-            // Compare
-            if (plateIngredients.size() == requiredIngredients.size() && plateIngredients.containsAll(requiredIngredients)) {
+            // ----- Build filtered ingredient + method lists from this plate -----
+            List<String> plateIngredients = new ArrayList<>();
+            List<String> plateMethods = new ArrayList<>();
+
+            for (int i = 0; i < this.ingredients.size(); i++) {
+                String ing = this.ingredients.get(i);
+
+                if (ing != null && !isSeasoningIngredient(ing)) {
+                    plateIngredients.add(ing);
+
+                    if (i < this.cookMethods.size()) {
+                        String method = this.cookMethods.get(i);
+
+                        // SKIP chopping board steps completely
+                        if (!"Chopping Board".equals(method)) {
+                            plateMethods.add(method);
+                        } else {
+                            plateMethods.add(""); // treat as "no specific method"
+                        }
+                    }
+                }
+            }
+
+            // Also remove chopping board requirements from recipe side
+            for (int i = requiredMethods.size() - 1; i >= 0; i--) {
+                if ("Chopping Board".equals(requiredMethods.get(i))) {
+                    requiredMethods.set(i, "");
+                }
+            }
+
+            // ----- Now use the REAL recipe matching logic -----
+            if (recipe.matches(plateIngredients, plateMethods)) {
                 return recipe.finishedPlate;
             }
         }
+
         return null;
     }
     private boolean isSeasoningIngredient(String ingredientName) {
@@ -228,7 +266,13 @@ public class Plate extends Item {
         }
         return result;
     }
-
+    public List<String> getCookMethods() {
+        List<String> result = new ArrayList<>();
+        for (String ing : cookMethods) {
+            if (ing != null) result.add(ing);
+        }
+        return result;
+    }
     public void clearIngredients() {
         ingredients.clear();
         ingredientImages.clear();
@@ -238,11 +282,11 @@ public class Plate extends Item {
     }
 
     public boolean isFinishedRecipe() {
-        return RecipeManager.getMatchingRecipe(getIngredients()) != null;
+        return RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods()) != null;
     }
 
     public String getFinishedRecipeName() {
-        Recipe matched = RecipeManager.getMatchingRecipe(getIngredients());
+        Recipe matched = RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods());
         return matched != null ? matched.getName() : null;
     }
     public void draw(Renderer renderer) {

@@ -94,7 +94,7 @@ public class World {
     public boolean fadingIn = false;
     private float fadeSpeed = 0.7f; // tweak for faster/slower fade
     
-    private int groupChance = 100;
+    private int groupChance = 20;
 
     public World(GamePanel gp) {
         this.gp = gp;
@@ -299,6 +299,9 @@ public class World {
 	                    } else {
 		                    // Decide WHAT to spawn first
 	                      	boolean tryGroup = random.nextInt(100) < groupChance;
+	                      	if(gp.progressM.currentPhase == 1) {
+	                      		tryGroup = false;
+	                      	}
 	                      	if (tryGroup && gp.mapM.getRoom(0).isGroupTable() != null) {
 		                        // Spawn a group if we got lucky AND a group table exists
 		                    	gp.mapM.getRoom(0).addGroup(random.nextInt(2) + 3);

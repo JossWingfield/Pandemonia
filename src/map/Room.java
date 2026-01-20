@@ -357,10 +357,10 @@ public class Room {
 			door.setDoorNum(7);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
-			Rubble barricade = new Rubble(gp, 732, 432+16, 3);
-			barricade.setBarricade();
-			buildings[arrayCounter] = barricade;
-			arrayCounter++;
+			//Rubble barricade = new Rubble(gp, 732, 432+16, 3);
+			//barricade.setBarricade();
+			//buildings[arrayCounter] = barricade;
+			//arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 384, 5);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 636, 312, 8);

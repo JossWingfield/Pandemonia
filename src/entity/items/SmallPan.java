@@ -9,7 +9,7 @@ public class SmallPan extends CookingItem {
 	
 	public SmallPan(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos);
-		name = "Small Pan";
+		name = "Small Pot";
 		importImages();
 		setupRecipes();
 		xDrawOffset = 10;
@@ -41,6 +41,9 @@ public class SmallPan extends CookingItem {
 	    
 	    rawIngredients.add("Penne");
 	    cookedResults.add("Cooked Penne");
+	    
+	    rawIngredients.add("Egg");
+	    cookedResults.add("Scrambled Egg");
 
 	    // Add more recipes as needed
 	}

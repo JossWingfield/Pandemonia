@@ -1,6 +1,5 @@
 package entity.buildings;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +13,7 @@ import entity.items.Chicken;
 import entity.items.Egg;
 import entity.items.Fish;
 import entity.items.Food;
+import entity.items.Garlic;
 import entity.items.Greens;
 import entity.items.Item;
 import entity.items.Penne;
@@ -87,6 +87,8 @@ public class StorageFridge extends Building {
 		if(starterFridge) {
 			contents.add(new Tomato(gp, 0, 0));
 			contents.add(new Greens(gp, 0, 0));
+		} else {
+			contents.add(new Garlic(gp, 0, 0));
 		}
 
 	}
@@ -186,7 +188,7 @@ public class StorageFridge extends Building {
 	            renderer.draw(ui2, x, y, slotSize, slotSize);
 
 	            // Draw food item icon
-	            TextureRegion itemImage = contents.get(i).animations[0][0][0];
+	            TextureRegion itemImage = contents.get(i).getImage();
 	            int iconSize = 16 * 3;
 	            int offset = (slotSize - iconSize) / 2;
 	            renderer.draw(itemImage, x + offset, y + offset, iconSize, iconSize);

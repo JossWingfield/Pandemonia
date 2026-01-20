@@ -22,6 +22,7 @@ public class CookStyleResolver {
         		case "Spaghetti" -> CookStyle.STIR;
         		case "Penne" -> CookStyle.STIR;
            		case "Fish" -> CookStyle.PASSIVE;
+           		case "Egg" -> CookStyle.STIR;
 
         		default -> CookStyle.PASSIVE;
         	};

@@ -14,11 +14,9 @@ public class Sage extends Seasoning {
 	private void importImages() {
 		animations = new TextureRegion[1][1][5];
 		
-		animations[0][0][0] = importImage("/food/seasoning/sage.png").getSubimage(0, 16, 16, 16);
-		animations[0][0][1] = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
-		animations[0][0][2] = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
-		animations[0][0][3] = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
-		animations[0][0][4] = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
+		rawImage = importImage("/food/seasoning/sage.png").getSubimage(0, 16, 16, 16);
+		choppedImage = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
+		generalPlated = importImage("/food/seasoning/Seasoning.png").toTextureRegion();;
 	}
 
 }

@@ -3,11 +3,11 @@ package entity.items;
 import main.GamePanel;
 import main.renderer.TextureRegion;
 
-public class Bread extends Food {
+public class BreadSlice extends Food {
 	
-	public Bread(GamePanel gp, float xPos, float yPos) {
+	public BreadSlice(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos);
-		name = "Bread";
+		name = "Bread Slice";
 		importImages();
 		foodLayer = 2;
 		chopCount = 12;

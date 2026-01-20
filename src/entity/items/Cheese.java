@@ -16,9 +16,9 @@ public class Cheese extends Food {
 	private void importImages() {
 		animations = new TextureRegion[1][1][5];
 		
-		animations[0][0][0] = importImage("/food/cheese/Cheese.png").getSubimage(0, 0, 16, 16);
-		animations[0][0][4] = importImage("/food/cheese/Cheese.png").getSubimage(0, 16, 16, 16);
-		animations[0][0][2] = importImage("/food/cheese/Cheese.png").getSubimage(0, 32, 16, 16);
+		rawImage = importImage("/food/cheese/Cheese.png").getSubimage(0, 0, 16, 16);
+		choppedImage = importImage("/food/cheese/Cheese.png").getSubimage(0, 16, 16, 16);
+		generalPlated = importImage("/food/cheese/Cheese.png").getSubimage(0, 32, 16, 16);
 	}
 	
 	

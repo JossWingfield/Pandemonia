@@ -167,11 +167,7 @@ public class ChoppingBoard extends Building {
 	    
 	    if(currentItem != null) {
 		    renderer.draw(animations[0][0][2], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-		    if(currentItem.foodState == FoodState.RAW) {
-		    	renderer.draw(currentItem.animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-		    } else {
-		    	renderer.draw(currentItem.animations[0][0][4], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-		    }
+	    	renderer.draw(currentItem.getImage(), (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    }
 	    
 	    

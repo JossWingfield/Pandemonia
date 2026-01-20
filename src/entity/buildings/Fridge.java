@@ -186,7 +186,7 @@ public class Fridge extends Building {
 
                 renderer.draw(ui2, x, y, slotSize, slotSize);
 
-                TextureRegion itemImage = contents.get(i).animations[0][0][0];
+                TextureRegion itemImage = contents.get(i).getImage();
                 if(contents.get(i) instanceof Food food) {
                 	itemImage = food.getImage();
                 }

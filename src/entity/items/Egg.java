@@ -16,10 +16,9 @@ public class Egg extends Food {
 	private void importImages() {
 		animations = new TextureRegion[1][1][4];
 		
-		animations[0][0][0] = importImage("/food/egg/Egg.png").toTextureRegion();;
-		animations[0][0][1] = importImage("/food/egg/PlatedEgg.png").toTextureRegion();;
-		animations[0][0][2] = importImage("/food/egg/PlatedEgg.png").toTextureRegion();;
-		animations[0][0][3] = importImage("/food/food.png").getSubimage(32, 112, 16, 16);
+		rawImage = importImage("/food/egg/Egg.png").toTextureRegion();
+		panPlated = importImage("/food/egg/PlatedEgg.png").toTextureRegion();
+		potPlated = importImage("/food/egg/ScrambledEgg.png").getSubimage(16, 0, 16, 16);
 	}
 	
 	

@@ -30,6 +30,7 @@ public class Oven extends Building {
 	private boolean cooking = false;
     private double cookCount = 0;
     private double maxCookCount = 20;
+    private TextureRegion completeSign;
     
 	private boolean destroyed = false;
 	
@@ -46,6 +47,7 @@ public class Oven extends Building {
 		setupRecipes();
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
+		completeSign = importImage("/UI/Tick.png").getSubimage(0, 0, 16, 16);
 	}
 	public void onPlaced() {
 		buildHitbox = hitbox;
@@ -92,6 +94,7 @@ public class Oven extends Building {
 					    			if(f.foodState == FoodState.RAW) {
 							    		currentItem = (Food)gp.player.currentItem;
 							    		cooking = true;
+							    		currentItem.cookedBy = "Oven";
 							    		gp.player.currentItem = null;
 							    		clickCooldown = 0.1;
 					    			}
@@ -150,6 +153,8 @@ public class Oven extends Building {
 		if(currentItem != null) {
 			if(currentItem.foodState == FoodState.RAW) {
 				drawCookingBar(renderer, (int) hitbox.x  + 24, (int) (hitbox.y ) + 24+48, (int)cookCount, (int)maxCookCount);
+			} else {
+				drawCookingWarning(renderer, (int) hitbox.x, (int) (hitbox.y ));
 			}
 		}
 	}
@@ -184,6 +189,11 @@ public class Oven extends Building {
 	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 
 	}
+	public void drawCookingWarning(Renderer renderer, int x, int y) {
+		if(currentItem.foodState.equals(FoodState.COOKED)) {
+			renderer.draw(completeSign,(int)(x ),(int)(y  - 48),48, 48);
+		}
+	}
 	 private void setupRecipes() {
 		 rawIngredients = new ArrayList<>();
 		 cookedResults = new ArrayList<>();
@@ -193,6 +203,9 @@ public class Oven extends Building {
 	     
 		 rawIngredients.add("Chicken");
 		 cookedResults.add("Cooked Chicken");
+		 
+		 rawIngredients.add("Bread Slice");
+		 cookedResults.add("Toast");
 	}
 	public boolean canCook(String itemName) {
 		return rawIngredients.contains(itemName);

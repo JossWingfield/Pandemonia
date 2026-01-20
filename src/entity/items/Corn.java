@@ -15,7 +15,7 @@ public class Corn extends Food {
 	private void importImages() {
 		animations = new TextureRegion[1][1][5];
 		
-		animations[0][0][0] = importImage("/food/crops/corn.png").getSubimage(16, 16, 16, 16);
+		rawImage = importImage("/food/crops/corn.png").getSubimage(16, 16, 16, 16);
 	}
 	
 	

@@ -197,7 +197,7 @@ public class Stove extends Building {
 							leftSlot = null;
 						}
 					} else {
-						if(leftSlot.getName().equals("Small Pan")) {
+						if(leftSlot.getName().equals("Small Pot")) {
 							SmallPan pan = (SmallPan)leftSlot;
 							if(pan.canCook(gp.player.currentItem.getName()) && pan.cookingItem == null) {
 								Food f = (Food)gp.player.currentItem;
@@ -295,7 +295,7 @@ public class Stove extends Building {
 			if(gp.player.currentItem != null) {
 				if(gp.player.clickCounter == 0 && gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 					if(leftHitbox.intersects(gp.player.hitbox)) {
-						if(gp.player.currentItem.getName().equals("Small Pan") || gp.player.currentItem.getName().equals("Frying Pan")) {
+						if(gp.player.currentItem.getName().equals("Small Pot") || gp.player.currentItem.getName().equals("Frying Pan")) {
 							leftSlot = (CookingItem)gp.player.currentItem;
 							String foodName = null;
 							String itemName = null;
@@ -383,7 +383,7 @@ public class Stove extends Building {
 							rightSlot = null;
 						}
 					} else {
-						if(rightSlot.getName().equals("Small Pan")) {
+						if(rightSlot.getName().equals("Small Pot")) {
 							SmallPan pan = (SmallPan)rightSlot;
 							if(pan.canCook(gp.player.currentItem.getName()) && pan.cookingItem == null) {
 								Food f = (Food)gp.player.currentItem;
@@ -481,7 +481,7 @@ public class Stove extends Building {
 			if(gp.player.currentItem != null) {
 				if(gp.player.clickCounter == 0 && gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 					if(rightHitbox.intersects(gp.player.hitbox)) {
-						if(gp.player.currentItem.getName().equals("Small Pan") || gp.player.currentItem.getName().equals("Frying Pan")) {
+						if(gp.player.currentItem.getName().equals("Small Pot") || gp.player.currentItem.getName().equals("Frying Pan")) {
 							rightSlot = (CookingItem)gp.player.currentItem;
 							String foodName = null;
 							String itemName = null;
@@ -553,7 +553,7 @@ public class Stove extends Building {
 		}
 		
 		if(leftSlot != null) {
-			if(leftSlot.getName().equals("Small Pan")) {
+			if(leftSlot.getName().equals("Small Pot")) {
 				renderer.draw(leftSlot.animations[0][0][0], (int) hitbox.x - xDrawOffset  + 18, (int) (hitbox.y )-yDrawOffset+48+10, 48, 48);
 				if(leftHitbox.intersects(gp.player.hitbox)) {
 					renderer.draw(leftSlot.animations[0][0][2], (int) hitbox.x - xDrawOffset  + 18, (int) (hitbox.y )-yDrawOffset+48+10, 48, 48);
@@ -583,7 +583,7 @@ public class Stove extends Building {
 			renderer.draw(rightSlot.animations[0][0][0], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 			if(rightHitbox.intersects(gp.player.hitbox)) {
 				renderer.draw(rightSlot.animations[0][0][2], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
-				if(rightSlot.getName().equals("Small Pan")) {
+				if(rightSlot.getName().equals("Small Pot")) {
 					SmallPan pan = (SmallPan)rightSlot;
 					if(pan.cookingItem != null) {
 						renderer.draw(rightSlot.animations[0][0][4], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
@@ -622,7 +622,6 @@ public class Stove extends Building {
 		if (rightSlot instanceof FryingPan pan && pan.isCooking()) {
 			renderer.draw(rightSlot.animations[0][0][3], (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 48, 48);
 			renderer.draw(rightCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-
 		}
 		
 		if(leftSlot != null) {

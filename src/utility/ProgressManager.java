@@ -619,6 +619,7 @@ public class ProgressManager {
 		gp.gui.addMessage("Ignis has found peace.", Colour.GREEN);
 		//achievements.get("master_of_heat").unlock();
 		
+		currentPhase = 2;
 		
 		if(gp.mapM.isInRoom(9)) {
 			Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");

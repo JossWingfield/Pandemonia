@@ -45,7 +45,8 @@ public class Recipe {
         this.dirtyPlate = dirtyImage;
         this.baseCost = cost;
     }
-    public boolean matches(List<String> plateIngredients) {
+    /*
+    public boolean matches(List<String> plateIngredients, List<String> cookMethod) {
         if (plateIngredients.size() != requiredIngredients.size()) return false;
 
         if (orderMatters) {
@@ -69,6 +70,66 @@ public class Recipe {
 
             return requiredCount.equals(plateCount);
         }
+    }
+    */
+    public boolean matches(List<String> plateIngredients, List<String> cookMethod) {
+
+        // First check ingredient count
+        if (plateIngredients.size() != requiredIngredients.size()) {
+            return false;
+        }
+
+        // ----- INGREDIENT MATCHING -----
+
+        if (orderMatters) {
+            for (int i = 0; i < requiredIngredients.size(); i++) {
+                if (!plateIngredients.get(i).equals(requiredIngredients.get(i))) {
+                    return false;
+                }
+            }
+        } else {
+            // Unordered ingredient match using frequency count
+            Map<String, Integer> requiredCount = new HashMap<>();
+            Map<String, Integer> plateCount = new HashMap<>();
+
+            for (String ing : requiredIngredients) {
+                requiredCount.put(ing, requiredCount.getOrDefault(ing, 0) + 1);
+            }
+            for (String ing : plateIngredients) {
+                plateCount.put(ing, plateCount.getOrDefault(ing, 0) + 1);
+            }
+
+            if (!requiredCount.equals(plateCount)) {
+                return false;
+            }
+        }
+
+        // ----- COOK METHOD MATCHING -----
+
+        if (cookMethod.size() != cookingStates.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < cookingStates.size(); i++) {
+            String expected = cookingStates.get(i);
+            String actual = cookMethod.get(i);
+
+            // If either side is chopping board, ignore this slot completely
+            if ("Chopping Board".equals(expected) || "Chopping Board".equals(actual)) {
+                continue;
+            }
+
+            // Empty expected = don't care
+            if (expected == null || expected.isEmpty()) {
+                continue;
+            }
+
+            if (!expected.equals(actual)) {
+                return false;
+            }
+        }
+
+        return true;
     }
     public void setCursed() {
     	isCursed = true;

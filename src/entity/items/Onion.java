@@ -3,19 +3,20 @@ package entity.items;
 import main.GamePanel;
 import main.renderer.TextureRegion;
 
-public class Asparagus extends Food {
+public class Onion extends Food {
 	
-	public Asparagus(GamePanel gp, float xPos, float yPos) {
+	public Onion(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos);
-		name = "Asparagus";
+		name = "Onion";
 		importImages();
 		foodLayer = 1;
+		cookTime = 18;
 	}
 	
 	private void importImages() {
 		animations = new TextureRegion[1][1][5];
 		
-		rawImage = importImage("/food/crops/asparagus.png").getSubimage(16, 16, 16, 16);
+		rawImage = importImage("/food/crops/onion.png").getSubimage(16, 16, 16, 16);
 	}
 	
 	

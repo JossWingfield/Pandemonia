@@ -15,7 +15,7 @@ public class Leek extends Food {
 	private void importImages() {
 		animations = new TextureRegion[1][1][5];
 		
-		animations[0][0][0] = importImage("/food/crops/leek.png").getSubimage(16, 16, 16, 16);
+		rawImage = importImage("/food/crops/leek.png").getSubimage(16, 16, 16, 16);
 	}
 	
 	

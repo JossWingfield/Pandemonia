@@ -1498,8 +1498,15 @@ public class FloorDecor_Building extends Building {
 	    	
 	        BuildingManager bm = gp.buildingM;
 	        
-	        for (int i = 0; i < bm.getBuildings().length; i++) {
-	            Building b = bm.getBuildings()[i];
+	        
+	        Building[] buildings = bm.getBuildings();
+	        
+	        if(!gp.mapM.isInRoom(roomNum)) {
+	        	buildings = gp.mapM.getRoom(roomNum).getBuildings();
+	        }
+	        
+	        for (int i = 0; i < buildings.length; i++) {
+	            Building b = buildings[i];
 
 	            if (b == null || b == this) continue;
 
@@ -1516,7 +1523,11 @@ public class FloorDecor_Building extends Building {
 	                    
 	                    // Destroy & remove it
 	                    b.destroy();
-	                    bm.getBuildings()[i] = null;
+	                    if(gp.mapM.isInRoom(roomNum)) {
+		                    bm.getBuildings()[i] = null;
+	                    } else {
+	                    	gp.mapM.getRoom(roomNum).getBuildings()[i] = null;
+	                    }
 	                }
 	            }
 	        }
