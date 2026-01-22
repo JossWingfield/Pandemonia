@@ -1,6 +1,5 @@
 package entity;
 
-import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.glfw.GLFW;
@@ -11,6 +10,7 @@ import entity.items.CookingItem;
 import entity.items.Food;
 import entity.items.FoodState;
 import entity.items.Item;
+import entity.items.OvenTray;
 import entity.items.Plate;
 import main.GamePanel;
 import main.KeyListener;
@@ -151,6 +151,7 @@ public class Player extends Entity{
         this.currentRoomIndex = data.currentRoomIndex;
         gp.mapM.setRoom(currentRoomIndex);
 
+        /*
         // Recreate item if needed
         if (data.currentItemName != null) {
             this.currentItem = gp.itemRegistry.getItemFromName(data.currentItemName, data.currentItemState);
@@ -158,6 +159,7 @@ public class Player extends Entity{
                 f.setState(data.currentItemState);
             }
         }
+        */
     }
     
     public void setSpawnPoint(int xPos, int yPos) {
@@ -453,6 +455,11 @@ public class Player extends Entity{
 			    				            currentItem = plate;
 			    				            clickCounter = 0.1;
 			    				        }
+			    				    } else if (table.currentItem instanceof OvenTray ovenTray) {
+			    						if(ovenTray.getFoodState().equals(FoodState.COOKED)) {
+			    				    		clickCounter = 0.1;
+			    				    		ovenTray.addToPlate(plate);
+			    				    	}
 			    				    }
 		    					}
 		    				} else if(currentItem instanceof Food food) {
@@ -478,7 +485,13 @@ public class Player extends Entity{
 		    							gp.player.currentItem = null;
 		    							clickCounter = 0.1;
 		    						}
-		    					}
+		    					} else if(table.currentItem instanceof OvenTray ovenTray) {
+		    						if(ovenTray.canBeAddedToTray(food.getName(), food.foodState)) {
+		    							ovenTray.addIngredient(food);
+		    							gp.player.currentItem = null;
+		    							clickCounter = 0.1;
+		    						}
+		    					} 
 		    				} else if (currentItem instanceof CookingItem pan) {
 		    					if (table.currentItem instanceof Plate plate) {
 		    					    if (tryPlateFromCookingItem(pan, plate)) {
@@ -486,6 +499,20 @@ public class Player extends Entity{
 		    					        table.currentItem = plate;
 		    					        clickCounter = 0.1;
 		    					    }
+		    					}
+		    				} else if (currentItem instanceof OvenTray ovenTray) {
+		    					if (table.currentItem instanceof Food food) {
+		    					    if (ovenTray.canBeAddedToTray(food.getName(), food.foodState)) {
+		    					        ovenTray.addIngredient(food);
+		    					        table.currentItem = null;
+		    					        clickCounter = 0.1;
+		    					    }
+		    					} else if (table.currentItem instanceof Plate plate) {
+		    						if(ovenTray.getFoodState().equals(FoodState.COOKED)) {
+		    							ovenTray.addToPlate(plate);
+		    							table.currentItem = plate;
+		    					    	clickCounter = 0.1;
+		    						}
 		    					}
 		    				}
 		    			}
@@ -674,30 +701,33 @@ public class Player extends Entity{
 	    	yOffset = baseOffset + (finalOffset - baseOffset) * currentStage / totalStages;
     	}
     	
-        TextureRegion frame = currentItem.animations[0][0][0];
-    	if(currentItem instanceof Food) {
-    		Food f = (Food)currentItem;
-    		frame = f.getImage();
-    	}
-    	switch(direction) {
-    	case 0:
-    		//xOffset += 14;
-    		break;
-    	case 1:
-    		//xOffset -= 14;
-    		frame = createHorizontalFlipped(frame);
-    		break;
-    	case 2:
-    		//yOffset +=8;
-    		break;
-    	case 3:
-    		//yOffset -= 20;
-    		break;
-    	}
     	if(currentItem instanceof Plate plate) {
     		boolean flip = direction == 1;
     		plate.drawInHand(renderer, (int)(hitbox.x - xDrawOffset + xOffset), (int)(hitbox.y - yDrawOffset + yOffset), flip);
+    	} else if(currentItem instanceof OvenTray tray) {
+    		boolean flip = direction == 1;
+    		tray.drawInHand(renderer, (int)(hitbox.x - xDrawOffset + xOffset), (int)(hitbox.y - yDrawOffset + yOffset), flip);
     	} else {
+            TextureRegion frame = currentItem.animations[0][0][0];
+        	if(currentItem instanceof Food) {
+        		Food f = (Food)currentItem;
+        		frame = f.getImage();
+        	}
+        	switch(direction) {
+        	case 0:
+        		//xOffset += 14;
+        		break;
+        	case 1:
+        		//xOffset -= 14;
+        		frame = createHorizontalFlipped(frame);
+        		break;
+        	case 2:
+        		//yOffset +=8;
+        		break;
+        	case 3:
+        		//yOffset -= 20;
+        		break;
+        	}
 		    renderer.draw(frame, (int)(hitbox.x - xDrawOffset + xOffset), (int)(hitbox.y - yDrawOffset + yOffset), (int)(48), (int)(48));
     	}
     }

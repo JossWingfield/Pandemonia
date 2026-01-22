@@ -18,7 +18,7 @@ public class Bin extends Building {
 	private Rectangle2D.Float binHitbox;
 	private boolean firstUpdate = true;
 	
-	private int preset;
+	public int preset;
 	
 	public Bin(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);

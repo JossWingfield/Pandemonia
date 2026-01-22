@@ -19,6 +19,7 @@ public class Cheese extends Food {
 		rawImage = importImage("/food/cheese/Cheese.png").getSubimage(0, 0, 16, 16);
 		choppedImage = importImage("/food/cheese/Cheese.png").getSubimage(0, 16, 16, 16);
 		generalPlated = importImage("/food/cheese/Cheese.png").getSubimage(0, 32, 16, 16);
+		ovenPlated = importImage("/food/CheeseToast.png").getSubimage(0, 0, 16, 16);
 	}
 	
 	

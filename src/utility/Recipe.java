@@ -45,42 +45,14 @@ public class Recipe {
         this.dirtyPlate = dirtyImage;
         this.baseCost = cost;
     }
-    /*
-    public boolean matches(List<String> plateIngredients, List<String> cookMethod) {
-        if (plateIngredients.size() != requiredIngredients.size()) return false;
+    public boolean matches(List<String> plateIngredients, List<String> cookMethod, List<String> secondaryCookMethod) {
 
-        if (orderMatters) {
-            for (int i = 0; i < requiredIngredients.size(); i++) {
-                if (!plateIngredients.get(i).equals(requiredIngredients.get(i))) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            // Use frequency count to check unordered match
-            Map<String, Integer> requiredCount = new HashMap<>();
-            Map<String, Integer> plateCount = new HashMap<>();
-
-            for (String ing : requiredIngredients) {
-                requiredCount.put(ing, requiredCount.getOrDefault(ing, 0) + 1);
-            }
-            for (String ing : plateIngredients) {
-                plateCount.put(ing, plateCount.getOrDefault(ing, 0) + 1);
-            }
-
-            return requiredCount.equals(plateCount);
-        }
-    }
-    */
-    public boolean matches(List<String> plateIngredients, List<String> cookMethod) {
-
-        // First check ingredient count
+        // ----- INGREDIENT COUNT -----
         if (plateIngredients.size() != requiredIngredients.size()) {
             return false;
         }
 
         // ----- INGREDIENT MATCHING -----
-
         if (orderMatters) {
             for (int i = 0; i < requiredIngredients.size(); i++) {
                 if (!plateIngredients.get(i).equals(requiredIngredients.get(i))) {
@@ -88,7 +60,6 @@ public class Recipe {
                 }
             }
         } else {
-            // Unordered ingredient match using frequency count
             Map<String, Integer> requiredCount = new HashMap<>();
             Map<String, Integer> plateCount = new HashMap<>();
 
@@ -104,20 +75,26 @@ public class Recipe {
             }
         }
 
-        // ----- COOK METHOD MATCHING -----
-
-        if (cookMethod.size() != cookingStates.size()) {
+        // ----- PRIMARY COOK METHOD -----
+        if (!matchesCookingMethods(cookingStates, cookMethod)) {
             return false;
         }
 
-        for (int i = 0; i < cookingStates.size(); i++) {
-            String expected = cookingStates.get(i);
-            String actual = cookMethod.get(i);
+        // ----- SECONDARY COOK METHOD -----
+        if (!matchesCookingMethods(secondaryCookingStates, secondaryCookMethod)) {
+            return false;
+        }
+        
+        return true;
+    }
+    private boolean matchesCookingMethods(List<String> expectedMethods, List<String> actualMethods) {
+        if (actualMethods.size() != expectedMethods.size()) {
+            return false;
+        }
 
-            // If either side is chopping board, ignore this slot completely
-            if ("Chopping Board".equals(expected) || "Chopping Board".equals(actual)) {
-                continue;
-            }
+        for (int i = 0; i < expectedMethods.size(); i++) {
+            String expected = expectedMethods.get(i);
+            String actual = actualMethods.get(i);
 
             // Empty expected = don't care
             if (expected == null || expected.isEmpty()) {

@@ -17,6 +17,8 @@ public class Aubergine extends Food {
 		animations = new TextureRegion[1][1][5];
 		
 		rawImage = importImage("/food/crops/eggplant.png").getSubimage(16, 16, 16, 16);
+		choppedImage = importImage("/food/CookedAubergine.png").getSubimage(16, 0, 16, 16);;
+		ovenPlated = importImage("/food/CookedAubergine.png").getSubimage(0, 0, 16, 16);
 	}
 	
 	

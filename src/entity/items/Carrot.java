@@ -16,6 +16,7 @@ public class Carrot extends Food {
 		animations = new TextureRegion[1][1][5];
 		
 		rawImage = importImage("/food/crops/carrot.png").getSubimage(16, 16, 16, 16);
+		choppedImage = importImage("/food/Carrot.png").getSubimage(16, 0, 16, 16);
 	}
 	
 	

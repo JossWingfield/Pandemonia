@@ -64,7 +64,7 @@ public class ChoppingBoard extends Building {
 	private void importImages() {
 		animations = new TextureRegion[1][1][3];
 		
-		name = "Chopping Board 1";
+		name = "Chopping Board";
     	animations[0][0][0] = importImage("/decor/ChoppingBoard.png").getSubimage(0, 0, 16, 16);
     	animations[0][0][1] = importImage("/decor/ChoppingBoard.png").getSubimage(0, 16, 16, 16);
     	animations[0][0][2] = importImage("/decor/ChoppingBoard.png").getSubimage(0, 32, 16, 16);
@@ -85,6 +85,7 @@ public class ChoppingBoard extends Building {
 				    			if(f.foodState == FoodState.RAW) {
 						    		currentItem = (Food)gp.player.currentItem;
 						    		gp.player.currentItem = null;
+						    		currentItem.addCookMethod(name);
 						    		clickCooldown = 0.08;
 						    		currentChopCount = f.getChopCount();
 						    		if(gp.multiplayer) {
@@ -124,6 +125,7 @@ public class ChoppingBoard extends Building {
 						    			if(currentItem.cutIntoNewItem) {
 						    				Food newItem = (Food)gp.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);
 						    				currentItem = newItem;
+						    	    		currentItem.addCookMethod(name);
 						    			}
 						    		}
 					    		} else {
@@ -193,6 +195,7 @@ public class ChoppingBoard extends Building {
 			if(currentItem.cutIntoNewItem) {
 				Food newItem = (Food)gp.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);
 				currentItem = newItem;
+	    		currentItem.addCookMethod(name);
 			}
 			if(currentItem.notRawItem) {
 				currentItem.foodState = FoodState.RAW;
@@ -242,6 +245,18 @@ public class ChoppingBoard extends Building {
 	     
 	     rawIngredients.add("Chicken");
 	     choppedResults.add("Chicken Pieces");
+	     
+	     rawIngredients.add("Garlic");
+	     choppedResults.add("Chopped Garlic");
+	     
+	     rawIngredients.add("Aubergine");
+	     choppedResults.add("Chopped Aubergine");
+	     
+	     rawIngredients.add("Carrot");
+	     choppedResults.add("Chopped Carrot");
+	     
+	     rawIngredients.add("Aubergine");
+	     choppedResults.add("Chopped Aubergine");
 	     
 	     rawIngredients.add("Cursed Greens");
 	     choppedResults.add("Chopped Cursed Greens");

@@ -48,6 +48,7 @@ import entity.buildings.outdoor.OutdoorDecor;
 import entity.buildings.outdoor.OutdoorWallDecor;
 import entity.buildings.outdoor.SeasonalDecoration;
 import entity.items.Item;
+import entity.items.OvenTray;
 import entity.npc.Cook;
 import entity.npc.Customer;
 import entity.npc.GroupCustomer;
@@ -1991,6 +1992,8 @@ public class Room {
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 396, 8);
 			arrayCounter++;
 			buildings[arrayCounter] = new Sink(gp, 300, 432);
+			arrayCounter++;
+			buildings[arrayCounter] = new Sink(gp, 300, 336);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 312, 8);
 			arrayCounter++;

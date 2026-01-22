@@ -24,6 +24,7 @@ public class Plate extends Item {
 
     private List<String> ingredients = new ArrayList<>();
     private List<String> cookMethods = new ArrayList<>();
+    private List<String> secondaryCookMethods = new ArrayList<>();
     private List<TextureRegion> ingredientImages = new ArrayList<>();
     private Set<String> platableFoods = new HashSet<>();
     private Set<String> bypassPlateFoods = new HashSet<>();
@@ -41,7 +42,7 @@ public class Plate extends Item {
         updatePlateStack(currentStackCount);
     }
     private void setupPlates() {
-        platableFoods.add("Bread");
+        platableFoods.add("Bread Slice");
         platableFoods.add("Fish");
         platableFoods.add("Egg");
         platableFoods.add("Cheese");
@@ -115,7 +116,7 @@ public class Plate extends Item {
     	this.isDirty = isDirty;
     	
     	 if(isDirty) {
-        	 Recipe matched = RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods());
+        	 Recipe matched = RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods(), getSecondaryCookMethods());
      		 this.dirtyImage = matched.dirtyPlate;
     	 }
     	 seasoningQuality = -1;
@@ -161,6 +162,7 @@ public class Plate extends Item {
             ingredients.add(null);
             ingredientImages.add(null);
             cookMethods.add(null);
+            secondaryCookMethods.add(null);
         }
 
         // Find the next free layer starting from preferredLayer
@@ -178,7 +180,8 @@ public class Plate extends Item {
         // Insert ingredient
         ingredientImages.set(targetLayer, foodItem.getImage());
         ingredients.set(targetLayer, foodItem.name);
-        cookMethods.set(targetLayer, foodItem.cookedBy);
+        cookMethods.set(targetLayer, foodItem.getCookMethod());
+        secondaryCookMethods.set(targetLayer, foodItem.getSecondaryCookMethod());
 
         // === Recipe check ===
         List<String> currentIngredients = new ArrayList<>();
@@ -189,8 +192,12 @@ public class Plate extends Item {
         for (String ing : cookMethods) {
             if (ing != null) currentMethods.add(ing);
         }
+        List<String> secondaryCurrentMethods = new ArrayList<>();
+        for (String ing : secondaryCookMethods) {
+            if (ing != null) secondaryCurrentMethods.add(ing);
+        }
 
-        matchedRecipe = RecipeManager.getMatchingRecipe(currentIngredients, currentMethods);
+        matchedRecipe = RecipeManager.getMatchingRecipe(currentIngredients, currentMethods, secondaryCurrentMethods);
         matchedRecipeImage = getMatchingRecipeIgnoringSeasoning();
     }
     public TextureRegion getMatchingRecipeIgnoringSeasoning() {
@@ -200,18 +207,21 @@ public class Plate extends Item {
             // ----- Build filtered ingredient list from recipe -----
             List<String> requiredIngredients = new ArrayList<>(recipe.getIngredients());
             List<String> requiredMethods = new ArrayList<>(recipe.getCookingStates());
-
+            List<String> requiredSecondaryMethods = new ArrayList<>(recipe.getSecondaryCookingStates());
+            
             // Remove seasoning entries from recipe side
             for (int i = requiredIngredients.size() - 1; i >= 0; i--) {
                 if (isSeasoningIngredient(requiredIngredients.get(i))) {
                     requiredIngredients.remove(i);
                     requiredMethods.remove(i);
+                    requiredSecondaryMethods.remove(i);
                 }
             }
 
             // ----- Build filtered ingredient + method lists from this plate -----
             List<String> plateIngredients = new ArrayList<>();
             List<String> plateMethods = new ArrayList<>();
+            List<String> plateSecondaryMethods = new ArrayList<>();
 
             for (int i = 0; i < this.ingredients.size(); i++) {
                 String ing = this.ingredients.get(i);
@@ -219,28 +229,28 @@ public class Plate extends Item {
                 if (ing != null && !isSeasoningIngredient(ing)) {
                     plateIngredients.add(ing);
 
+                    // PRIMARY METHOD
                     if (i < this.cookMethods.size()) {
                         String method = this.cookMethods.get(i);
 
-                        // SKIP chopping board steps completely
-                        if (!"Chopping Board".equals(method)) {
-                            plateMethods.add(method);
-                        } else {
-                            plateMethods.add(""); // treat as "no specific method"
-                        }
+                        plateMethods.add(method);
+                    } else {
+                        plateMethods.add("");
+                    }
+
+                    // SECONDARY METHOD
+                    if (i < this.secondaryCookMethods.size()) {
+                        String secondary = this.secondaryCookMethods.get(i);
+
+                        plateSecondaryMethods.add(secondary);
+                    } else {
+                        plateSecondaryMethods.add("");
                     }
                 }
             }
 
-            // Also remove chopping board requirements from recipe side
-            for (int i = requiredMethods.size() - 1; i >= 0; i--) {
-                if ("Chopping Board".equals(requiredMethods.get(i))) {
-                    requiredMethods.set(i, "");
-                }
-            }
-
             // ----- Now use the REAL recipe matching logic -----
-            if (recipe.matches(plateIngredients, plateMethods)) {
+            if (recipe.matches(plateIngredients, plateMethods, plateSecondaryMethods)) {
                 return recipe.finishedPlate;
             }
         }
@@ -273,20 +283,29 @@ public class Plate extends Item {
         }
         return result;
     }
+    public List<String> getSecondaryCookMethods() {
+        List<String> result = new ArrayList<>();
+        for (String ing : secondaryCookMethods) {
+            if (ing != null) result.add(ing);
+        }
+        return result;
+    }
     public void clearIngredients() {
         ingredients.clear();
         ingredientImages.clear();
+        cookMethods.clear();
+        secondaryCookMethods.clear();
         matchedRecipe = null;
         matchedRecipeImage = null;
         seasoningQuality = -1;
     }
 
     public boolean isFinishedRecipe() {
-        return RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods()) != null;
+        return RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods(), getSecondaryCookMethods()) != null;
     }
 
     public String getFinishedRecipeName() {
-        Recipe matched = RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods());
+        Recipe matched = RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods(), getSecondaryCookMethods());
         return matched != null ? matched.getName() : null;
     }
     public void draw(Renderer renderer) {
@@ -380,36 +399,32 @@ public class Plate extends Item {
         
     }
     public void drawInHand(Renderer renderer, int x, int y, boolean flip) {
-        int baseX = (int) x;
-        int baseY = (int) y;
-        
-        TextureRegion base = animations[0][0][0];
-        
-        if(flip) {
-        	base = createHorizontalFlipped(base);
-        }
+    	 this.baseX = (int) x;
+         this.baseY = (int) y;
 
-        if(isDirty) {
-            renderer.draw(dirtyImage, baseX, baseY, drawWidth, drawHeight);
-        } else {
-            renderer.draw(base, baseX, baseY, drawWidth, drawHeight);
-        }
-        
-        if (matchedRecipeImage != null) {
-        	renderer.draw(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight);
-        } else {
-            for (int i = 0; i < ingredientImages.size(); i++) {
-                TextureRegion img = ingredientImages.get(i);
-                if (img != null) {
-                    renderer.draw(img, baseX, baseY, drawWidth, drawHeight);
-                }
-            }
-        }
-        
-        if (seasoningQuality != -1) {
-        	TextureRegion seasoning = ingredientImages.get(ingredientImages.size()-1);
-            renderer.draw(seasoning, baseX, baseY, drawWidth, drawHeight);
-        }
+         if(isDirty) {
+             renderer.draw(dirtyImage, baseX, baseY, drawWidth, drawHeight);
+         } else {
+             renderer.draw(animations[0][0][0], baseX, baseY, drawWidth, drawHeight);
+         }
+         
+         // Draw food layers from bottom to top
+         
+         if (matchedRecipeImage != null) {
+         	renderer.draw(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight);
+         }  else {
+             for (int i = 0; i < ingredientImages.size(); i++) {
+             	TextureRegion img = ingredientImages.get(i);
+                 if (img != null) {
+                     renderer.draw(img, baseX, baseY, drawWidth, drawHeight);
+                 }
+             }
+         }
+         
+         if (seasoningQuality != -1) {
+         	TextureRegion seasoning = ingredientImages.get(ingredientImages.size()-1);
+             renderer.draw(seasoning, baseX, baseY, drawWidth, drawHeight);
+         }
         
     }
 }

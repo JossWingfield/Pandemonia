@@ -18,6 +18,7 @@ public class Penne extends Food {
 		
 		rawImage = importImage("/food/pasta/Penne.png").getSubimage(0, 0, 16, 16);
 		potPlated = importImage("/food/pasta/Penne.png").getSubimage(16, 0, 16, 16);
+		ovenPlated = importImage("/food/pasta/Penne.png").getSubimage(16, 0, 16, 16);
 	}
 	
 	

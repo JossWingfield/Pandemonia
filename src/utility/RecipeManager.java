@@ -75,10 +75,23 @@ public class RecipeManager {
             );
         registerRecipe(steak);
 
+        Recipe steakAndVeg = new Recipe(
+                "Steak and Veg",
+                Arrays.asList("Steak", "Asparagus"),
+                Arrays.asList("Frying Pan", "Chopping Board"),
+                Arrays.asList("", ""),
+                false, 
+                importImage("/food/food.png").getSubimage(48, 96, 16, 16),
+                importImage("/food/food.png").getSubimage(48, 96+16, 16, 16),
+                6,
+                1
+            );
+        registerRecipe(steakAndVeg);
+
         
         Recipe eggSandwich = new Recipe(
                 "Egg Sandwich",
-                Arrays.asList("Egg", "Greens", "Bread"),
+                Arrays.asList("Egg", "Greens", "Bread Slice"),
                 Arrays.asList("Frying Pan", "Chopping Board", "Chopping Board"),
                 Arrays.asList("", "", ""),
                 false, 
@@ -91,7 +104,7 @@ public class RecipeManager {
         
         Recipe cheeseSandwich = new Recipe(
                 "Cheese Sandwich",
-                Arrays.asList("Cheese", "Bread"),
+                Arrays.asList("Cheese", "Bread Slice"),
                 Arrays.asList("Chopping Board", "Chopping Board"),
                 Arrays.asList("", ""),
                 false, 
@@ -211,7 +224,7 @@ public class RecipeManager {
         registerRecipe(salad);
         Recipe bruschetta = new Recipe(
                 "Bruschetta",
-                Arrays.asList("Bread", "Chopped Tomatoes"),
+                Arrays.asList("Bread Slice", "Chopped Tomatoes"),
                 Arrays.asList("Chopping Board", "Chopping Board"),
                 Arrays.asList("", ""),
                 false, 
@@ -263,38 +276,127 @@ public class RecipeManager {
         registerRecipe(scrambledEgg);
         
         //OVEN TRAY RECIPES
-        /*
+   
         Recipe garlicBread = new Recipe(
                 "Garlic Bread",
-                Arrays.asList("Bread Slice", "Garlic"),
-                Arrays.asList("Oven", "Chopping Board"),
-                Arrays.asList("", "Oven"),
+                Arrays.asList("Bread Slice", "Chopped Garlic"),
+                Arrays.asList("Oven Tray", "Chopping Board"),
+                Arrays.asList("", "Oven Tray"),
                 false, 
-                importImage("/food/food.png").getSubimage(0, 96, 16, 16),
-                importImage("/food/food.png").getSubimage(0, 112, 16, 16),
+                importImage("/food/GarlicBread.png").getSubimage(16, 0, 16, 16),
+                null,
                 9,
                 2
             );
         registerRecipe(garlicBread);
         
         Recipe grilledCheese = new Recipe(
-        	    "Grilled Cheese",
+        	    "Cheese Toast",
                 Arrays.asList("Bread Slice", "Cheese"),
-                Arrays.asList("Oven", "Chopping Board"),
-                Arrays.asList("", "Oven"),
+                Arrays.asList("Oven Tray", "Chopping Board"),
+                Arrays.asList("", "Oven Tray"),
                 false, 
-                importImage("/food/food.png").getSubimage(0, 96, 16, 16),
-                importImage("/food/food.png").getSubimage(0, 112, 16, 16),
+                importImage("/food/CheeseToast.png").getSubimage(16, 0, 16, 16),
+                null,
                 9,
                 2
             );
-        registerRecipe(garlicBread);
+        registerRecipe(grilledCheese);
+        
+        Recipe carrotSalad = new Recipe(
+        	    "Carrot Salad",
+                Arrays.asList("Carrot", "Red Onion", "Greens"),
+                Arrays.asList("Chopping Board", "Chopping Board", "Chopping Board"),
+                Arrays.asList("", "", ""),
+                false, 
+                importImage("/food/CarrotSalad.png").getSubimage(0, 0, 16, 16),
+                null,
+                7,
+                2
+            );
+        registerRecipe(carrotSalad);
+        
+        Recipe roastChicken = new Recipe(
+        	    "Roast Chicken",
+                Arrays.asList("Chicken", "Potato", "Greens"),
+                Arrays.asList("Oven Tray", "Oven Tray", "Chopping Board"),
+                Arrays.asList("", "", "Oven Tray"),
+                false, 
+                importImage("/food/RoastChicken.png").getSubimage(0, 0, 16, 16),
+                null,
+                11,
+                2
+            );
+        registerRecipe(roastChicken);
+        
+        Recipe vegRoast = new Recipe(
+        	    "Vegetable Roast",
+                Arrays.asList("Carrot", "Potato", "Aubergine"),
+                Arrays.asList("Chopping Board", "Oven Tray", "Oven Tray"),
+                Arrays.asList("Oven Tray", "", ""),
+                false, 
+                importImage("/food/VegRoast.png").getSubimage(0, 0, 16, 16),
+                null,
+                10,
+                2
+            );
+        registerRecipe(vegRoast);
+        
+        Recipe aubergineBake = new Recipe(
+        	    "Aubergine Bake",
+                Arrays.asList("Tomato", "Cheese", "Aubergine"),
+                Arrays.asList("Chopping Board", "Chopping Board", "Chopping Board"),
+                Arrays.asList("Oven Tray", "Oven Tray", "Oven Tray"),
+                false, 
+                importImage("/food/AubergineBake.png").getSubimage(0, 0, 16, 16),
+                null,
+                10,
+                2
+            );
+        registerRecipe(aubergineBake);
+        
+        Recipe lasagna = new Recipe(
+        	    "Lasagna",
+                Arrays.asList("Lasagna", "Tomato", "Cheese"),
+                Arrays.asList("Oven Tray", "Chopping Board", "Chopping Board"),
+                Arrays.asList("", "Oven Tray", "Oven Tray"),
+                false, 
+                importImage("/food/pasta/Lasagna.png").getSubimage(32, 0, 16, 16),
+                null,
+                10,
+                2
+            );
+        registerRecipe(lasagna);
+        
+        Recipe pastaBake = new Recipe(
+        	    "Pasta Bake",
+                Arrays.asList("Penne", "Tomato", "Cheese"),
+                Arrays.asList("Small Pot", "Chopping Board", "Chopping Board"),
+                Arrays.asList("OvenTray", "Oven Tray", "Oven Tray"),
+                false, 
+                importImage("/food/pasta/PastaBake.png").getSubimage(0, 0, 16, 16),
+                null,
+                10,
+                2
+            );
+        registerRecipe(pastaBake);
         
         //ADDITIONAL RECIPES TO ADD:
-         //pasta bake, lasagna, mac and cheese, pasta al forno, pizza types + calzone + flatbread(dough in oven)
-         //Roast beef and pork chops, pies, chips and chicken(maybe fried tho),
-         //Cakes, cookies, brownies
-        */
+        //OVEN RECIPES
+        //pasta bake, mac and cheese, pasta al forno, pizza types + calzone + flatbread(dough in oven)
+        //Roast beef and pork chops, pies
+        //Cakes, cookies, brownies 
+        //NEW PASTA types, ravioli, bows etc, rigatoni also add parmesan
+        
+        //ADD CURRIES and rice dishes
+        //FRYER RECIPES
+        //chips and chicken, beer battered cod
+        
+        //SOUPS
+        
+        //FRUIT SALADS
+        //ADD PRE MARINATED FOODS e.g. salt, pepper, marinade sauce, honey glazed
+        //POTENTIALLY ADD STARTERS AND SIDES
         
         //CURSED RECIPES
         Recipe cursedGreens = new Recipe(
@@ -412,14 +514,14 @@ public class RecipeManager {
         }
     	return null;
     }
-    public static Recipe getMatchingRecipe(List<String> plateIngredients, List<String> cookMethods) {
+    public static Recipe getMatchingRecipe(List<String> plateIngredients, List<String> cookMethods, List<String> secondaryCookMethods) {
         for (Recipe recipe : unlockedRecipes) { // only match unlocked ones
-            if (recipe.matches(plateIngredients, cookMethods)) {
+            if (recipe.matches(plateIngredients, cookMethods, secondaryCookMethods)) {
                 return recipe;
             }
         }
         for (Recipe recipe : cursedRecipes) { // only match unlocked ones
-            if (recipe.matches(plateIngredients, cookMethods)) {
+            if (recipe.matches(plateIngredients, cookMethods, secondaryCookMethods)) {
                 return recipe;
             }
         }
@@ -462,10 +564,10 @@ public class RecipeManager {
         currentOrders.remove(recipe);
     }
 
-    public static boolean completeOrder(List<String> plateIngredients, List<String> cookMethods) {
+    public static boolean completeOrder(List<String> plateIngredients, List<String> cookMethods, List<String> secondaryCookMethods) {
         for (int i = 0; i < currentOrders.size(); i++) {
             Recipe order = currentOrders.get(i);
-            if (order.matches(plateIngredients, cookMethods)) {
+            if (order.matches(plateIngredients, cookMethods, secondaryCookMethods)) {
                 order.incrementCookCount();
                 currentOrders.remove(i);
                 return true;

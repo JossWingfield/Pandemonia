@@ -10,6 +10,7 @@ import entity.items.Carrot;
 import entity.items.Cheese;
 import entity.items.Chicken;
 import entity.items.ChickenPieces;
+import entity.items.ChoppedGarlic;
 import entity.items.ChoppedTomatoes;
 import entity.items.Corn;
 import entity.items.CursedGreens;
@@ -17,11 +18,14 @@ import entity.items.Egg;
 import entity.items.Fish;
 import entity.items.Food;
 import entity.items.FryingPan;
+import entity.items.Garlic;
 import entity.items.Greens;
 import entity.items.Item;
+import entity.items.Lasagna;
 import entity.items.Leek;
 import entity.items.Meatball;
 import entity.items.Onion;
+import entity.items.OvenTray;
 import entity.items.Penne;
 import entity.items.Plate;
 import entity.items.Potato;
@@ -58,6 +62,8 @@ public class ItemRegistry {
 			case "Red Onion" -> i = new RedOnion(gp, 0, 0);
 			case "Onion" -> i = new Onion(gp, 0, 0);
 			case "Potato" -> i = new Potato(gp, 0, 0);
+			case "Garlic" -> i = new Garlic(gp, 0, 0);
+			case "Chopped Garlic" -> i = new ChoppedGarlic(gp, 0, 0);
 			case "Steak" -> i = new Steak(gp, 0, 0);
 			case "Corn" -> i = new Corn(gp, 0, 0);
 			case "Tomato" -> i = new Tomato(gp, 0, 0);
@@ -69,6 +75,7 @@ public class ItemRegistry {
 			case "Chopped Tomatoes" -> i = new ChoppedTomatoes(gp, 0, 0);
 			case "Spaghetti" -> i = new Spaghetti(gp, 0, 0);
 			case "Penne" -> i = new Penne(gp, 0, 0);
+			case "Lasagna" -> i = new Lasagna(gp, 0, 0);
 			case "Thyme" -> i = new Thyme(gp, 0, 0);
 			case "Basil" -> i = new Basil(gp, 0, 0);
 			case "Rosemary" -> i = new Rosemary(gp, 0, 0);
@@ -78,9 +85,13 @@ public class ItemRegistry {
 			case "Plate" -> i = new Plate(gp, 0, 0);
 			case "Frying Pan" -> i = new FryingPan(gp, 0, 0);
 			case "Small Pot" -> i = new SmallPan(gp, 0, 0);
+			case "Oven Tray" -> i = new OvenTray(gp, 0, 0);
 		}
 		if(i instanceof Food food) {
 			food.setState(state);
+			if(state == 1) {
+				food.addCookMethod("Chopping Board");
+			}
 		}
 		return i;
 	}
@@ -91,6 +102,7 @@ public class ItemRegistry {
 			case "Chopped Tomatoes" -> i = new Tomato(gp, 0, 0);
 			case "Chicken Pieces" -> i = new Chicken(gp, 0, 0);
 			case "Bread Slice" -> i = new Bread(gp, 0, 0);
+			case "Chopped Garlic" -> i = new Garlic(gp, 0, 0);
 		}
 		if(i instanceof Food food) {
 			food.setState(state);
@@ -117,6 +129,11 @@ public class ItemRegistry {
 	}
 	public TextureRegion getImageFromName(String name) {
 		Item item = getItemFromName(name, 0);
+		if(item instanceof Food f) {
+			if(f.notRawItem) {
+				item = getRawIngredientFromName(name, 0);
+			}
+		}
 		if (item != null && item.animations != null && item.animations.length > 0 && item.animations[0].length > 0 && item.animations[0][0].length > 0) {
 			if(item instanceof Food f) {
 				return f.rawImage;

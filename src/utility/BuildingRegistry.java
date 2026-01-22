@@ -82,7 +82,9 @@ public class BuildingRegistry {
 				if(isPresetBuilding(b)) {
 					if(b instanceof Chair c) {
 						data.preset = c.facing;
-					} else if(b instanceof CornerTable c) {
+					} else if(b instanceof Bin c) {
+						data.preset = c.preset;
+					}  else if(b instanceof CornerTable c) {
 						data.preset = c.presetNum;
 					} else if(b instanceof FoodStore c) {
 						data.preset = c.foodType;
@@ -226,7 +228,7 @@ public class BuildingRegistry {
 			case "Soul Lantern" -> i = new SoulLantern(gp, x, y);
 			case "Stove" -> i = new Stove(gp, x, y);
 			case "Large Table" -> i = new LargeTable(gp, x, y);
-			case "Chopping Board 1" -> i = new ChoppingBoard(gp, x, y);
+			case "Chopping Board" -> i = new ChoppingBoard(gp, x, y);
 			case "Turntable" -> i = new Turntable(gp, x, y);
 			case "Tip Jar" -> i = new TipJar(gp, x, y);
 			case "Herb Basket" -> i = new HerbBasket(gp, x, y);

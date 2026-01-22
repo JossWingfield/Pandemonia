@@ -676,6 +676,7 @@ public class ProgressManager {
 	    	gp.buildingM.addBuilding(new LargeTable(gp, 516, 288));
 	    	gp.buildingM.addBuilding(new Table(gp, 348, 264, "Left", false));
 		} else {
+			gp.mapM.getRoom(0).removeAllWithName("Chopping Board");
 			gp.mapM.getRoom(0).removeAllWithName("Stove");
 			gp.mapM.getRoom(0).removeAllWithName("Bin 1");
 			gp.mapM.getRoom(0).removeAllWithName("Sink 1");

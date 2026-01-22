@@ -16,6 +16,7 @@ public class Asparagus extends Food {
 		animations = new TextureRegion[1][1][5];
 		
 		rawImage = importImage("/food/crops/asparagus.png").getSubimage(16, 16, 16, 16);
+		choppedImage = importImage("/food/CutAsparagus.png").getSubimage(0, 0, 16, 16);
 	}
 	
 	

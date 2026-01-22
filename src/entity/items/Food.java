@@ -12,7 +12,8 @@ public class Food extends Item {
 	protected int foodLayer = 0;
 	protected TextureRegion burntImage;
 	public TextureRegion potPlated, panPlated, rawImage, choppedImage, generalPlated, ovenPlated;
-	public String cookedBy = "";
+	private String cookedBy = "";
+	private String secondaryCookedBy = "";
 	public boolean cutIntoNewItem = false;
 	public boolean notRawItem = false;
 	protected int chopCount = 12;
@@ -22,6 +23,13 @@ public class Food extends Item {
 		super(gp, xPos, yPos);
 		foodState = FoodState.RAW;
 		burntImage = importImage("/food/BurntFood.png").toTextureRegion();
+	}
+	public void addCookMethod(String method) {
+		if(cookedBy == null || cookedBy.equals("")) {
+			cookedBy = method;
+		} else {
+			secondaryCookedBy = method;
+		}
 	}
 	public void setState(int state) {
 		switch(state) {
@@ -66,7 +74,7 @@ public class Food extends Item {
 				 img = panPlated;
 			 } else if(cookedBy.equals("Small Pot")){
 				 img = potPlated;
-			 } else if(cookedBy.equals("Oven")){
+			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
 				 img = ovenPlated;
 			 }
 			 break;
@@ -75,7 +83,7 @@ public class Food extends Item {
 				 img = panPlated;
 			 } else if(cookedBy.equals("Small Pot")){
 				 img = potPlated;
-			 } else if(cookedBy.equals("Oven")){
+			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
 				 img = ovenPlated;
 			 } else {
 				 img = generalPlated;
@@ -102,7 +110,7 @@ public class Food extends Item {
 				 img = panPlated;
 			 } else if(cookedBy.equals("Small Pot")){
 				 img = potPlated;
-			 } else if(cookedBy.equals("Oven")){
+			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
 				 img = ovenPlated;
 			 }
 			 break;
@@ -112,7 +120,7 @@ public class Food extends Item {
 				 img = panPlated;
 			 } else if(cookedBy.equals("Small Pot")){
 				 img = potPlated;
-			 } else if(cookedBy.equals("Oven")){
+			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
 				 img = ovenPlated;
 			 } else {
 				 img = generalPlated;
@@ -128,7 +136,12 @@ public class Food extends Item {
 		 }
 		 return img;
 	 }
-	 
+	 public String getCookMethod() {
+			return cookedBy;
+		 }
+	 public String getSecondaryCookMethod() {
+		return secondaryCookedBy;
+	 }
 	 public int getChopCount() {
 		if(gp.progressM.choppingBoardUpgradeI) {
 			return (int)(chopCount * 0.75);

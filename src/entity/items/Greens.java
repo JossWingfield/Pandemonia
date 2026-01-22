@@ -17,9 +17,9 @@ public class Greens extends Food {
 		animations = new TextureRegion[1][1][5];
 		
 		rawImage = importImage("/food/greens/caisim.png").getSubimage(16, 16, 16, 16);
-		choppedImage = importImage("/food/greens/Greens.png").toTextureRegion();;
-		generalPlated = importImage("/food/greens/Greens.png").toTextureRegion();;
-
+		choppedImage = importImage("/food/greens/Greens.png").toTextureRegion();
+		generalPlated = importImage("/food/greens/Greens.png").toTextureRegion();
+		ovenPlated = importImage("/food/greens/Greens.png").toTextureRegion();
 	}
 	
 	

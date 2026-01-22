@@ -21,6 +21,7 @@ public class Tomato extends Food {
 		rawImage = importImage("/food/crops/tomato.png").getSubimage(16, 16, 16, 16);
 		choppedImage = importImage("/food/pasta/CookedTomato.png").toTextureRegion();
 		panPlated = importImage("/food/pasta/CookedTomato.png").toTextureRegion();
+		ovenPlated = importImage("/food/pasta/CookedTomato.png").toTextureRegion();
 	}
 	
 	

@@ -11,6 +11,7 @@ public class Garlic extends Food {
 		importImages();
 		foodLayer = 3;
 		chopCount = 16;
+		cutIntoNewItem = true;
 	}
 	
 	private void importImages() {
