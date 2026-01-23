@@ -20,9 +20,10 @@ public class EmberParticle extends Particle {
     
     private final boolean flare;
     
-    public EmberParticle(GamePanel gp, float x, float y, boolean flare) {
+    public EmberParticle(GamePanel gp, int roomNum, float x, float y, boolean flare) {
         super(
             gp,
+            roomNum,
             x, y,
             (rand.nextFloat() - 0.5f) * 1.2f,
             (rand.nextFloat() - 0.5f) * 1.2f,

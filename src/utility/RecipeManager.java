@@ -274,8 +274,6 @@ public class RecipeManager {
                     2
                 );
         registerRecipe(scrambledEgg);
-        
-        //OVEN TRAY RECIPES
    
         Recipe garlicBread = new Recipe(
                 "Garlic Bread",
@@ -383,7 +381,7 @@ public class RecipeManager {
         
         //ADDITIONAL RECIPES TO ADD:
         //OVEN RECIPES
-        //pasta bake, mac and cheese, pasta al forno, pizza types + calzone + flatbread(dough in oven)
+        //mac and cheese, pasta al forno, pizza types + calzone + flatbread(dough in oven)
         //Roast beef and pork chops, pies
         //Cakes, cookies, brownies 
         //NEW PASTA types, ravioli, bows etc, rigatoni also add parmesan
@@ -430,7 +428,7 @@ public class RecipeManager {
         PotIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(16, 0, 16, 16);
         ovenIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(48, 0, 16, 16);
         
-        unlockAllRecipes();
+        //unlockAllRecipes();
     }
 
     public void unlockAllRecipes() {
@@ -446,6 +444,21 @@ public class RecipeManager {
     }
     public static void registerCursedRecipe(Recipe recipe) {
         cursedRecipes.add(recipe);
+    }
+    public Recipe chooseChefSpecial(List<Recipe> todaysMenu) {
+        // Filter unlocked recipes that:
+        // 1. Are unlocked
+        // 2. Are not already on today's menu
+        // 3. Are allowed in the current phase
+        List<Recipe> candidates = unlockedRecipes.stream()
+                .filter(r -> !todaysMenu.contains(r))
+                .toList();
+
+        if (candidates.isEmpty()) {
+            return null; // no valid chef special
+        }
+
+        return candidates.get(random.nextInt(candidates.size()));
     }
     public static Recipe[] getTwoRandomLocked(GamePanel gp) {
         int currentPhase = gp.progressM.currentPhase;

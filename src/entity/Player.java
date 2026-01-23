@@ -669,7 +669,7 @@ public class Player extends Entity{
         float spawnX = hitbox.x + hitbox.width / 2f;
         float spawnY = hitbox.y + hitbox.height; // near the player’s feet
 
-        gp.particleM.addParticle(new PlayerDustParticle(gp, spawnX, spawnY));
+        gp.particleM.addParticle(new PlayerDustParticle(gp, currentRoomIndex, spawnX, spawnY));
     }
     
     public void setCurrentAnimation(int currentAnimation) {

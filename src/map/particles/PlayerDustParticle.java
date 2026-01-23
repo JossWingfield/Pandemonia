@@ -14,9 +14,10 @@ public class PlayerDustParticle extends Particle {
     private float alpha = 0.3f + rand.nextFloat() * 0.3f;
     private float fadeSpeed = 0.01f + rand.nextFloat() * 0.01f;
     
-    public PlayerDustParticle(GamePanel gp, float x, float y) {
+    public PlayerDustParticle(GamePanel gp, int roomNum, float x, float y) {
         super(
             gp,
+            roomNum,
             x, y,
             (rand.nextFloat() - 0.5f) * 0.3f,   // small outward spread
             -rand.nextFloat() * 0.2f,           // drift slightly upward

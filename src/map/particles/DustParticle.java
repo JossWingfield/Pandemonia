@@ -14,9 +14,10 @@ public class DustParticle extends Particle {
     private float fadeSpeed = 0.001f + rand.nextFloat() * 0.0015f;
     private float gravity = 0.005f + rand.nextFloat() * 0.01f;
     
-    public DustParticle(GamePanel gp, float x, float y) {
+    public DustParticle(GamePanel gp, int roomNum, float x, float y) {
         super(
             gp, 
+            roomNum,
             x, y,
             (rand.nextFloat() - 0.5f) * 0.15f,  // slower, subtler horizontal drift
             (rand.nextFloat() - 0.5f) * 0.15f,  // slower vertical drift

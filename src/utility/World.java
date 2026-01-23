@@ -38,7 +38,7 @@ public class World {
     private double timeSpeed = 30.0;
 
     private double spawnTimer = 0;
-    private int customerSpawnTimer = 24;
+    private int customerSpawnTimer = 2;//24;
     public int previousSoulsCollected = 0;
     private boolean waitingForLevelUp = false;
 
@@ -148,6 +148,9 @@ public class World {
     public void setTodaysMenu(List<Recipe> menu) {
         todaysMenu.clear();
         todaysMenu.addAll(menu);
+        if(gp.progressM.currentPhase != 1) {
+        	todaysMenu.add(gp.recipeM.chooseChefSpecial(menu));
+        }
         menuChosen = true;
     }
     public void addRecipeToMenu(Recipe recipe) {

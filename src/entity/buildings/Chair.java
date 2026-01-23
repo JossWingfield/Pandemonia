@@ -47,8 +47,8 @@ public class Chair extends Building {
 		return building;
     }
 	public void printOutput() {
-		//System.out.println("buildings[arrayCounter] = new Chair(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
-		//System.out.println("arrayCounter++;");	
+		System.out.println("buildings[arrayCounter] = new Chair(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
+		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][1];

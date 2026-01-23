@@ -1371,7 +1371,7 @@ public class GUI {
 		    int y = 0;
 
 		    // BASE
-		    renderer.draw(data.borderImage, x, y, 64*recipeScale, 80*recipeScale);
+		    renderer.draw(data.borderImage, x, y, 64*recipeScale, 96*recipeScale);
 		    if (data.customer.hideOrder) {
 		        // Overlay the "mystery order" image
 		        renderer.draw(data.mysteryOrderImage, x, y, 64*recipeScale, 80*recipeScale);
@@ -1393,34 +1393,34 @@ public class GUI {
 
 		        renderer.setFont(font);
 			    for (int j = 0; j < data.nameLines.size(); j++) {
-			        renderer.drawString(font, data.nameLines.get(j), x + data.nameLineOffsets.get(j), y + 57*recipeScale + j*15, textScale);
+			        renderer.drawString(font, data.nameLines.get(j), x + data.nameLineOffsets.get(j), y + recipeScale*16 + 57*recipeScale + j*15, textScale);
 			    }
 		        
-			    renderer.draw(starLevel, x +7*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+			    renderer.draw(starLevel, x +7*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
 		        if(data.starLevel > 2) {
-		            renderer.draw(starLevel, x +7*recipeScale + 1 * 16*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+		            renderer.draw(starLevel, x +7*recipeScale + 1 * 16*recipeScale, y + recipeScale*16+ 36*recipeScale, 16*recipeScale, 16*recipeScale);
 		        } else {
-		            renderer.draw(emptyStar, x +7*recipeScale + 1 * 16*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+		            renderer.draw(emptyStar, x +7*recipeScale + 1 * 16*recipeScale, y+ recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
 		        }
 		        
 		        if(data.starLevel > 3) {
-		            renderer.draw(starLevel, x +7*recipeScale + 2 * 16*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+		            renderer.draw(starLevel, x +7*recipeScale + 2 * 16*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
 		        } else {
-		            renderer.draw(emptyStar, x +7*recipeScale + 2 * 16*recipeScale, y + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+		            renderer.draw(emptyStar, x +7*recipeScale + 2 * 16*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
 		        }
 
-			    renderer.draw(data.plateImage, x + 23*recipeScale, y + 62*recipeScale, 16*recipeScale, 16*recipeScale);
+			    renderer.draw(data.plateImage, x + 23*recipeScale, y + recipeScale*16 + 62*recipeScale, 16*recipeScale, 16*recipeScale);
 		    }
 
 		    // COIN + FACE
-		    renderer.draw(data.coinImage, x, y + 82*recipeScale - 2, 16*recipeScale, 16*recipeScale);
-		    renderer.draw(data.faceIcon, x + 70, y + 70*recipeScale - 2 - 16*recipeScale, 32*recipeScale, 32*recipeScale);
+		    renderer.draw(data.coinImage, x, y + recipeScale*16 + 82*recipeScale - 2, 16*recipeScale, 16*recipeScale);
+		    renderer.draw(data.faceIcon, x + 70, y + recipeScale*16 + 70*recipeScale - 2 - 16*recipeScale, 32*recipeScale, 32*recipeScale);
 
 		    // COST
-		    renderer.drawString(font, data.cost, x + 19*recipeScale, y + 90*recipeScale - 2 + 8, 1.0f, Colour.WHITE);
+		    renderer.drawString(font, data.cost, x + 19*recipeScale, y + recipeScale*16 + 90*recipeScale - 2 + 8, 1.0f, Colour.WHITE);
 
 		    // PATIENCE
-		    drawPatienceBar(renderer, x, y + 90*recipeScale - 2 + 16*recipeScale, (int)data.customer.getPatienceCounter(), (int)data.customer.getMaxPatienceTime());
+		    drawPatienceBar(renderer, x, y + recipeScale*16 + 90*recipeScale - 2 + 16*recipeScale, (int)data.customer.getPatienceCounter(), (int)data.customer.getMaxPatienceTime());
 
 		    i++;
 		}

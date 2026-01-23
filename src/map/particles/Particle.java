@@ -13,9 +13,11 @@ public abstract class Particle {
     protected float lifetime, maxLifetime; // seconds remaining
     protected float size;
     protected Colour colour;
+    public int roomNum;
     
-    public Particle(GamePanel gp, float x, float y, float vx, float vy, float lifetime, float size, Colour color) {
+    public Particle(GamePanel gp, int roomNum, float x, float y, float vx, float vy, float lifetime, float size, Colour color) {
         this.gp = gp;
+        this.roomNum = roomNum;
     	this.x = x;
         this.y = y;
         this.vx = vx;

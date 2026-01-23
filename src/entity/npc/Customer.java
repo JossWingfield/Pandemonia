@@ -76,7 +76,7 @@ public class Customer extends NPC {
 		speed = 60;
 		npcType = "Customer";
 		
-		type = r.nextInt(7);
+		type = r.nextInt(10);
 		
 		talkHitbox = new Rectangle2D.Float(hitbox.x - 16, hitbox.y - 16, hitbox.width + 32, hitbox.height + 32);
 		
@@ -101,6 +101,84 @@ public class Customer extends NPC {
 	        }
 
     }
+    protected void importDirectionalSpriteSheet(
+            String basePath,
+            int startX,
+            int startY,
+            int width,
+            int height
+    ) {
+        // Load textures once
+        Texture sideSheet = importImage(basePath + "/Side.png");
+        Texture downSheet = importImage(basePath + "/Down.png");
+        Texture upSheet   = importImage(basePath + "/Up.png");
+
+        // ---- SIDE → directions 0 & 1 ----
+        for (int dir = 0; dir <= 1; dir++) {
+
+            // IDLE
+            for (int frame = 0; frame < 4; frame++) {
+                animations[dir][0][frame] =
+                    sideSheet.getSubimage(
+                        startX + frame * width,
+                        startY,
+                        width,
+                        height
+                    );
+            }
+
+            // WALK
+            for (int frame = 0; frame < 8; frame++) {
+                animations[dir][1][frame] =
+                    sideSheet.getSubimage(
+                        startX + frame * width,
+                        startY + height,
+                        width,
+                        height
+                    );
+            }
+        }
+
+        // ---- DOWN → direction 2 ----
+        for (int frame = 0; frame < 4; frame++) {
+            animations[2][0][frame] =
+                downSheet.getSubimage(
+                    startX + frame * width,
+                    startY,
+                    width,
+                    height
+                );
+        }
+        for (int frame = 0; frame < 8; frame++) {
+            animations[2][1][frame] =
+                downSheet.getSubimage(
+                    startX + frame * width,
+                    startY + height,
+                    width,
+                    height
+                );
+        }
+
+        // ---- UP → direction 3 ----
+        for (int frame = 0; frame < 4; frame++) {
+            animations[3][0][frame] =
+                upSheet.getSubimage(
+                    startX + frame * width,
+                    startY,
+                    width,
+                    height
+                );
+        }
+        for (int frame = 0; frame < 8; frame++) {
+            animations[3][1][frame] =
+                upSheet.getSubimage(
+                    startX + frame * width,
+                    startY + height,
+                    width,
+                    height
+                );
+        }
+    }
 	private void importImages() {
 		animations = new TextureRegion[5][10][10];
 		animations[0][0][0] = importImage("/npcs/mannequin.png").getSubimage(16, 0, 16, 32);
@@ -113,7 +191,6 @@ public class Customer extends NPC {
 		importEatingAnimation("/npcs/Eating", 4, 1, 0, 0, 80, 80, 1);
 		importEatingAnimation("/npcs/Eating", 4, 1, 0, 0, 80, 80, 2);
 		importEatingAnimation("/npcs/Eating", 4, 1, 0, 160, 80, 80, 3);
-		
 		
 		switch(type) {
 		case 0:
@@ -149,6 +226,20 @@ public class Customer extends NPC {
 		case 6:
 	        importPlayerSpriteSheet("/npcs/miner/Idle", 4, 1, 0, 0, 0, 80, 80);
 	        importPlayerSpriteSheet("/npcs/miner/Walk", 8, 1, 1, 0, 0, 80, 80);
+	        faceIcon = importImage("/npcs/FaceIcons.png").getSubimage(type*32, 0, 32, 32);
+			break;
+		case 7:
+	        importPlayerSpriteSheet("/npcs/customers/customer1/idle", 4, 1, 0, 0, 0, 80, 80);
+	        importPlayerSpriteSheet("/npcs/customers/customer1/walk", 8, 1, 1, 0, 0, 80, 80);
+	        faceIcon = importImage("/npcs/customers/customer1/FaceIcon.png").toTextureRegion();
+			break;
+		case 8:
+	        importDirectionalSpriteSheet("/npcs/customers/customer2", 0, 0, 80, 80);
+	        faceIcon = importImage("/npcs/customers/customer2/FaceIcon.png").toTextureRegion();
+			break;
+		case 9:
+	        importDirectionalSpriteSheet("/npcs/customers/customer3", 0, 0, 80, 80);
+	        faceIcon = importImage("/npcs/customers/customer3/FaceIcon.png").toTextureRegion();
 			break;
 		}
 		

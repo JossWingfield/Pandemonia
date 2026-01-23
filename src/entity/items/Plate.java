@@ -42,7 +42,6 @@ public class Plate extends Item {
         updatePlateStack(currentStackCount);
     }
     private void setupPlates() {
-        platableFoods.add("Bread Slice");
         platableFoods.add("Fish");
         platableFoods.add("Egg");
         platableFoods.add("Cheese");
@@ -50,6 +49,7 @@ public class Plate extends Item {
         platableFoods.add("Greens");
         platableFoods.add("Cursed Greens");
         bypassPlateFoods.add("Chopped Tomatoes");
+        bypassPlateFoods.add("Bread Slice");
     }
     private void importImages() {
         animations = new TextureRegion[1][1][5];

@@ -16,8 +16,8 @@ public class FireflyParticle extends Particle {
     private int changeTimer;
     private float speed = 0.5f; 
 
-    public FireflyParticle(GamePanel gp, float x, float y, int lifetime) {
-        super(gp, x, y, 0, 0, lifetime, 3, new Colour(180, 190, 20));
+    public FireflyParticle(GamePanel gp, int roomNum, float x, float y, int lifetime) {
+        super(gp, roomNum, x, y, 0, 0, lifetime, 3, new Colour(180, 190, 20));
         lightRadius = 9;
         
         light = new LightSource((int)x, (int)y, colour, lightRadius);

@@ -73,7 +73,7 @@ public class ParticleSystem {
                 while (particles.size() < dustTargetCount) {
                     float x = (float) (Math.random() * gp.frameWidth);
                     float y = (float) (Math.random() * gp.frameHeight);
-                    addParticle(new DustParticle(gp, x, y));
+                    addParticle(new DustParticle(gp, gp.player.currentRoomIndex, x, y));
                 }
             }
         }
@@ -87,7 +87,7 @@ public class ParticleSystem {
 	                float x = (float) (Math.random() * gp.frameWidth);
 	                float y = (float) (Math.random() * gp.frameHeight);
 	                int lifetime = (int) (Math.random() * 200 + 100);
-	                addParticle(new FireflyParticle(gp, x, y, lifetime));
+	                addParticle(new FireflyParticle(gp, gp.player.currentRoomIndex, x, y, lifetime));
 	            }
 	        }
         }
@@ -126,7 +126,7 @@ public class ParticleSystem {
                         }
 
                         boolean flare = rand.nextFloat() < ROOM_FLARE_CHANCE;
-                        addParticle(new EmberParticle(gp, x, y, flare));
+                        addParticle(new EmberParticle(gp, gp.player.currentRoomIndex, x, y, flare));
 
                         emberCount++;
                     }
@@ -152,7 +152,7 @@ public class ParticleSystem {
             	boolean flare = ep.withLight &&
             	                Math.random() < FLARE_CHANCE;
 
-                addParticle(new EmberParticle(gp, pos[0], pos[1], flare));
+                addParticle(new EmberParticle(gp, gp.player.currentRoomIndex, pos[0], pos[1], flare));
             }
         }
         if (randomShaking) {
@@ -200,7 +200,11 @@ public class ParticleSystem {
     public void draw(Renderer renderer) {
     	for (int i = 0; i < particles.size(); i++) {
     	    Particle p = particles.get(i);
-    	    if (p != null) p.draw(renderer);
+    	    if (p != null) {
+    	    	if(p.roomNum == gp.player.currentRoomIndex) {
+    	    		p.draw(renderer); 
+    	    	}
+    	    }
     	}
     }
     public void setRandomShaking(boolean isShaking) {

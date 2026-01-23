@@ -58,7 +58,6 @@ public class BuildingRegistry {
 		this.gp = gp;
 		
 		presetBuildingNames = new ArrayList<>();
-		presetBuildingNames.add("Chair 1");
 		presetBuildingNames.add("Table Corner 1");
 		presetBuildingNames.add("Food Store");
 		presetBuildingNames.add("Toilet 1");
@@ -80,9 +79,7 @@ public class BuildingRegistry {
 				data.y = (int)b.hitbox.y;
 				data.name = b.getName();
 				if(isPresetBuilding(b)) {
-					if(b instanceof Chair c) {
-						data.preset = c.facing;
-					} else if(b instanceof Bin c) {
+					if(b instanceof Bin c) {
 						data.preset = c.preset;
 					}  else if(b instanceof CornerTable c) {
 						data.preset = c.presetNum;
@@ -244,7 +241,6 @@ public class BuildingRegistry {
 	public Building getBuildingFromName(String name, int x, int y, int preset) {
 		Building i = null;
 		switch(name) {
-			case "Chair 1" -> i = new Chair(gp, x, y, preset);
 			case "Table Corner 1" -> i = new CornerTable(gp, x, y, preset);
 			case "Food Store" -> i = new FoodStore(gp, x, y, preset);
 			case "Toilet 1" -> i = new Toilet(gp, x, y, preset);
