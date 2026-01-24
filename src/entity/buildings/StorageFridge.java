@@ -24,7 +24,6 @@ import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
-import net.packets.Packet03PickupItem;
 
 public class StorageFridge extends Building {
 	
@@ -203,6 +202,7 @@ public class StorageFridge extends Building {
 	    			    	clickCooldown = 0.3;
 	    			    	uiOpen = false;
 	    			    	gp.player.resetAnimation(4);
+	    			    	/*
 	    			    	if(gp.multiplayer) {
 	    		    			int state = 0;
 	    		    			if(gp.player.currentItem instanceof Food f) {
@@ -211,6 +211,7 @@ public class StorageFridge extends Building {
 	    			            Packet03PickupItem packet = new Packet03PickupItem(gp.player.currentItem.getName(), gp.player.getUsername(), state);
 	    			            packet.writeData(gp.socketClient);
 	    		            }
+	    		            */
 	    		    	}
 	                }
 	            }

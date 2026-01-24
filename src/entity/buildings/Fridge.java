@@ -13,10 +13,6 @@ import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
-import net.packets.Packet03PickupItem;
-import net.packets.Packet13ClearPlayerHand;
-import net.packets.Packet17AddItemToFridge;
-import net.packets.Packet18RemoveItemFromFridge;
 
 public class Fridge extends Building {
 	
@@ -127,12 +123,14 @@ public class Fridge extends Building {
                         contents.add((Food) f.clone());
                         gp.player.currentItem = null;
                         clickCooldown = 0.333; 
+                        /*
                         if(gp.multiplayer) {
 			    			Packet17AddItemToFridge packet = new Packet17AddItemToFridge(gp.player.getUsername(), getArrayCounter(), f.getName(), f.getState());
 			    			packet.writeData(gp.socketClient); 
 			    			Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
 			    			packet2.writeData(gp.socketClient); 
 			    		}
+			    		*/
                         uiOpen = false; // keep fridge closed
                     } else {
                     	clickCooldown = 0.1; 
@@ -206,6 +204,7 @@ public class Fridge extends Building {
                             uiOpen = false;
                         	gp.player.resetAnimation(4);
 
+                        	/*
                             if(gp.multiplayer) {
                                 int state = 0;
                                 if(gp.player.currentItem instanceof Food f) {
@@ -218,6 +217,7 @@ public class Fridge extends Building {
                                 Packet18RemoveItemFromFridge packet2 = new Packet18RemoveItemFromFridge(gp.player.getUsername(), getArrayCounter(), i);
 				    			packet2.writeData(gp.socketClient); 
                             }
+                            */
                         } else {
                             // PUT ITEM IN (only if fridge not full)
                             if (gp.player.currentItem instanceof Food f) {
@@ -226,12 +226,14 @@ public class Fridge extends Building {
                                     gp.player.currentItem = null;
                                     clickCooldown = 0.1;
                                     uiOpen = false;
+                                    /*
                                     if(gp.multiplayer) {
     					    			Packet17AddItemToFridge packet = new Packet17AddItemToFridge(gp.player.getUsername(), getArrayCounter(), f.getName(), f.getState());
     					    			packet.writeData(gp.socketClient); 
     					    			Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
     					    			packet2.writeData(gp.socketClient); 
     					    		}
+    					    		*/
                                 } else {
                                     clickCooldown = 0.1;
                                 }

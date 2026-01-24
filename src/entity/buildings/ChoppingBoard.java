@@ -15,11 +15,6 @@ import main.GamePanel;
 import main.renderer.Colour;
 import main.renderer.Renderer;
 import main.renderer.TextureRegion;
-import net.packets.Packet03PickupItem;
-import net.packets.Packet12AddItemToChoppingBoard;
-import net.packets.Packet13ClearPlayerHand;
-import net.packets.Packet14UpdateChoppingProgress;
-import net.packets.Packet15RemoveItemFromChoppingBoard;
 import utility.Statistics;
 
 public class ChoppingBoard extends Building {
@@ -88,6 +83,7 @@ public class ChoppingBoard extends Building {
 						    		currentItem.addCookMethod(name);
 						    		clickCooldown = 0.08;
 						    		currentChopCount = f.getChopCount();
+						    		/*
 						    		if(gp.multiplayer) {
 						    			Food foodItem = (Food)currentItem;
 						    			Packet12AddItemToChoppingBoard packet = new Packet12AddItemToChoppingBoard(currentItem.getName(),getArrayCounter(), foodItem.getState());
@@ -95,6 +91,7 @@ public class ChoppingBoard extends Building {
 						    			Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
 						    			packet2.writeData(gp.socketClient); 
 						    		}
+						    		*/
 				    			}
 				    		} else if(gp.player.currentItem instanceof Plate p) {
 				    			if(currentItem != null) {
@@ -111,10 +108,12 @@ public class ChoppingBoard extends Building {
 					    		if(currentItem.foodState == FoodState.RAW && canChop(currentItem.getName())) {
 						    		clickCooldown = 0.08;
 						    		chopCount++;
+						    		/*
 						    		if(gp.multiplayer) {
 						    			Packet14UpdateChoppingProgress packet = new Packet14UpdateChoppingProgress(gp.player.getUsername(), getArrayCounter(), (int)chopCount);
 						    			packet.writeData(gp.socketClient); 
 						    		}
+						    		*/
 						    		if(chopCount == currentChopCount) {
 						    			chopCount = 0;
 						    			Statistics.ingredientsChopped++;
@@ -133,6 +132,7 @@ public class ChoppingBoard extends Building {
 					    			gp.player.resetAnimation(4);
 						    		currentItem = null;
 						    		clickCooldown = 0.33;
+						    		/*
 						    		if(gp.multiplayer) {
 						    			Packet15RemoveItemFromChoppingBoard packet = new Packet15RemoveItemFromChoppingBoard(getArrayCounter());
 						    			packet.writeData(gp.socketClient); 
@@ -140,6 +140,7 @@ public class ChoppingBoard extends Building {
 						    			Packet03PickupItem packet2 = new Packet03PickupItem(gp.player.currentItem.getName(), gp.player.getUsername(), foodItem.getState());
 						    			packet2.writeData(gp.socketClient); 
 						    		}
+						    		*/
 					    		}
 				    		}else {
 					    		gp.player.currentItem = currentItem;

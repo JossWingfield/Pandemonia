@@ -13,7 +13,6 @@ import main.renderer.AssetPool;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
-import net.packets.Packet05ChangeRoom;
 import utility.Season;
 
 public class MapManager {
@@ -318,10 +317,12 @@ public class MapManager {
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;
 	    	gp.player.currentRoomIndex = roomNum;
+	    	/*
 	    	if(gp.multiplayer) {
 	            Packet05ChangeRoom packet = new Packet05ChangeRoom(gp.player.getUsername(), roomNum);
 	            packet.writeData(gp.socketClient);
             }
+            */
 	    	gp.lightingM.getRoomOcclusion();
 	    	gp.cutsceneM.checkCutsceneTrigger();
 	    }

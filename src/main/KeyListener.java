@@ -27,19 +27,44 @@ public class KeyListener {
     public KeyListener(GamePanel gp) {
         this.gp = gp;
     }
+    
 
     public void keyCallback(long window, int key, int scanCode, int action, int mods) {
         if (key < 0 || key >= 350) return;
 
         if (action == GLFW.GLFW_PRESS) {
-            if (!keyPressed[key]) {          // ← transition check
-                keyBeginPress[key] = true;   // only once
+
+            if (gp.gui.usernameActive && key == GLFW.GLFW_KEY_BACKSPACE) {
+                if (!gp.gui.username.isEmpty()) {
+                    gp.gui.username =
+                        gp.gui.username.substring(0, gp.gui.username.length() - 1);
+                }
+                return;
+            }
+
+            if (!keyPressed[key]) {
+                keyBeginPress[key] = true;
             }
             keyPressed[key] = true;
         }
         else if (action == GLFW.GLFW_RELEASE) {
             keyPressed[key] = false;
             keyBeginPress[key] = false;
+        }
+    }
+    
+    public void charCallback(long window, int codepoint) {
+    	if(gp.gui != null) {
+    		if (!gp.gui.usernameActive) return;
+    	}
+
+        char c = (char) codepoint;
+
+        // Backspace is NOT sent here by GLFW, handled via keyCallback
+        if (Character.isLetterOrDigit(c) || c == '_' || c == '-') {
+            if (gp.gui.username.length() < 16) {
+                gp.gui.username += c;
+            }
         }
     }
 

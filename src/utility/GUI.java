@@ -23,7 +23,6 @@ import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import net.DiscoveryManager.DiscoveredServer;
-import net.packets.Packet01Disconnect;
 import utility.ProgressManager.RewardType;
 
 public class GUI {
@@ -81,7 +80,7 @@ public class GUI {
 	//USERNAME
 	public String username = "";
 	public boolean usernameActive = false; // whether user is typing
-	private int caretBlinkCounter = 0; // blinking cursor effect
+	private double caretBlinkCounter = 0; // blinking cursor effect
 	private boolean levelUp = false;
 	
 	private Map<Recipe, RecipeRenderData> renderCache = new HashMap<>();
@@ -1069,7 +1068,7 @@ public class GUI {
 
 	    renderer.setColour(new Colour(0, 0, 0, 150));
 	    renderer.fillRect(boxX, boxY, boxWidth, boxHeight);
-	    renderer.setColour(Colour.WHITE);
+	    renderer.setColour(Colour.BLACK);
 	    renderer.fillRect(boxX, boxY, boxWidth, boxHeight);
 
 	    // Username text
@@ -1078,9 +1077,7 @@ public class GUI {
 	    renderer.drawString(username, boxX + 10, boxY + 35);
 
 	    // Blinking caret
-	    caretBlinkCounter++;
-	    if(caretBlinkCounter > 120) caretBlinkCounter = 0;
-	    if(caretBlinkCounter < 60 && usernameActive) {
+	    if(caretBlinkCounter < 1 && usernameActive) {
 	        int caretX = boxX + 10 + getTextWidth(username, font);
 	        renderer.fillRect(caretX, boxY + 10, 2, 30);
 	    }
@@ -1679,6 +1676,10 @@ public class GUI {
 						gp.currentState = gp.titleState;
 						currentTitleAnimation = 0;
 						if(gp.multiplayer) {
+							gp.disconnect();
+						}
+						/*
+						if(gp.multiplayer) {
 							gp.discovery.shutdown();
 							Packet01Disconnect loginPacket = new Packet01Disconnect(gp.player.getUsername());
 					        if(gp.socketServer != null) {
@@ -1689,6 +1690,7 @@ public class GUI {
 					        }
 					        loginPacket.writeData(gp.socketClient);
 						}
+						*/
 					}
 				}
 		}else {
@@ -2439,6 +2441,13 @@ public class GUI {
 			clickCooldown -= dt;        // subtract elapsed time in seconds
 		    if (clickCooldown <= 0) {
 		    	clickCooldown = 0;      // clamp to zero
+		    }
+		}
+		
+		if(gp.currentState == gp.writeUsernameState) {
+		    caretBlinkCounter+=dt;
+		    if(caretBlinkCounter > 2) {
+		    	caretBlinkCounter = 0;
 		    }
 		}
 		

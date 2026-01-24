@@ -13,8 +13,6 @@ import main.renderer.Colour;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
-import net.packets.Packet03PickupItem;
-import net.packets.Packet10RemoveSinkPlate;
 
 public class Sink extends Building {
 	
@@ -187,7 +185,8 @@ public class Sink extends Building {
 						gp.player.currentItem = plate;
 						gp.player.clickCounter = 0.1;
 						gp.player.resetAnimation(4);
-						 if (gp.multiplayer) {
+						/*
+						if (gp.multiplayer) {
 							 int state = gp.player.currentItem instanceof Food f ? f.getState() : 0;
 					         Packet03PickupItem packet = new Packet03PickupItem(
 					                gp.player.currentItem.getName(),
@@ -197,7 +196,8 @@ public class Sink extends Building {
 					         packet.writeData(gp.socketClient);
 					         Packet10RemoveSinkPlate packet2 = new Packet10RemoveSinkPlate(gp.player.getUsername(), getArrayCounter());
 						     packet2.writeData(gp.socketClient);
-						 }
+						}
+						*/
 					}
 				}
 			}

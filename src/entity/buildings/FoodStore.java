@@ -9,7 +9,6 @@ import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
-import net.packets.Packet03PickupItem;
 
 public class FoodStore extends Building {
 	
@@ -120,6 +119,7 @@ public class FoodStore extends Building {
 				        gp.player.currentItem = (Food) gp.itemRegistry.getItemFromName(itemName, 0);
 				    	gp.player.resetAnimation(4);
 
+				    	/*
 				        if (gp.multiplayer) {
 				            int state = gp.player.currentItem instanceof Food f ? f.getState() : 0;
 				            Packet03PickupItem packet = new Packet03PickupItem(
@@ -129,6 +129,7 @@ public class FoodStore extends Building {
 				            );
 				            packet.writeData(gp.socketClient);
 				        }
+				        */
 				    }
 				}
 			}

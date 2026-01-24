@@ -23,14 +23,7 @@ import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import map.LightSource;
 import map.particles.PlayerDustParticle;
-import net.packets.Packet;
 import net.packets.Packet02Move;
-import net.packets.Packet04PlaceItem;
-import net.packets.Packet07PickUpItemFromTable;
-import net.packets.Packet19AddFoodToPlateInHand;
-import net.packets.Packet20AddFoodToPlateOnTable;
-import net.packets.Packet21PickupPlate;
-import net.packets.Packet22PlacePlate;
 import utility.CollisionMethods;
 import utility.Settings;
 import utility.save.PlayerSaveData;
@@ -77,6 +70,10 @@ public class Player extends Entity{
     public LightSource playerLight;
     public boolean isInvisible = false;
     private double dustCooldown = 0;
+    
+    private float prevX, prevY;
+    private boolean moved = false;
+    private double timeSinceLastSend = 0;
 
     public Player(GamePanel gp, int xPos, int yPos, KeyListener keyL, MouseListener mouseL, String username) { //Setting default variables
         super(gp, (xPos), (yPos), 32, 32);
@@ -354,15 +351,32 @@ public class Player extends Entity{
             	gp.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
             }
 
-            	
-            if(gp.multiplayer) {
-	            Packet02Move packet = new Packet02Move(getUsername(), (int)hitbox.x, (int)hitbox.y, currentAnimation, direction);
-	            packet.writeData(gp.socketClient);
+            
+            if(prevX != hitbox.x || prevY != hitbox.y) {
+            	moved = true;
+            } else {
+            	moved = false;
             }
-    }
-    
-    public void sendPacket(Packet packet) {
-    	packet.writeData(gp.socketClient);
+        	prevX = hitbox.x;
+         	prevY = hitbox.x;
+         	
+         	timeSinceLastSend+=dt;
+            
+         	
+         	if (gp.multiplayer) { // implement isHostPlayer()
+         	    if (moved) {
+         	        timeSinceLastSend = 0;
+         	        gp.socketClient.send(
+         	            new Packet02Move(
+         	                username,
+         	                (int) hitbox.x,
+         	                (int) hitbox.y,
+         	                direction,
+         	                currentAnimation
+         	            )
+         	        );
+         	    }
+         	}
     }
     private void handleDebugMode() {
     	if(keyI.isKeyPressed(GLFW.GLFW_KEY_EQUAL)) {
@@ -416,6 +430,7 @@ public class Player extends Entity{
 		    		if(gp.buildingM.intersectsKitchenBuilding(gp, b, b.interactHitbox)) {
 			    		FloorDecor_Building table = b;
 		    			if(table.currentItem == null) {
+		    				/*
 					    	if(gp.multiplayer) {
 			    				if(currentItem instanceof Plate p) {
 			    					Packet22PlacePlate packet = new Packet22PlacePlate(getUsername(), p, b.getArrayCounter());
@@ -429,6 +444,7 @@ public class Player extends Entity{
 							        packet.writeData(gp.socketClient);
 							    }
 		    				}
+		    				*/
 				    		table.currentItem = currentItem;
 				    		currentItem = null;
 					    	clickCounter = 0.1;
@@ -444,10 +460,12 @@ public class Player extends Entity{
 						    				currentItem = plate;
 						    				clickCounter = 0.1;
 						    				int num = table.getArrayCounter();
+						    				/*
 						    				if(gp.multiplayer) {
 						    	                Packet19AddFoodToPlateInHand packet = new Packet19AddFoodToPlateInHand(getUsername(),food.getName(),food.getState(), num);
 						    	                packet.writeData(gp.socketClient);
 						    	            }
+						    	            */
 				    					}
 			    					} else if (table.currentItem instanceof CookingItem pan) {
 			    				        if (tryPlateFromCookingItem(pan, plate)) {
@@ -470,6 +488,7 @@ public class Player extends Entity{
 					    				currentItem = null;
 					    				table.currentItem = plate;
 					    				clickCounter = 0.1;
+					    				/*
 					    				if(gp.multiplayer) {
 					    	                Packet20AddFoodToPlateOnTable packet = new Packet20AddFoodToPlateOnTable(
 						    	                	getUsername(),
@@ -478,6 +497,7 @@ public class Player extends Entity{
 						    	                    food.getState());
 					    	                packet.writeData(gp.socketClient);
 					    	            }
+					    	            */
 			    					}
 		    					} else if(table.currentItem instanceof CookingItem cookingItem) {
 		    						if(cookingItem.canCook(gp.player.currentItem.getName()) && cookingItem.cookingItem == null) {
@@ -570,6 +590,7 @@ public class Player extends Entity{
         return true;
     }
     private void sendPickupPacket(Building b) {
+    	/*
     	if(gp.multiplayer) {
 			if(currentItem instanceof Plate p) {
 				Packet21PickupPlate packet = new Packet21PickupPlate(getUsername(), p, b.getArrayCounter());
@@ -583,6 +604,7 @@ public class Player extends Entity{
 	            packet.writeData(gp.socketClient);
 			}
         }
+        */
     }
     
     public void updateInteractHitbox() {
@@ -788,11 +810,6 @@ public class Player extends Entity{
             gp.itemM.drawItemHitboxes(renderer);
             renderer.setColour(Colour.GREEN);
             gp.npcM.drawNPCHitboxes(renderer);
-        }
-        
-        
-        if (keyI.debugMode) {
-        	//handleDebugMode(xDiff, yDiff);
         }
     }
     public void drawOverlay(Renderer renderer) {

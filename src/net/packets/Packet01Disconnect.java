@@ -1,38 +1,27 @@
 package net.packets;
 
-import net.GameClient;
-import net.GameServer;
+import java.io.Serializable;
 
-public class Packet01Disconnect extends Packet{
+public class Packet01Disconnect extends Packet implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String username;
 
-    public Packet01Disconnect(byte[] data) {
-        super(01);
-        this.username = readData(data);
-    }
-
     public Packet01Disconnect(String username) {
-        super(01);
+        super(PacketType.DISCONNECT);
         this.username = username;
     }
 
-    
-    public void writeData(GameClient client) {
-        client.sendData(getData());
-    }
-
-    
-    public void writeData(GameServer server) {
-        server.sendDataToAllClients(getData());
-    }
-
-    
-    public byte[] getData() {
-        return ("01" + this.username).getBytes();
-    }
     public String getUsername() {
         return username;
     }
 
+    @Override
+    protected void read(String[] data) { }
+
+    @Override
+    protected String writeData() {
+        return username;
+    }
 }

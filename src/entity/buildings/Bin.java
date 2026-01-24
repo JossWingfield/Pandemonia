@@ -10,8 +10,6 @@ import entity.items.Plate;
 import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.TextureRegion;
-import net.packets.Packet03PickupItem;
-import net.packets.Packet06BinItem;
 
 public class Bin extends Building {
 	
@@ -84,13 +82,16 @@ public class Bin extends Building {
 					if(gp.player.currentItem != null) {
 						if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {
 							gp.player.currentItem = null;
+							/*
 							if(gp.multiplayer) {
 					            Packet06BinItem packet = new Packet06BinItem(gp.player.getUsername());
 					            packet.writeData(gp.socketClient);
 				            }
+				            */
 						} else if(gp.player.currentItem instanceof Plate plate) {
 							if(!plate.isDirty()) {
 								plate.clearIngredients();
+								/*
 								if(gp.multiplayer) {
 							        Packet03PickupItem packet = new Packet03PickupItem(
 							        new Plate(gp, 0, 0).getName(),
@@ -99,6 +100,7 @@ public class Bin extends Building {
 							        );
 							        packet.writeData(gp.socketClient);
 					            }
+					            */
 							}
 						} else if(gp.player.currentItem instanceof CookingItem pan) {
 							pan.bin();

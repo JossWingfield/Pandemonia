@@ -20,10 +20,6 @@ import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import map.LightSource;
-import net.packets.Packet08PickUpFromStove;
-import net.packets.Packet09PlaceItemOnStove;
-import net.packets.Packet13ClearPlayerHand;
-import net.packets.Packet16StartCookingOnStove;
 
 public class Stove extends Building {
 	
@@ -183,6 +179,7 @@ public class Stove extends Building {
 								}
 								itemName = leftSlot.getName();
 							}
+							/*
 							if(gp.multiplayer) {
 								Packet08PickUpFromStove packet = new Packet08PickUpFromStove(
 			    	                	gp.player.getUsername(),
@@ -194,6 +191,7 @@ public class Stove extends Building {
 			    	                    cookTime);
 		    	                packet.writeData(gp.socketClient);
 		    	            }
+		    	            */
 							leftSlot = null;
 						}
 					} else {
@@ -204,6 +202,7 @@ public class Stove extends Building {
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
 									gp.lightingM.addLight(leftLight);
+									/*
 									if(gp.multiplayer) {
 										 // send packet to server
 									    Packet16StartCookingOnStove packet = new Packet16StartCookingOnStove(
@@ -216,6 +215,7 @@ public class Stove extends Building {
 									    Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
 						    			packet2.writeData(gp.socketClient); 
 									}
+									*/
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
 								}
@@ -249,6 +249,7 @@ public class Stove extends Building {
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
 									gp.lightingM.addLight(leftLight);
+									/*
 									if(gp.multiplayer) {
 										 // send packet to server
 									    Packet16StartCookingOnStove packet = new Packet16StartCookingOnStove(
@@ -261,6 +262,7 @@ public class Stove extends Building {
 									    Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
 						    			packet2.writeData(gp.socketClient); 
 									}
+									*/
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
 								}
@@ -310,6 +312,7 @@ public class Stove extends Building {
 								}
 								itemName = leftSlot.getName();
 							}
+							/*
 							if(gp.multiplayer) {
 								Packet09PlaceItemOnStove packet = new Packet09PlaceItemOnStove(
 			    	                	gp.player.getUsername(),
@@ -321,6 +324,7 @@ public class Stove extends Building {
 			    	                    cookTime);
 		    	                packet.writeData(gp.socketClient);
 		    	            }
+		    	            */
 							gp.player.currentItem = null;
 							gp.player.clickCounter = 0.1;
 						}
@@ -369,6 +373,7 @@ public class Stove extends Building {
 								}
 								itemName = rightSlot.getName();
 							}
+							/*
 							if(gp.multiplayer) {
 								Packet08PickUpFromStove packet = new Packet08PickUpFromStove(
 			    	                	gp.player.getUsername(),
@@ -380,6 +385,7 @@ public class Stove extends Building {
 			    	                    cookTime);
 		    	                packet.writeData(gp.socketClient);
 		    	            }
+		    	            */
 							rightSlot = null;
 						}
 					} else {
@@ -390,6 +396,7 @@ public class Stove extends Building {
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
 									gp.lightingM.addLight(rightLight);
+									/*
 									if(gp.multiplayer) {
 										 // send packet to server
 									    Packet16StartCookingOnStove packet = new Packet16StartCookingOnStove(
@@ -402,6 +409,7 @@ public class Stove extends Building {
 									    Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
 						    			packet2.writeData(gp.socketClient); 
 									}
+									*/
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
 								}
@@ -435,6 +443,7 @@ public class Stove extends Building {
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
 									gp.lightingM.addLight(rightLight);
+									/*
 									if(gp.multiplayer) {
 										 // send packet to server
 									    Packet16StartCookingOnStove packet = new Packet16StartCookingOnStove(
@@ -447,6 +456,7 @@ public class Stove extends Building {
 									    Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
 						    			packet2.writeData(gp.socketClient); 
 									}
+									*/
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
 								}
@@ -496,6 +506,7 @@ public class Stove extends Building {
 								}
 								itemName = rightSlot.getName();
 							}
+							/*
 							if(gp.multiplayer) {
 								Packet09PlaceItemOnStove packet = new Packet09PlaceItemOnStove(
 			    	                	gp.player.getUsername(),
@@ -507,6 +518,7 @@ public class Stove extends Building {
 			    	                	cookTime);
 		    	                packet.writeData(gp.socketClient);
 		    	            }
+		    	            */
 							gp.player.currentItem = null;
 							gp.player.clickCounter = 0.1;
 						}

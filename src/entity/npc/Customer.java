@@ -76,7 +76,7 @@ public class Customer extends NPC {
 		speed = 60;
 		npcType = "Customer";
 		
-		type = r.nextInt(10);
+		type = r.nextInt(11);
 		
 		talkHitbox = new Rectangle2D.Float(hitbox.x - 16, hitbox.y - 16, hitbox.width + 32, hitbox.height + 32);
 		
@@ -240,6 +240,10 @@ public class Customer extends NPC {
 		case 9:
 	        importDirectionalSpriteSheet("/npcs/customers/customer3", 0, 0, 80, 80);
 	        faceIcon = importImage("/npcs/customers/customer3/FaceIcon.png").toTextureRegion();
+			break;
+		case 10:
+	        importDirectionalSpriteSheet("/npcs/customers/customer4", 0, 0, 80, 80);
+	        faceIcon = importImage("/npcs/customers/customer4/FaceIcon.png").toTextureRegion();
 			break;
 		}
 		

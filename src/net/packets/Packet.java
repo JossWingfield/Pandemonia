@@ -1,57 +1,40 @@
 package net.packets;
 
+import java.io.Serializable;
+
+import net.ClientHandler;
 import net.GameClient;
 import net.GameServer;
 
-public abstract class Packet  {
+public abstract class Packet implements Serializable {
 
-    public static enum PacketTypes {
-        INVALID(-1), LOGIN(0), DISCONNECT(1), MOVE(2), PICKUPITEM(3), PLACEITEM(4), CHANGEROOM(5), BINITEM(6), PICKUPFROMTABLE(7),
-        PICKUPFROMSTOVE(8), PLACEONSTOVE(9), REMOVESINKPLATE(10), SPAWNINFO(11), ADDTOCHOPPINGBOARD(12), CLEARPLAYERHAND(13),
-        UPDATECHOPPINGPROGRESS(14), REMOVEITEMFROMCHOPPINGBOARD(15), STARTCOOKINGONSTOVE(16), ADDTOFRIDGE(17), REMOVEFROMFRIDGE(18),
-        ADDFOODTOPLATEINHAND(19), ADDFOODTOPLATEONTABLE(20), PICKUPPLATE(21), PLACEPLATE(22);
+    private static final long serialVersionUID = 1L;
 
-        private int packetId;
-        private PacketTypes(int packetId) {
-            this.packetId = packetId;
-        }
+    protected PacketType type;
 
-        public int getId() {
-            return packetId;
-        }
+    public Packet(PacketType type) {
+        this.type = type;
     }
 
-    public byte packetId;
-
-    public Packet(int packetId) {
-        this.packetId = (byte)packetId;
+    public PacketType getType() {
+        return type;
     }
 
-    public abstract void writeData(GameClient client);
-    public abstract void writeData(GameServer server);
+    // Optional if you still want string serialization for debug
+    protected abstract void read(String[] data);
+    protected abstract String writeData();
 
-    public String readData(byte[] data) {
-        String message = new String(data).trim();
-        return message.substring(2);
+    /* -------- TCP helpers (object streams) -------- */
+
+    public final void send(GameClient client) {
+        client.send(this); // send the Packet object directly
     }
 
-    public abstract byte[] getData();
-
-    public static PacketTypes lookupPacket(String packetId) {
-        try {
-            return lookupPacket(Integer.parseInt(packetId));
-        } catch (NumberFormatException e) {
-            return PacketTypes.INVALID;
-        }
+    public final void send(GameServer server) {
+        server.broadcast(this);
     }
 
-    public static PacketTypes lookupPacket(int id) {
-        for (PacketTypes p : PacketTypes.values()) {
-            if(p.getId() == id) {
-                return p;
-            }
-        }
-        return PacketTypes.INVALID;
+    public final void sendExcept(GameServer server, ClientHandler excluded) {
+        server.sendToAllExcept(this, excluded);
     }
-
 }

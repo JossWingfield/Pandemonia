@@ -70,9 +70,7 @@ import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.io.IOException;
-import java.net.BindException;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -84,10 +82,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Stream;
 
-import javax.swing.JOptionPane;
-
 import org.joml.Vector2f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -120,6 +115,7 @@ import net.DiscoveryManager;
 import net.GameClient;
 import net.GameServer;
 import net.packets.Packet00Login;
+import net.packets.Packet01Disconnect;
 import utility.BuildingRegistry;
 import utility.Catalogue;
 import utility.Debug;
@@ -274,90 +270,64 @@ public class GamePanel {
     	saveM.loadGame(saveSlot);
     }
     public void hostServer(String username) {
+
         if (serverHost) return;
-        if(hostError) {
-            playerList = null;
-            player = null;
-        	return;
-        }
 
         playerList = new ArrayList<PlayerMP>();
-        // 1) Create host player
-        player = new PlayerMP(this, 48 * 10, 48 * 10, keyL, mouseL, username, null, -1);
-        if (!playerList.contains(player)) playerList.add((PlayerMP) player);
+        
+        player = new PlayerMP(this, 48*10, 48*10, keyL, mouseL, username);
+        playerList.add((PlayerMP)player); // only local player
 
-        // 2) Start server
+        // start server
         try {
-            socketServer = new GameServer(this);
-            socketServer.start();
-            serverHost = true;
-        } catch (BindException e) {
-            // Another server is already hosting
-        	hostError = true;
-        	errorCounter = 60;
-            JOptionPane.showMessageDialog(null, 
-                "A LAN world is already being hosted on this network.\nYou can only join it.",
-                "LAN Host Error",
-                JOptionPane.ERROR_MESSAGE);
-            serverHost = false;
-            currentState = multiplayerSettingsState;
-            //mouseL.leftClickPressed = false;
-            gui.startLoading = false;
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-            serverHost = false;
-            return;
-        }
+			socketServer = new GameServer(this);
+	        socketServer.start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        // 3) Start local client (connects to localhost)
+        // connect client to self
         socketClient = new GameClient(this, "127.0.0.1", GameServer.GAME_PORT);
         socketClient.start();
 
-        // 4) Send login packet from local client
-        Packet00Login loginPacket = new Packet00Login(player.getUsername(), (int) player.hitbox.x, (int) player.hitbox.y);
-        if (socketServer != null) socketServer.addConnection((PlayerMP) player, loginPacket);
-        loginPacket.writeData(socketClient);
-
-        // Ensure discovery is running for LAN browsing
+        socketClient.send(new Packet00Login(username,
+            (int) player.hitbox.x,
+            (int) player.hitbox.y
+        ));
+        
         if (discovery == null) {
             discovery = new DiscoveryManager(false, null, null, 0); // client mode
             discovery.start();
         }
 
-        //player.mouseI.leftClickPressed = false;
         multiplayer = true;
         currentState = playState;
     }
-
     public void joinServer(String username, String ip, int port) {
+
         if (joiningServer) return;
         joiningServer = true;
+
+        playerList = new ArrayList<PlayerMP>();
+
+        player = new PlayerMP(this, 48 * 10, 48 * 10, keyL, mouseL, username);
+        playerList.add((PlayerMP)player);
+
+        socketClient = new GameClient(this, ip, port);
+        socketClient.start();
+
+        socketClient.send(new Packet00Login(username,
+            (int) player.hitbox.x,
+            (int) player.hitbox.y
+        ));
         
-        if (playerList == null) {
-            playerList = new ArrayList<>();
-        }
-
-        // 1) Create local player
-        player = new PlayerMP(this, 48 * 10, 48 * 10, keyL, mouseL, username, null, -1);
-        if (!playerList.contains(player)) playerList.add((PlayerMP) player);
-
-        // 2) Ensure discovery is running
         if (discovery == null) {
             discovery = new DiscoveryManager(false, null, null, 0); // client mode
             discovery.start();
         }
 
-        // 3) Start client
-        socketClient = new GameClient(this, ip, port);
-        socketClient.start();
-
-        // 4) Send login packet
-        Packet00Login loginPacket = new Packet00Login(player.getUsername(), (int) player.hitbox.x, (int) player.hitbox.y);
-        loginPacket.writeData(socketClient);
-
         multiplayer = true;
-        //player.mouseI.leftClickPressed = false;
         currentState = playState;
     }
     public void startDiscovery() {
@@ -400,6 +370,11 @@ public class GamePanel {
             discovery.shutdown();
             discovery = null;
         }
+    }
+    public void disconnect() {
+		if (socketClient != null) {
+		    socketClient.send(new Packet01Disconnect(player.getUsername()));
+		}
     }
     public synchronized ArrayList<PlayerMP> getPlayerList() {
         return playerList;
@@ -643,7 +618,7 @@ public class GamePanel {
             // -----------------------
             // Game Setup
             // -----------------------
-            playSinglePlayer(0);
+            //playSinglePlayer(0);
     }
 
     public void screenShake(float duration, float intensity) {
@@ -689,6 +664,7 @@ public class GamePanel {
         glfwSetMouseButtonCallback(window, mouseL::mouseButtonCallback);
         glfwSetScrollCallback(window, mouseL::mouseScrollCallback);
         glfwSetKeyCallback(window, keyL::keyCallback);
+        GLFW.glfwSetCharCallback(window, keyL::charCallback);
         
         GLFW.glfwSetFramebufferSizeCallback(window, (win, fbWidth, fbHeight) -> {
             if (fbWidth == 0 || fbHeight == 0) return;
