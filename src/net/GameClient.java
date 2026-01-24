@@ -12,6 +12,8 @@ import net.packets.Packet;
 import net.packets.Packet00Login;
 import net.packets.Packet01Disconnect;
 import net.packets.Packet02Move;
+import net.packets.Packet03Snapshot;
+import net.snapshots.PlayerSnapshot;
 
 public class GameClient extends Thread {
 
@@ -103,8 +105,27 @@ public class GameClient extends Thread {
                         player.hitbox.y = p.getY();
                         player.setDirection(p.getDirection());
                         player.setCurrentAnimation(p.getCurrentAnimation());
+                        player.setCurrentRoomIndex(p.getCurrentRoomIndex());
                         break;
                     }
+                }
+            }
+            case SNAPSHOT -> {
+                Packet03Snapshot snap = (Packet03Snapshot) packet;
+
+                for (PlayerSnapshot ps : snap.getPlayers()) {
+
+                    // Skip local player
+                    if (ps.username.equals(gp.player.getUsername())) continue;
+
+                    PlayerMP player = gp.findPlayer(ps.username);
+                    if (player == null) continue;
+
+                    // Hard correction OR soft correction
+                    player.hitbox.x = ps.x;
+                    player.hitbox.y = ps.y;
+                    player.setDirection(ps.direction);
+                    player.currentAnimation = ps.animation;
                 }
             }
 

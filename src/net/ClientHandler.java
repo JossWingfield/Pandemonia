@@ -65,6 +65,7 @@ public class ClientHandler extends Thread {
                     p.hitbox.y = move.getY();
                     player.setDirection(move.getDirection());
                     player.setCurrentAnimation(move.getCurrentAnimation());
+                    player.setCurrentRoomIndex(move.getCurrentRoomIndex());
                 }
 
                 // Broadcast move to everyone else

@@ -16,12 +16,4 @@ public class Packet01Disconnect extends Packet implements Serializable {
     public String getUsername() {
         return username;
     }
-
-    @Override
-    protected void read(String[] data) { }
-
-    @Override
-    protected String writeData() {
-        return username;
-    }
 }

@@ -330,6 +330,14 @@ public class GamePanel {
         multiplayer = true;
         currentState = playState;
     }
+    public PlayerMP findPlayer(String username) {
+        for (PlayerMP player : playerList) {
+            if (player.getUsername().equals(username)) {
+                return player;
+            }
+        }
+        return null;
+    }
     public void startDiscovery() {
         // Stop old discovery if already running
         if (discovery != null) {
@@ -970,6 +978,11 @@ public class GamePanel {
     			hostError = false;
     		}
     	}
+        if(multiplayer) {
+        	if(socketServer != null) {
+        		socketServer.update();
+        	}
+        }
     	
         applyScreenShake(dt);
     	keyL.update();
@@ -983,6 +996,7 @@ public class GamePanel {
 		    			if(p.getUsername() != player.getUsername()) {
 		    				if(p.currentRoomIndex == player.currentRoomIndex) {
 		    					p.updateInteractHitbox();
+		    					p.updateAnimations(dt);
 		    				}
 		    			}
 		    		}
@@ -1039,10 +1053,6 @@ public class GamePanel {
 	        		for (int i = 0; i < getPlayerList().size(); i++) {
 	    	            if (getPlayerList().get(i) != null) {
 	    	            	Player p = getPlayerList().get(i);
-	    	            	if(p != player) {
-	    	            		//p.xDiff = player.xDiff;
-	    	            		//p.yDiff = player.yDiff;
-	    	            	}
 	    	            	if(p.currentRoomIndex == player.currentRoomIndex) {
 		    	            	entityList.add(p);
 	    	            	}
@@ -1136,7 +1146,17 @@ public class GamePanel {
 		        	}
 		        }
 		        
-		        player.drawOverlay(renderer);
+    	        if(multiplayer) {
+	        		for (int i = 0; i < getPlayerList().size(); i++) {
+	    	            Player p = getPlayerList().get(i);
+	    	            if(p.currentRoomIndex == player.currentRoomIndex) {
+		    	            p.drawOverlay(renderer);
+	    	            }
+	    	        }
+	        	} else {
+			        player.drawOverlay(renderer);
+	        	}
+		        
 		        for(NPC npc: copy) {
 		        	if(npc != null) {
 		        		npc.drawOverlay(renderer);

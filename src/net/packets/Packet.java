@@ -19,11 +19,6 @@ public abstract class Packet implements Serializable {
     public PacketType getType() {
         return type;
     }
-
-    // Optional if you still want string serialization for debug
-    protected abstract void read(String[] data);
-    protected abstract String writeData();
-
     /* -------- TCP helpers (object streams) -------- */
 
     public final void send(GameClient client) {

@@ -83,7 +83,7 @@ public class Player extends Entity{
         this.username = username;
         
         usernameFont = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
-        usernameColor = new Colour(213, 213, 213);
+        usernameColor = new Colour(255, 255, 255);
 
         initialSpeed = 300;
         speed = initialSpeed;
@@ -372,7 +372,8 @@ public class Player extends Entity{
          	                (int) hitbox.x,
          	                (int) hitbox.y,
          	                direction,
-         	                currentAnimation
+         	                currentAnimation,
+         	                currentRoomIndex
          	            )
          	        );
          	    }
@@ -674,7 +675,10 @@ public class Player extends Entity{
     	}
     	
     	handleDebugMode();
-    	
+
+    	updateAnimations(dt);
+    }
+    public void updateAnimations(double dt) {
     	animationSpeed+=dt; //Updating animation frame
         if (animationSpeed >= animationSpeedFactor) {
         	animationSpeed = 0;
@@ -693,7 +697,9 @@ public class Player extends Entity{
 
         gp.particleM.addParticle(new PlayerDustParticle(gp, currentRoomIndex, spawnX, spawnY));
     }
-    
+    public void setCurrentRoomIndex(int currentRoomIndex) {
+		this.currentRoomIndex = currentRoomIndex;
+	}
     public void setCurrentAnimation(int currentAnimation) {
         this.currentAnimation = currentAnimation;
     }
@@ -780,24 +786,6 @@ public class Player extends Entity{
     	}	 
         
         
-        //Draw username
-        if(gp.multiplayer) {
-        	if(Settings.showUsernames) {
-		        if(username != null) {
-		            renderer.setColour(usernameColor);
-		            renderer.setFont(usernameFont);
-		
-		            //Get centered text
-		            int x;
-		            int length = (int)usernameFont.getTextWidth(username);
-		            x = (int)(hitbox.x + (hitbox.width/2)) - length/2;
-		
-		            renderer.drawString(username, x , hitbox.y  - 20);
-		        }
-        	}
-        }
-        
-        
         //g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)interactHitbox.x, (int)interactHitbox.y, (int)interactHitbox.width, (int)interactHitbox.height);
         
@@ -825,6 +813,23 @@ public class Player extends Entity{
     			    renderer.draw(frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
     			}   
     	}
+    	
+        //Draw username
+        if(gp.multiplayer) {
+        	if(Settings.showUsernames) {
+		        if(username != null) {
+		            renderer.setColour(usernameColor);
+		            renderer.setFont(usernameFont);
+		
+		            //Get centered text
+		            int x;
+		            int length = (int)usernameFont.getTextWidth(username);
+		            x = (int)(hitbox.x + (hitbox.width/2)) - length/2;
+		
+		            renderer.drawString(username, x , hitbox.y  - 20);
+		        }
+        	}
+        }
     }
 
 }

@@ -3,7 +3,8 @@ package net.packets;
 public enum PacketType {
     LOGIN(0),
     DISCONNECT(1),
-    MOVE(2);
+    MOVE(2),
+    SNAPSHOT(3);
 
     public final int id;
 

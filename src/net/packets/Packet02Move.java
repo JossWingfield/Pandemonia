@@ -10,15 +10,17 @@ public class Packet02Move extends Packet implements Serializable {
     private int x, y;
     private int direction;        // new field
     private int currentAnimation; // new field
+    private int currentRoomIndex;
 
     // Updated constructor
-    public Packet02Move(String username, int x, int y, int direction, int currentAnimation) {
+    public Packet02Move(String username, int x, int y, int direction, int currentAnimation, int currentRoom) {
         super(PacketType.MOVE);
         this.username = username;
         this.x = x;
         this.y = y;
         this.direction = direction;
         this.currentAnimation = currentAnimation;
+        this.currentRoomIndex = currentRoom;
     }
 
     // Getters
@@ -27,15 +29,5 @@ public class Packet02Move extends Packet implements Serializable {
     public int getY() { return y; }
     public int getDirection() { return direction; }
     public int getCurrentAnimation() { return currentAnimation; }
-
-    // Optional: for debug or string serialization
-    @Override
-    protected void read(String[] data) {
-        // Not used with object streams, can leave empty
-    }
-
-    @Override
-    protected String writeData() {
-        return username + "," + x + "," + y + "," + direction + "," + currentAnimation;
-    }
+    public int getCurrentRoomIndex() { return currentRoomIndex; }
 }

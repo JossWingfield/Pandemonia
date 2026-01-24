@@ -3,6 +3,7 @@ package net;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -11,6 +12,8 @@ import main.GamePanel;
 import main.renderer.Colour;
 import net.packets.Packet00Login;
 import net.packets.Packet01Disconnect;
+import net.packets.Packet03Snapshot;
+import net.snapshots.PlayerSnapshot;
 
 public class GameServer extends Thread {
 
@@ -23,6 +26,7 @@ public class GameServer extends Thread {
     private final List<ClientHandler> clients = new CopyOnWriteArrayList<>();
     
     private DiscoveryManager discoveryManager;
+    long lastSnapshot = 0;
 
     public GameServer(GamePanel gp) throws IOException {
         this.gp = gp;
@@ -49,6 +53,13 @@ public class GameServer extends Thread {
             } catch (IOException e) {
                 if (running) e.printStackTrace();
             }
+        }
+    }
+    public void update() {
+        long now = System.currentTimeMillis();
+        if (now - lastSnapshot > 1000) {
+            sendSnapshot();
+            lastSnapshot = now;
         }
     }
 
@@ -125,6 +136,21 @@ public class GameServer extends Thread {
                     packet.getY()
             ));
         }
+    }
+    public void sendSnapshot() {
+        List<PlayerSnapshot> snaps = new ArrayList<>();
+
+        for (PlayerMP p : gp.playerList) {
+            snaps.add(new PlayerSnapshot(
+                p.getUsername(),
+                (int)p.hitbox.x,
+                (int)p.hitbox.y,
+                p.getDirection(),
+                p.currentAnimation
+            ));
+        }
+        
+        sendToAll(new Packet03Snapshot(snaps));
     }
     public void handleDisconnect(Packet01Disconnect packet, ClientHandler sender) {
 

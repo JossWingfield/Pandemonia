@@ -23,10 +23,4 @@ public class Packet00Login extends Packet implements Serializable {
     public String getUsername() { return username; }
     public int getX() { return x; }
     public int getY() { return y; }
-
-    // Not needed for object streams, but you can keep them for debugging
-    @Override
-    protected void read(String[] data) { }
-    @Override
-    protected String writeData() { return username + "," + x + "," + y; }
 }

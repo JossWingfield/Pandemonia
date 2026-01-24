@@ -1676,6 +1676,7 @@ public class GUI {
 						gp.currentState = gp.titleState;
 						currentTitleAnimation = 0;
 						if(gp.multiplayer) {
+							gp.discovery.shutdown();
 							gp.disconnect();
 						}
 						/*
