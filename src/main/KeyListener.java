@@ -40,6 +40,12 @@ public class KeyListener {
                         gp.gui.username.substring(0, gp.gui.username.length() - 1);
                 }
                 return;
+            } else if(gp.currentState == gp.chatState && key == GLFW.GLFW_KEY_BACKSPACE) {
+            	 if (!gp.gui.chatInput.isEmpty()) {
+                     gp.gui.chatInput =
+                         gp.gui.chatInput.substring(0, gp.gui.chatInput.length() - 1);
+                 }
+                 return;
             }
 
             if (!keyPressed[key]) {
@@ -55,16 +61,24 @@ public class KeyListener {
     
     public void charCallback(long window, int codepoint) {
     	if(gp.gui != null) {
-    		if (!gp.gui.usernameActive) return;
+    		if (!gp.gui.usernameActive && gp.currentState != gp.chatState) return;
     	}
 
         char c = (char) codepoint;
 
-        // Backspace is NOT sent here by GLFW, handled via keyCallback
-        if (Character.isLetterOrDigit(c) || c == '_' || c == '-') {
-            if (gp.gui.username.length() < 16) {
-                gp.gui.username += c;
-            }
+        if(gp.gui != null) {
+	        // Backspace is NOT sent here by GLFW, handled via keyCallback
+        	if(gp.currentState == gp.writeUsernameState) {
+        		if (Character.isLetterOrDigit(c) || c == '_' || c == '-') {
+        			if (gp.gui.username.length() < 16) {
+        				gp.gui.username += c;
+        			}
+        		}
+        	} else if(gp.currentState == gp.chatState) {
+	        	if (gp.gui.chatInput.length() < 200) {
+	        		gp.gui.chatInput += c;
+		        }
+	        }
         }
     }
 
@@ -87,7 +101,7 @@ public class KeyListener {
         // ----- PLAY STATE -----
         if (gp.currentState == gp.playState) {
         	
-        	if (keyBeginPress(GLFW.GLFW_KEY_L)) gp.progressM.unlockOldKitchen();;
+        	if (keyBeginPress(GLFW.GLFW_KEY_L)) gp.progressM.unlockOldKitchen();
 
             if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
             if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);
@@ -110,7 +124,7 @@ public class KeyListener {
             if (keyBeginPress(GLFW.GLFW_KEY_B)) showHitboxes = !showHitboxes;
             if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) gp.currentState = gp.mapBuildState;
             if (keyBeginPress(GLFW.GLFW_KEY_MINUS)) gp.mapM.drawPath = !gp.mapM.drawPath;
-
+            if (keyBeginPress(GLFW.GLFW_KEY_T)) gp.currentState = gp.chatState;
         }
         // ----- MAP BUILD STATE -----
         else if (gp.currentState == gp.mapBuildState) {
@@ -143,6 +157,16 @@ public class KeyListener {
         // ----- PAUSE STATE -----
         else if (gp.currentState == gp.pauseState) {
             if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) gp.currentState = gp.playState;
+        } else if (gp.currentState == gp.chatState) {
+            if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
+            	gp.currentState = gp.playState;
+            	gp.gui.chatInput = "";
+             	gp.gui.chatActive = false;
+            }
+            if(keyBeginPress(GLFW.GLFW_KEY_ENTER)) {
+            	gp.gui.sendChatMessage();
+            	gp.gui.chatActive = false;
+            }
         }
         // ----- CUSTOMISE RESTAURANT -----
         else if (gp.currentState == gp.customiseRestaurantState) {

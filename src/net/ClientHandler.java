@@ -11,6 +11,7 @@ import net.packets.Packet;
 import net.packets.Packet00Login;
 import net.packets.Packet01Disconnect;
 import net.packets.Packet02Move;
+import net.packets.Packet04Chat;
 
 public class ClientHandler extends Thread {
 
@@ -70,6 +71,11 @@ public class ClientHandler extends Thread {
 
                 // Broadcast move to everyone else
                 server.sendToAllExcept(move, this);
+            }
+            case CHAT -> {
+            	 Packet04Chat chatPacket = (Packet04Chat)packet;
+            	 // Relay to all clients
+                 server.sendToAllExcept(chatPacket, this);
             }
         }
     }

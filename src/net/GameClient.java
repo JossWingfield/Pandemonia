@@ -13,6 +13,7 @@ import net.packets.Packet00Login;
 import net.packets.Packet01Disconnect;
 import net.packets.Packet02Move;
 import net.packets.Packet03Snapshot;
+import net.packets.Packet04Chat;
 import net.snapshots.PlayerSnapshot;
 
 public class GameClient extends Thread {
@@ -127,6 +128,10 @@ public class GameClient extends Thread {
                     player.setDirection(ps.direction);
                     player.currentAnimation = ps.animation;
                 }
+            }
+            case CHAT -> {
+            	Packet04Chat chatPacket = (Packet04Chat)packet;
+            	gp.gui.addMessageFromPacket(chatPacket.getUsername(), chatPacket.getMessage());
             }
 
         }

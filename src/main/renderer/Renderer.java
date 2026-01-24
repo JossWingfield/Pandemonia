@@ -364,6 +364,9 @@ public class Renderer {
     public void drawString(String text, float x, float y) {
         drawString(currentFont, text, x, y, 1.0f, currentColour);
     }
+    public void drawString(String text, float x, float y, Colour colour) {
+        drawString(currentFont, text, x, y, 1.0f, colour);
+    }
     public void drawString(BitmapFont font, String text, float x, float y, float scale) {
         drawString(currentFont, text, x, y, scale, currentColour);
     }

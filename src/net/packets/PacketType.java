@@ -4,7 +4,8 @@ public enum PacketType {
     LOGIN(0),
     DISCONNECT(1),
     MOVE(2),
-    SNAPSHOT(3);
+    SNAPSHOT(3),
+    CHAT(4);
 
     public final int id;
 

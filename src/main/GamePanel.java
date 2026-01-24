@@ -80,6 +80,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import org.joml.Vector2f;
@@ -111,6 +112,7 @@ import map.LightingManager;
 import map.MapBuilder;
 import map.MapManager;
 import map.particles.ParticleSystem;
+import net.ClientHandler;
 import net.DiscoveryManager;
 import net.GameClient;
 import net.GameServer;
@@ -169,7 +171,7 @@ public class GamePanel {
     private boolean hostError = false;
     private int errorCounter = 0;
 
-    public ArrayList<PlayerMP> playerList;
+    public List<PlayerMP> playerList;
 
     // SYSTEM initialising all classes and managers
     public Player player;
@@ -219,6 +221,7 @@ public class GamePanel {
     public final int dialogueState = 16;
     public final int achievementState = 17;
     public final int recipeState = 18;
+    public final int chatState = 19;
     
     Queue<String> textureQueue = new LinkedList<>();
     Queue<String> fontQueue = new LinkedList<>();
@@ -273,7 +276,7 @@ public class GamePanel {
 
         if (serverHost) return;
 
-        playerList = new ArrayList<PlayerMP>();
+        playerList = new CopyOnWriteArrayList<>();
         
         player = new PlayerMP(this, 48*10, 48*10, keyL, mouseL, username);
         playerList.add((PlayerMP)player); // only local player
@@ -289,7 +292,7 @@ public class GamePanel {
 
         // connect client to self
         socketClient = new GameClient(this, "127.0.0.1", GameServer.GAME_PORT);
-        socketClient.start();
+        socketClient.start();  
 
         socketClient.send(new Packet00Login(username,
             (int) player.hitbox.x,
@@ -309,7 +312,7 @@ public class GamePanel {
         if (joiningServer) return;
         joiningServer = true;
 
-        playerList = new ArrayList<PlayerMP>();
+        playerList = new CopyOnWriteArrayList<>();
 
         player = new PlayerMP(this, 48 * 10, 48 * 10, keyL, mouseL, username);
         playerList.add((PlayerMP)player);
@@ -384,7 +387,7 @@ public class GamePanel {
 		    socketClient.send(new Packet01Disconnect(player.getUsername()));
 		}
     }
-    public synchronized ArrayList<PlayerMP> getPlayerList() {
+    public synchronized List<PlayerMP> getPlayerList() {
         return playerList;
     }
     
@@ -988,8 +991,8 @@ public class GamePanel {
     	keyL.update();
     	camera.update(dt);
     	
-
-	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState) {
+    	
+	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState || currentState == chatState) {
 		    	
 		    	if(multiplayer) {
 		    		for(Player p: getPlayerList()) {
@@ -1001,7 +1004,7 @@ public class GamePanel {
 		    			}
 		    		}
 		    	}
-		    		
+		    	
 		    	player.update(dt);
 		    	mapM.update(dt);
 		    	buildingM.update(dt);
@@ -1032,7 +1035,7 @@ public class GamePanel {
     // --------------------------
     private void draw() {
         
-        if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
+        if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState || currentState == chatState) {
         		mapM.draw(renderer);	 
         		
         		Building[] bottomLayer = buildingM.getBottomLayer();

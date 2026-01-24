@@ -658,7 +658,9 @@ public class Player extends Entity{
     }
     public void update(double dt) {
     	if(!gp.minigameM.miniGameActive && controlEnabled) {
-    		handleMovement(dt);
+    		if(gp.currentState != gp.chatState) {
+    			handleMovement(dt);
+    		}
     		updateCounters(dt);
     		updateInteractHitbox();
     		handleItems(dt);

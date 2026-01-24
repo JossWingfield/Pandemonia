@@ -23,6 +23,7 @@ import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import net.DiscoveryManager.DiscoveredServer;
+import net.packets.Packet04Chat;
 import utility.ProgressManager.RewardType;
 
 public class GUI {
@@ -64,6 +65,9 @@ public class GUI {
 	
 	//MESSAGES
 	private List<GUIMessage> messages = new ArrayList<>();
+	private List<GUIMessage> chatMessages = new ArrayList<>();
+	private float chatScrollOffset = 0; // how far up the user has scrolled
+	private final int maxMessages = 1000; // optional cap to avoid memory issues
 	
 	private boolean firstDraw = true;
 	public boolean startLoading = false;
@@ -116,6 +120,9 @@ public class GUI {
 	private float notificationTimer = 0f; // seconds
 	private final float notificationDuration = 7f; // how long to show (3 seconds)
 	private int notificationX, notificationY; // position to draw
+	
+	public boolean chatActive = true;
+	public String chatInput = "";
 
 	public GUI(GamePanel gp) {
 		this.gp = gp;
@@ -1041,6 +1048,92 @@ public class GUI {
 		
 		return saveChosen;
 	}
+	public void drawChatScreen(Renderer renderer) {
+		updateMessages();
+	    // Background box for input
+	    int boxWidth = gp.frameWidth - 40; // almost full width
+	    int boxHeight = 50;
+	    int boxX = 20; // small margin from sides
+	    int boxY = gp.frameHeight - boxHeight - 20; // 20px from bottom
+	    
+	    drawChatFeed(renderer);
+
+	    // Draw semi-transparent background
+	    renderer.setColour(new Colour(0, 0, 0, 150));
+	    renderer.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+	    // Draw border
+	    renderer.setColour(Colour.BLACK);
+	    renderer.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+	    // Chat text inside box
+	    renderer.setFont(font);
+	    renderer.setColour(Colour.WHITE);
+	    renderer.drawString(chatInput, boxX + 10, boxY + 35);
+
+	    // Blinking caret
+	    if(caretBlinkCounter < 1) {
+	        int caretX = boxX + 10 + getTextWidth(chatInput, font);
+	        renderer.fillRect(caretX, boxY + 10, 2, 30);
+	    }
+	}
+	public void drawChatFeed(Renderer renderer) {
+	    int padding = 20;
+	    int inputBoxHeight = 50;
+	    int boxY = gp.frameHeight - inputBoxHeight - 20; // same as chat input
+	    int chatHeight = boxY - padding; // chat area height
+	    int chatX = 20;
+	    int chatWidth = gp.frameWidth - 40;
+
+	    renderer.setColour(new Colour(0, 0, 0, 150));
+	    renderer.fillRect(chatX, padding, chatWidth, chatHeight);
+
+	    renderer.setFont(font);
+	    renderer.setColour(Colour.WHITE);
+
+	    // Draw messages from bottom up
+	    int lineHeight = 30;
+	    float y = boxY - 10 - chatScrollOffset; // start just above input box
+
+	    for(int i = chatMessages.size() - 1; i >= 0; i--) {
+	        GUIMessage msg = chatMessages.get(i);
+	        String text;
+	    	msg.lifetime = 100;
+	        if(msg.username.equals("")) {
+	        	text = msg.text;
+	        } else {
+		        text = msg.username + ": " + msg.text;
+	        }
+
+	        renderer.drawString(text, chatX + 10, (int)y, msg.color);
+	        y -= lineHeight;
+	        if(y < padding) break; // stop drawing if we reach top
+	    }
+	}
+	public void scrollChat(float delta) {
+	    chatScrollOffset -= delta * 20; // delta from mouse wheel
+	    if(chatScrollOffset < 0) chatScrollOffset = 0;
+
+	    // Optional: limit max scroll to avoid empty space
+	    int lineHeight = 30;
+	    int visibleLines = (gp.frameHeight - 50 - 20 - 20) / lineHeight; // total visible lines
+	    int extraLines = chatMessages.size() - visibleLines;
+	    if(extraLines > 0) {
+	        float maxScroll = extraLines * lineHeight;
+	        if(chatScrollOffset > maxScroll) chatScrollOffset = maxScroll;
+	    }
+	}
+	public void sendChatMessage() {
+		 addChatMessage(gp.player.getUsername(), chatInput);
+		 
+		 if(gp.multiplayer) {
+			 if (gp.socketClient != null) {
+				 gp.socketClient.send(new Packet04Chat(gp.player.getUsername(), chatInput));
+			 }
+		 }
+		 
+		 chatInput = "";
+	}
 	public void drawUsernameInput(Renderer renderer) {
 	    
 	    // Background (reuse your title background style if you want)
@@ -1339,6 +1432,9 @@ public class GUI {
 		case 18:
 			drawRecipesScreen(renderer);
 			break;
+		case 19:
+			drawChatScreen(renderer);
+			break;
 		}
 		
 		drawAchievementNotification(renderer);
@@ -1478,14 +1574,19 @@ public class GUI {
 		    //int alpha = (int)(255 * lifeRatio);
 		    float alpha = lifeRatio;
 		    if (alpha < 0) alpha = 0;
-
+		    
+		    String text = msg.text;
+		    if(msg.username != "") {
+		    	text = msg.username + ": " + msg.text;
+		    }
+		    
 		    // Shadow
 		    renderer.setColour(new Colour(0, 0, 0, alpha));
-		    renderer.drawString(msg.text, msgX, msgY - k * lineHeight + 3);
+		    renderer.drawString(text, msgX, msgY - k * lineHeight + 3);
 
 		    // Main text
 		    renderer.setColour(new Colour(msg.color.r, msg.color.g, msg.color.b, alpha));
-		    renderer.drawString(msg.text, msgX, msgY - k * lineHeight);
+		    renderer.drawString(text, msgX, msgY - k * lineHeight);
 		}
 		
 	}
@@ -2426,15 +2527,32 @@ public class GUI {
 		computerAnimationSpeed = 0;
 		computerAnimationCounter = 0;
 	}
+	public void addChatMessage(String username, String message) {
+	    if(messages.size() >= maxMessages) {
+	    	messages.remove(0); // remove oldest message
+	    }
+	    GUIMessage msg = new GUIMessage(message, username);
+	    chatMessages.add(msg);
+	    //messages.add(msg);
+	}
+	public void addMessageFromPacket(String username, String message) {
+	    if(messages.size() >= maxMessages) {
+	    	messages.remove(0); // remove oldest message
+	    }
+	    GUIMessage msg = new GUIMessage(message, username);
+	    chatMessages.add(msg);
+	    messages.add(msg);
+	}
 	public void addMessage(String text) {
 	    addMessage(text, 320, Colour.YELLOW);
 	}
 	public void addMessage(String text, Colour Colour) {
 	    addMessage(text, 320, Colour);
 	}
-
 	public void addMessage(String text, int lifetime, Colour colour) {
-	    messages.add(new GUIMessage(text, lifetime, colour));
+		GUIMessage msg = new GUIMessage(text, lifetime, colour);
+	    messages.add(msg);
+	    chatMessages.add(msg);
 	}
 	public void update(double dt) {
 		
@@ -2445,11 +2563,13 @@ public class GUI {
 		    }
 		}
 		
-		if(gp.currentState == gp.writeUsernameState) {
+		if(gp.currentState == gp.writeUsernameState || gp.currentState == gp.chatState) {
 		    caretBlinkCounter+=dt;
 		    if(caretBlinkCounter > 2) {
 		    	caretBlinkCounter = 0;
 		    }
+		    
+
 		}
 		
 		if(gp.currentState == gp.catalogueState) {
