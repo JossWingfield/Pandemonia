@@ -52,6 +52,9 @@ public class Player extends Entity{
     public double clickCounter = 0;
     public Rectangle2D.Float interactHitbox;
     
+    //CUSTOMISATION 
+    public TextureRegion[][][] hand1Animations, hand2Animations, headAnimations, bodyAnimations, accessoryAnimations, vfxAnimations;
+    
     //ATTRIBUTES
     public int level = 1;
     public int soulsServed = 0;
@@ -72,6 +75,7 @@ public class Player extends Entity{
     public boolean isInvisible = false;
     private double dustCooldown = 0;
     
+    //MULTIPLAYER
     private float prevX, prevY;
     private boolean moved = false;
     private double timeSinceLastSend = 0;
@@ -102,6 +106,10 @@ public class Player extends Entity{
 
         //hitbox.x = (float) spawnPoint.getX();
         //hitbox.y = (float) spawnPoint.getY();
+    	
+    	Plate plate = new Plate(gp, 0, 0);
+    	plate.setDirty();
+    	currentItem = plate;
         
         //animationSpeedFactor = 2;
     	animationSpeedFactor = 0.09;
@@ -179,9 +187,8 @@ public class Player extends Entity{
     	this.speed = initialSpeed;
     }
     public void importImages() {
-
-        animations = new TextureRegion[4][20][15];
         
+        /*
         importPlayerSpriteSheet("/player/idle", 4, 1, 0, 0, 0, 80, 80); //IDLE
         importPlayerSpriteSheet("/player/run", 8, 1, 1, 0, 0, 80, 80); //RUN
         
@@ -194,11 +201,95 @@ public class Player extends Entity{
         importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 1); //Washing
         importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 2); //Washing
         importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 3); //Washing
+        importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 0); //Washing
+        importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 1); //Washing
+        importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 2); //Washing
+        importFromSpriteSheet("/player/Washing.png", 4, 1, 5, 0, 0, 80, 80, 3); //Washing
+        */
 
-
+        hand1Animations = new TextureRegion[4][20][15];
+        hand2Animations = new TextureRegion[4][20][15];
+        bodyAnimations = new TextureRegion[4][20][15];
+        headAnimations = new TextureRegion[4][20][15];
+        accessoryAnimations = new TextureRegion[4][20][15];
+        vfxAnimations = new TextureRegion[4][20][15];
+        
+        //Hand 1
+        hand1Animations = importPlayerSpriteSheet("/player/hand1", 80, 80);
+        hand1Animations = importUniversalAnimation("/player/hand1/Washing.png", hand1Animations, 0, 0, 80, 80, 5, 4);
+        //Hand 2
+        hand2Animations = importPlayerSpriteSheet("/player/hand2", 80, 80);
+        hand2Animations = importUniversalAnimation("/player/hand2/Washing.png", hand2Animations, 0, 0, 80, 80, 5, 4);
+        //Head
+        headAnimations = importPlayerSpriteSheet("/player/head", 80, 80);
+        headAnimations = importUniversalAnimation("/player/head/Washing.png", headAnimations, 0, 0, 80, 80, 5, 4);
+        
+        //Body
+        bodyAnimations = importPlayerSpriteSheet("/player/body", 80, 80);
+        bodyAnimations = importUniversalAnimation("/player/body/Washing.png", bodyAnimations, 0, 0, 80, 80, 5, 4);
+        
+        //Accessory
+        accessoryAnimations = importPlayerSpriteSheet("/player/acc", 80, 80);
+        accessoryAnimations = importUniversalAnimation("/player/acc/Washing.png", accessoryAnimations, 0, 0, 80, 80, 5, 4);
+        
+        vfxAnimations = importUniversalAnimation("/player/Washing.png", vfxAnimations, 0, 0, 80, 80, 5, 4);
         currentAnimation = 0;
     }
-    
+    private TextureRegion[][][] importPlayerSpriteSheet(String filepath, int width, int height) {
+        // Create the full animations array: 4 directions, 20 animation types, 15 frames max
+        TextureRegion[][][] anis = new TextureRegion[4][20][15];
+
+        // Define all sheets with their directions and frames
+        String[] sheetPaths = { filepath + "/Side.png", filepath+ "/Down.png", filepath + "/Up.png" };
+        int[][] directions = { {0, 1}, {2}, {3} };
+        int[][] animationFrames = {
+            {4, 8, 6, 4, 8}, // Side
+            {4, 8, 6, 4, 8}, // Down
+            {4, 8, 6, 4, 8}  // Up
+        };
+        
+        for (int s = 0; s < sheetPaths.length; s++) {
+            Texture sheet = importImage(sheetPaths[s]);
+            int yOffset = 0;
+
+            for (int anim = 0; anim < animationFrames[s].length; anim++) {
+                int frames = animationFrames[s][anim];
+
+                for (int dir : directions[s]) {
+                    for (int frame = 0; frame < frames; frame++) {
+                        anis[dir][anim][frame] = sheet.getSubimage(
+                            frame * width,
+                            yOffset,
+                            width,
+                            height
+                        );
+                    }
+                }
+
+                yOffset += height; // Next animation row in this sheet
+            }
+        }
+
+        return anis;
+    }
+    private TextureRegion[][][] importUniversalAnimation(String sheetPath, TextureRegion[][][] targetArray, int startX, int startY,int width,int height,int animationIndex,int frameCount) {
+        Texture sheet = importImage(sheetPath);
+        
+        TextureRegion[][] array = new TextureRegion[20][15];
+        for (int dir = 0; dir < 4; dir++) {
+
+            for (int frame = 0; frame < frameCount; frame++) {
+                targetArray[dir][animationIndex][frame] = sheet.getSubimage(
+                        startX + frame * width,
+                        startY,
+                        width,
+                        height
+                );
+            }
+        }
+        return targetArray;
+    }
+    /*
     protected void importPlayerSpriteSheet(String filePath, int columnNumber, int rowNumber, int animationIndex,int startX, int startY, int width, int height) {
 	
 		Texture sheetTexture = AssetPool.getTexture(filePath + ".png");
@@ -234,7 +325,7 @@ public class Player extends Entity{
 		
 		startY = originalStartY; // restore startY in case needed elsewhere
 	}
-    
+	*/
     public String getUsername() {
         return username;
     }
@@ -264,10 +355,10 @@ public class Player extends Entity{
     	boolean right = keyI.isKeyPressed(GLFW.GLFW_KEY_D);
     	boolean up = keyI.isKeyPressed(GLFW.GLFW_KEY_W);
     	boolean down = keyI.isKeyPressed(GLFW.GLFW_KEY_S);
-    		if (!(left || right || up || down) && currentAnimation != 4  && currentAnimation != 5) {
+    		if (!(left || right || up || down) && currentAnimation != 2  && currentAnimation != 5) {
                 currentAnimation = 0;
                 if(currentItem != null) {
-                	currentAnimation = 2;
+                	currentAnimation = 3;
                 }
             } else if(currentAnimation == 5) {
             	if(!keyI.isKeyPressed(GLFW.GLFW_KEY_E)) {
@@ -283,10 +374,10 @@ public class Player extends Entity{
             	float moveAmount = (float) (currentSpeed * dt);
                 if(CollisionMethods.tileCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
                     hitbox.x -= moveAmount;
-                    if(currentAnimation != 4) {
+                    if(currentAnimation != 2) {
 	                    currentAnimation = 1;
 	                    if(currentItem != null) {
-	                    	currentAnimation = 3;
+	                    	currentAnimation = 4;
 	                    }
                     }
                 } else if(!gp.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
@@ -301,10 +392,10 @@ public class Player extends Entity{
              	float moveAmount = (float) (currentSpeed * dt);
                 if(CollisionMethods.tileCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
                     hitbox.x += moveAmount;
-                    if(currentAnimation != 4) {
+                    if(currentAnimation != 2) {
 	                    currentAnimation = 1;
 	                    if(currentItem != null) {
-	                    	currentAnimation = 3;
+	                    	currentAnimation = 4;
 	                    }
                     }
                 } else if(!gp.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
@@ -319,10 +410,10 @@ public class Player extends Entity{
              	float moveAmount = (float) (currentSpeed * dt);
                 if(CollisionMethods.tileCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
                     hitbox.y -= moveAmount;
-                    if(currentAnimation != 4) {
+                    if(currentAnimation != 2) {
 	                    currentAnimation = 1;
 	                    if(currentItem != null) {
-	                    	currentAnimation = 3;
+	                    	currentAnimation = 4;
 	                    }
                     }
                 } else if(!gp.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
@@ -336,10 +427,10 @@ public class Player extends Entity{
             	float moveAmount = (float) (currentSpeed * dt);
                 if(CollisionMethods.tileCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height)) {
                     hitbox.y += moveAmount;
-                    if(currentAnimation != 4) {
+                    if(currentAnimation != 2) {
 	                    currentAnimation = 1;
 	                    if(currentItem != null) {
-	                    	currentAnimation = 3;
+	                    	currentAnimation = 4;
 	                    }
                     }
                 } else if(!gp.buildingM.entityCheck(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height)) {
@@ -352,8 +443,6 @@ public class Player extends Entity{
             if(!gp.world.isPowerOn()) {
             	gp.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
             }
-
-            
             
          	if (gp.multiplayer) { 
          		if(gp.socketClient != null && gp.socketClient.state == ConnectionState.IN_GAME && !isChangingRoom) {
@@ -556,18 +645,18 @@ public class Player extends Entity{
 					    			p.setCurrentStackCount(1);
 					    			currentItem = p;
 					    			clickCounter = 0.1;
-					    			resetAnimation(4);
+					    			resetAnimation(2);
 				    			} else {
 				    				currentItem = b.currentItem;
 						    		clickCounter = 0.1;
-						    		resetAnimation(4);
+						    		resetAnimation(2);
 						    		sendPickupPacket(b);
 						    		b.currentItem = null;
 				    			}
 			    			} else {
 			    				currentItem = b.currentItem;
 					    		clickCounter = 0.1;
-					    		resetAnimation(4);
+					    		resetAnimation(2);
 					    		sendPickupPacket(b);
 					    		b.currentItem = null;
 			    			}
@@ -689,10 +778,10 @@ public class Player extends Entity{
         	animationSpeed = 0;
             animationCounter++;
         }
-        if (animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
+        if (hand2Animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
             animationCounter = 0;
-            if(currentAnimation == 4) {
-            	currentAnimation = 2;
+            if(currentAnimation == 2) {
+            	currentAnimation = 3;
             }
         }
     }
@@ -724,7 +813,7 @@ public class Player extends Entity{
     	int finalOffset = yOffset;
     	int baseOffset = 132-(16); 
 
-    	if(currentAnimation == 4) {
+    	if(currentAnimation == 2) {
 	    	int currentStage = animationCounter; // goes 0 → 6
 	    	int totalStages = 2;  
 	    	
@@ -776,15 +865,28 @@ public class Player extends Entity{
     		drawCurrentItem(renderer);
     	}
 
-        TextureRegion frame = animations[direction][currentAnimation][animationCounter];
+        TextureRegion hand2Frame = hand2Animations[direction][currentAnimation][animationCounter];
+        TextureRegion bodyFrame = bodyAnimations[direction][currentAnimation][animationCounter];
+        TextureRegion headFrame = headAnimations[direction][currentAnimation][animationCounter];
+        TextureRegion accessoryFrame = accessoryAnimations[direction][currentAnimation][animationCounter];
+        TextureRegion hand1Frame = hand1Animations[direction][currentAnimation][animationCounter];
+
         //The image is flipped
         if(direction == 1) {
-        	frame = createHorizontalFlipped(frame);
+        	hand2Frame = createHorizontalFlipped(hand2Frame);
+        	bodyFrame = createHorizontalFlipped(bodyFrame);
+        	headFrame = createHorizontalFlipped(headFrame);
+        	accessoryFrame = createHorizontalFlipped(accessoryFrame);
+        	hand1Frame = createHorizontalFlipped(hand1Frame);
         }	    
      
 
-		if (frame != null) {
-		    renderer.draw(frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+		if (hand2Frame != null) {
+		    renderer.draw(hand2Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+		    renderer.draw(bodyFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+		    renderer.draw(headFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+		    renderer.draw(accessoryFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+		    renderer.draw(hand1Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
 		}     
         if(direction != 3) {
     		drawCurrentItem(renderer);
@@ -807,15 +909,18 @@ public class Player extends Entity{
     }
     public void drawOverlay(Renderer renderer) {
     	if(currentAnimation == 5) {
-    	       TextureRegion frame = animations[direction][currentAnimation][animationCounter];
+    	       TextureRegion handFrame = hand1Animations[direction][currentAnimation][animationCounter];
+    	       TextureRegion vfxFrame = vfxAnimations[direction][currentAnimation][animationCounter];
     	        //The image is flipped
     	        if(direction == 1) {
-    	        	frame = createHorizontalFlipped(frame);
+    	        	handFrame = createHorizontalFlipped(handFrame);
+    	        	vfxFrame = createHorizontalFlipped(vfxFrame);
     	        }	    
     	     
 
-    			if (frame != null) {
-    			    renderer.draw(frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+    			if (handFrame != null) {
+    			    renderer.draw(vfxFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+    			    renderer.draw(handFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
     			}   
     	}
     	
