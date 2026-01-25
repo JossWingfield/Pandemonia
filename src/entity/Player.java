@@ -23,6 +23,7 @@ import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import map.LightSource;
 import map.particles.PlayerDustParticle;
+import net.ConnectionState;
 import net.packets.Packet02Move;
 import utility.CollisionMethods;
 import utility.Settings;
@@ -74,6 +75,7 @@ public class Player extends Entity{
     private float prevX, prevY;
     private boolean moved = false;
     private double timeSinceLastSend = 0;
+    public boolean isChangingRoom = false;
 
     public Player(GamePanel gp, int xPos, int yPos, KeyListener keyL, MouseListener mouseL, String username) { //Setting default variables
         super(gp, (xPos), (yPos), 32, 32);
@@ -352,31 +354,32 @@ public class Player extends Entity{
             }
 
             
-            if(prevX != hitbox.x || prevY != hitbox.y) {
-            	moved = true;
-            } else {
-            	moved = false;
-            }
-        	prevX = hitbox.x;
-         	prevY = hitbox.x;
-         	
-         	timeSinceLastSend+=dt;
             
-         	
-         	if (gp.multiplayer) { // implement isHostPlayer()
-         	    if (moved) {
-         	        timeSinceLastSend = 0;
-         	        gp.socketClient.send(
-         	            new Packet02Move(
-         	                username,
-         	                (int) hitbox.x,
-         	                (int) hitbox.y,
-         	                direction,
-         	                currentAnimation,
-         	                currentRoomIndex
-         	            )
-         	        );
-         	    }
+         	if (gp.multiplayer) { 
+         		if(gp.socketClient != null && gp.socketClient.state == ConnectionState.IN_GAME && !isChangingRoom) {
+	                if(prevX != hitbox.x || prevY != hitbox.y) {
+	                	moved = true;
+	                } else {
+	                	moved = false;
+	                }
+	            	prevX = hitbox.x;
+	             	prevY = hitbox.x;
+	             	
+	             	timeSinceLastSend+=dt;
+	         	    if (moved) {
+	         	        timeSinceLastSend = 0;
+	         	        gp.socketClient.send(
+	         	            new Packet02Move(
+	         	                username,
+	         	                (int) hitbox.x,
+	         	                (int) hitbox.y,
+	         	                direction,
+	         	                currentAnimation,
+	         	                currentRoomIndex
+	         	            )
+	         	        );
+	         	    }
+         		}
          	}
     }
     private void handleDebugMode() {

@@ -2,6 +2,7 @@ package map;
 
 import java.util.List;
 
+import entity.PlayerMP;
 import entity.buildings.Building;
 import entity.buildings.Door;
 import entity.buildings.EscapeHole;
@@ -13,6 +14,7 @@ import main.renderer.AssetPool;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
+import net.packets.Packet02Move;
 import utility.Season;
 
 public class MapManager {
@@ -260,6 +262,7 @@ public class MapManager {
 	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
 	    }
 	    public void changeRoom(int roomNum, Door previousDoor) {
+	        gp.player.isChangingRoom = true;
 	    	gp.buildingM.setDoorCooldowns();
 	    	switchRoom(roomNum);
 	    	
@@ -279,8 +282,30 @@ public class MapManager {
 	    			gp.player.hitbox.y = door.hitbox.y+80-48;
 	    		}
 	    	}
+	        gp.player.currentRoomIndex = roomNum;
+	    	
 	    	gp.buildingM.setDoorCooldowns();
 	    	gp.player.updateInteractHitbox();
+	    	
+	    	gp.player.isChangingRoom = false;
+	    	
+	    	  if (gp.multiplayer && gp.socketClient != null) {
+	    	        // Only broadcast to other clients
+	    	        if (gp.serverHost) {
+	    	            // Host: server updates its authoritative player
+	    	            gp.socketServer.sendSnapshotForPlayer((PlayerMP)gp.player);
+	    	        } else {
+	    	            // Remote client
+	    	            gp.socketClient.send(new Packet02Move(
+	    	                gp.player.getUsername(),
+	    	                (int) gp.player.hitbox.x,
+	    	                (int) gp.player.hitbox.y,
+	    	                gp.player.getDirection(),
+	    	                gp.player.currentAnimation,
+	    	                gp.player.currentRoomIndex
+	    	            ));
+	    	        }
+	    	    }
 	    }
 	    public void changeRoom(int roomNum, Trapdoor trapdoor) {
 	    	switchRoom(roomNum);
@@ -317,12 +342,6 @@ public class MapManager {
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;
 	    	gp.player.currentRoomIndex = roomNum;
-	    	/*
-	    	if(gp.multiplayer) {
-	            Packet05ChangeRoom packet = new Packet05ChangeRoom(gp.player.getUsername(), roomNum);
-	            packet.writeData(gp.socketClient);
-            }
-            */
 	    	gp.lightingM.getRoomOcclusion();
 	    	gp.cutsceneM.checkCutsceneTrigger();
 	    }

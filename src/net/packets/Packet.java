@@ -1,35 +1,27 @@
 package net.packets;
 
-import java.io.Serializable;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-import net.ClientHandler;
-import net.GameClient;
-import net.GameServer;
+import net.ConnectionState;
 
-public abstract class Packet implements Serializable {
+public abstract class Packet {
 
-    private static final long serialVersionUID = 1L;
+    protected final PacketType type;
 
-    protected PacketType type;
-
-    public Packet(PacketType type) {
+    protected Packet(PacketType type) {
         this.type = type;
     }
 
     public PacketType getType() {
         return type;
     }
-    /* -------- TCP helpers (object streams) -------- */
 
-    public final void send(GameClient client) {
-        client.send(this); // send the Packet object directly
-    }
+    /** Which connection state is required to receive this packet */
+    public abstract ConnectionState requiredState();
 
-    public final void send(GameServer server) {
-        server.broadcast(this);
-    }
+    /** Write packet payload (NOT the type) */
+    public abstract void write(DataOutputStream out) throws IOException;
 
-    public final void sendExcept(GameServer server, ClientHandler excluded) {
-        server.sendToAllExcept(this, excluded);
-    }
 }

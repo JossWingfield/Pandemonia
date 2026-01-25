@@ -5,19 +5,24 @@ public enum PacketType {
     DISCONNECT(1),
     MOVE(2),
     SNAPSHOT(3),
-    CHAT(4);
+    CHAT(4),
+    LOGIN_ACK(5);
 
-    public final int id;
+	 private final int id;
 
-    PacketType(int id) {
-        this.id = id;
-    }
+	 PacketType(int id) {
+		 this.id = id;
+	 }
 
-    public static PacketType fromId(int id) {
-        for (PacketType t : values()) {
-            if (t.id == id) return t;
-        }
-        return null;
-    }
-}
+	    public int getId() {
+	        return id;
+	    }
+
+	    public static PacketType fromId(int id) {
+	        for (PacketType t : values()) {
+	            if (t.id == id) return t;
+	        }
+	        throw new IllegalArgumentException("Unknown packet id: " + id);
+	    }
+	}
 

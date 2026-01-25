@@ -10,9 +10,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import entity.PlayerMP;
 import main.GamePanel;
 import main.renderer.Colour;
-import net.packets.Packet00Login;
-import net.packets.Packet01Disconnect;
-import net.packets.Packet03Snapshot;
+import net.packets.*;
+
 import net.snapshots.PlayerSnapshot;
 
 public class GameServer extends Thread {
@@ -24,17 +23,15 @@ public class GameServer extends Thread {
     private boolean running = true;
 
     private final List<ClientHandler> clients = new CopyOnWriteArrayList<>();
-    
     private DiscoveryManager discoveryManager;
     long lastSnapshot = 0;
 
     public GameServer(GamePanel gp) throws IOException {
         this.gp = gp;
         this.serverSocket = new ServerSocket(GAME_PORT);
-        System.out.println("TCP Server started on port " + GAME_PORT);
-        
+
         discoveryManager = new DiscoveryManager(
-                true, // server
+                true,
                 gp.player != null ? gp.player.getUsername() : "Host",
                 "World1",
                 GAME_PORT
@@ -55,6 +52,7 @@ public class GameServer extends Thread {
             }
         }
     }
+
     public void update() {
         long now = System.currentTimeMillis();
         if (now - lastSnapshot > 1000) {
@@ -63,19 +61,23 @@ public class GameServer extends Thread {
         }
     }
 
-    public void sendToAll(Object obj) {
-        for (ClientHandler client : clients) client.send(obj);
-    }
-
-    public void sendToAllExcept(Object obj, ClientHandler excludedHandler) {
+    // ✅ All send methods now take Packet directly
+    public void sendToAll(Packet packet) {
         for (ClientHandler client : clients) {
-            if (client == excludedHandler) continue;
-            client.send(obj);
+            if (!client.isAlive()) continue;
+            client.send(packet);
         }
     }
 
-    public void broadcast(Object obj) {
-        for (ClientHandler client : clients) client.send(obj);
+    public void sendToAllExcept(Packet packet, ClientHandler excludedHandler) {
+        for (ClientHandler client : clients) {
+            if (client == excludedHandler) continue;
+            client.send(packet);
+        }
+    }
+
+    public void broadcast(Packet packet) {
+        for (ClientHandler client : clients) client.send(packet);
     }
 
     public void removeClient(ClientHandler client) {
@@ -88,11 +90,11 @@ public class GameServer extends Thread {
             for (ClientHandler c : clients) c.shutdown();
             serverSocket.close();
         } catch (IOException ignored) {}
-        System.out.println("TCP Server shut down.");
         if (discoveryManager != null) discoveryManager.shutdown();
     }
-    
+
     public void handleLogin(Packet00Login packet, ClientHandler senderHandler) {
+        senderHandler.setState(ConnectionState.LOGGING_IN);
 
         boolean isHost = packet.getUsername().equals(gp.player.getUsername());
 
@@ -114,15 +116,19 @@ public class GameServer extends Thread {
                     packet.getUsername() + " has joined the game.",
                     Colour.WHITE
             );
+        } else {
+            senderHandler.setPlayer((PlayerMP) gp.player);
         }
 
         // Send existing players to the new client
         if (senderHandler != null) {
             for (PlayerMP p : gp.playerList) {
                 if (p.getUsername().equals(packet.getUsername())) continue;
-
-                // 👇 Send directly through the handler
-                Packet00Login existingPlayer = new Packet00Login(p.getUsername(), (int)p.hitbox.x, (int)p.hitbox.y);
+                Packet00Login existingPlayer = new Packet00Login(
+                        p.getUsername(), 
+                        (int) p.hitbox.x, 
+                        (int) p.hitbox.y
+                );
                 senderHandler.send(existingPlayer);
             }
         }
@@ -136,41 +142,73 @@ public class GameServer extends Thread {
                     packet.getY()
             ));
         }
-    }
-    public void sendSnapshot() {
-        List<PlayerSnapshot> snaps = new ArrayList<>();
 
+        senderHandler.send(new Packet05LoginAck());
+        senderHandler.setState(ConnectionState.IN_GAME);
+    }
+
+    public void sendSnapshot() {
+        for (ClientHandler client : clients) {
+            if (client.getConnectionState() != ConnectionState.IN_GAME) continue;
+
+            List<PlayerSnapshot> snaps = new ArrayList<>();
+            for (PlayerMP p : gp.playerList) {
+                if (p.isChangingRoom) continue;
+
+                // IMPORTANT: Skip sending this player's own snapshot to their client
+                if (client.getPlayer() == p) continue;
+
+                snaps.add(new PlayerSnapshot(
+                    p.getUsername(),
+                    (int)p.hitbox.x,
+                    (int)p.hitbox.y,
+                    p.getDirection(),
+                    p.currentAnimation,
+                    p.currentRoomIndex
+                ));
+            }
+
+            client.send(new Packet03Snapshot(snaps));
+        }
+    }
+
+
+    public void sendSnapshotForPlayer(PlayerMP targetPlayer) {
+        List<PlayerSnapshot> snaps = new ArrayList<>();
+        
         for (PlayerMP p : gp.playerList) {
+            if (p.isChangingRoom) continue;
+            if (p == targetPlayer) continue; // Don't send own snapshot
             snaps.add(new PlayerSnapshot(
                 p.getUsername(),
                 (int)p.hitbox.x,
                 (int)p.hitbox.y,
                 p.getDirection(),
-                p.currentAnimation
+                p.currentAnimation,
+                p.currentRoomIndex
             ));
         }
-        
-        sendToAll(new Packet03Snapshot(snaps));
-    }
-    public void handleDisconnect(Packet01Disconnect packet, ClientHandler sender) {
 
+        for (ClientHandler client : clients) {
+            if (client.getConnectionState() != ConnectionState.IN_GAME) continue;
+            client.send(new Packet03Snapshot(snaps));
+        }
+    }
+
+    public void handleDisconnect(Packet01Disconnect packet, ClientHandler sender) {
         PlayerMP removed = sender.getPlayer();
         if (removed == null) return;
 
-        // Remove player
         gp.playerList.remove(removed);
 
-        // 🔔 HOST MESSAGE (ONCE)
         gp.gui.addMessage(
-            packet.getUsername() + " has left the game.",
-            Colour.WHITE
+                packet.getUsername() + " has left the game.",
+                Colour.WHITE
         );
 
-        // Notify other clients (NOT sender)
         for (ClientHandler c : clients) {
             if (c == sender) continue;
             c.send(packet);
         }
     }
-
 }

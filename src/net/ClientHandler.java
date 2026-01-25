@@ -1,9 +1,13 @@
 package net;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import entity.PlayerMP;
 import main.GamePanel;
@@ -11,37 +15,53 @@ import net.packets.Packet;
 import net.packets.Packet00Login;
 import net.packets.Packet01Disconnect;
 import net.packets.Packet02Move;
+import net.packets.Packet03Snapshot;
 import net.packets.Packet04Chat;
+import net.packets.Packet05LoginAck;
+import net.packets.PacketType;
 
 public class ClientHandler extends Thread {
 
-    private final GamePanel gp;
-    private final GameServer server;
-    private final Socket socket;
-    private PlayerMP player;
+	    private final GamePanel gp;
+	    private final GameServer server;
+	    private final Socket socket;
+	    private PlayerMP player;
 
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+	    private DataInputStream in;
+	    private DataOutputStream out;
+	    private volatile boolean running = true;
 
-    private boolean running = true;
+	    private final BlockingQueue<Packet> sendQueue = new LinkedBlockingQueue<>();
+	    private Thread writerThread;
+	    
+	    ConnectionState state = ConnectionState.CONNECTING;
 
-    public ClientHandler(GamePanel gp, GameServer server, Socket socket) {
-        this.gp = gp;
-        this.server = server;
-        this.socket = socket;
-    }
+
+	    public ClientHandler(GamePanel gp, GameServer server, Socket socket) {
+	        this.gp = gp;
+	        this.server = server;
+	        this.socket = socket;
+	    }
 
     @Override
     public void run() {
         try {
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in  = new ObjectInputStream(socket.getInputStream());
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
+            startWriter();
 
             while (running) {
-                Object obj = in.readObject();
-                if (obj instanceof Packet packet) {
-                    handlePacket(packet);
-                }
+                int typeCode = in.readInt();
+                PacketType type = PacketType.values()[typeCode];
+                Packet packet = switch (type) {
+                    case LOGIN -> new Packet00Login(in);
+                    case DISCONNECT -> new Packet01Disconnect(in);
+                    case MOVE -> new Packet02Move(in);
+                    case SNAPSHOT -> new Packet03Snapshot(in);
+                    case CHAT -> new Packet04Chat(in);
+                    case LOGIN_ACK -> new Packet05LoginAck();
+                };
+                handlePacket(packet);
             }
         } catch (Exception e) {
             shutdown();
@@ -49,6 +69,11 @@ public class ClientHandler extends Thread {
     }
 
     private void handlePacket(Packet packet) {
+    	
+    	 if (packet.requiredState() != null &&
+    		        packet.requiredState() != state) {
+    		        return;
+    	 }
         switch (packet.getType()) {
             case LOGIN -> {
             	server.handleLogin((Packet00Login) packet, this);
@@ -67,10 +92,11 @@ public class ClientHandler extends Thread {
                     player.setDirection(move.getDirection());
                     player.setCurrentAnimation(move.getCurrentAnimation());
                     player.setCurrentRoomIndex(move.getCurrentRoomIndex());
+                    
+                    // Broadcast move to everyone else
+                    server.sendToAllExcept(move, this);
                 }
-
-                // Broadcast move to everyone else
-                server.sendToAllExcept(move, this);
+                
             }
             case CHAT -> {
             	 Packet04Chat chatPacket = (Packet04Chat)packet;
@@ -79,16 +105,33 @@ public class ClientHandler extends Thread {
             }
         }
     }
-
-    public void send(Object obj) {
-        try {
-            out.writeObject(obj);
-            out.flush();
-        } catch (IOException e) {
-            shutdown();
-        }
+    private void startWriter() {
+        writerThread = new Thread(() -> {
+            try {
+                while (running && !socket.isClosed()) {
+                    Packet packet = sendQueue.take();
+                    out.writeInt(packet.getType().ordinal());
+                    packet.write(out);
+                    out.flush();
+                }
+            } catch (Exception e) {
+                shutdown();
+            }
+        }, "ClientHandler-Writer");
+        writerThread.start();
     }
 
+    public void send(Packet packet) {
+        if (!running || socket.isClosed()) return;
+        sendQueue.offer(packet);
+    }
+
+    public ConnectionState getConnectionState() {
+        return state;
+    }
+    public void setState(ConnectionState state) {
+        this.state = state;
+    }
     public void setPlayer(PlayerMP player) {
         this.player = player;
         player.setOwner(this);
@@ -99,7 +142,7 @@ public class ClientHandler extends Thread {
     }
 
     public void shutdown() {
-        if (!running) return; // 🔒 prevent double shutdown
+        if (!running) return;
         running = false;
 
         if (player != null) {
@@ -109,10 +152,7 @@ public class ClientHandler extends Thread {
             );
         }
 
-        try {
-            socket.close();
-        } catch (IOException ignored) {}
-
+        try { socket.close(); } catch (IOException ignored) {}
         server.removeClient(this);
     }
 }
