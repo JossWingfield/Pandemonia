@@ -19,6 +19,7 @@ import main.renderer.AssetPool;
 import main.renderer.BitmapFont;
 import main.renderer.Colour;
 import main.renderer.Renderer;
+import main.renderer.Shader;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import map.LightSource;
@@ -54,6 +55,8 @@ public class Player extends Entity{
     
     //CUSTOMISATION 
     public TextureRegion[][][] hand1Animations, hand2Animations, headAnimations, bodyAnimations, accessoryAnimations, vfxAnimations;
+    public PlayerAppearance appearance;
+    private Shader playerShader;
     
     //ATTRIBUTES
     public int level = 1;
@@ -80,6 +83,7 @@ public class Player extends Entity{
     private boolean moved = false;
     private double timeSinceLastSend = 0;
     public boolean isChangingRoom = false;
+    
 
     public Player(GamePanel gp, int xPos, int yPos, KeyListener keyL, MouseListener mouseL, String username) { //Setting default variables
         super(gp, (xPos), (yPos), 32, 32);
@@ -97,6 +101,12 @@ public class Player extends Entity{
         
         interactHitbox = new Rectangle2D.Float(0, 0, 1, 1);
         
+        playerShader = AssetPool.getShader("/shaders/player.glsl");
+        
+        appearance = new PlayerAppearance(
+        	    new SkinPalette(0)
+        	);
+        setPlayerSkin(appearance.skin);
         
         setUp();
     }
@@ -106,10 +116,6 @@ public class Player extends Entity{
 
         //hitbox.x = (float) spawnPoint.getX();
         //hitbox.y = (float) spawnPoint.getY();
-    	
-    	Plate plate = new Plate(gp, 0, 0);
-    	plate.setDirty();
-    	currentItem = plate;
         
         //animationSpeedFactor = 2;
     	animationSpeedFactor = 0.09;
@@ -275,7 +281,6 @@ public class Player extends Entity{
     private TextureRegion[][][] importUniversalAnimation(String sheetPath, TextureRegion[][][] targetArray, int startX, int startY,int width,int height,int animationIndex,int frameCount) {
         Texture sheet = importImage(sheetPath);
         
-        TextureRegion[][] array = new TextureRegion[20][15];
         for (int dir = 0; dir < 4; dir++) {
 
             for (int frame = 0; frame < frameCount; frame++) {
@@ -856,7 +861,19 @@ public class Player extends Entity{
     public void setUsername(String newName) {
     	username = newName;
     }
-    
+    public void setPlayerSkin(SkinPalette palette) {
+        if (palette == null) return;
+
+        this.appearance.skin = palette;
+
+        // Upload ONCE — uniforms persist on the shader
+        playerShader.use();
+
+        playerShader.uploadVec3fArray("u_SkinFrom", palette.from);
+        playerShader.uploadVec3fArray("u_SkinTo", palette.to);
+
+        playerShader.detach();
+    }
     public void draw(Renderer renderer) {
     	if(isInvisible) {
     		return;
@@ -879,14 +896,14 @@ public class Player extends Entity{
         	accessoryFrame = createHorizontalFlipped(accessoryFrame);
         	hand1Frame = createHorizontalFlipped(hand1Frame);
         }	    
-     
+        
 
 		if (hand2Frame != null) {
-		    renderer.draw(hand2Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+		    renderer.draw(hand2Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
 		    renderer.draw(bodyFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
-		    renderer.draw(headFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
-		    renderer.draw(accessoryFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
-		    renderer.draw(hand1Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
+		    renderer.draw(headFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
+		    renderer.draw(accessoryFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
+		    renderer.draw(hand1Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
 		}     
         if(direction != 3) {
     		drawCurrentItem(renderer);

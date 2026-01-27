@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.GamePanel;
-import utility.Recipe;
 import utility.RecipeManager;
 
 public class RecipeSaveData extends SaveData {

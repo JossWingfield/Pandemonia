@@ -202,6 +202,22 @@ public class Shader {
 	    buffer.flip(); // Prepare the buffer for reading
 	    GL20.glUniform3fv(varLocation, buffer);
 	}
+	public void uploadVec3fArray(String varName, float[] array) {
+	    int varLocation = GL20.glGetUniformLocation(shaderProgramID, varName);
+	    use();
+
+	    if (array.length % 3 != 0) {
+	        throw new IllegalArgumentException(
+	            "uploadVec3fArray requires array length multiple of 3"
+	        );
+	    }
+
+	    FloatBuffer buffer = BufferUtils.createFloatBuffer(array.length);
+	    buffer.put(array);
+	    buffer.flip();
+
+	    GL20.glUniform3fv(varLocation, buffer);
+	}
 	public void uploadVec4fArray(String varName, Vector4f[] vecArray) {
 	    int varLocation = GL20.glGetUniformLocation(shaderProgramID, varName);
 	    use();

@@ -1,15 +1,17 @@
 package main.renderer;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLE_FAN;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
@@ -24,11 +26,12 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -40,10 +43,9 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
+import entity.SkinPalette;
 import main.GamePanel;
 import map.LightSource;
-import utility.CollisionMethods;
-import utility.Settings;
 
 public class Renderer {
 
@@ -290,6 +292,17 @@ public class Renderer {
 
         draw(region.texture, uv4, x, y, width, height);
     }
+    public void draw(TextureRegion region, float x, float y, float width, float height, Shader shader) {
+        if (region == null || region.texture == null) return;
+
+        // Compute UVs in OpenGL orientation (flip V)
+        float[] uv4 = new float[] {
+            region.u0, region.v1,  // bottom-left
+            region.u1, region.v0   // top-right
+        };
+
+        draw(region.texture, uv4, x, y, width, height, shader);
+    }
     public void draw(TextureRegion region, float x, float y, float width, float height, Vector4f tint) {
         if (region == null || region.texture == null) return;
 
@@ -458,7 +471,7 @@ public class Renderer {
             lightScreenPositions.add(screenPos);
         }
     }
-
+    
     // helper to write a vertex into the host vertexArray
     private void putVertex(float x, float y, float u, float v, float texSlot, Vector4f color) {
         int base = vertexCount;

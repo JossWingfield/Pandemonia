@@ -33,20 +33,22 @@ public class KeyListener {
         if (key < 0 || key >= 350) return;
 
         if (action == GLFW.GLFW_PRESS) {
-
-            if (gp.gui.usernameActive && key == GLFW.GLFW_KEY_BACKSPACE) {
-                if (!gp.gui.username.isEmpty()) {
-                    gp.gui.username =
-                        gp.gui.username.substring(0, gp.gui.username.length() - 1);
-                }
-                return;
-            } else if(gp.currentState == gp.chatState && key == GLFW.GLFW_KEY_BACKSPACE) {
-            	 if (!gp.gui.chatInput.isEmpty()) {
-                     gp.gui.chatInput =
-                         gp.gui.chatInput.substring(0, gp.gui.chatInput.length() - 1);
-                 }
-                 return;
-            }
+        	
+        	if(gp.gui != null) {
+	            if (gp.gui.usernameActive && key == GLFW.GLFW_KEY_BACKSPACE) {
+	                if (!gp.gui.username.isEmpty()) {
+	                    gp.gui.username =
+	                        gp.gui.username.substring(0, gp.gui.username.length() - 1);
+	                }
+	                return;
+	            } else if(gp.currentState == gp.chatState && key == GLFW.GLFW_KEY_BACKSPACE) {
+	            	 if (!gp.gui.chatInput.isEmpty()) {
+	                     gp.gui.chatInput =
+	                         gp.gui.chatInput.substring(0, gp.gui.chatInput.length() - 1);
+	                 }
+	                 return;
+	            }
+        	}
 
             if (!keyPressed[key]) {
                 keyBeginPress[key] = true;
