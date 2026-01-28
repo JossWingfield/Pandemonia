@@ -37,6 +37,9 @@ uniform vec3 u_SkinFrom[3]; // light, mid, dark
 */
 uniform vec3 u_SkinTo[3];
 
+uniform vec3 u_HairFrom[2];
+uniform vec3 u_HairTo[2];
+
 out vec4 FragColor;
 
 bool approxEqual(vec3 a, vec3 b) {
@@ -45,10 +48,9 @@ bool approxEqual(vec3 a, vec3 b) {
 
 void main() {
     vec4 texColor = texture(uTextures[0], vTexCoord);
-
-    // Palette swap ONLY on RGB, outline colors won't match so stay untouched
     vec3 rgb = texColor.rgb;
 
+    // --- SKIN ---
     for (int i = 0; i < 3; i++) {
         if (approxEqual(rgb, u_SkinFrom[i])) {
             rgb = u_SkinTo[i];
@@ -56,11 +58,15 @@ void main() {
         }
     }
 
+    // --- HAIR ---
+    for (int i = 0; i < 3; i++) {
+        if (approxEqual(rgb, u_HairFrom[i])) {
+            rgb = u_HairTo[i];
+            break;
+        }
+    }
+
     texColor.rgb = rgb;
-
-    // Premultiply alpha
     texColor.rgb *= texColor.a;
-
-    // Vertex color multiply (batching safe)
     FragColor = texColor * vColor;
 }

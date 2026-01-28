@@ -267,7 +267,7 @@ public class GamePanel {
       	
         //cutsceneM.enterDestroyedRestaurant();
     }
-    public void playSinglePlayer(int saveSlot, String playerName, String worldName, int selectedSkinNum) {
+    public void playSinglePlayer(int saveSlot, String playerName, String worldName, int selectedSkinNum, int selectedHairNum) {
     	saveM.currentSave = saveSlot;
     	player = new Player(this, 48*10, 48*10, keyL, mouseL, playerName);
     	currentState = playState;
@@ -277,6 +277,7 @@ public class GamePanel {
     	if(!worldName.equals("")) {
         	progressM.worldName = worldName;
         	player.setSkin(selectedSkinNum);
+          	player.setHair(selectedHairNum);
     	}
     }
     public void hostServer(String username) {

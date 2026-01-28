@@ -399,8 +399,6 @@ public class GUI {
 
 			text = "Play";
 			
-			int mouseX = (int)gp.mouseL.getWorldX();
-			int mouseY = (int)gp.mouseL.getWorldY();
 			
 			x = 120;
 		    y = 360;
@@ -1054,7 +1052,7 @@ public class GUI {
 		    		gp.player.setDirection(2);
 		    		selectedSkinNum = 0;
 				} else {
-					gp.playSinglePlayer(saveChosen, "", "", 0);
+					gp.playSinglePlayer(saveChosen, "", "", 0, 0);
 				}
 			}
 		}
@@ -1132,12 +1130,12 @@ public class GUI {
 	    //Skin
 	    String text = "Skin " + (selectedSkinNum + 1);
 	    x = centerX + 50;
-	    y = 400;
+	    y = 360;
 	    
 	    renderer.setColour(titleColour1);
 	    renderer.drawString(text, x, y);
 	    
-	    y-= 36;
+	    y-= 50;
 	    
 	    imageSize = 32*3;
 	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
@@ -1168,6 +1166,45 @@ public class GUI {
 		    renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize);
 	    }
 	    
+	    //Hair
+	    text = "Hair " + (selectedHairNum + 1);
+	    x = centerX + 50;
+	    y = 460;
+	    
+	    renderer.setColour(titleColour1);
+	    renderer.drawString(text, x, y);
+	    
+	    y-= 50;
+	    
+	    imageSize = 32*3;
+	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            selectedHairNum--;
+	            if(selectedHairNum < 0) {
+	            	selectedHairNum = 0;
+	            }
+	            gp.player.setHair(selectedHairNum);
+	        }
+	    } else {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    if (isHovering(x + imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            selectedHairNum++;
+	            if(selectedHairNum > 9) {
+	            	selectedHairNum = 9;
+	            }
+	            gp.player.setHair(selectedHairNum);
+	        }
+	    } else {
+		    renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize);
+	    }
+	    
 
 	    // ---- Confirm ----
 	    text = "Confirm";
@@ -1185,7 +1222,7 @@ public class GUI {
 	            String playerName = playerNameBox.getText();
 	            String worldName  = worldNameBox.getText();
 	            
-	            gp.playSinglePlayer(saveChosen, playerName, worldName, selectedSkinNum);
+	            gp.playSinglePlayer(saveChosen, playerName, worldName, selectedSkinNum, selectedHairNum);
 	            playerNameBox.setText("");
 	            worldNameBox.setText("");
 	        }
