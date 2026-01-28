@@ -33,23 +33,35 @@ public class KeyListener {
         if (key < 0 || key >= 350) return;
 
         if (action == GLFW.GLFW_PRESS) {
-        	
-        	if(gp.gui != null) {
-	            if (gp.gui.usernameActive && key == GLFW.GLFW_KEY_BACKSPACE) {
-	                if (!gp.gui.username.isEmpty()) {
-	                    gp.gui.username =
-	                        gp.gui.username.substring(0, gp.gui.username.length() - 1);
-	                }
-	                return;
-	            } else if(gp.currentState == gp.chatState && key == GLFW.GLFW_KEY_BACKSPACE) {
-	            	 if (!gp.gui.chatInput.isEmpty()) {
-	                     gp.gui.chatInput =
-	                         gp.gui.chatInput.substring(0, gp.gui.chatInput.length() - 1);
-	                 }
-	                 return;
-	            }
-        	}
 
+            // ---- BACKSPACE ----
+            if (key == GLFW.GLFW_KEY_BACKSPACE && gp.gui != null) {
+
+                // TextBoxes handle their own deletion
+                if (gp.currentState == gp.createWorldScreen) {
+                    gp.gui.playerNameBox.onCharTyped('\b');
+                    gp.gui.worldNameBox.onCharTyped('\b');
+                    return;
+                } 
+                
+                if (gp.currentState == gp.writeUsernameState) {
+                    gp.gui.usernameBox.onCharTyped('\b');
+                    return;
+                }
+
+                // Chat input (if you haven't converted it yet)
+                if (gp.currentState == gp.chatState) {
+                    String msg = gp.gui.chatBox.getText();
+
+                    if (!msg.isBlank()) {
+                        //gp.gui.sendChatMessage(msg);
+                        //gp.gui.chatBox.setText("");
+                    }
+                    return;
+                }
+            }
+
+            // ---- NORMAL KEY TRACKING ----
             if (!keyPressed[key]) {
                 keyBeginPress[key] = true;
             }
@@ -62,25 +74,26 @@ public class KeyListener {
     }
     
     public void charCallback(long window, int codepoint) {
-    	if(gp.gui != null) {
-    		if (!gp.gui.usernameActive && gp.currentState != gp.chatState) return;
-    	}
+
+        if (gp.gui == null) return;
 
         char c = (char) codepoint;
 
-        if(gp.gui != null) {
-	        // Backspace is NOT sent here by GLFW, handled via keyCallback
-        	if(gp.currentState == gp.writeUsernameState) {
-        		if (Character.isLetterOrDigit(c) || c == '_' || c == '-') {
-        			if (gp.gui.username.length() < 16) {
-        				gp.gui.username += c;
-        			}
-        		}
-        	} else if(gp.currentState == gp.chatState) {
-	        	if (gp.gui.chatInput.length() < 200) {
-	        		gp.gui.chatInput += c;
-		        }
-	        }
+        // ---- Create World Screen ----
+        if (gp.currentState == gp.createWorldScreen) {
+            gp.gui.playerNameBox.onCharTyped(c);
+            gp.gui.worldNameBox.onCharTyped(c);
+            return;
+        }
+        
+        if (gp.currentState == gp.writeUsernameState) {
+            gp.gui.usernameBox.onCharTyped(c);
+            return;
+        }
+
+        // ---- Chat ----
+        if (gp.currentState == gp.chatState) {
+            gp.gui.chatBox.onCharTyped(c);
         }
     }
 
@@ -113,20 +126,16 @@ public class KeyListener {
             if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) gp.currentState = gp.pauseState;
 
             // Movement
-            boolean left = isKeyPressed(GLFW.GLFW_KEY_A) || isKeyPressed(GLFW.GLFW_KEY_LEFT);
-            boolean right = isKeyPressed(GLFW.GLFW_KEY_D) || isKeyPressed(GLFW.GLFW_KEY_RIGHT);
-            boolean up = isKeyPressed(GLFW.GLFW_KEY_W) || isKeyPressed(GLFW.GLFW_KEY_UP);
-            boolean down = isKeyPressed(GLFW.GLFW_KEY_S) || isKeyPressed(GLFW.GLFW_KEY_DOWN);
-            // Other actions
-            boolean shiftPressed = isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT) || isKeyPressed(GLFW.GLFW_KEY_RIGHT_SHIFT);
-            boolean ePressed = isKeyPressed(GLFW.GLFW_KEY_E);
 
             // Debug
             if (keyBeginPress(GLFW.GLFW_KEY_KP_EQUAL)) debugMode = !debugMode;
             if (keyBeginPress(GLFW.GLFW_KEY_B)) showHitboxes = !showHitboxes;
             if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) gp.currentState = gp.mapBuildState;
             if (keyBeginPress(GLFW.GLFW_KEY_MINUS)) gp.mapM.drawPath = !gp.mapM.drawPath;
-            if (keyBeginPress(GLFW.GLFW_KEY_T)) gp.currentState = gp.chatState;
+            if (keyBeginPress(GLFW.GLFW_KEY_T)) {
+            	gp.currentState = gp.chatState;
+              	gp.gui.chatBox.setActive(true);
+            }
         }
         // ----- MAP BUILD STATE -----
         else if (gp.currentState == gp.mapBuildState) {
@@ -162,12 +171,12 @@ public class KeyListener {
         } else if (gp.currentState == gp.chatState) {
             if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
             	gp.currentState = gp.playState;
-            	gp.gui.chatInput = "";
              	gp.gui.chatActive = false;
             }
             if(keyBeginPress(GLFW.GLFW_KEY_ENTER)) {
-            	gp.gui.sendChatMessage();
+            	gp.gui.sendChatMessage(gp.gui.chatBox.getText());
             	gp.gui.chatActive = false;
+            	gp.gui.chatBox.setText("");
             }
         }
         // ----- CUSTOMISE RESTAURANT -----

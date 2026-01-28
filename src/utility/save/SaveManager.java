@@ -325,6 +325,16 @@ public class SaveManager {
 	        return null;
 	    }
 	}
+	public String getSavedWorldName(int slot) {
+	    try (FileReader reader = new FileReader("save/progress" + slot + ".json")) {
+	        Gson gson = new Gson();
+	        ProgressSaveData data = gson.fromJson(reader, ProgressSaveData.class);
+	        return data != null ? data.worldName : null; // return null if no save
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
     // Convenience methods to save/load directly from disk
 	public void saveToFile(String path, SaveData data) {
 	    try {

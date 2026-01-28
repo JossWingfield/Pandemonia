@@ -96,4 +96,7 @@ public class SkinPalette {
             b / 255f
         };
     }
+    public int getIndex() {
+		return index;
+	}
 }

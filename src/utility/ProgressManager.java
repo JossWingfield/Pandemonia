@@ -24,6 +24,7 @@ public class ProgressManager {
 	
     GamePanel gp;
     Random random = new Random();
+    public String worldName = "";
     
     // Keeps track of level-specific rewards
     public enum RewardType {
@@ -558,6 +559,7 @@ public class ProgressManager {
 	}
     public ProgressSaveData saveData() {
     	ProgressSaveData data = new ProgressSaveData();
+    	data.worldName = worldName;
     	data.fridgeUpgradeI = fridgeUpgradeI;
     	data.fridgeUpgradeII = fridgeUpgradeII;
     	data.sinkUpgradeI = sinkUpgradeI;
@@ -577,6 +579,7 @@ public class ProgressManager {
     	return data;
     }
     public void applySaveData(ProgressSaveData data) {
+    	worldName = data.worldName;
     	currentPhase = data.phase;
     	fridgeUpgradeI = data.fridgeUpgradeI;
     	fridgeUpgradeII = data.fridgeUpgradeII;

@@ -9,8 +9,10 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
+import entity.Player;
 import entity.items.Food;
 import entity.npc.Customer;
 import entity.npc.NPC;
@@ -40,7 +42,7 @@ public class GUI {
     private TextureRegion[] computerAnimations;
     private TextureRegion shoppingUI, shoppingButtonUI, leftArrow, rightArrow, basketUI, basketButtons;
     private TextureRegion leftProgress1, leftProgress2, middleProgress1, middleProgress2, rightProgress1, rightProgress2;
-    private TextureRegion saveBorder, deleteSave;
+    private TextureRegion saveBorder, deleteSave, leftTitleArrow, rightTitleArrow;
     private TextureRegion dialogueFrame;
 	private TextureRegion bookIcons[], bookOpen, bookClosed, recipeBookBorder, lockedRecipeBorder;
 	private TextureRegion achievementBorder, achievement, lockedAchievement, mysteryIcon, mysteryCrateUI, catalogueButton, catalogueMenu;
@@ -84,7 +86,6 @@ public class GUI {
 	//USERNAME
 	public String username = "";
 	public boolean usernameActive = false; // whether user is typing
-	private double caretBlinkCounter = 0; // blinking cursor effect
 	private boolean levelUp = false;
 	
 	private Map<Recipe, RecipeRenderData> renderCache = new HashMap<>();
@@ -113,6 +114,7 @@ public class GUI {
 	//SAVE
 	private boolean doDestroySave;
 	private int destroySaveNum;
+	private int saveChosen;
 	
 	private int currentPage = 0;  
 	private int achievementStartIndex = 0; // which achievement is currently at the top
@@ -122,7 +124,14 @@ public class GUI {
 	private int notificationX, notificationY; // position to draw
 	
 	public boolean chatActive = true;
-	public String chatInput = "";
+	
+	public TextBox playerNameBox;
+	public TextBox worldNameBox;
+	public TextBox chatBox;
+	public TextBox usernameBox;
+	
+	private int selectedSkinNum = 0;
+	private int selectedHairNum = 0;
 
 	public GUI(GamePanel gp) {
 		this.gp = gp;
@@ -134,13 +143,61 @@ public class GUI {
 		titleColour1 = Colour.BLACK;
 	    titleColour2 = new Colour(87, 87, 87);
 		titleColour2 = Colour.WHITE;
-        //orderTextColour = new Colour(145, 102, 91);
 	    orderTextColour = Colour.BLACK;
-        //titleAnimationSpeedFactor = 4;
         titleAnimationSpeedFactor = 3.0;
         
         font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
         fancyFont = AssetPool.getBitmapFont("/UI/monogram-extended-italic.ttf", 32);
+        
+        int boxWidth  = 220;
+        int boxHeight = 40;
+        int centerX   = 20 + 90;
+
+        playerNameBox = new TextBox(
+            gp,
+            centerX,
+            200,
+            boxWidth,
+            boxHeight,
+            font
+        );
+
+        worldNameBox = new TextBox(
+            gp,
+            centerX,
+            280,
+            boxWidth,
+            boxHeight,
+            font
+        );
+        
+        boxWidth  = gp.frameWidth - 40;
+        boxHeight = 50;
+        int boxX = 20;
+        int boxY = gp.frameHeight - boxHeight - 20;
+
+        chatBox = new TextBox(
+            gp,
+            boxX,
+            boxY,
+            boxWidth,
+            boxHeight,
+            font
+        );
+        
+        boxWidth  = 400;
+        boxHeight = 50;
+        boxX = gp.frameWidth / 2 - boxWidth / 2;
+        boxY = 300;
+
+        usernameBox = new TextBox(
+            gp,
+            boxX,
+            boxY,
+            boxWidth,
+            boxHeight,
+            font
+        );
         
 		importImages();
 	}
@@ -180,7 +237,9 @@ public class GUI {
 		titleBookAnimations[0] = importFromSpriteSheet("/UI/titlescreen/BookOpen.png", 5, 1, 0, 0, 848, 640); 
 		titleBookAnimations[1] = importFromSpriteSheet("/UI/titlescreen/PageLeft.png", 8, 1, 0, 0, 848, 640); 
 		titleBookAnimations[2] = importFromSpriteSheet("/UI/titlescreen/PageRight.png", 8, 1, 0, 0, 848, 640); 
-
+		leftTitleArrow = importImage("/UI/titlescreen/Arrow.png").toTextureRegion(); 
+		rightTitleArrow = createHorizontalFlipped(leftTitleArrow);
+		
 		computerAnimations = importFromSpriteSheet("/UI/catalogue/Computer.png", 10, 1, 0, 0, 260, 190); 
 		shoppingUI = importImage("/UI/catalogue/Shopping.png").getSubimage(0, 190, 260, 190);
 		shoppingButtonUI = importImage("/UI/catalogue/Shopping.png").getSubimage(0, 190*2, 260, 190);
@@ -233,6 +292,17 @@ public class GUI {
 		mysteryCrateUI = importImage("/UI/catalogue/MysteryCrateUI.png").toTextureRegion();
 		catalogueButton = importImage("/UI/catalogue/CatalogueButton.png").toTextureRegion();
 		catalogueMenu = importImage("/UI/catalogue/CatalogueMenu.png").toTextureRegion();
+	}
+	private TextureRegion createHorizontalFlipped(TextureRegion original) {
+	        // Swap U coordinates (flip horizontally)
+	        float u0 = original.u1;
+	        float u1 = original.u0;
+
+	        // Keep V coordinates the same
+	        float v0 = original.v0;
+	        float v1 = original.v1;
+
+	        return new TextureRegion(original.texture, u0, v0, u1, v1);
 	}
 	protected TextureRegion[] importFromSpriteSheet(String filePath, int columnNumber, int rowNumber, int startX, int startY, int width, int height) {
 	    TextureRegion animations[] = new TextureRegion[20];
@@ -600,6 +670,7 @@ public class GUI {
 					usernameActive = true;
 					gp.currentState = gp.writeUsernameState;
 					clickCooldown = 0.16;
+					usernameBox.setActive(true);
 				}
 			}
 			renderer.fillRect(x, y+ 14, getTextWidth(text, fancyFont), 6, c);
@@ -869,13 +940,16 @@ public class GUI {
 			int y = 200;
 			String text = "Choose Save";
 			
-			int saveChosen = -1;
+			saveChosen = -1;
 			
 			renderer.setFont(font);
 			renderer.setColour(titleColour1);
 			renderer.drawString(text, x, y);
 			
 			text = "Save 1";
+			if(gp.saveM.isSlotEmpty(1)) {
+				
+			}
 			
 			x = 100;
 			y = 260 - 40;
@@ -952,7 +1026,7 @@ public class GUI {
 				
 				renderer.setColour(titleColour1);
 				text = "No";
-
+				
 				x += 200;
 				y = 400;
 				
@@ -970,21 +1044,180 @@ public class GUI {
 				renderer.drawString(text, x, y);
 			}
 			
-			if(saveChosen != -1 && !doDestroySave) {					
-				renderer.setFont(font);
-				renderer.setColour(Colour.WHITE);
-				text = "LOADING";
-					
-				x = 20;
-				y = 800;
-				
-				renderer.drawString(text, x, y);
-				if(singleplayerSelected) {
-					gp.playSinglePlayer(saveChosen);
-					singleplayerSelected = false;
+			if(saveChosen != -1 && !doDestroySave) {
+				if(gp.saveM.isSlotEmpty(saveChosen)) {
+					gp.currentState = gp.createWorldScreen;
+					currentTitleAnimation = 1;
+					titleAnimationCounter = 0;
+					titleAnimationSpeed = 0;
+		    		gp.player = new Player(gp, 0, 0, null, null, "");
+		    		gp.player.setDirection(2);
+		    		selectedSkinNum = 0;
+				} else {
+					gp.playSinglePlayer(saveChosen, "", "", 0);
 				}
 			}
 		}
+	}
+	private void drawCreateWorldScreen(Renderer renderer) {
+
+	    renderer.draw(
+	        titleBackground,
+	        (gp.frameWidth / 2) - (int) ((768 * 1.5) / 2),
+	        (gp.frameHeight / 2) - (int) ((560 * 1.5) / 2),
+	        (int) (768 * 1.5),
+	        (int) (560 * 1.5)
+	    );
+
+	    // ---- Book animation ----
+	    titleAnimationSpeed++;
+	    if (titleAnimationSpeed >= titleAnimationSpeedFactor) {
+	        titleAnimationSpeed = 0;
+	        titleAnimationCounter++;
+	    }
+
+	    if (titleBookAnimations[currentTitleAnimation][titleAnimationCounter] == null) {
+	        titleAnimationCounter--;
+	    }
+
+	    renderer.draw(
+	        titleBookAnimations[currentTitleAnimation][titleAnimationCounter],
+	        (gp.frameWidth / 2) - (int) ((848 * 1.5) / 2),
+	        (gp.frameHeight / 2) - (int) ((640 * 1.5) / 2),
+	        (int) (848 * 1.5),
+	        (int) (640 * 1.5)
+	    );
+
+	    if (titleAnimationCounter <= 6) return;
+	    
+	    // ---- Labels ----
+	    renderer.setFont(font);
+	    renderer.setColour(titleColour1);
+	      int centerX   = 20 + 90;
+	    renderer.drawString("Player Name", centerX, 190);
+
+	    renderer.drawString("World Name", centerX, 270);
+
+	    // ---- TextBoxes ----
+	    playerNameBox.draw(renderer);
+	    worldNameBox.draw(renderer);
+	    
+	    //DRAW PLAYER PREVIEW
+	    gp.player.drawPreview(renderer, 420, -20);
+	    
+	    int x = 540+200;
+	    int y = 300;
+	    //DIRECTION ARROWS 
+	    int imageSize = 32*3;
+	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            gp.player.rotateLeft();
+	        }
+	    } else {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    if (isHovering(x + imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            gp.player.rotateRight();
+	        }
+	    } else {
+		    renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    //Skin
+	    String text = "Skin " + (selectedSkinNum + 1);
+	    x = centerX + 50;
+	    y = 400;
+	    
+	    renderer.setColour(titleColour1);
+	    renderer.drawString(text, x, y);
+	    
+	    y-= 36;
+	    
+	    imageSize = 32*3;
+	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.1;
+	            selectedSkinNum--;
+	            if(selectedSkinNum < 0) {
+	            	selectedSkinNum = 0;
+	            }
+	            gp.player.setSkin(selectedSkinNum);
+	        }
+	    } else {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    if (isHovering(x + imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.1;
+	            selectedSkinNum++;
+	            if(selectedSkinNum > 6) {
+	            	selectedSkinNum = 6;
+	            }
+	            gp.player.setSkin(selectedSkinNum);
+	        }
+	    } else {
+		    renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize);
+	    }
+	    
+
+	    // ---- Confirm ----
+	    text = "Confirm";
+	    x = 200+gp.frameWidth / 2 - getTextWidth(text, font) / 2;
+	    y = 640;
+
+	    renderer.setColour(titleColour1);
+
+	    if (isHovering(text, x, y - 24, font)) {
+	        renderer.setColour(titleColour2);
+
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.33;
+
+	            String playerName = playerNameBox.getText();
+	            String worldName  = worldNameBox.getText();
+	            
+	            gp.playSinglePlayer(saveChosen, playerName, worldName, selectedSkinNum);
+	            playerNameBox.setText("");
+	            worldNameBox.setText("");
+	        }
+
+	        renderer.fillRect(x, y + 14, getTextWidth(text, font), 6);
+	    }
+	    
+	    renderer.drawString(text, x, y);
+
+	    // ---- Back ----
+	    renderer.setColour(titleColour1);
+	    text = "Back";
+	    x = 100;
+	    y = 660;
+
+	    if (isHovering(text, x, y - 24, font)) {
+	        renderer.setColour(titleColour2);
+
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            gp.currentState = gp.chooseSaveState;
+	            clickCooldown = 0.33;
+	            currentTitleAnimation = 2;
+	            titleAnimationCounter = 0;
+	            titleAnimationSpeed = 0;
+	            playerNameBox.setText("");
+	            worldNameBox.setText("");
+	        }
+
+	        renderer.fillRect(x, y + 14, getTextWidth(text, font), 6);
+	    }
+
+	    renderer.drawString(text, x, y);
 	}
 	private int drawSave(Renderer renderer, int saveSlot, int x, int y, String text) {
 		int saveChosen = -1;
@@ -997,6 +1230,9 @@ public class GUI {
 				if(gp.mouseL.mouseButtonDown(0)) {
 					saveChosen = saveSlot;
 				}
+			}
+			if(!gp.saveM.isSlotEmpty(saveSlot)) {
+				text = gp.saveM.getSavedWorldName(saveSlot);
 			}
 			renderer.drawString(text, 120, y+50);
 			
@@ -1049,33 +1285,12 @@ public class GUI {
 		return saveChosen;
 	}
 	public void drawChatScreen(Renderer renderer) {
-		updateMessages();
-	    // Background box for input
-	    int boxWidth = gp.frameWidth - 40; // almost full width
-	    int boxHeight = 50;
-	    int boxX = 20; // small margin from sides
-	    int boxY = gp.frameHeight - boxHeight - 20; // 20px from bottom
-	    
+
+	    updateMessages();
+	    // Chat feed stays exactly the same
 	    drawChatFeed(renderer);
-
-	    // Draw semi-transparent background
-	    renderer.setColour(new Colour(0, 0, 0, 150));
-	    renderer.fillRect(boxX, boxY, boxWidth, boxHeight);
-
-	    // Draw border
-	    renderer.setColour(Colour.BLACK);
-	    renderer.fillRect(boxX, boxY, boxWidth, boxHeight);
-
-	    // Chat text inside box
-	    renderer.setFont(font);
-	    renderer.setColour(Colour.WHITE);
-	    renderer.drawString(chatInput, boxX + 10, boxY + 35);
-
-	    // Blinking caret
-	    if(caretBlinkCounter < 1) {
-	        int caretX = boxX + 10 + getTextWidth(chatInput, font);
-	        renderer.fillRect(caretX, boxY + 10, 2, 30);
-	    }
+	    // Chat input box
+	    chatBox.draw(renderer);
 	}
 	public void drawChatFeed(Renderer renderer) {
 	    int padding = 20;
@@ -1123,126 +1338,117 @@ public class GUI {
 	        if(chatScrollOffset > maxScroll) chatScrollOffset = maxScroll;
 	    }
 	}
-	public void sendChatMessage() {
-		 addChatMessage(gp.player.getUsername(), chatInput);
+	public void sendChatMessage(String message) {
+		 addChatMessage(gp.player.getUsername(), message);
 		 
 		 if(gp.multiplayer) {
 			 if (gp.socketClient != null) {
-				 gp.socketClient.send(new Packet04Chat(gp.player.getUsername(), chatInput));
+				 gp.socketClient.send(new Packet04Chat(gp.player.getUsername(), message));
 			 }
 		 }
-		 
-		 chatInput = "";
 	}
 	public void drawUsernameInput(Renderer renderer) {
-	    
-	    // Background (reuse your title background style if you want)
-	    renderer.draw(titleBackground, 
-	        (gp.frameWidth/2) - (int)((768*1.5) / 2), 
-	        (gp.frameHeight/2) - (int)((560*1.5)/2), 
-	        (int)(768*1.5), 
-	        (int)(560*1.5));
 
-		
+	    renderer.draw(
+	        titleBackground,
+	        (gp.frameWidth / 2) - (int) ((768 * 1.5) / 2),
+	        (gp.frameHeight / 2) - (int) ((560 * 1.5) / 2),
+	        (int) (768 * 1.5),
+	        (int) (560 * 1.5)
+	    );
+
 	    boolean drawLoadingScreen = false;
-	    // Title
+
+	    // ---- Title ----
 	    renderer.setFont(font);
 	    renderer.setColour(titleColour1);
+
 	    String text = "Enter Username";
-	    int x = gp.frameWidth/2 - getTextWidth(text, font)/2;
+	    int x = gp.frameWidth / 2 - getTextWidth(text, font) / 2;
 	    int y = 200;
 	    renderer.drawString(text, x, y);
 
-	    // Username box
-	    int boxWidth = 400;
-	    int boxHeight = 50;
-	    int boxX = gp.frameWidth/2 - boxWidth/2;
-	    int boxY = 300;
+	    // ---- TextBox ----
+	    usernameBox.draw(renderer);
 
-	    renderer.setColour(new Colour(0, 0, 0, 150));
-	    renderer.fillRect(boxX, boxY, boxWidth, boxHeight);
-	    renderer.setColour(Colour.BLACK);
-	    renderer.fillRect(boxX, boxY, boxWidth, boxHeight);
-
-	    // Username text
-	    renderer.setFont(font);
-	    renderer.setColour(Colour.WHITE);
-	    renderer.drawString(username, boxX + 10, boxY + 35);
-
-	    // Blinking caret
-	    if(caretBlinkCounter < 1 && usernameActive) {
-	        int caretX = boxX + 10 + getTextWidth(username, font);
-	        renderer.fillRect(caretX, boxY + 10, 2, 30);
-	    }
-
-	    // "Confirm" button
+	    // ---- Confirm ----
 	    text = "Confirm";
-	    x = gp.frameWidth/2 - getTextWidth(text, font)/2;
+	    x = gp.frameWidth / 2 - getTextWidth(text, font) / 2;
 	    y = 420;
+
 	    renderer.setColour(titleColour1);
 
-	    if(isHovering(text, x, y-24, font)) {
+	    if (isHovering(text, x, y - 24, font)) {
 	        renderer.setColour(titleColour2);
-	        if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-	        	drawLoadingScreen = true;
-	        	startLoading = true; 
+
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            drawLoadingScreen = true;
+	            startLoading = true;
 	            clickCooldown = 0.33;
 	        }
-	        renderer.fillRect(x, y+14, getTextWidth(text, font), 6);
+
+	        renderer.fillRect(x, y + 14, getTextWidth(text, font), 6);
 	    }
+
 	    renderer.drawString(text, x, y);
-	    
-		renderer.setColour(titleColour1);
-		text = "Back";
 
-		x = 100;
-		y = 660;
-		
-		if(isHovering(text,x, y-24, font)) {
-			renderer.setColour(titleColour2);
-			if(gp.mouseL.mouseButtonDown(0)) {
-				//QUIT GAME
-				if(clickCooldown == 0) {
-					gp.currentState = gp.multiplayerSettingsState;
-					clickCooldown = 0.33;
-					currentTitleAnimation = 2;
-					titleAnimationCounter = 0;
-					titleAnimationSpeed = 0;
-					usernameActive = false;
-					joinSelected = false;
-					hostSelected = false;
-				}
-			}
-			renderer.fillRect(x, y+ 14, getTextWidth(text, font), 6);
+	    // ---- Back ----
+	    renderer.setColour(titleColour1);
+	    text = "Back";
 
-		}
-		renderer.drawString(text, x, y);
-		
-		if(drawLoadingScreen) {
-			
-			renderer.setFont(font);
-			renderer.setColour(Colour.WHITE);
-			text = "LOADING...";
-				
-			x = 30;
-			y = 720;
-			
-			renderer.drawString(text, x, y);
-			if(startLoading) {
-				if(hostSelected) {
-					gp.hostServer(username);
-					hostSelected = false;
-					usernameActive = false;
-				} else if(joinSelected) {
-					gp.joinServer(username, gp.selectedServer.ip, gp.selectedServer.port);
-					joinSelected = false;
-					usernameActive = false;
-				}
-				startLoading = false;
-			}
-			startLoading = true;
-		}
-	    
+	    x = 100;
+	    y = 660;
+
+	    if (isHovering(text, x, y - 24, font)) {
+	        renderer.setColour(titleColour2);
+
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            gp.currentState = gp.multiplayerSettingsState;
+	            clickCooldown = 0.33;
+
+	            currentTitleAnimation = 2;
+	            titleAnimationCounter = 0;
+	            titleAnimationSpeed = 0;
+
+	            joinSelected = false;
+	            hostSelected = false;
+	        }
+
+	        renderer.fillRect(x, y + 14, getTextWidth(text, font), 6);
+	    }
+
+	    renderer.drawString(text, x, y);
+
+	    // ---- Loading ----
+	    if (drawLoadingScreen) {
+
+	        renderer.setFont(font);
+	        renderer.setColour(Colour.WHITE);
+
+	        text = "LOADING...";
+	        renderer.drawString(text, 30, 720);
+
+	        if (startLoading) {
+	            String username = usernameBox.getText();
+
+	            if (hostSelected) {
+	                gp.hostServer(username);
+	                hostSelected = false;
+	            } 
+	            else if (joinSelected) {
+	                gp.joinServer(
+	                    username,
+	                    gp.selectedServer.ip,
+	                    gp.selectedServer.port
+	                );
+	                joinSelected = false;
+	            }
+
+	            startLoading = false;
+	        }
+
+	        startLoading = true;
+	    }
 	}
 	private void drawAchievementsScreen(Renderer renderer) {
 		renderer.setColour(darkened);
@@ -1434,6 +1640,9 @@ public class GUI {
 			break;
 		case 19:
 			drawChatScreen(renderer);
+			break;
+		case 20:
+			drawCreateWorldScreen(renderer);
 			break;
 		}
 		
@@ -1776,6 +1985,7 @@ public class GUI {
 						//QUIT
 						gp.currentState = gp.titleState;
 						currentTitleAnimation = 0;
+						gp.multiplayer = false;
 						if(gp.multiplayer) {
 							gp.discovery.shutdown();
 							gp.disconnect();
@@ -2563,13 +2773,15 @@ public class GUI {
 		    }
 		}
 		
-		if(gp.currentState == gp.writeUsernameState || gp.currentState == gp.chatState) {
-		    caretBlinkCounter+=dt;
-		    if(caretBlinkCounter > 2) {
-		    	caretBlinkCounter = 0;
-		    }
-		    
-
+		if(gp.currentState == gp.writeUsernameState) {
+		    usernameBox.update(dt);
+		} 
+		if(gp.currentState == gp.chatState) {
+			chatBox.update(dt);
+		}
+		if(gp.currentState == gp.createWorldScreen) {
+			playerNameBox.update(dt);
+			worldNameBox.update(dt);
 		}
 		
 		if(gp.currentState == gp.catalogueState) {

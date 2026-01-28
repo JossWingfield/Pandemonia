@@ -5,6 +5,7 @@ import main.GamePanel;
 public class PlayerSaveData extends SaveData {
 	
     public String username;
+    public int skinNum;
     public int level;
     public int soulsServed;
     public int nextLevelAmount;

@@ -7,6 +7,7 @@ import main.GamePanel;
 
 public class ProgressSaveData extends SaveData {
 	
+	public String worldName;
 	public boolean fridgeUpgradeI, fridgeUpgradeII;
 	public boolean sinkUpgradeI;
 	public boolean stoveUpgradeI;

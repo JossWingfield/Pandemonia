@@ -54,7 +54,7 @@ public class Player extends Entity{
     public Rectangle2D.Float interactHitbox;
     
     //CUSTOMISATION 
-    public TextureRegion[][][] hand1Animations, hand2Animations, headAnimations, bodyAnimations, accessoryAnimations, vfxAnimations;
+    public TextureRegion[][][] hand1Animations, hand2Animations, headAnimations, bodyAnimations, hairAnimations, accessoryAnimations, vfxAnimations;
     public PlayerAppearance appearance;
     private Shader playerShader;
     
@@ -83,7 +83,6 @@ public class Player extends Entity{
     private boolean moved = false;
     private double timeSinceLastSend = 0;
     public boolean isChangingRoom = false;
-    
 
     public Player(GamePanel gp, int xPos, int yPos, KeyListener keyL, MouseListener mouseL, String username) { //Setting default variables
         super(gp, (xPos), (yPos), 32, 32);
@@ -133,10 +132,14 @@ public class Player extends Entity{
         
         importImages();
     }
-    
+    public void setSkin(int skinNum) {
+    	appearance.setSkin(skinNum);
+        setPlayerSkin(appearance.skin);
+    }
     public PlayerSaveData toSaveData() {
         PlayerSaveData data = new PlayerSaveData();
         data.username = username;
+        data.skinNum = appearance.skin.getIndex();
         data.level = level;
         data.soulsServed = soulsServed;
         data.nextLevelAmount = nextLevelAmount;
@@ -155,6 +158,7 @@ public class Player extends Entity{
     }
     public void applySaveData(PlayerSaveData data) {
         this.username = data.username;
+        setSkin(data.skinNum);
         this.level = data.level;
         this.soulsServed = data.soulsServed;
         this.nextLevelAmount = data.nextLevelAmount;
@@ -957,6 +961,66 @@ public class Player extends Entity{
 		        }
         	}
         }
+    }
+    public void rotateLeft() {
+    	switch(direction) {
+    	case 2:
+    		direction = 1;
+    		break;
+    	case 1:
+    		direction = 3;
+    		break;
+    	case 3:
+    		direction = 0;
+    		break;
+    	case 0:
+    		direction = 2;
+    		break;
+    	}
+    } 
+    public void rotateRight() {
+    	switch(direction) {
+    	case 2:
+    		direction = 0;
+    		break;
+    	case 1:
+    		direction = 2;
+    		break;
+    	case 3:
+    		direction = 1;
+    		break;
+    	case 0:
+    		direction = 3;
+    		break;
+    	}
+    }
+    public void drawPreview(Renderer renderer, int x, int y) {
+    	   TextureRegion hand2Frame = hand2Animations[direction][currentAnimation][animationCounter];
+           TextureRegion bodyFrame = bodyAnimations[direction][currentAnimation][animationCounter];
+           TextureRegion headFrame = headAnimations[direction][currentAnimation][animationCounter];
+           TextureRegion accessoryFrame = accessoryAnimations[direction][currentAnimation][animationCounter];
+           TextureRegion hand1Frame = hand1Animations[direction][currentAnimation][animationCounter];
+
+           //The image is flipped
+           if(direction == 1) {
+           		hand2Frame = createHorizontalFlipped(hand2Frame);
+           		bodyFrame = createHorizontalFlipped(bodyFrame);
+           		headFrame = createHorizontalFlipped(headFrame);
+           		accessoryFrame = createHorizontalFlipped(accessoryFrame);
+           		hand1Frame = createHorizontalFlipped(hand1Frame);
+           }	    
+           
+        int scale = 3;
+
+   		if (hand2Frame != null) {
+   		    renderer.draw(hand2Frame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    renderer.draw(bodyFrame, x,y,drawWidth*scale, drawHeight*scale);
+   		    renderer.draw(headFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    renderer.draw(accessoryFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    renderer.draw(hand1Frame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		}   
+   		
+   		
     }
 
 }

@@ -222,6 +222,7 @@ public class GamePanel {
     public final int achievementState = 17;
     public final int recipeState = 18;
     public final int chatState = 19;
+    public final int createWorldScreen = 20;
     
     Queue<String> textureQueue = new LinkedList<>();
     Queue<String> fontQueue = new LinkedList<>();
@@ -266,11 +267,17 @@ public class GamePanel {
       	
         //cutsceneM.enterDestroyedRestaurant();
     }
-    public void playSinglePlayer(int saveSlot) {
+    public void playSinglePlayer(int saveSlot, String playerName, String worldName, int selectedSkinNum) {
     	saveM.currentSave = saveSlot;
-    	player = new Player(this, 48*10, 48*10, keyL, mouseL, "");
+    	player = new Player(this, 48*10, 48*10, keyL, mouseL, playerName);
     	currentState = playState;
     	saveM.loadGame(saveSlot);
+    	
+    	//SET STUFF DOWN HERE AFTER CREATING CLASSES
+    	if(!worldName.equals("")) {
+        	progressM.worldName = worldName;
+        	player.setSkin(selectedSkinNum);
+    	}
     }
     public void hostServer(String username) {
 

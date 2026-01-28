@@ -10,4 +10,8 @@ public class PlayerAppearance {
     public PlayerAppearance(SkinPalette skin) {
         this.skin = skin;
     }
+    
+    public void setSkin(int num) {
+    	skin = new SkinPalette(num);
+    }
 }
