@@ -33,7 +33,7 @@ public class GameServer extends Thread {
         discoveryManager = new DiscoveryManager(
                 true,
                 gp.player != null ? gp.player.getUsername() : "Host",
-                "World1",
+                gp.progressM.worldName,
                 GAME_PORT
         );
         discoveryManager.start();
@@ -94,7 +94,17 @@ public class GameServer extends Thread {
     }
 
     public void handleLogin(Packet00Login packet, ClientHandler senderHandler) {
+    	for (PlayerMP p : gp.playerList) {
+    	    if (p.getUsername().equals(packet.getUsername())) {
+    	        senderHandler.setPlayer(p);
+    	        senderHandler.send(new Packet05LoginAck());
+    	        senderHandler.setState(ConnectionState.IN_GAME);
+    	        return;
+    	    }
+    	}
+    	
         senderHandler.setState(ConnectionState.LOGGING_IN);
+        
 
         boolean isHost = packet.getUsername().equals(gp.player.getUsername());
 
@@ -134,13 +144,15 @@ public class GameServer extends Thread {
         }
 
         // Broadcast new player to everyone else
-        for (ClientHandler c : clients) {
-            if (c == senderHandler) continue;
-            c.send(new Packet00Login(
+        if (!isHost) {
+            for (ClientHandler c : clients) {
+                if (c == senderHandler) continue;
+                c.send(new Packet00Login(
                     packet.getUsername(),
                     packet.getX(),
                     packet.getY()
-            ));
+                ));
+            }
         }
 
         senderHandler.send(new Packet05LoginAck());

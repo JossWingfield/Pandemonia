@@ -106,8 +106,10 @@ public class Player extends Entity{
         	    new SkinPalette(0),
         	    new HairPalette(0)
         	);
-        setPlayerSkin(appearance.skin);
-        setPlayerHair(appearance.hair);
+        if(!gp.multiplayer) {
+        	setPlayerSkin(appearance.skin);
+        	setPlayerHair(appearance.hair);
+        }
         
         setUp();
     }
@@ -186,7 +188,12 @@ public class Player extends Entity{
         }
         */
     }
-    
+    public int getSkinColour() {
+    	return appearance.skin.getIndex();
+    }
+    public int getHairColour() {
+    	return appearance.hair.getIndex();
+    }
     public void setSpawnPoint(int xPos, int yPos) {
     	hitbox.x = xPos;
     	hitbox.y = yPos;
@@ -311,43 +318,6 @@ public class Player extends Entity{
         }
         return targetArray;
     }
-    /*
-    protected void importPlayerSpriteSheet(String filePath, int columnNumber, int rowNumber, int animationIndex,int startX, int startY, int width, int height) {
-	
-		Texture sheetTexture = AssetPool.getTexture(filePath + ".png");
-		int sheetWidth = sheetTexture.getWidth();
-		int sheetHeight = sheetTexture.getHeight();
-		
-		int originalStartY = startY; // save the original startY
-		
-		for (int k = 0; k < 4; k++) {
-		int arrayIndex = 0;
-		
-		for (int i = 0; i < columnNumber; i++) {     // column-first
-		for (int j = 0; j < rowNumber; j++) {   // row-second
-		int px = i * width + startX;
-		int py = j * height + startY;
-		
-		float u0 = px / (float) sheetWidth;
-		float v0 = 1f - (py + height) / (float) sheetHeight; // flip V
-		float u1 = (px + width) / (float) sheetWidth;
-		float v1 = 1f - py / (float) sheetHeight;
-		
-		animations[k][animationIndex][arrayIndex] =
-		new TextureRegion(sheetTexture, u0, v0, u1, v1);
-		
-		arrayIndex++;
-		}
-		}
-		
-		if (k > 0) {
-		startY += height;  // increment just like old version
-		}
-		}
-		
-		startY = originalStartY; // restore startY in case needed elsewhere
-	}
-	*/
     public String getUsername() {
         return username;
     }
@@ -475,7 +445,7 @@ public class Player extends Entity{
 	                }
 	            	prevX = hitbox.x;
 	             	prevY = hitbox.x;
-	             	
+	             		             	
 	             	timeSinceLastSend+=dt;
 	         	    if (moved) {
 	         	        timeSinceLastSend = 0;
@@ -672,14 +642,14 @@ public class Player extends Entity{
 				    				currentItem = b.currentItem;
 						    		clickCounter = 0.1;
 						    		resetAnimation(2);
-						    		sendPickupPacket(b);
+						    		//sendPickupPacket(b);
 						    		b.currentItem = null;
 				    			}
 			    			} else {
 			    				currentItem = b.currentItem;
 					    		clickCounter = 0.1;
 					    		resetAnimation(2);
-					    		sendPickupPacket(b);
+					    		//sendPickupPacket(b);
 					    		b.currentItem = null;
 			    			}
 		    			} 
@@ -704,24 +674,6 @@ public class Player extends Entity{
 
         return true;
     }
-    private void sendPickupPacket(Building b) {
-    	/*
-    	if(gp.multiplayer) {
-			if(currentItem instanceof Plate p) {
-				Packet21PickupPlate packet = new Packet21PickupPlate(getUsername(), p, b.getArrayCounter());
-	            packet.writeData(gp.socketClient);
-			} else {
-    			int state = 0;
-    			if(currentItem instanceof Food f) {
-    				state = f.getState();
-    			}
-	            Packet07PickUpItemFromTable packet = new Packet07PickUpItemFromTable(currentItem.getName(), username, state, b.getArrayCounter());
-	            packet.writeData(gp.socketClient);
-			}
-        }
-        */
-    }
-    
     public void updateInteractHitbox() {
         float baseX = hitbox.x;
         float baseY = hitbox.y;
@@ -801,7 +753,7 @@ public class Player extends Entity{
             animationCounter++;
         }
         if (hand2Animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
-            animationCounter = 0;
+        	animationCounter = 0;
             if(currentAnimation == 2) {
             	currentAnimation = 3;
             }
@@ -924,8 +876,7 @@ public class Player extends Entity{
        		hairFrame = createHorizontalFlipped(hairFrame);
         	accessoryFrame = createHorizontalFlipped(accessoryFrame);
         	hand1Frame = createHorizontalFlipped(hand1Frame);
-        }	    
-        
+        }	            
 
 		if (hand2Frame != null) {
 		    renderer.draw(hand2Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);

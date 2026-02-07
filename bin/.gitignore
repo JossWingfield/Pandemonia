@@ -1,12 +1,12 @@
 /.DS_Store
 /UI/
+/ai/
 /buildings/
 /decor/
-/gson-2.11.0.jar
-/ai/
 /entity/
 /environment/
 /food/
+/gson-2.11.0.jar
 /main/
 /map/
 /maps/

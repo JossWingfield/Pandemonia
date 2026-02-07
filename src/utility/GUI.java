@@ -665,10 +665,11 @@ public class GUI {
 				if(clickCooldown == 0) {
 					//ENTER GAME
 					hostSelected = true;
-					usernameActive = true;
-					gp.currentState = gp.writeUsernameState;
+					gp.currentState = gp.chooseSaveState;
 					clickCooldown = 0.16;
-					usernameBox.setActive(true);
+					
+					//usernameActive = true;
+					//usernameBox.setActive(true);
 				}
 			}
 			renderer.fillRect(x, y+ 14, getTextWidth(text, fancyFont), 6, c);
@@ -774,10 +775,12 @@ public class GUI {
 	                    if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	                        // Select this server
 	                        gp.selectedServer = server;
-	                        gp.currentState = gp.writeUsernameState;
+	                        gp.currentState = gp.createJoinPlayerScreen;
 	                        usernameActive = true;
 	                        joinSelected = true;
 	                        clickCooldown = 0.25;
+	                		selectedSkinNum = 0;
+	    		    		selectedHairNum = 0;
 	                    }
 	                    renderer.fillRect(x, y+14, getTextWidth(text, fancyFont), 6, c);
 	                }
@@ -802,6 +805,7 @@ public class GUI {
 	                titleAnimationCounter = 0;
 	                titleAnimationSpeed = 0;
 	                gp.stopDiscovery();
+	                joinSelected = false;
 	            }
 	            renderer.fillRect(x, y+14, getTextWidth(text, fancyFont), 6, c);
 	        }
@@ -945,9 +949,6 @@ public class GUI {
 			renderer.drawString(text, x, y);
 			
 			text = "Save 1";
-			if(gp.saveM.isSlotEmpty(1)) {
-				
-			}
 			
 			x = 100;
 			y = 260 - 40;
@@ -990,6 +991,7 @@ public class GUI {
 						titleAnimationCounter = 0;
 						titleAnimationSpeed = 0;
 						singleplayerSelected = false;
+						hostSelected = false;
 					}
 				}
 				renderer.fillRect(x, y+ 6, getTextWidth(text, font), 4);
@@ -1051,8 +1053,14 @@ public class GUI {
 		    		gp.player = new Player(gp, 0, 0, null, null, "");
 		    		gp.player.setDirection(2);
 		    		selectedSkinNum = 0;
+		    		selectedHairNum = 0;
 				} else {
-					gp.playSinglePlayer(saveChosen, "", "", 0, 0);
+					if(!hostSelected) {
+						gp.playSinglePlayer(saveChosen, "", "", 0, 0);
+					} else {
+						gp.hostServer(saveChosen, "", "", 0, 0);
+						hostSelected = false;
+					}
 				}
 			}
 		}
@@ -1167,7 +1175,7 @@ public class GUI {
 	    }
 	    
 	    //Hair
-	    text = "Hair " + (selectedHairNum + 1);
+	    text = "Hair Colour " + (selectedHairNum + 1);
 	    x = centerX + 50;
 	    y = 460;
 	    
@@ -1191,8 +1199,9 @@ public class GUI {
 	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
 	    }
 	    
-	    if (isHovering(x + imageSize, y, imageSize, imageSize)) {
-	    	renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	    int rightArrowOffset = 80;
+	    if (isHovering(x + imageSize+rightArrowOffset, y, imageSize, imageSize)) {
+	    	renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            clickCooldown = 0.25;
 	            selectedHairNum++;
@@ -1202,7 +1211,7 @@ public class GUI {
 	            gp.player.setHair(selectedHairNum);
 	        }
 	    } else {
-		    renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize);
+		    renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize);
 	    }
 	    
 
@@ -1222,7 +1231,13 @@ public class GUI {
 	            String playerName = playerNameBox.getText();
 	            String worldName  = worldNameBox.getText();
 	            
-	            gp.playSinglePlayer(saveChosen, playerName, worldName, selectedSkinNum, selectedHairNum);
+	            if(!hostSelected) {
+		            gp.playSinglePlayer(saveChosen, playerName, worldName, selectedSkinNum, selectedHairNum);
+	            } else {
+	            	hostSelected = false;
+		            gp.hostServer(saveChosen, playerName, worldName, selectedSkinNum, selectedHairNum);
+	            }
+	            
 	            playerNameBox.setText("");
 	            worldNameBox.setText("");
 	        }
@@ -1243,6 +1258,208 @@ public class GUI {
 
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            gp.currentState = gp.chooseSaveState;
+	            clickCooldown = 0.33;
+	            currentTitleAnimation = 2;
+	            titleAnimationCounter = 0;
+	            titleAnimationSpeed = 0;
+	            playerNameBox.setText("");
+	            worldNameBox.setText("");
+	        }
+
+	        renderer.fillRect(x, y + 14, getTextWidth(text, font), 6);
+	    }
+
+	    renderer.drawString(text, x, y);
+	}
+	private void drawJoinWorldScreen(Renderer renderer) {
+
+	    renderer.draw(
+	        titleBackground,
+	        (gp.frameWidth / 2) - (int) ((768 * 1.5) / 2),
+	        (gp.frameHeight / 2) - (int) ((560 * 1.5) / 2),
+	        (int) (768 * 1.5),
+	        (int) (560 * 1.5)
+	    );
+
+	    // ---- Book animation ----
+	    titleAnimationSpeed++;
+	    if (titleAnimationSpeed >= titleAnimationSpeedFactor) {
+	        titleAnimationSpeed = 0;
+	        titleAnimationCounter++;
+	    }
+
+	    if (titleBookAnimations[currentTitleAnimation][titleAnimationCounter] == null) {
+	        titleAnimationCounter--;
+	    }
+
+	    renderer.draw(
+	        titleBookAnimations[currentTitleAnimation][titleAnimationCounter],
+	        (gp.frameWidth / 2) - (int) ((848 * 1.5) / 2),
+	        (gp.frameHeight / 2) - (int) ((640 * 1.5) / 2),
+	        (int) (848 * 1.5),
+	        (int) (640 * 1.5)
+	    );
+
+	    if (titleAnimationCounter <= 6) return;
+	    
+	    // ---- Labels ----
+	    renderer.setFont(font);
+	    renderer.setColour(titleColour1);
+	      int centerX   = 20 + 90;
+	    renderer.drawString("Player Name", centerX, 190);
+
+	    // ---- TextBoxes ----
+	    playerNameBox.draw(renderer);
+	    
+	    //DRAW PLAYER PREVIEW
+	    if(gp.player == null) {
+			gp.player = new Player(gp, 0, 0, null, null, "");
+    		gp.player.setDirection(2);
+    		selectedSkinNum = 0;
+	    }
+	    gp.player.drawPreview(renderer, 420, -20);
+	    
+	    int x = 540+200;
+	    int y = 300;
+	    //DIRECTION ARROWS 
+	    int imageSize = 32*3;
+	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            gp.player.rotateLeft();
+	        }
+	    } else {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    if (isHovering(x + imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            gp.player.rotateRight();
+	        }
+	    } else {
+		    renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    //Skin
+	    String text = "Skin " + (selectedSkinNum + 1);
+	    x = centerX + 50;
+	    y = 360;
+	    
+	    renderer.setColour(titleColour1);
+	    renderer.drawString(text, x, y);
+	    
+	    y-= 50;
+	    
+	    imageSize = 32*3;
+	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.1;
+	            selectedSkinNum--;
+	            if(selectedSkinNum < 0) {
+	            	selectedSkinNum = 0;
+	            }
+	            gp.player.setSkin(selectedSkinNum);
+	        }
+	    } else {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    if (isHovering(x + imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.1;
+	            selectedSkinNum++;
+	            if(selectedSkinNum > 6) {
+	            	selectedSkinNum = 6;
+	            }
+	            gp.player.setSkin(selectedSkinNum);
+	        }
+	    } else {
+		    renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    //Hair
+	    text = "Hair Colour " + (selectedHairNum + 1);
+	    x = centerX + 50;
+	    y = 460;
+	    
+	    renderer.setColour(titleColour1);
+	    renderer.drawString(text, x, y);
+	    
+	    y-= 50;
+	    
+	    imageSize = 32*3;
+	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            selectedHairNum--;
+	            if(selectedHairNum < 0) {
+	            	selectedHairNum = 0;
+	            }
+	            gp.player.setHair(selectedHairNum);
+	        }
+	    } else {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    int rightArrowOffset = 80;
+	    if (isHovering(x + imageSize+rightArrowOffset, y, imageSize, imageSize)) {
+	    	renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            selectedHairNum++;
+	            if(selectedHairNum > 9) {
+	            	selectedHairNum = 9;
+	            }
+	            gp.player.setHair(selectedHairNum);
+	        }
+	    } else {
+		    renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize);
+	    }
+	    
+
+	    // ---- Confirm ----
+	    text = "Confirm";
+	    x = 200+gp.frameWidth / 2 - getTextWidth(text, font) / 2;
+	    y = 640;
+
+	    renderer.setColour(titleColour1);
+
+	    if (isHovering(text, x, y - 24, font)) {
+	        renderer.setColour(titleColour2);
+
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.33;
+
+	            String playerName = playerNameBox.getText();
+	            
+	            gp.joinServer(playerName, gp.selectedServer.ip, gp.selectedServer.port, selectedSkinNum, selectedHairNum);
+	            joinSelected = false;
+	            
+	            playerNameBox.setText("");
+	        }
+
+	        renderer.fillRect(x, y + 14, getTextWidth(text, font), 6);
+	    }
+	    
+	    renderer.drawString(text, x, y);
+
+	    // ---- Back ----
+	    renderer.setColour(titleColour1);
+	    text = "Back";
+	    x = 100;
+	    y = 660;
+
+	    if (isHovering(text, x, y - 24, font)) {
+	        renderer.setColour(titleColour2);
+
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            gp.currentState = gp.lanJoinMenuState;
 	            clickCooldown = 0.33;
 	            currentTitleAnimation = 2;
 	            titleAnimationCounter = 0;
@@ -1469,15 +1686,15 @@ public class GUI {
 	            String username = usernameBox.getText();
 
 	            if (hostSelected) {
-	                gp.hostServer(username);
+	                //gp.hostServer(username);
 	                hostSelected = false;
 	            } 
 	            else if (joinSelected) {
-	                gp.joinServer(
-	                    username,
-	                    gp.selectedServer.ip,
-	                    gp.selectedServer.port
-	                );
+	                //gp.joinServer(
+	                    //username,
+	                    //gp.selectedServer.ip,
+	                    //gp.selectedServer.port
+	                //);
 	                joinSelected = false;
 	            }
 
@@ -1680,6 +1897,9 @@ public class GUI {
 			break;
 		case 20:
 			drawCreateWorldScreen(renderer);
+			break;
+		case 21:
+			drawJoinWorldScreen(renderer);
 			break;
 		}
 		
@@ -2819,6 +3039,9 @@ public class GUI {
 		if(gp.currentState == gp.createWorldScreen) {
 			playerNameBox.update(dt);
 			worldNameBox.update(dt);
+		}
+		if(gp.currentState == gp.createJoinPlayerScreen) {
+			playerNameBox.update(dt);
 		}
 		
 		if(gp.currentState == gp.catalogueState) {

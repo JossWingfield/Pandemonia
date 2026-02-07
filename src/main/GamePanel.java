@@ -223,6 +223,7 @@ public class GamePanel {
     public final int recipeState = 18;
     public final int chatState = 19;
     public final int createWorldScreen = 20;
+    public final int createJoinPlayerScreen = 21;
     
     Queue<String> textureQueue = new LinkedList<>();
     Queue<String> fontQueue = new LinkedList<>();
@@ -249,7 +250,11 @@ public class GamePanel {
     	this.camera = new GLSLCamera(new Vector2f(0, 0), frameWidth, frameHeight);
     }
     public void startGame() {
-    	player = new Player(this, 48*10, 48*10, keyL, mouseL, "");
+    	if(!multiplayer) {
+    		player = new Player(this, 48*10, 48*10, keyL, mouseL, "");
+    	} else {
+            player = new PlayerMP(this, 48*10, 48*10, keyL, mouseL, "");
+    	}
         buildingM = new BuildingManager(this);
         itemM = new ItemManager(this);
         npcM = new NPCManager(this);
@@ -274,19 +279,18 @@ public class GamePanel {
     	saveM.loadGame(saveSlot);
     	
     	//SET STUFF DOWN HERE AFTER CREATING CLASSES
-    	if(!worldName.equals("")) {
-        	progressM.worldName = worldName;
-        	player.setSkin(selectedSkinNum);
-          	player.setHair(selectedHairNum);
-    	}
+    	progressM.worldName = worldName;
+    	player.setUsername(playerName);
+    	player.setSkin(selectedSkinNum);
+      	player.setHair(selectedHairNum);
     }
-    public void hostServer(String username) {
+    public void hostServer(int saveSlot, String playerName, String worldName, int selectedSkinNum, int selectedHairNum) {
 
         if (serverHost) return;
 
         playerList = new CopyOnWriteArrayList<>();
         
-        player = new PlayerMP(this, 48*10, 48*10, keyL, mouseL, username);
+        player = new PlayerMP(this, 48*10, 48*10, keyL, mouseL, playerName);
         playerList.add((PlayerMP)player); // only local player
 
         // start server
@@ -301,8 +305,8 @@ public class GamePanel {
         // connect client to self
         socketClient = new GameClient(this, "127.0.0.1", GameServer.GAME_PORT);
         socketClient.start();  
-
-        socketClient.send(new Packet00Login(username,
+        
+        socketClient.send(new Packet00Login(playerName,
             (int) player.hitbox.x,
             (int) player.hitbox.y
         ));
@@ -314,8 +318,16 @@ public class GamePanel {
 
         multiplayer = true;
         currentState = playState;
+        
+    	saveM.loadGame(saveSlot);
+        
+    	player.setUsername(playerName);
+    	progressM.worldName = worldName;
+    	player.setSkin(selectedSkinNum);
+      	player.setHair(selectedHairNum);
+        
     }
-    public void joinServer(String username, String ip, int port) {
+    public void joinServer(String username, String ip, int port, int selectedSkinNum, int selectedHairNum) {
 
         if (joiningServer) return;
         joiningServer = true;
@@ -327,6 +339,9 @@ public class GamePanel {
 
         socketClient = new GameClient(this, ip, port);
         socketClient.start();
+        
+    	player.setSkin(selectedSkinNum);
+      	player.setHair(selectedHairNum);
 
         socketClient.send(new Packet00Login(username,
             (int) player.hitbox.x,
@@ -1064,11 +1079,14 @@ public class GamePanel {
 	        		for (int i = 0; i < getPlayerList().size(); i++) {
 	    	            if (getPlayerList().get(i) != null) {
 	    	            	Player p = getPlayerList().get(i);
-	    	            	if(p.currentRoomIndex == player.currentRoomIndex) {
-		    	            	entityList.add(p);
+	    	            	if(!p.getUsername().equals(player.getUsername())) {
+		    	            	if(p.currentRoomIndex == player.currentRoomIndex) {
+			    	            	entityList.add(p);
+		    	            	}
 	    	            	}
 	    	            }
 	    	        }
+	               	entityList.add(player);
 	        	} else {
 		        	entityList.add(player);
 	        	}

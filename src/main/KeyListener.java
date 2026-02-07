@@ -44,6 +44,11 @@ public class KeyListener {
                     return;
                 } 
                 
+                if (gp.currentState == gp.createJoinPlayerScreen) {
+                    gp.gui.playerNameBox.onCharTyped('\b');
+                    return;
+                } 
+                
                 if (gp.currentState == gp.writeUsernameState) {
                     gp.gui.usernameBox.onCharTyped('\b');
                     return;
@@ -83,6 +88,10 @@ public class KeyListener {
         if (gp.currentState == gp.createWorldScreen) {
             gp.gui.playerNameBox.onCharTyped(c);
             gp.gui.worldNameBox.onCharTyped(c);
+            return;
+        }
+        if (gp.currentState == gp.createJoinPlayerScreen) {
+            gp.gui.playerNameBox.onCharTyped(c);
             return;
         }
         
