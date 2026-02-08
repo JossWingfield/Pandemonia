@@ -2,8 +2,10 @@ package net;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -17,6 +19,8 @@ import net.packets.Packet02Move;
 import net.packets.Packet03Snapshot;
 import net.packets.Packet04Chat;
 import net.packets.Packet05LoginAck;
+import net.packets.Packet06Ping;
+import net.packets.Packet07ServerShutdown;
 import net.packets.PacketType;
 import net.snapshots.PlayerSnapshot;
 
@@ -31,6 +35,8 @@ public class GameClient extends Thread {
     private final BlockingQueue<Packet> sendQueue = new LinkedBlockingQueue<>();
     private Thread writerThread;
     private volatile boolean running = true;
+    
+    private long lastPingSent = 0;
 
     public GameClient(GamePanel gp, String ip, int port) {
         this.gp = gp;
@@ -69,7 +75,7 @@ public class GameClient extends Thread {
     public void run() {
         try {
             while (running && !socket.isClosed()) {
-                int typeCode = in.readInt();
+                int typeCode = in.readInt(); // blocks
                 PacketType type = PacketType.values()[typeCode];
 
                 Packet packet = switch (type) {
@@ -79,19 +85,62 @@ public class GameClient extends Thread {
                     case SNAPSHOT -> new Packet03Snapshot(in);
                     case CHAT -> new Packet04Chat(in);
                     case LOGIN_ACK -> new Packet05LoginAck();
+                    case PING -> new Packet06Ping(in);
+                    case SERVERSHUTDOWN -> new Packet07ServerShutdown();
                 };
+
                 handlePacket(packet);
             }
-        } catch (Exception e) {
+        }
+        catch (EOFException | SocketException e) {
+            // Normal disconnect (server crashed or closed)
+            handleRemoteDisconnect();
+        }
+        catch (Exception e) {
+            // Unexpected bug
             e.printStackTrace();
+            handleRemoteDisconnect();
         }
     }
+    public void flush() throws IOException {
+        out.flush();
+    }
+    public void close() throws IOException {
+    	out.close();
+    }
+    private void handleRemoteDisconnect() {
+        if (!running) return;
 
+        running = false;
+
+        gp.gui.addMessage(
+            "Disconnected from server.",
+            Colour.WHITE
+        );
+
+        shutdown();
+    }
+    public void sendImmediately(Packet packet) {
+        try {
+            out.writeInt(packet.getType().ordinal());
+            packet.write(out);
+            out.flush();
+        } catch (IOException ignored) {
+        }
+    }
     public void shutdown() {
         running = false;
         try { socket.close(); } catch (IOException ignored) {}
     }
+    public void update() {
+        if (state != ConnectionState.IN_GAME) return;
 
+        long now = System.currentTimeMillis();
+        if (now - lastPingSent > 2000) {
+            send(new Packet06Ping());
+            lastPingSent = now;
+        }
+    }
     private void handlePacket(Packet packet) {
         switch (packet.getType()) {
             case LOGIN -> {
@@ -172,6 +221,11 @@ public class GameClient extends Thread {
             case LOGIN_ACK -> {
                 state = ConnectionState.IN_GAME;
 
+            }
+            case SERVERSHUTDOWN -> {
+                shutdown();                // close socket
+                gp.multiplayer = false;
+                gp.currentState = gp.titleState;
             }
 
         }

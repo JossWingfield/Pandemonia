@@ -287,6 +287,8 @@ public class GamePanel {
     public void hostServer(int saveSlot, String playerName, String worldName, int selectedSkinNum, int selectedHairNum) {
 
         if (serverHost) return;
+        
+        serverHost = true;
 
         playerList = new CopyOnWriteArrayList<>();
         
@@ -310,11 +312,7 @@ public class GamePanel {
             (int) player.hitbox.x,
             (int) player.hitbox.y
         ));
-        
-        if (discovery == null) {
-            discovery = new DiscoveryManager(false, null, null, 0); // client mode
-            discovery.start();
-        }
+        stopDiscovery();
 
         multiplayer = true;
         currentState = playState;
@@ -348,10 +346,7 @@ public class GamePanel {
             (int) player.hitbox.y
         ));
         
-        if (discovery == null) {
-            discovery = new DiscoveryManager(false, null, null, 0); // client mode
-            discovery.start();
-        }
+        stopDiscovery();
 
         multiplayer = true;
         currentState = playState;
@@ -406,9 +401,17 @@ public class GamePanel {
         }
     }
     public void disconnect() {
-		if (socketClient != null) {
-		    socketClient.send(new Packet01Disconnect(player.getUsername()));
-		}
+        try {
+            if (socketClient != null) {
+                socketClient.sendImmediately(
+                    new Packet01Disconnect(player.getUsername())
+                );
+
+                socketClient.flush();   
+                Thread.sleep(10);       
+                socketClient.close();   // close AFTER send
+            }
+        } catch (Exception ignored) {}
     }
     public synchronized List<PlayerMP> getPlayerList() {
         return playerList;
@@ -1008,6 +1011,9 @@ public class GamePanel {
         	if(socketServer != null) {
         		socketServer.update();
         	}
+        	if (socketClient != null) {
+        		socketClient.update();
+            }
         }
     	
         applyScreenShake(dt);

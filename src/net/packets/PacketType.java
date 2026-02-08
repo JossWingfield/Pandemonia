@@ -6,7 +6,9 @@ public enum PacketType {
     MOVE(2),
     SNAPSHOT(3),
     CHAT(4),
-    LOGIN_ACK(5);
+    LOGIN_ACK(5),
+    PING(6),
+    SERVERSHUTDOWN(7);
 
 	 private final int id;
 

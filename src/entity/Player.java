@@ -198,7 +198,6 @@ public class Player extends Entity{
     	hitbox.x = xPos;
     	hitbox.y = yPos;
     }
-    
     public int getCurrentAnimation() {
     	return currentAnimation;
     }

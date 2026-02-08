@@ -10,8 +10,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import entity.PlayerMP;
 import main.GamePanel;
 import main.renderer.Colour;
-import net.packets.*;
-
+import net.packets.Packet;
+import net.packets.Packet00Login;
+import net.packets.Packet01Disconnect;
+import net.packets.Packet03Snapshot;
+import net.packets.Packet05LoginAck;
+import net.packets.Packet07ServerShutdown;
 import net.snapshots.PlayerSnapshot;
 
 public class GameServer extends Thread {
@@ -59,9 +63,23 @@ public class GameServer extends Thread {
             sendSnapshot();
             lastSnapshot = now;
         }
+        
+        // ⏱ Timeout detection
+        for (ClientHandler client : clients) {
+            if (now - client.getLastHeardTime() > 6000) { // 6 seconds
+            	/*
+            	boolean isHost = client.getName().equals(gp.player.getUsername());
+            	if(isHost) {
+            		gp.serverHost = false;
+				    gp.socketServer.shutdown();
+            	}
+            	*/
+                client.shutdown();
+            }
+        }
     }
 
-    // ✅ All send methods now take Packet directly
+
     public void sendToAll(Packet packet) {
         for (ClientHandler client : clients) {
             if (!client.isAlive()) continue;
@@ -85,9 +103,17 @@ public class GameServer extends Thread {
     }
 
     public void shutdown() {
+        // Tell all clients the host is gone
+        Packet07ServerShutdown packet = new Packet07ServerShutdown();
+        sendToAll(packet);
+
+        // Close all client connections
+        for (ClientHandler client : clients) {
+            client.shutdown();
+        }
         running = false;
+
         try {
-            for (ClientHandler c : clients) c.shutdown();
             serverSocket.close();
         } catch (IOException ignored) {}
         if (discoveryManager != null) discoveryManager.shutdown();

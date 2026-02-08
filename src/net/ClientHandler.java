@@ -3,8 +3,6 @@ package net;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -18,6 +16,8 @@ import net.packets.Packet02Move;
 import net.packets.Packet03Snapshot;
 import net.packets.Packet04Chat;
 import net.packets.Packet05LoginAck;
+import net.packets.Packet06Ping;
+import net.packets.Packet07ServerShutdown;
 import net.packets.PacketType;
 
 public class ClientHandler extends Thread {
@@ -36,6 +36,7 @@ public class ClientHandler extends Thread {
 	    
 	    ConnectionState state = ConnectionState.CONNECTING;
 
+	    private volatile long lastHeardTime = System.currentTimeMillis();
 
 	    public ClientHandler(GamePanel gp, GameServer server, Socket socket) {
 	        this.gp = gp;
@@ -60,6 +61,8 @@ public class ClientHandler extends Thread {
                     case SNAPSHOT -> new Packet03Snapshot(in);
                     case CHAT -> new Packet04Chat(in);
                     case LOGIN_ACK -> new Packet05LoginAck();
+                    case PING -> new Packet06Ping(in);
+                    case SERVERSHUTDOWN -> new Packet07ServerShutdown();
                 };
                 handlePacket(packet);
             }
@@ -69,6 +72,8 @@ public class ClientHandler extends Thread {
     }
 
     private void handlePacket(Packet packet) {
+    	
+        lastHeardTime = System.currentTimeMillis();
     	
     	 if (packet.requiredState() != null &&
     		        packet.requiredState() != state) {
@@ -80,6 +85,7 @@ public class ClientHandler extends Thread {
             }
             case DISCONNECT -> {
             	server.handleDisconnect((Packet01Disconnect) packet, this);
+                shutdown(); 
             }
             case MOVE -> {
                 Packet02Move move = (Packet02Move) packet;
@@ -103,7 +109,13 @@ public class ClientHandler extends Thread {
             	 // Relay to all clients
                  server.sendToAllExcept(chatPacket, this);
             }
+            case PING -> {
+                // nothing to do, just counts as "I'm alive"
+            }
         }
+    }
+    public long getLastHeardTime() {
+        return lastHeardTime;
     }
     private void startWriter() {
         writerThread = new Thread(() -> {

@@ -2242,10 +2242,17 @@ public class GUI {
 						//QUIT
 						gp.currentState = gp.titleState;
 						currentTitleAnimation = 0;
-						gp.multiplayer = false;
 						if(gp.multiplayer) {
-							gp.discovery.shutdown();
+							if(gp.discovery != null) {
+								gp.discovery.shutdown();
+							}
+							if (gp.serverHost) {
+								gp.serverHost = false;
+							    gp.socketServer.shutdown();
+							}
+							gp.joiningServer = false;
 							gp.disconnect();
+							gp.multiplayer = false;
 						}
 						/*
 						if(gp.multiplayer) {
