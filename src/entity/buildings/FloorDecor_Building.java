@@ -1463,31 +1463,31 @@ public class FloorDecor_Building extends Building {
 	public void refreshImages() {
 		switch(type) {
 		case 4:
-           	animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 0, 16, 32);
+           	animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 0, 16, 32);
 			break;
 		case 5:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(16, 0, 16, 32);
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(16, 0, 16, 32);
 			break;
 		case 6:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 0, 16, 32);
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 0, 16, 32);
 			break;
 		case 7:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 32, 32, 16);
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 32, 32, 16);
 			break;
 		case 8:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 48, 32, 16);
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 48, 32, 16);
 			break;
 		case 9:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 64, 32, 16);
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 64, 32, 16);
 			break;
 		case 10:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 32, 32, 16);
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 32, 32, 16);
 			break;
 		case 11:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 48, 32, 16);
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 48, 32, 16);
 			break;
 		case 12:
-			animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 64, 32, 16);
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(32, 64, 32, 16);
 			break;
 		}
 	}
@@ -1496,13 +1496,13 @@ public class FloorDecor_Building extends Building {
 	    // Only tables clean up table-placed buildings
 	    if (name.equals("Table Piece")) {
 	    	
-	        BuildingManager bm = gp.buildingM;
+	        BuildingManager bm = gp.world.buildingM;
 	        
 	        
 	        Building[] buildings = bm.getBuildings();
 	        
-	        if(!gp.mapM.isInRoom(roomNum)) {
-	        	buildings = gp.mapM.getRoom(roomNum).getBuildings();
+	        if(!gp.world.mapM.isInRoom(roomNum)) {
+	        	buildings = gp.world.mapM.getRoom(roomNum).getBuildings();
 	        }
 	        
 	        for (int i = 0; i < buildings.length; i++) {
@@ -1518,15 +1518,15 @@ public class FloorDecor_Building extends Building {
 
 	                    // Return to customiser inventory
 	                	if(b.canBePlaced) {
-	                		gp.customiser.addToInventory(b);
+	                		gp.world.customiser.addToInventory(b);
 	                	}
 	                    
 	                    // Destroy & remove it
 	                    b.destroy();
-	                    if(gp.mapM.isInRoom(roomNum)) {
+	                    if(gp.world.mapM.isInRoom(roomNum)) {
 		                    bm.getBuildings()[i] = null;
 	                    } else {
-	                    	gp.mapM.getRoom(roomNum).getBuildings()[i] = null;
+	                    	gp.world.mapM.getRoom(roomNum).getBuildings()[i] = null;
 	                    }
 	                }
 	            }

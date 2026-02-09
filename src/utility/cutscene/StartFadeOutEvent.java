@@ -14,10 +14,10 @@ public class StartFadeOutEvent extends CutsceneEvent {
 
     public void update(double dt) {
     	if(!started) {
-    		gp.world.startFadeOut();
+    		gp.world.gameM.startFadeOut();
     		started = true;
     	}
-    	if(!gp.world.fadingOut) {
+    	if(!gp.world.gameM.fadingOut) {
             finished = true;
     	}
     }

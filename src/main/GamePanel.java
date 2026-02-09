@@ -128,7 +128,7 @@ import utility.RecipeManager;
 import utility.RoomHelperMethods;
 import utility.Settings;
 import utility.UpgradeManager;
-import utility.World;
+import utility.GameManager;
 import utility.cutscene.CutsceneManager;
 import utility.minigame.MiniGameManager;
 import utility.save.SaveManager;
@@ -171,33 +171,13 @@ public class GamePanel {
     private boolean hostError = false;
     private int errorCounter = 0;
 
-    public List<PlayerMP> playerList;
 
     // SYSTEM initialising all classes and managers
+    public List<PlayerMP> playerList;
     public Player player;
-    public BuildingManager buildingM;
-    public ItemManager itemM;
-    public NPCManager npcM;
-    public MapManager mapM;
-    public GUI gui;
-    public ArrayList<Entity> updateEntityList;
-    public ArrayList<Entity> entityList;
-    public ItemRegistry itemRegistry;
-    public BuildingRegistry buildingRegistry;
-    public Catalogue catalogue;
     public World world;
-    public LightingManager lightingM = new LightingManager(this, camera);
-    public ParticleSystem particleM;
-    public Customiser customiser;
-    public PathFinder pathF;
-    public RecipeManager recipeM;;
-    public UpgradeManager upgradeM;
-    public ProgressManager progressM;
-    public MiniGameManager minigameM;
-    public RoomHelperMethods roomH;
-    public CutsceneManager cutsceneM;
     public SaveManager saveM;
-    public MapBuilder mapB;
+    public GUI gui;
     public Debug debug;
 
     // GAME STATES The different states which represent which, screens, gui and gameplay should be allowed in each state
@@ -255,20 +235,8 @@ public class GamePanel {
     	} else {
             player = new PlayerMP(this, 48*10, 48*10, keyL, mouseL, "");
     	}
-        buildingM = new BuildingManager(this);
-        itemM = new ItemManager(this);
-        npcM = new NPCManager(this);
-        mapM = new MapManager(this);
-        updateEntityList = new ArrayList<>();
-        entityList = new ArrayList<>();
-        world = new World(this);
-        lightingM = new LightingManager(this, camera);
-        customiser = new Customiser(this);
-        cutsceneM = new CutsceneManager(this);
-        catalogue = new Catalogue(this);
-        recipeM = new RecipeManager();
-        upgradeM = new UpgradeManager(this);
-        progressM = new ProgressManager(this);
+        world = new World(this, false);
+        world.startGame();
       	
         //cutsceneM.enterDestroyedRestaurant();
     }
@@ -279,7 +247,8 @@ public class GamePanel {
     	saveM.loadGame(saveSlot);
     	
     	//SET STUFF DOWN HERE AFTER CREATING CLASSES
-    	progressM.worldName = worldName;
+    	world.isServer = true;
+    	world.progressM.worldName = worldName;
     	player.setUsername(playerName);
     	player.setSkin(selectedSkinNum);
       	player.setHair(selectedHairNum);
@@ -319,8 +288,9 @@ public class GamePanel {
         
     	saveM.loadGame(saveSlot);
         
+    	world.isServer = true;
     	player.setUsername(playerName);
-    	progressM.worldName = worldName;
+    	world.progressM.worldName = worldName;
     	player.setSkin(selectedSkinNum);
       	player.setHair(selectedHairNum);
         
@@ -569,15 +539,6 @@ public class GamePanel {
         }
         return -1; // not found
     }
-    
-    public void movePlayer(String username, int x, int y, int currentAnimation, int direction) {
-        int index = getPlayerMPIndex(username);
-        PlayerMP player = getPlayerList().get(index);
-        player.hitbox.x = x;
-        player.hitbox.y = y;
-        player.setCurrentAnimation(currentAnimation);
-        player.setDirection(direction);
-    }
     private void createTextureList() {
         Path resFolder = Paths.get("res");
 
@@ -628,30 +589,12 @@ public class GamePanel {
 		glfwTerminate();
 		glfwSetErrorCallback(null).free();
     }
-    private void initialiseManagers() {
-            buildingM = new BuildingManager(this);
-            itemM = new ItemManager(this);
-            npcM = new NPCManager(this);
-            mapM = new MapManager(this);
-            gui = new GUI(this);
-            updateEntityList = new ArrayList<>();
-            entityList = new ArrayList<>();
-            itemRegistry = new ItemRegistry(this);
-            buildingRegistry = new BuildingRegistry(this);
-            catalogue = new Catalogue(this);
-            world = new World(this);
-            particleM = new ParticleSystem(this);
-            customiser = new Customiser(this);
-            pathF = new PathFinder(this);
-            recipeM = new RecipeManager();
-            upgradeM = new UpgradeManager(this);
-            progressM = new ProgressManager(this);
-            minigameM = new MiniGameManager(this);
-            roomH = new RoomHelperMethods();
-            cutsceneM = new CutsceneManager(this);
+    private void initialiseManagers() {            
+            world = new World(this, false);
+            world.initialiseManagers();
             saveM = new SaveManager(this);
-            mapB = new MapBuilder(this);
             debug = new Debug(this);
+            gui = new GUI(this);
             // -----------------------
             // Game Setup
             // -----------------------
@@ -1019,43 +962,11 @@ public class GamePanel {
         applyScreenShake(dt);
     	keyL.update();
     	camera.update(dt);
-    	
-    	
-	    	if(currentState == playState || currentState == customiseRestaurantState || currentState == catalogueState || currentState == xpState || currentState == chatState) {
-		    	
-		    	if(multiplayer) {
-		    		for(Player p: getPlayerList()) {
-		    			if(p.getUsername() != player.getUsername()) {
-		    				if(p.currentRoomIndex == player.currentRoomIndex) {
-		    					p.updateInteractHitbox();
-		    					p.updateAnimations(dt);
-		    				}
-		    			}
-		    		}
-		    	}
-		    	
-		    	player.update(dt);
-		    	mapM.update(dt);
-		    	buildingM.update(dt);
-		    	npcM.update(dt);
-		    	itemM.update(dt);
-		    	world.update(dt);
-    			cutsceneM.update(dt);
-		    	lightingM.update(dt);
-		    	minigameM.update(dt);
-		        //if(keyI.debugMode) {
-		        	//debug.update(dt);
-		        //}
-		    	if(currentState == customiseRestaurantState) {
-		    		customiser.update(dt);
-		    	}
-	    	} else if(currentState == mapBuildState) {
-	    		mapB.update(dt);
-	    		buildingM.update(dt);
-	    	}
-    		catalogue.update(dt);
-    		gui.update(dt);
-	    	particleM.update(dt);
+    	gui.update(dt);
+
+	    	
+	    world.serverUpdate(dt);
+    	world.clientUpdate(dt);
 
     }
 
@@ -1063,351 +974,21 @@ public class GamePanel {
     // DRAW USING OPENGL
     // --------------------------
     private void draw() {
-        
-        if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState || currentState == chatState) {
-        		mapM.draw(renderer);	 
-        		
-        		Building[] bottomLayer = buildingM.getBottomLayer();
-    	        for(int i = 0; i < bottomLayer.length-1; i++) {
-    	        	if(bottomLayer[i] != null) {
-    	        		bottomLayer[i].draw(renderer);
-    	        	}
-    	        }
-    	        
-    	        Building[] secondLayer = buildingM.getSecondLayer();
-    	        for(int i = 0; i < secondLayer.length-1; i++) {
-    	        	if(secondLayer[i] != null) {
-    	        		secondLayer[i].draw(renderer);
-    	        	}
-    	        }
-        		
-    	        if(multiplayer) {
-	        		for (int i = 0; i < getPlayerList().size(); i++) {
-	    	            if (getPlayerList().get(i) != null) {
-	    	            	Player p = getPlayerList().get(i);
-	    	            	if(!p.getUsername().equals(player.getUsername())) {
-		    	            	if(p.currentRoomIndex == player.currentRoomIndex) {
-			    	            	entityList.add(p);
-		    	            	}
-	    	            	}
-	    	            }
-	    	        }
-	               	entityList.add(player);
-	        	} else {
-		        	entityList.add(player);
-	        	}
-	        	
-	        	Building[] builds = buildingM.getBuildingsToDraw();
-		        for(int i = 0; i < builds.length-1; i++) {
-		        	if(builds[i] != null) {
-		        		entityList.add(builds[i]);
-		        		builds[i].drawEmissive(renderer);
-		        	}
-		        }
-		        Item[] itemsInBuildings = buildingM.getBuildingItems();
-		        for(int i = 0; i < itemsInBuildings.length-1; i++) {
-		        	if(itemsInBuildings[i] != null) {
-		        		entityList.add(itemsInBuildings[i]);
-		        	}
-		        }
-		        List<NPC> copy = new ArrayList<NPC>(npcM.getNPCs());
-		        
-		        for(NPC npc: copy) {
-		        	if(npc != null) {
-		        		entityList.add(npc);
-		        	}
-		        }
-	        	
-	        	//SORT
-	    		ArrayList<Entity> listCopy = new ArrayList<Entity>(entityList);
-
-	            Collections.sort(listCopy, new Comparator<Entity>() {
-	                //@Override
-	                public int compare(Entity e1, Entity e2) {
-	 
-	                    int result = Integer.compare((int)e1.hitbox.y, (int)e2.hitbox.y);
-	                    return result;
-	                }
-	            });
-	            
-	            entityList = listCopy;
-	            //DRAW ENTITIES
-	            for(int i = 0; i < entityList.size(); i++) {
-	            	Entity a = entityList.get(i);
-	            	if(a != null) {
-		            	if(a.isOnScreen(camera, frameWidth, frameHeight)) {
-		            		a.draw(renderer);
-		            	}
-	            	}
-	            }
-	            //EMPTY ENTITY LIST
-	            entityList.clear();
-	            
-	            Building[] thirdLayer = buildingM.getThirdLayer();
-		        for(int i = 0; i < thirdLayer.length-1; i++) {
-		        	if(thirdLayer[i] != null) {
-		        		entityList.add(thirdLayer[i]);
-		        	}
-		        }
-		        
-			       listCopy = new ArrayList<Entity>(entityList);
-
-		            Collections.sort(listCopy, new Comparator<Entity>() {
-		                //@Override
-		                public int compare(Entity e1, Entity e2) {
-		
-		                    int result = Integer.compare((int)e1.hitbox.y, (int)e2.hitbox.y);
-		                    return result;
-		                }
-		            });
-		            
-		            entityList = listCopy;
-		            //DRAW ENTITIES
-		            for(int i = 0; i < entityList.size(); i++) {
-		            	Entity a = entityList.get(i);
-		            	if(a != null) {
-		            		if(a.isOnScreen(camera, frameWidth, frameHeight)) {
-			            		a.draw(renderer);
-			            	}
-		            	}
-		            }
-		            //EMPTY ENTITY LIST
-		            entityList.clear();
-		        
-		        List<Item> items = new ArrayList<Item>(itemM.getItems());
-		        for(Item item: items) {
-		        	if(item != null) {
-		        		item.draw(renderer);
-		        	}
-		        }
-		        
-    	        if(multiplayer) {
-	        		for (int i = 0; i < getPlayerList().size(); i++) {
-	    	            Player p = getPlayerList().get(i);
-	    	            if(p.currentRoomIndex == player.currentRoomIndex) {
-		    	            p.drawOverlay(renderer);
-	    	            }
-	    	        }
-	        	} else {
-			        player.drawOverlay(renderer);
-	        	}
-		        
-		        for(NPC npc: copy) {
-		        	if(npc != null) {
-		        		npc.drawOverlay(renderer);
-		        	}
-		        }
-		    
-		        Building[] fourthLayer = buildingM.getFourthLayer();
-		        for(int i = 0; i < fourthLayer.length-1; i++) {
-		        	if(fourthLayer[i] != null) {
-		        		fourthLayer[i].draw(renderer);
-		        	}
-		        }
-		        
-		        
-		        Building[] fifthLayer = buildingM.getFifthLayer();
-		        for(int i = 0; i < fifthLayer.length-1; i++) {
-		        	if(fifthLayer[i] != null) {
-		        		entityList.add(fifthLayer[i]);
-		        	}
-		        }
-		        
-		        
-		       listCopy = new ArrayList<Entity>(entityList);
-
-	            Collections.sort(listCopy, new Comparator<Entity>() {
-	                //@Override
-	                public int compare(Entity e1, Entity e2) {
-	
-	                    int result = Integer.compare((int)e1.hitbox.y, (int)e2.hitbox.y);
-	                    return result;
-	                }
-	            });
-	            
-	            entityList = listCopy;
-	            //DRAW ENTITIES
-	            for(int i = 0; i < entityList.size(); i++) {
-	            	Entity a = entityList.get(i);
-	            	if(a != null) {
-		            	if(a.isOnScreen(camera, frameWidth, frameHeight)) {
-		            		a.draw(renderer);
-		            	}
-	            	}
-	            }
-	            //EMPTY ENTITY LIST
-	            entityList.clear();
-		        
-	            mapM.drawForeground(renderer);
-		        
-	            
-	            particleM.draw(renderer);
-        		}
-	            /*
-		        if (Settings.fancyLighting) {
-		            Texture litFull = lightingM.applyLighting(colorBuffer, emissiveBuffer, xDiff, yDiff);
-		            
-		            int bufferCamX = Math.round(camera.x );
-		            int bufferCamY = Math.round(camera.y );
-		            int srcW = Math.max(1, (int) Math.round(frameWidth / camera.zoom));
-		            int srcH = Math.max(1, (int) Math.round(frameHeight / camera.zoom));
-
-		            int srcX = bufferCamX - srcW / 2;
-		            int srcY = bufferCamY - srcH / 2;
-		            
-		            int lightingScale = 3;
-
-		            // snap to lighting buffer's pixel grid
-		            srcX = Math.round(srcX / (float) lightingScale) * lightingScale;
-		            srcY = Math.round(srcY / (float) lightingScale) * lightingScale;
-
-		            // clamp to litFull edges
-		            srcX = Math.max(0, Math.min(srcX, litFull.getWidth() - srcW));
-		            srcY = Math.max(0, Math.min(srcY, litFull.getHeight() - srcH));
-
-		            Texture viewSub = litFull.getSubimage(srcX, srcY, srcW, srcH);
-		            renderer.draw(viewSub, 0, 0, frameWidth, frameHeight, null);
-		        } else {
-		        	int bufferCamX = Math.round(camera.x );
-		        	int bufferCamY = Math.round(camera.y );
-		        	int srcW = Math.max(1, (int) Math.round(frameWidth / camera.zoom));
-		        	int srcH = Math.max(1, (int) Math.round(frameHeight / camera.zoom));
-
-		        	int srcX = bufferCamX - srcW / 2;
-		        	int srcY = bufferCamY - srcH / 2;
-
-		        	// clamp to buffer edges
-		        	if (srcX < 0) srcX = 0;
-		        	if (srcY < 0) srcY = 0;
-		        	if (srcX + srcW > colorBuffer.getWidth()) srcX = colorBuffer.getWidth() - srcW;
-		        	if (srcY + srcH > colorBuffer.getHeight()) srcY = colorBuffer.getHeight() - srcH;
-
-		        	Texture viewSub = colorBuffer.getSubimage(srcX, srcY, srcW, srcH);
-		        	renderer.draw(viewSub, 0, 0, frameWidth, frameHeight, null);
-		        }
-		        */
-
+    	world.draw(renderer);
     }
     private void drawEmissiveBuffers() {
-        if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
-	    	Building[] builds = buildingM.getBuildingsToDraw();
-	        for(int i = 0; i < builds.length-1; i++) {
-	        	if(builds[i] != null) {
-	        		entityList.add(builds[i]);
-	        		builds[i].drawEmissive(renderer);
-	        	}
-	        }
-    	
-	        particleM.drawEmissive(renderer);
-        }
+        world.drawEmissiveBuffers(renderer);
     }
     private void drawGUI() {
-		        //renderer.setGUI();
     	renderer.setGUI();
 		        
-		        if(currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState) {
-		            Building[] thirdLayer = buildingM.getThirdLayer();
-		        	for (int i = 0; i < thirdLayer.length; i++) {
-		            if (thirdLayer[i] != null) {
-		                thirdLayer[i].drawOverlayUI(renderer);
-		            }
-		        }
-		        	
-			    Building[] fourthLayer = buildingM.getFourthLayer();
-		        for (int i = 0; i < fourthLayer.length; i++) {
-		            if (fourthLayer[i] != null) {
-		                fourthLayer[i].drawOverlayUI(renderer);
-		            }
-		        }
-		
-		        Building[] fifthLayer = buildingM.getFifthLayer();
-		        for (int i = 0; i < fifthLayer.length; i++) {
-		            if (fifthLayer[i] != null) {
-		                fifthLayer[i].drawOverlayUI(renderer);
-		            }
-		        }
-
-		        Building[] builds = buildingM.getBuildings();
-		        for (int i = 0; i < builds.length; i++) {
-		            if (builds[i] != null) {
-		                builds[i].drawOverlayUI(renderer);
-		            }
-		        }
-		        
-		        Item[] itemsInBuildings = buildingM.getBuildingItems();
-		        for(int i = 0; i < itemsInBuildings.length-1; i++) {
-		        	if(itemsInBuildings[i] != null) {
-		        		itemsInBuildings[i].drawOverlay(renderer);
-		        	}
-		        }
-		        
-		        world.drawFilters(renderer);
-		        world.drawWeather(renderer); 
-		        cutsceneM.draw(renderer);
-		}
-		
-		
-		if(currentState == mapBuildState) {
-			mapM.draw(renderer);
-			mapM.drawForeground(renderer);
-			
-			Building[] bottomLayer = buildingM.getBottomLayer();
-		    for(int i = 0; i < bottomLayer.length-1; i++) {
-		    	if(bottomLayer[i] != null) {
-		    		bottomLayer[i].draw(renderer);
-		    	}
-		    }
-		    Building[] middleLayer = buildingM.getSecondLayer();
-		    for(int i = 0; i < middleLayer.length-1; i++) {
-		    	if(middleLayer[i] != null) {
-		    		middleLayer[i].draw(renderer);
-		    	}
-		    }
-			
-			Building[] main = buildingM.getBuildingsToDraw();
-		    for(int i = 0; i < main.length-1; i++) {
-		    	if(main[i] != null) {
-		    		main[i].draw(renderer);
-		    	}
-		    }
-			
-			Building[] secondLayer = buildingM.getThirdLayer();
-		    for(int i = 0; i < secondLayer.length-1; i++) {
-		    	if(secondLayer[i] != null) {
-		    		secondLayer[i].draw(renderer);
-		    	}
-		    }
-		    Building[] thirdLayer = buildingM.getFourthLayer();
-		    for(int i = 0; i < thirdLayer.length-1; i++) {
-		    	if(thirdLayer[i] != null) {
-		    		thirdLayer[i].draw(renderer);
-		    	}
-		    }
-		    Building[] fourthLayer = buildingM.getFifthLayer();
-		    for(int i = 0; i < fourthLayer.length-1; i++) {
-		    	if(fourthLayer[i] != null) {
-		    		fourthLayer[i].draw(renderer);
-		    	}
-		    }
-			
-			mapB.draw(renderer);
-		} 
-		if(currentState == customiseRestaurantState) {
-			customiser.draw(renderer);
-		}
-		//renderer.setGUI();
+		world.drawGUI(renderer);
 		
     	renderer.setGUI();
-		minigameM.draw(renderer);
 		gui.draw(renderer);
     }
     private void drawGodRays() {
-    	Building[] main = buildingM.getBuildingsToDraw();
-	    for(int i = 0; i < main.length-1; i++) {
-	    	if(main[i] != null) {
-	    		main[i].drawGodRay(renderer);
-	    	}
-	    }
+    	world.drawGodRays(renderer);
     }
 
 }

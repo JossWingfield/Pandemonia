@@ -16,7 +16,7 @@ public class WorldSaveData extends SaveData{
 	  public Season currentSeason;
 	  
 	  public void applySaveData(GamePanel gp) {
-		  gp.world.setSaveData(this);
+		  gp.world.gameM.setSaveData(this);
 	  }
 	
 }

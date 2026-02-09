@@ -27,7 +27,7 @@ public class CatalogueSaveData extends SaveData {
 	public List<BuildingSaveData> bathroomBuildingInventory = new ArrayList<BuildingSaveData>();
 	
 	public void applySaveData(GamePanel gp) {
-		gp.catalogue.applySaveData(this);
+		gp.world.catalogue.applySaveData(this);
 	}
 	
 }

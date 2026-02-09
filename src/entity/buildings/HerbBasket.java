@@ -53,13 +53,70 @@ public class HerbBasket extends Building {
 
 		yDrawOffset = 48;
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
+		
 		if (clickCooldown > 0) {
 	    	clickCooldown -= dt;        // subtract elapsed time in seconds
 			if (clickCooldown < 0) {
 				clickCooldown = 0;      // clamp to zero
 			}
+		}
+		
+		if(gp.player.interactHitbox.intersects(interactHitbox)) {
+			if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
+				if(gp.player.currentItem == null) {
+					openUI = !openUI;
+					clickCooldown = 0.06;
+				}
+			}
+		}
+		
+		if(openUI) {
+			int basketScreenX = (int) (hitbox.x - xDrawOffset );
+		    int basketScreenY = (int) (hitbox.y ) - yDrawOffset + 20;
+
+		    // Dimensions for each slot
+		    int slotSize = 20 * 2;
+		    int numSlots = 4;
+		    int spacing = 4; // space between each slot
+
+		    // Total width including spacing between slots
+		    int totalWidth = numSlots * slotSize + (numSlots - 1) * spacing;
+
+		    // Center the row above the basket
+		    int startX = basketScreenX + (drawWidth / 2) - (totalWidth / 2);
+		    int startY = basketScreenY - slotSize - 10; // 10px gap above the basket
+
+		    // Herb names for each slot
+		    String[] herbNames = { "Basil", "Rosemary", "Thyme", "Sage" };
+
+
+		    // Mouse position (screen space)
+		    int mouseX = (int)gp.mouseL.getWorldX();
+		    int mouseY = (int)gp.mouseL.getWorldY();
+
+		    // Draw 4 borders horizontally with items inside
+		    for (int i = 0; i < numSlots; i++) {
+		        int x = startX + i * (slotSize + spacing);
+		        int y = startY;
+
+		        // Check hover
+		        boolean hovering = mouseX >= x && mouseX <= x + slotSize &&
+		                           mouseY >= y && mouseY <= y + slotSize;
+
+		        // Retrieve the herb item
+		        var item = gp.world.itemRegistry.getItemFromName(herbNames[i], 0);
+
+		        // Handle click (once per frame when hovering)
+		        if (hovering && gp.mouseL.mouseButtonDown(0)) {
+		            gp.player.currentItem = item.clone();
+		            openUI = false;
+		        }
+		    }
 		}
 	}
 	public void draw(Renderer renderer) {
@@ -71,12 +128,6 @@ public class HerbBasket extends Building {
 				
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-			if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
-				if(gp.player.currentItem == null) {
-					openUI = !openUI;
-					clickCooldown = 0.06;
-				}
-			}
 		} else {
 			openUI = false;
 		     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
@@ -133,7 +184,7 @@ public class HerbBasket extends Building {
 	        renderer.draw(currentBorder, x, y, slotSize, slotSize);
 
 	        // Retrieve the herb item
-	        var item = gp.itemRegistry.getItemFromName(herbNames[i], 0);
+	        var item = gp.world.itemRegistry.getItemFromName(herbNames[i], 0);
 	        if (item != null && item.animations != null && item.animations[0][0][0] != null) {
 	            int iconPadding = 6;
 	            int iconSize = slotSize - iconPadding * 2;
@@ -146,12 +197,6 @@ public class HerbBasket extends Building {
 	                iconSize
 	                
 	            );
-	        }
-
-	        // Handle click (once per frame when hovering)
-	        if (hovering && gp.mouseL.mouseButtonDown(0)) {
-	            gp.player.currentItem = item.clone();
-	            openUI = false;
 	        }
 	    }
 	}

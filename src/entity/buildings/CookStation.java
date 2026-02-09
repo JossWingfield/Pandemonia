@@ -95,11 +95,11 @@ public class CookStation extends Building {
 	            return;
 	        }
 	    }
-	public void update(double dt) {
-		super.update(dt);
-		
+	public void updateState(double dt) {
+		super.updateState(dt);
+	}
+	public void inputUpdate(double dt) {
 		handleItemInteraction();
-		
 		animationSpeed+=dt; //Updating animation frame
         if (animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;

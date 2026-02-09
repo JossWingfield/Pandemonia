@@ -97,8 +97,8 @@ public class Room {
 	}
 	private void setUpRoom(int preset) {
 		int phase = 1;
-		if(gp.progressM != null) {
-			phase = gp.progressM.currentPhase;
+		if(gp.world.progressM != null) {
+			phase = gp.world.progressM.currentPhase;
 		}
 		setTableSkin(0);
 		setPanSkin(0);
@@ -255,53 +255,53 @@ public class Room {
 			setWallpaper(30);
 			setFloorpaper(12);
 			setBeam(5);
-			gp.buildingM.addSpill(0);
-			gp.buildingM.addSpill(1);
+			gp.world.buildingM.addSpill(0);
+			gp.world.buildingM.addSpill(1);
 			
-			gp.buildingM.addBuilding(new Rubble(gp, 408, 288+48, 1));
-			gp.buildingM.addBuilding(new Rubble(gp, 564, 300+48, 2));
-			gp.buildingM.addBuilding(new Rubble(gp, 696, 324, 0));
-			gp.buildingM.addBuilding(new Rubble(gp, 648, 432, 0));
+			gp.world.buildingM.addBuilding(new Rubble(gp, 408, 288+48, 1));
+			gp.world.buildingM.addBuilding(new Rubble(gp, 564, 300+48, 2));
+			gp.world.buildingM.addBuilding(new Rubble(gp, 696, 324, 0));
+			gp.world.buildingM.addBuilding(new Rubble(gp, 648, 432, 0));
 			
-			Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+			Lantern lantern = (Lantern)gp.world.buildingM.findBuildingWithName("Lantern");
 			lantern.turnOff();
 		} else if(preset == 9) {
 			setCounterSkin(3);
 			darkerRoom = true;
 			//setWallpaper(30);
 			//setFloorpaper(12);
-			List<Building> torches = gp.buildingM.findBuildingsWithName("Lantern");
+			List<Building> torches = gp.world.buildingM.findBuildingsWithName("Lantern");
     	    for (Building b: torches) {
     	    	Lantern t = (Lantern)b;
     	    	t.turnOff();
     	    }
-			Oven oven = (Oven)gp.buildingM.findBuildingWithName("Oven");
+			Oven oven = (Oven)gp.world.buildingM.findBuildingWithName("Oven");
 			oven.setDestroyed(true);
-			Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+			Stove stove = (Stove)gp.world.buildingM.findBuildingWithName("Stove");
 			stove.setDestroyed(true);
 			
 			setBeam(5);
-			gp.buildingM.addBuilding(new CursedDecor(gp, 696, 456, 25));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 492, 348, 24));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 552, 396, 22));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 612, 504, 21));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 756, 396, 16));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 492, 396, 14));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 336, 504, 20));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 588, 408, 18));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 708, 372, 19));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 636, 348, 44));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 384, 300, 45));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 372, 348, 26));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 540, 396, 33));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 372, 504, 34));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 684, 504, 35));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 756, 432, 32));
-			gp.buildingM.addBuilding(new FloorDecor_Building(gp, 348, 312, 34));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 408, 348, 15));
-			gp.buildingM.addBuilding(new CursedDecor(gp, 612, 348, 23));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 696, 456, 25));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 492, 348, 24));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 552, 396, 22));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 612, 504, 21));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 756, 396, 16));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 492, 396, 14));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 336, 504, 20));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 588, 408, 18));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 708, 372, 19));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 636, 348, 44));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 384, 300, 45));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 372, 348, 26));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 540, 396, 33));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 372, 504, 34));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 684, 504, 35));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 756, 432, 32));
+			gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 348, 312, 34));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 408, 348, 15));
+			gp.world.buildingM.addBuilding(new CursedDecor(gp, 612, 348, 23));
 		}
-		gp.buildingM.refreshBuildings();
+		gp.world.buildingM.refreshBuildings();
 	}
 	public void setRestored() {
 		if(preset == 0) {
@@ -310,28 +310,28 @@ public class Room {
 			setFloorpaper(0);
 			setBeam(0);
 			
-			Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+			Lantern lantern = (Lantern)gp.world.buildingM.findBuildingWithName("Lantern");
 			lantern.turnOn();
 		
 		} else if(preset == 9) {
 			setBeam(0);
 			setCounterSkin(0);
 			darkerRoom = false;
-			List<Building> torches = gp.buildingM.findBuildingsWithName("Lantern");
+			List<Building> torches = gp.world.buildingM.findBuildingsWithName("Lantern");
     	    for (Building b: torches) {
     	    	Lantern t = (Lantern)b;
     	    	t.turnOn();
     	    }
-    		Oven oven = (Oven)gp.buildingM.findBuildingWithName("Oven");
+    		Oven oven = (Oven)gp.world.buildingM.findBuildingWithName("Oven");
 			oven.setDestroyed(false);
-			Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+			Stove stove = (Stove)gp.world.buildingM.findBuildingWithName("Stove");
 			stove.setDestroyed(false);
-    	    List<Building> mess = gp.buildingM.findBuildingsWithName("Mess");
+    	    List<Building> mess = gp.world.buildingM.findBuildingsWithName("Mess");
     	    for (Building b: mess) {
-    	    	gp.buildingM.removeBuilding(b);
+    	    	gp.world.buildingM.removeBuilding(b);
     	    }
 		}
-		gp.buildingM.refreshBuildings();
+		gp.world.buildingM.refreshBuildings();
 	}
 	private void setBuildings(int preset) {
 		buildings = new Building[250];
@@ -2060,7 +2060,7 @@ public class Room {
 				buildList.add(b);
 			}
 		}
-		data.buildings = gp.buildingRegistry.saveBuildings(buildList);
+		data.buildings = gp.world.buildingRegistry.saveBuildings(buildList);
 		data.buildingArrayCounter = buildingArrayCounter;
 		
 		return data;
@@ -2076,7 +2076,7 @@ public class Room {
 		tableSkin = new TableSkin(gp, data.tableSkin);
 		panSkin = new PanSkin(gp, data.panSkin);
 		doorSkin = new DoorSkin(gp, data.doorSkin);
-		List<Building> buildList = gp.buildingRegistry.unpackSavedBuildings(data.buildings);
+		List<Building> buildList = gp.world.buildingRegistry.unpackSavedBuildings(data.buildings);
 		Building[] newBuilds = new Building[250];
 		int counter = 0;
 		buildings = null;
@@ -2087,23 +2087,23 @@ public class Room {
 		buildingArrayCounter = data.buildingArrayCounter;
 		buildings = newBuilds;
 		if(preset == gp.player.currentRoomIndex) {
-			gp.lightingM.setLights(lights);
-			gp.buildingM.setBuildings(newBuilds);
-			gp.buildingM.setArrayCounter(buildingArrayCounter);
+			gp.world.lightingM.setLights(lights);
+			gp.world.buildingM.setBuildings(newBuilds);
+			gp.world.buildingM.setArrayCounter(buildingArrayCounter);
 		}
 	}
     public void setWallpaper(int preset) {
     	this.wallpaper = new WallPaper(gp, preset);
     }
     public void setWallpaper(WallPaper wallpaper) {
-    	gp.customiser.addToInventory(this.wallpaper);
+    	gp.world.customiser.addToInventory(this.wallpaper);
     	this.wallpaper = wallpaper;
     }
     public void setChairSkin(int preset) {
     	this.chairSkin = new ChairSkin(gp, preset);
     }
     public void setChairSkin(ChairSkin chairSkin) {
-    	gp.customiser.addToInventory(this.chairSkin);
+    	gp.world.customiser.addToInventory(this.chairSkin);
     	this.chairSkin = chairSkin;
     	
     }
@@ -2111,39 +2111,39 @@ public class Room {
     	this.counterSkin = new CounterSkin(gp, preset);
     }
     public void setCounterSkin(CounterSkin counterSkin) {
-    	gp.customiser.addToInventory(this.counterSkin);
+    	gp.world.customiser.addToInventory(this.counterSkin);
     	this.counterSkin = counterSkin;
     }
     public void setTableSkin(int preset) {
     	this.tableSkin = new TableSkin(gp, preset);
     }
     public void setTableSkin(TableSkin tableSkin) {
-    	gp.customiser.addToInventory(this.tableSkin);
+    	gp.world.customiser.addToInventory(this.tableSkin);
     	this.tableSkin = tableSkin;
     }
     public void setPanSkin(int preset) {
     	this.panSkin = new PanSkin(gp, preset);
     }
     public void setPanSkin(PanSkin panSkin) {
-    	gp.customiser.addToInventory(this.panSkin);
+    	gp.world.customiser.addToInventory(this.panSkin);
     	this.panSkin = panSkin;
     }
     public void setDoorSkin(int preset) {
     	this.doorSkin = new DoorSkin(gp, preset);
     }
     public void setDoorSkin(DoorSkin doorSkin) {
-    	gp.customiser.addToInventory(this.doorSkin);
+    	gp.world.customiser.addToInventory(this.doorSkin);
     	this.doorSkin = doorSkin;
     }
     public void setFloorpaper(int preset) {
     	this.floorpaper = new FloorPaper(gp, preset);
     }
     public void setFloorpaper(FloorPaper floorpaper) {
-    	gp.customiser.addToInventory(this.floorpaper);
+    	gp.world.customiser.addToInventory(this.floorpaper);
     	this.floorpaper = floorpaper;
     }
     public void setBeam(Beam beam) {
-    	gp.customiser.addToInventory(this.beam);
+    	gp.world.customiser.addToInventory(this.beam);
     	this.beam = beam;
     }
     public void setBeam(int preset) {
@@ -2433,10 +2433,10 @@ public class Room {
 		}
 	}
 	public void addSpill(int a) {
-		if(gp.progressM.currentPhase == 0) {
+		if(gp.world.progressM.currentPhase == 0) {
 			buildings[buildingArrayCounter] = new Spill(gp, 15*gp.tileSize - 24, 8*gp.tileSize);
 			buildingArrayCounter++;
-		} else if(gp.progressM.currentPhase == 1) {
+		} else if(gp.world.progressM.currentPhase == 1) {
 			if(a == 0) {
 				buildings[buildingArrayCounter] = new Spill(gp, 15*gp.tileSize - 24, 8*gp.tileSize);
 				buildingArrayCounter++;
@@ -2552,21 +2552,39 @@ public class Room {
 	            }
 	        }
 	    }
-    public void update(double dt) {
+    public void updateState(double dt) {
     	for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
-            	i.update(dt); //Draws the item
+            	i.updateState(dt);
             }
         }
     	for(Item i: items) { //Loops through the items on the current map
             if(i != null) {
-            	i.update(dt); //Draws the item
+            	i.updateState(dt);
             }
         }
     	
     	for (NPC i : new ArrayList<>(npcs)) {
     	    if (i != null) {
-    	        i.update(dt);
+    	        i.updateState(dt);
+    	    }
+    	}
+    }
+    public void inputUpdate(double dt) {
+    	for(Building i: buildings) { //Loops through the items on the current map
+            if(i != null) {
+            	i.inputUpdate(dt);
+            }
+        }
+    	for(Item i: items) { //Loops through the items on the current map
+            if(i != null) {
+            	i.inputUpdate(dt);
+            }
+        }
+    	
+    	for (NPC i : new ArrayList<>(npcs)) {
+    	    if (i != null) {
+    	        i.inputUpdate(dt);
     	    }
     	}
     }

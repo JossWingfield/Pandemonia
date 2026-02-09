@@ -111,10 +111,10 @@ public class Customiser {
 	}
 	public CustomiserSaveData saveCustomiserData() {
 		CustomiserSaveData data = new CustomiserSaveData();
-		data.decorBuildingInventory = gp.buildingRegistry.saveBuildings(decorBuildingInventory);
-		data.bathroomBuildingInventory = gp.buildingRegistry.saveBuildings(bathroomBuildingInventory);
-		data.kitchenBuildingInventory = gp.buildingRegistry.saveBuildings(kitchenBuildingInventory);
-		data.storeBuildingInventory = gp.buildingRegistry.saveBuildings(storeBuildingInventory);	
+		data.decorBuildingInventory = gp.world.buildingRegistry.saveBuildings(decorBuildingInventory);
+		data.bathroomBuildingInventory = gp.world.buildingRegistry.saveBuildings(bathroomBuildingInventory);
+		data.kitchenBuildingInventory = gp.world.buildingRegistry.saveBuildings(kitchenBuildingInventory);
+		data.storeBuildingInventory = gp.world.buildingRegistry.saveBuildings(storeBuildingInventory);	
 		
 		List<Integer> beams = new ArrayList<>();
 		for(Beam b: beamInventory) {
@@ -166,10 +166,10 @@ public class Customiser {
 	}
 	public void applySaveData(CustomiserSaveData data) {
 		
-		decorBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.decorBuildingInventory);
-		bathroomBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.bathroomBuildingInventory);
-		kitchenBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.kitchenBuildingInventory);
-		storeBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.storeBuildingInventory);
+		decorBuildingInventory = gp.world.buildingRegistry.unpackSavedBuildings(data.decorBuildingInventory);
+		bathroomBuildingInventory = gp.world.buildingRegistry.unpackSavedBuildings(data.bathroomBuildingInventory);
+		kitchenBuildingInventory = gp.world.buildingRegistry.unpackSavedBuildings(data.kitchenBuildingInventory);
+		storeBuildingInventory = gp.world.buildingRegistry.unpackSavedBuildings(data.storeBuildingInventory);
 		
 		beamInventory.clear();
 		for(Integer i: data.beamInventory) {
@@ -280,7 +280,10 @@ public class Customiser {
 	public void addToInventory(DoorSkin b) {
 		doorSkinInventory.add(b);
 	}
-	public void update(double dt) {
+	public void updateState(double dt) {
+
+	}
+	public void inputUpdate(double dt) {
 		if (clickCounter > 0) {
 			clickCounter -= dt;        // subtract elapsed time in seconds
 		    if (clickCounter < 0) {
@@ -302,14 +305,6 @@ public class Customiser {
 				}
 			}
 		}
-		/*
-		if(gp.currentState == gp.customiseRestaurantState) {
-        	if(!showBuildings) {
-        		showBuildings = true;
-        		selectedBuilding = null;
-        	}
-        }
-        */
 	}
 	public void draw(Renderer renderer) {
 		
@@ -485,7 +480,7 @@ public class Customiser {
 			    			}
 							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 							
-							TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
@@ -533,7 +528,7 @@ public class Customiser {
 			    			}
 							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
-							TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -572,7 +567,7 @@ public class Customiser {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-			    					gp.mapM.currentRoom.setFloorpaper(b);
+			    					gp.world.mapM.currentRoom.setFloorpaper(b);
 			    					floorpaperInventory.remove(b);
 			    					clickCounter = 0.33;
 			    				}
@@ -582,7 +577,7 @@ public class Customiser {
 							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
 			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 
-			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+			    			TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -620,7 +615,7 @@ public class Customiser {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-			    					gp.mapM.currentRoom.setWallpaper(b);
+			    					gp.world.mapM.currentRoom.setWallpaper(b);
 			    					wallpaperInventory.remove(b);
 			    					clickCounter = 0.33;
 			    				}
@@ -630,7 +625,7 @@ public class Customiser {
 							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
 			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 
-			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+			    			TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -668,7 +663,7 @@ public class Customiser {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight2, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-			    					gp.mapM.currentRoom.setBeam(b);
+			    					gp.world.mapM.currentRoom.setBeam(b);
 			    					beamInventory.remove(b);
 			    					clickCounter = 0.33;
 			    				}
@@ -679,7 +674,7 @@ public class Customiser {
 							renderer.draw(b.getBaseImage(), xStart+(55) - 24, yPos+28, 48, 48);
 			    			renderer.draw(border, xStart+(55) - 24, yPos+28, 48, 48);
 
-			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+			    			TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -726,7 +721,7 @@ public class Customiser {
 			    			}
 							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
-							TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -773,7 +768,7 @@ public class Customiser {
 			    			}
 							renderer.draw(b.animations[0][0][0], xStart+(55) - b.drawWidth/2, yPos+30 - b.yDrawOffset, b.drawWidth, b.drawHeight);
 
-							TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+							TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -810,17 +805,17 @@ public class Customiser {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-			    					gp.mapM.currentRoom.setChairSkin(b);
+			    					gp.world.mapM.currentRoom.setChairSkin(b);
 			    					chairSkinInventory.remove(b);
 			    					clickCounter = 0.33;
-			    					gp.buildingM.refreshBuildings();
+			    					gp.world.buildingM.refreshBuildings();
 			    				}
 			    			} else {
 								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
 			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
-			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+			    			TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -857,17 +852,17 @@ public class Customiser {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-			    					gp.mapM.currentRoom.setCounterSkin(b);
+			    					gp.world.mapM.currentRoom.setCounterSkin(b);
 			    					counterSkinInventory.remove(b);
 			    					clickCounter = 0.33;
-			    					gp.buildingM.refreshBuildings();
+			    					gp.world.buildingM.refreshBuildings();
 			    				}
 			    			} else {
 								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
 			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
-			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+			    			TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -904,17 +899,17 @@ public class Customiser {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-			    					gp.mapM.currentRoom.setTableSkin(b);
+			    					gp.world.mapM.currentRoom.setTableSkin(b);
 			    					tableSkinInventory.remove(b);
 			    					clickCounter = 0.33;
-			    					gp.buildingM.refreshBuildings();
+			    					gp.world.buildingM.refreshBuildings();
 			    				}
 			    			} else {
 								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
 			    			renderer.draw(b.getImage2(), xStart+(55) - 24, yPos+28, 48, 48);
 
-			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+			    			TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -951,17 +946,17 @@ public class Customiser {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-			    					gp.mapM.currentRoom.setPanSkin(b);
+			    					gp.world.mapM.currentRoom.setPanSkin(b);
 			    					panSkinInventory.remove(b);
 			    					clickCounter = 0.33;
-			    					gp.buildingM.refreshStove();
+			    					gp.world.buildingM.refreshStove();
 			    				}
 			    			} else {
 								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
 			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
-			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+			    			TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -998,17 +993,17 @@ public class Customiser {
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-			    					gp.mapM.currentRoom.setDoorSkin(b);
+			    					gp.world.mapM.currentRoom.setDoorSkin(b);
 			    					doorSkinInventory.remove(b);
 			    					clickCounter = 0.33;
-			    					gp.buildingM.refreshBuildings();
+			    					gp.world.buildingM.refreshBuildings();
 			    				}
 			    			} else {
 								renderer.draw(buildFrame, xStart, yPos, 37*3, 37*3);
 			    			}
 			    			renderer.draw(b.getImage(), xStart+(55) - 24, yPos+28, 48, 48);
 
-			    			TextureRegion r = gp.catalogue.getCatalogueIconFor(b);
+			    			TextureRegion r = gp.world.catalogue.getCatalogueIconFor(b);
 							if(r != null) {
 								renderer.draw(r, xStart+(55) - 54, yPos+30+40, 48, 48);
 							}
@@ -1054,7 +1049,7 @@ public class Customiser {
 			        selectedBuilding.hitbox.y = yPos;
 			        selectedBuilding.onPlaced();
 		    	    if(prevX != xPos || prevY != yPos) {
-				        List<Building> shelves = gp.buildingM.findBuildingsWithName("Shelf");
+				        List<Building> shelves = gp.world.buildingM.findBuildingsWithName("Shelf");
 			    	    for (Building b: shelves) {
 			    	    	Shelf t = (Shelf)b;
 			    	    	t.updateConnections();
@@ -1077,7 +1072,7 @@ public class Customiser {
 						boolean onShelf = false;
 						boolean onTable = false;
 
-						for (Building b : gp.buildingM.getBuildings()) {
+						for (Building b : gp.world.buildingM.getBuildings()) {
 						    if (b == null) continue;
 
 						    String name = b.getName();
@@ -1109,10 +1104,10 @@ public class Customiser {
 					            //placed.isFifthLayer = false;
 					        }
 						
-						gp.buildingM.addBuilding(placed, xPos, yPos);
+						gp.world.buildingM.addBuilding(placed, xPos, yPos);
 						
 						Statistics.decorationsPlaced++;
-						gp.progressM.checkDecorationsPlaced();
+						gp.world.progressM.checkDecorationsPlaced();
 						
 						clickCounter = 0.66;
 						if(decorBuildingInventory.contains(selectedBuilding)) {

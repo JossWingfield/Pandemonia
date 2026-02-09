@@ -24,7 +24,7 @@ public class RoomSaveData extends SaveData {
     
 	
 	public void applySaveData(GamePanel gp) {
-		gp.mapM.getRoom(roomNum).applySaveData(this);
+		gp.world.mapM.getRoom(roomNum).applySaveData(this);
 	}
     
 }

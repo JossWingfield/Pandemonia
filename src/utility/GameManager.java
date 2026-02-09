@@ -23,7 +23,7 @@ import utility.save.OrderSaveData;
 import utility.save.SettingsSaveData;
 import utility.save.WorldSaveData;
 
-public class World {
+public class GameManager {
 
     GamePanel gp;
     Random random;
@@ -96,13 +96,13 @@ public class World {
     
     private int groupChance = 20;
 
-    public World(GamePanel gp) {
+    public GameManager(GamePanel gp) {
         this.gp = gp;
         this.time = dayStart;
         spawnTimer = customerSpawnTimer;
         random = new Random();
         currentSeason = Season.SUMMER;
-        gp.mapM.setSeason(currentSeason);
+        gp.world.mapM.setSeason(currentSeason);
         darkColour = new Colour(51, 60, 58, 200);
         
         boughtItems = new ArrayList<Object>();
@@ -110,7 +110,7 @@ public class World {
         currentWeather = Weather.SUNNY;
         resetWeatherTimer();
         
-        //gp.npcM.addDishWasher();
+        //gp.world.npcM.addDishWasher();
     }
 
     // === Specials generation ===
@@ -148,8 +148,8 @@ public class World {
     public void setTodaysMenu(List<Recipe> menu) {
         todaysMenu.clear();
         todaysMenu.addAll(menu);
-        if(gp.progressM.currentPhase != 1) {
-        	todaysMenu.add(gp.recipeM.chooseChefSpecial(menu));
+        if(gp.world.progressM.currentPhase != 1) {
+        	todaysMenu.add(gp.world.recipeM.chooseChefSpecial(menu));
         }
         menuChosen = true;
     }
@@ -189,24 +189,24 @@ public class World {
         nextEventTime = random.nextInt(maxEventInterval - minEventInterval) + minEventInterval;
     }
     public void powerCut() {
-    	Room electrics = gp.mapM.getRoom(3);
+    	Room electrics = gp.world.mapM.getRoom(3);
     	if(breaker == null) {
         	breaker = (Breaker)electrics.findBuildingWithName("Breaker");
     	}
     	breaker.cutPower();
     }
     private void spill() {
-    	if(gp.mapM.isInRoom(0)) {
-    		gp.buildingM.addSpill(random.nextInt(2));
+    	if(gp.world.mapM.isInRoom(0)) {
+    		gp.world.buildingM.addSpill(random.nextInt(2));
     	} else {
-    		gp.mapM.getRoom(0).addSpill(random.nextInt(2));
+    		gp.world.mapM.getRoom(0).addSpill(random.nextInt(2));
     	}
     }
     private void clogToilet() {
-    	if(gp.mapM.isInRoom(4)) {
-    		gp.buildingM.addLeak(random.nextInt(2));
+    	if(gp.world.mapM.isInRoom(4)) {
+    		gp.world.buildingM.addLeak(random.nextInt(2));
     	} else {
-    		gp.mapM.getRoom(4).addLeak(random.nextInt(2));
+    		gp.world.mapM.getRoom(4).addLeak(random.nextInt(2));
     	}
     }
     public void setSeason(String season) {
@@ -214,13 +214,13 @@ public class World {
 
         try {
             this.currentSeason = Season.valueOf(season.toUpperCase());
-            gp.mapM.setSeason(this.currentSeason); // make sure map/tiles update visually
+            gp.world.mapM.setSeason(this.currentSeason); // make sure map/tiles update visually
         } catch (IllegalArgumentException e) {
             System.err.println("World.setSeason(): Unknown season: " + season);
         }
     }
     private void spawnDuck() {
-    	gp.npcM.addDuck();
+    	gp.world.npcM.addDuck();
     }
     private void spawnRats() {
     	spawnRats = true;
@@ -258,7 +258,7 @@ public class World {
     }
     // === Game loop ===
     public void update(double dt) {
-        if(gp.cutsceneM.cutsceneActive) {
+        if(gp.world.cutsceneM.cutsceneActive) {
             updateCutsceneEffects(dt);
         	return;
         }
@@ -282,35 +282,35 @@ public class World {
             gp.gui.changeTimeState(currentPeriod);
         }
         
-        if(gp.progressM.moreCustomers) {
+        if(gp.world.progressM.moreCustomers) {
         	customerSpawnTimer = 12;
         }
 
         // Customer spawning only during service, and only if menu chosen
         if (currentPhase == DayPhase.SERVICE && menuChosen) {
 
-        	if(!gp.mapM.isInRoom(0)) {
-	            if (gp.mapM.getRoom(0).isFreeChair() != null) {
+        	if(!gp.world.mapM.isInRoom(0)) {
+	            if (gp.world.mapM.getRoom(0).isFreeChair() != null) {
 	                spawnTimer+=dt;
 	                if (spawnTimer >= customerSpawnTimer) {
 	                    spawnTimer = 0;
 	                    
 	                    if (queueSpecialCustomer) {
 	                        queueSpecialCustomer = false;
-	                        gp.mapM.getRoom(0).addSpecialCustomer();
+	                        gp.world.mapM.getRoom(0).addSpecialCustomer();
 	                        gp.gui.addMessage("A special customer has arrived!", Colour.MAGENTA);
 	                    } else {
 		                    // Decide WHAT to spawn first
 	                      	boolean tryGroup = random.nextInt(100) < groupChance;
-	                      	if(gp.progressM.currentPhase == 1) {
+	                      	if(gp.world.progressM.currentPhase == 1) {
 	                      		tryGroup = false;
 	                      	}
-	                      	if (tryGroup && gp.mapM.getRoom(0).isGroupTable() != null) {
+	                      	if (tryGroup && gp.world.mapM.getRoom(0).isGroupTable() != null) {
 		                        // Spawn a group if we got lucky AND a group table exists
-		                    	gp.mapM.getRoom(0).addGroup(random.nextInt(2) + 3);
+		                    	gp.world.mapM.getRoom(0).addGroup(random.nextInt(2) + 3);
 		                    } else {
-		                    	if(gp.mapM.getRoom(0).isFreeSingleChair() != null) {
-		                    		gp.mapM.getRoom(0).addCustomer();
+		                    	if(gp.world.mapM.getRoom(0).isFreeSingleChair() != null) {
+		                    		gp.world.mapM.getRoom(0).addCustomer();
 		                    	}
 		                    }
 	                    }
@@ -319,22 +319,22 @@ public class World {
 	                }
 	            }
 	        } else {
-	        	if (gp.buildingM.isFreeChair() != null) {
+	        	if (gp.world.buildingM.isFreeChair() != null) {
 	                spawnTimer+=dt;
 	                if (spawnTimer >= customerSpawnTimer) {
 	                    spawnTimer = 0;
 	                    if(queueSpecialCustomer) {
 	                    	queueSpecialCustomer = false;
-	                     	gp.npcM.addSpecialCustomer();
+	                     	gp.world.npcM.addSpecialCustomer();
 	                     	gp.gui.addMessage("A special customer has arrived!", Colour.MAGENTA);
 	                    } else {
 	                    	boolean tryGroup = random.nextInt(100) < groupChance;
-	                    	if (tryGroup && gp.buildingM.isGroupTable() != null) {
+	                    	if (tryGroup && gp.world.buildingM.isGroupTable() != null) {
 			                    // Spawn a group if we got lucky AND a group table exists
-                    			gp.npcM.addGroup(random.nextInt(2) + 3);
+                    			gp.world.npcM.addGroup(random.nextInt(2) + 3);
 			                } else {
-			                	if(gp.buildingM.isFreeSingleChair() != null) {
-			                		gp.npcM.addCustomer();
+			                	if(gp.world.buildingM.isFreeSingleChair() != null) {
+			                		gp.world.npcM.addCustomer();
 			                	}
 			                }
 	                    }
@@ -362,7 +362,7 @@ public class World {
 	        if(spawnRats) {
 	        	ratSpawnTimer+=dt;
 	        	if(ratSpawnTimer >= maxRatSpawnTime) {
-		        	gp.npcM.addRat();
+		        	gp.world.npcM.addRat();
 		        	ratsSpawned++;
 		        	ratSpawnTimer = 0;
 		        	maxRatSpawnTime = random.nextInt(140) + 30;
@@ -389,27 +389,27 @@ public class World {
              gp.gui.addMessage("The restaurant is now CLOSED.", Colour.YELLOW);
              
              // Either trigger instantly OR wait
-             if (gp.mapM.isRoomEmpty(0)) {
+             if (gp.world.mapM.isRoomEmpty(0)) {
                  gp.gui.startLevelUpScreen();
              } else {
                  waitingForLevelUp = true;
              }
              
              if(day == 2) {
-        		 gp.cutsceneM.cutsceneQueued = true;
-        		 gp.cutsceneM.cutsceneName = "Ghosts talking";
+        		 gp.world.cutsceneM.cutsceneQueued = true;
+        		 gp.world.cutsceneM.cutsceneName = "Ghosts talking";
         	 }
              if(day == 7) {
-        		 gp.cutsceneM.cutsceneQueued = true;
-        		 gp.cutsceneM.cutsceneName = "Ignis II";
-        		 gp.cutsceneM.checkCutsceneTrigger();
+        		 gp.world.cutsceneM.cutsceneQueued = true;
+        		 gp.world.cutsceneM.cutsceneName = "Ignis II";
+        		 gp.world.cutsceneM.checkCutsceneTrigger();
         	 }
          }
          lastPhase = currentPhase;
      }
 
      // Outside that, in update():
-     if (waitingForLevelUp && gp.mapM.isRoomEmpty(0)) {
+     if (waitingForLevelUp && gp.world.mapM.isRoomEmpty(0)) {
          gp.gui.startLevelUpScreen();
          waitingForLevelUp = false; // reset
      }
@@ -426,7 +426,7 @@ public class World {
         if (day > MAX_DAYS_PER_SEASON) {
             day = 1;
             currentSeason = currentSeason.next();
-            gp.mapM.setSeason(currentSeason);
+            gp.world.mapM.setSeason(currentSeason);
         }
         
         previousSoulsCollected = gp.player.soulsServed;
@@ -440,8 +440,8 @@ public class World {
         }
         
         if(day == 2) {
-        	gp.cutsceneM.cutsceneQueued = true;
-        	gp.cutsceneM.cutsceneName = "Customiser Tutorial";
+        	gp.world.cutsceneM.cutsceneQueued = true;
+        	gp.world.cutsceneM.cutsceneName = "Customiser Tutorial";
         }
 
         // Reset menu for new day
@@ -449,7 +449,7 @@ public class World {
         resetEventTimer();
 
         // Generate new specials at start of new day
-        generateDailySpecials(gp.recipeM.getUnlockedRecipes());
+        generateDailySpecials(gp.world.recipeM.getUnlockedRecipes());
         gp.saveM.saveGame();
     }
 
@@ -520,7 +520,7 @@ public class World {
     }
     public void orderCrate() {
     	crateOrdered = true;
-    	crateNum = gp.catalogue.getRandomCatalogue();
+    	crateNum = gp.world.catalogue.getRandomCatalogue();
     }
     public void sleep() {
         // Advance the calendar to the next day
@@ -621,7 +621,7 @@ public class World {
         	if(lightningCounter >= lightningTime) {
         		lightningCounter = 0;
         		lightningSpawned = false;
-        		gp.lightingM.removeLight(lightningLight);
+        		gp.world.lightingM.removeLight(lightningLight);
         	   	gp.screenShake(10, 5);
         	}
         }
@@ -633,13 +633,13 @@ public class World {
     public void addLightning() {
     	lightningSpawned = true;
     	lightningLight = new LightSource(0, gp.frameHeight/2, Colour.WHITE, 48*8*4);
-    	gp.lightingM.addLight(lightningLight);
+    	gp.world.lightingM.addLight(lightningLight);
     }
     public void removeLightning() {
     	if(lightningSpawned) {
     		lightningCounter = 0;
     		lightningSpawned = false;
-    		gp.lightingM.removeLight(lightningLight);
+    		gp.world.lightingM.removeLight(lightningLight);
     	}
     }
     public SettingsSaveData saveSettingsData() {
@@ -659,7 +659,7 @@ public class World {
     }
     private void addParcel() {
 		Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));
-        gp.buildingM.addBuilding(parcel);
+        gp.world.buildingM.addBuilding(parcel);
         gp.gui.addMessage("A Parcel has arrived!", Colour.MAGENTA);
         
         boughtItems.addAll(orderList);
@@ -668,7 +668,7 @@ public class World {
     }
     private void addCrate() {
 		Parcel parcel = new Parcel(gp, 9*48, 9*48, crateNum);
-        gp.buildingM.addBuilding(parcel);
+        gp.world.buildingM.addBuilding(parcel);
         gp.gui.addMessage("A Mystery Crate has arrived!", Colour.MAGENTA);
         
         crateOrdered = false;
@@ -677,7 +677,7 @@ public class World {
     public void setOrderData(OrderSaveData data) {
     	if(!data.orderEmpty) {
     		orderList = new ArrayList<Object>();
-    		List<Building> buildings = gp.buildingRegistry.unpackSavedBuildings(data.buildingInventory);
+    		List<Building> buildings = gp.world.buildingRegistry.unpackSavedBuildings(data.buildingInventory);
     		orderList.addAll(buildings);
 
 			for(Integer i: data.beamInventory) {
@@ -729,7 +729,7 @@ public class World {
 	    			}
 	    		}
 	    		
-		    	data.buildingInventory = gp.buildingRegistry.saveBuildings(buildings);	
+		    	data.buildingInventory = gp.world.buildingRegistry.saveBuildings(buildings);	
 				
 				List<Integer> beams = new ArrayList<>();
 				for(Beam b: beamInventory) {

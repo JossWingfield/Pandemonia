@@ -48,21 +48,21 @@ public class TipJar extends Building {
 		animations[0][0][2] = importImage("/decor/kitchen props.png").getSubimage(32, 0, 16, 16);
 	}
 	public void destroy() {
-		gp.progressM.tipJarPresent = false;
+		gp.world.progressM.tipJarPresent = false;
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(firstDraw) {
-			gp.progressM.tipJarPresent = true;
+			gp.world.progressM.tipJarPresent = true;
 			firstDraw = false;
 		}
 	}
 	public void draw(Renderer renderer) {
 		
 		int a = 0;
-		if(gp.world.getCurrentPhase() == DayPhase.SERVICE) {
+		if(gp.world.gameM.getCurrentPhase() == DayPhase.SERVICE) {
 			a = 1;
-		} else if(gp.world.getCurrentPhase() == DayPhase.AFTER_HOURS) {
+		} else if(gp.world.gameM.getCurrentPhase() == DayPhase.AFTER_HOURS) {
 			a = 2;
 		}
         

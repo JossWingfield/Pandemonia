@@ -51,7 +51,7 @@ public class Server extends Employee {
 	}
 	
 	private void findCustomer() {
-		customer = gp.mapM.findCustomerWaiting(currentRoomNum);
+		customer = gp.world.mapM.findCustomerWaiting(currentRoomNum);
 		if(customer != null) {
 			walking = true;
 		}
@@ -67,7 +67,7 @@ public class Server extends Employee {
 	    	customer = null;
 	    }
     }
-	public void update(double dt) {
+	public void updateState(double dt) {
 		
 		if(customer == null) {
 			findCustomer();
@@ -89,6 +89,8 @@ public class Server extends Employee {
 				walkToBase(dt);
 			}
 		}
+	}	
+	public void inputUpdate(double dt) {
         animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
         if(animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;
@@ -107,7 +109,7 @@ public class Server extends Employee {
                 }
             }
         }
-	}	
+	}
     public void draw(Renderer renderer) {
         if(animations != null) {
             TextureRegion img = animations[0][currentAnimation][animationCounter];

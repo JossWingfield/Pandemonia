@@ -259,10 +259,10 @@ public class Catalogue {
 	
 	public CatalogueSaveData saveCatalogueData() {
 		CatalogueSaveData data = new CatalogueSaveData();
-		data.decorBuildingInventory = gp.buildingRegistry.saveBuildings(decorBuildingInventory);
-		data.bathroomBuildingInventory = gp.buildingRegistry.saveBuildings(bathroomBuildingInventory);
-		data.kitchenBuildingInventory = gp.buildingRegistry.saveBuildings(kitchenBuildingInventory);
-		data.storeBuildingInventory = gp.buildingRegistry.saveBuildings(storeBuildingInventory);		
+		data.decorBuildingInventory = gp.world.buildingRegistry.saveBuildings(decorBuildingInventory);
+		data.bathroomBuildingInventory = gp.world.buildingRegistry.saveBuildings(bathroomBuildingInventory);
+		data.kitchenBuildingInventory = gp.world.buildingRegistry.saveBuildings(kitchenBuildingInventory);
+		data.storeBuildingInventory = gp.world.buildingRegistry.saveBuildings(storeBuildingInventory);		
 		
 		List<Integer> beams = new ArrayList<>();
 		for(Beam b: beamInventory) {
@@ -312,10 +312,10 @@ public class Catalogue {
 	}
 	public void applySaveData(CatalogueSaveData data) {
 		
-		decorBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.decorBuildingInventory);
-		bathroomBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.bathroomBuildingInventory);
-		kitchenBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.kitchenBuildingInventory);
-		storeBuildingInventory = gp.buildingRegistry.unpackSavedBuildings(data.storeBuildingInventory);
+		decorBuildingInventory = gp.world.buildingRegistry.unpackSavedBuildings(data.decorBuildingInventory);
+		bathroomBuildingInventory = gp.world.buildingRegistry.unpackSavedBuildings(data.bathroomBuildingInventory);
+		kitchenBuildingInventory = gp.world.buildingRegistry.unpackSavedBuildings(data.kitchenBuildingInventory);
+		storeBuildingInventory = gp.world.buildingRegistry.unpackSavedBuildings(data.storeBuildingInventory);
 		
 		beamInventory.clear();
 		for(Integer i: data.beamInventory) {
@@ -1521,7 +1521,10 @@ public class Catalogue {
 	public void drawMysteryScreen(Renderer renderer) {
 		renderer.drawString(font, Integer.toString(mysteryCrateCost), (int)(173*4.5), (int)(117*4.5), 1.0f, Colour.BLACK);
 	}
-	public void update(double dt) {
+	public void updateState(double dt) {
+		
+	}
+	public void inputUpdate(double dt) {
 		if (clickCounter > 0) {
 			clickCounter -= dt;        // subtract elapsed time in seconds
 		    if (clickCounter < 0) {
@@ -1538,20 +1541,20 @@ public class Catalogue {
 	}
 	public void tryPay() {
 		if(canPay) {
-			gp.catalogue.checkingOut = false;
-			gp.catalogue.layer = 0;
+			gp.world.catalogue.checkingOut = false;
+			gp.world.catalogue.layer = 0;
 			gp.currentState = gp.playState;
 			orderItems();
 		}
 	}
 	private void orderItems() {
-		gp.world.orderItems(new ArrayList<>(basket));
+		gp.world.gameM.orderItems(new ArrayList<>(basket));
 		gp.player.wealth -= basketCost;
 		basketCost = 0;
 		basket.clear();
 	}
 	private void orderCrate() {
-		gp.world.orderCrate();
+		gp.world.gameM.orderCrate();
 		gp.player.wealth -= mysteryCrateCost;
 		basketCost = 0;
 		basket.clear();

@@ -115,7 +115,7 @@ public class Player extends Entity{
     }
     
     private void setUp() {
-    	//Point2D spawnPoint = gp.mapM.findSpawnPosition();
+    	//Point2D spawnPoint = gp.world.mapM.findSpawnPosition();
 
         //hitbox.x = (float) spawnPoint.getX();
         //hitbox.y = (float) spawnPoint.getY();
@@ -176,12 +176,12 @@ public class Player extends Entity{
         this.hitbox.x = data.x;
         this.hitbox.y = data.y;
         this.currentRoomIndex = data.currentRoomIndex;
-        gp.mapM.setRoom(currentRoomIndex);
+        gp.world.mapM.setRoom(currentRoomIndex);
 
         /*
         // Recreate item if needed
         if (data.currentItemName != null) {
-            this.currentItem = gp.itemRegistry.getItemFromName(data.currentItemName, data.currentItemState);
+            this.currentItem = gp.world.itemRegistry.getItemFromName(data.currentItemName, data.currentItemState);
             if (this.currentItem instanceof Food f) {
                 f.setState(data.currentItemState);
             }
@@ -363,7 +363,7 @@ public class Player extends Entity{
             	facingLeft = true;
             	normaliseSpeed();
             	float moveAmount = (float) (currentSpeed * dt);
-                if(CollisionMethods.tileCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
+                if(CollisionMethods.tileCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.world.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
                     hitbox.x -= moveAmount;
                     if(currentAnimation != 2) {
 	                    currentAnimation = 1;
@@ -371,7 +371,7 @@ public class Player extends Entity{
 	                    	currentAnimation = 4;
 	                    }
                     }
-                } else if(!gp.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
+                } else if(!gp.world.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
 
                 } else {
                 	hitbox.x = CollisionMethods.getWallPos(hitbox.x, gp);
@@ -381,7 +381,7 @@ public class Player extends Entity{
                 facingLeft = false;
                 normaliseSpeed();
              	float moveAmount = (float) (currentSpeed * dt);
-                if(CollisionMethods.tileCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
+                if(CollisionMethods.tileCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.world.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
                     hitbox.x += moveAmount;
                     if(currentAnimation != 2) {
 	                    currentAnimation = 1;
@@ -389,7 +389,7 @@ public class Player extends Entity{
 	                    	currentAnimation = 4;
 	                    }
                     }
-                } else if(!gp.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
+                } else if(!gp.world.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
                 	
                 } else {
                     hitbox.x = CollisionMethods.getWallPos(hitbox.x + hitbox.width - 1, gp) - (hitbox.width- gp.tileSize);
@@ -399,7 +399,7 @@ public class Player extends Entity{
             	direction = 3;
             	normaliseSpeed();
              	float moveAmount = (float) (currentSpeed * dt);
-                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
+                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height, gp) && gp.world.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
                     hitbox.y -= moveAmount;
                     if(currentAnimation != 2) {
 	                    currentAnimation = 1;
@@ -407,7 +407,7 @@ public class Player extends Entity{
 	                    	currentAnimation = 4;
 	                    }
                     }
-                } else if(!gp.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
+                } else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
 
                 } else {
                     hitbox.y = CollisionMethods.getFloorPos(hitbox.y, gp);
@@ -416,7 +416,7 @@ public class Player extends Entity{
             	direction = 2;
             	normaliseSpeed();
             	float moveAmount = (float) (currentSpeed * dt);
-                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height, gp) && gp.buildingM.entityCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height)) {
+                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height, gp) && gp.world.buildingM.entityCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height)) {
                     hitbox.y += moveAmount;
                     if(currentAnimation != 2) {
 	                    currentAnimation = 1;
@@ -424,15 +424,15 @@ public class Player extends Entity{
 	                    	currentAnimation = 4;
 	                    }
                     }
-                } else if(!gp.buildingM.entityCheck(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height)) {
+                } else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height)) {
                 	
                 } else {
                     hitbox.y = CollisionMethods.getFloorPos(hitbox.y + hitbox.height - 1, gp) - (hitbox.height- gp.tileSize);
                 }
             }
             
-            if(!gp.world.isPowerOn()) {
-            	gp.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
+            if(!gp.world.gameM.isPowerOn()) {
+            	gp.world.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
             }
             
          	if (gp.multiplayer) { 
@@ -507,11 +507,11 @@ public class Player extends Entity{
     }
     private void handleItems(double dt) {
     	if(currentItem != null) {
-    		currentItem.update(dt);
+    		currentItem.inputUpdate(dt);
 	    	if(keyI.keyBeginPress(GLFW.GLFW_KEY_E) && clickCounter == 0) {
-	    		FloorDecor_Building b = gp.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
+	    		FloorDecor_Building b = gp.world.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {
-		    		if(gp.buildingM.intersectsKitchenBuilding(gp, b, b.interactHitbox)) {
+		    		if(gp.world.buildingM.intersectsKitchenBuilding(gp, b, b.interactHitbox)) {
 			    		FloorDecor_Building table = b;
 		    			if(table.currentItem == null) {
 		    				/*
@@ -625,9 +625,9 @@ public class Player extends Entity{
 	    	}
     	} else if(currentItem == null){
     		if(keyI.keyBeginPress(GLFW.GLFW_KEY_E) && clickCounter == 0) {
-	    		FloorDecor_Building b = gp.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
+	    		FloorDecor_Building b = gp.world.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {
-		    		if(gp.buildingM.intersectsKitchenBuilding(gp, b, interactHitbox)) {
+		    		if(gp.world.buildingM.intersectsKitchenBuilding(gp, b, interactHitbox)) {
 		    			if(b.currentItem != null) {
 			    			if(b.currentItem instanceof Plate plate) {
 				    			if(plate.getCurrentStackCount() > 1) {
@@ -722,7 +722,7 @@ public class Player extends Entity{
     	controlEnabled = isEnabled;
     }
     public void update(double dt) {
-    	if(!gp.minigameM.miniGameActive && controlEnabled) {
+    	if(!gp.world.minigameM.miniGameActive && controlEnabled) {
     		if(gp.currentState != gp.chatState) {
     			handleMovement(dt);
     		}
@@ -730,7 +730,7 @@ public class Player extends Entity{
     		updateInteractHitbox();
     		handleItems(dt);
     		
-    		if (gp.mapM.currentRoom.darkerRoom) {
+    		if (gp.world.mapM.currentRoom.darkerRoom) {
     		    if (currentAnimation == 1) {
     		        dustCooldown -= dt; // subtract elapsed time
     		        if (dustCooldown <= 0) {
@@ -762,7 +762,7 @@ public class Player extends Entity{
         float spawnX = hitbox.x + hitbox.width / 2f;
         float spawnY = hitbox.y + hitbox.height; // near the player’s feet
 
-        gp.particleM.addParticle(new PlayerDustParticle(gp, currentRoomIndex, spawnX, spawnY));
+        gp.world.particleM.addParticle(new PlayerDustParticle(gp, currentRoomIndex, spawnX, spawnY));
     }
     public void setCurrentRoomIndex(int currentRoomIndex) {
 		this.currentRoomIndex = currentRoomIndex;
@@ -897,11 +897,11 @@ public class Player extends Entity{
             renderer.setColour(Colour.RED);
             renderer.fillRect((int) hitbox.x , (int) (hitbox.y) , (int) hitbox.width, (int) hitbox.height);
             renderer.setColour(Colour.BLUE);
-            gp.buildingM.drawHitboxes(renderer);
+            gp.world.buildingM.drawHitboxes(renderer);
             renderer.setColour(Colour.YELLOW);
-            gp.itemM.drawItemHitboxes(renderer);
+            gp.world.itemM.drawItemHitboxes(renderer);
             renderer.setColour(Colour.GREEN);
-            gp.npcM.drawNPCHitboxes(renderer);
+            gp.world.npcM.drawNPCHitboxes(renderer);
         }
     }
     public void drawOverlay(Renderer renderer) {

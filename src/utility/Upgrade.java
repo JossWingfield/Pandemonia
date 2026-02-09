@@ -44,81 +44,81 @@ public class Upgrade {
 	public void activateUpgrade() {
 		switch(name) {
 		case "Turntable":
-			gp.customiser.addToInventory(new Turntable(gp, 0, 0));
+			gp.world.customiser.addToInventory(new Turntable(gp, 0, 0));
 			break;
 		case "Tip Jar":
-			gp.customiser.addToInventory(new TipJar(gp, 0, 0));
+			gp.world.customiser.addToInventory(new TipJar(gp, 0, 0));
 			break;
 		case "Faster Customers":
-			gp.progressM.fasterCustomers = true;
+			gp.world.progressM.fasterCustomers = true;
 			break;
 		case "More Customers":
-			gp.progressM.moreCustomers = true;
+			gp.world.progressM.moreCustomers = true;
 			break;
 		case "Coloured Walls":
 			for(int i = 21; i < 30; i++) {
-				gp.catalogue.addToInventory(new WallPaper(gp, i));
+				gp.world.catalogue.addToInventory(new WallPaper(gp, i));
 			}
 			break;
 		case "Small Plants":
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 25));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 25));
 
 			for(int i = 70; i < 101; i++) {
-				gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, i));
+				gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, i));
 			}
 			break;
 		case "Big Plants":
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 0));
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 1));
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 2));
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 3));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 0));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 1));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 2));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 3));
 			
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 101));
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 102));
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 103));
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 104));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 101));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 102));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 103));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 104));
 			break;
 		case "Flowers, Hanging Plants":
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 26));
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 28));
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 48));
-			gp.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 49));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 4));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 5));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 23));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 24));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 26));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 28));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 48));
+			gp.world.catalogue.addToInventory(new FloorDecor_Building(gp, 0, 0, 49));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 4));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 5));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 23));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 24));
 			break;
 		case "Paintings":
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 2));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 3));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 28));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 29));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 30));
-			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 31));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 2));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 3));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 28));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 29));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 30));
+			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 31));
 			break;
 		case "Shelves":
-			gp.catalogue.addToInventory(new Shelf(gp, 0, 0));
+			gp.world.catalogue.addToInventory(new Shelf(gp, 0, 0));
 			break;
 		case "Fridge Upgrade I":
-			gp.progressM.fridgeUpgradeI = true;
+			gp.world.progressM.fridgeUpgradeI = true;
 			break;
 		case "Fridge Upgrade II":
-			gp.progressM.fridgeUpgradeII = true;
+			gp.world.progressM.fridgeUpgradeII = true;
 			break;
 		case "Sink Upgrade I":
-			gp.progressM.sinkUpgradeI = true;
+			gp.world.progressM.sinkUpgradeI = true;
 			break;
 		case "Stove Upgrade I":
-			gp.progressM.stoveUpgradeI = true;
+			gp.world.progressM.stoveUpgradeI = true;
 			break;
 		case "Chopping Upgrade I":
-			gp.progressM.choppingBoardUpgradeI = true;
+			gp.world.progressM.choppingBoardUpgradeI = true;
 			break;
 		case "Oven Upgrade I":
-			gp.progressM.ovenUpgradeI = true;
+			gp.world.progressM.ovenUpgradeI = true;
 			break;
 		case "Seasoning!":
-			gp.progressM.seasoningUnlocked = true;
+			gp.world.progressM.seasoningUnlocked = true;
 			break;
 		}
 	}

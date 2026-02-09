@@ -59,7 +59,7 @@ public class Candle extends Building{
 		
 	}
 	public void destroy() {
-		gp.lightingM.removeLight(light);
+		gp.world.lightingM.removeLight(light);
 	}
 	public void draw(Renderer renderer) {
 		
@@ -67,7 +67,7 @@ public class Candle extends Building{
 			firstUpdate = false;
 			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.YELLOW, 32);
 	    	light.setIntensity(0.6f);
-			gp.lightingM.addLight(light);
+			gp.world.lightingM.addLight(light);
 		}
 
 	    renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);

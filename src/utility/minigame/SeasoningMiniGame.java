@@ -102,7 +102,7 @@ public class SeasoningMiniGame {
         return active;
     }
 
-    public void update(double dt) {
+    public void updateState(double dt) {
         if (!active) return;
 
         // Handle bursts
@@ -141,6 +141,10 @@ public class SeasoningMiniGame {
             }
         }
 
+
+
+    }
+    public void inputUpdate(double dt) {
     	if (clickCooldown > 0) {
 			clickCooldown -= dt;        // subtract elapsed time in seconds
 		    if (clickCooldown < 0) {
@@ -186,11 +190,11 @@ public class SeasoningMiniGame {
 		    	resultTimer = 0;      // clamp to zero
 		    }
 		}
-
+    	
         // End game
         if ((totalBeats / 4 >= maxBursts) && beats.isEmpty() && beatsInBurst == 0) {
             active = false;
-            gp.minigameM.miniGameActive = false;
+            gp.world.minigameM.miniGameActive = false;
 
             // Calculate final quality
             float quality = totalBeats > 0 ? totalScore / totalBeats : 0f;
@@ -200,7 +204,6 @@ public class SeasoningMiniGame {
             }
         }
     }
-
     private void spawnBeat() {
         Beat beat = new Beat();
         beat.x = 1.2f;

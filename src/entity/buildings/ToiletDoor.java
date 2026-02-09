@@ -56,7 +56,7 @@ public class ToiletDoor extends Building {
 			importImages();
 		}  
 		
-		if(!gp.player.interactHitbox.intersects(doorHitbox) && gp.npcM.entityCheck(npcVisualHitbox)) {
+		if(!gp.player.interactHitbox.intersects(doorHitbox) && gp.world.npcM.entityCheck(npcVisualHitbox)) {
 			renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {
 			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);

@@ -143,10 +143,10 @@ public class LightingManager {
     }
 
     public void updateLightColor(int roomIndex, LightSource light, Colour color) {
-        if (gp.mapM.isInRoom(roomIndex)) {
+        if (gp.world.mapM.isInRoom(roomIndex)) {
             lights.get(lights.indexOf(light)).setColor(color);
         } else {
-            var roomLights = gp.mapM.getRoom(roomIndex).getLights();
+            var roomLights = gp.world.mapM.getRoom(roomIndex).getLights();
             int idx = roomLights.indexOf(light);
             if (idx != -1) {
                 roomLights.get(idx).setColor(color);
@@ -354,7 +354,7 @@ public class LightingManager {
                 
         // Apply occlusion
         if (Settings.lightOcclusionEnabled) {
-        	occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
+        	occlusion = roomOcclusionCache.get(gp.world.mapM.currentRoom.preset);
 
         	// Directly modify the occlusion for the current frame:
         	int px = (int)(gp.player.hitbox.x + gp.player.hitbox.width / 2);
@@ -474,7 +474,7 @@ public class LightingManager {
     
     public void drawOcclusionDebug(Graphics2D g) {
 
-        Texture occlusion = roomOcclusionCache.get(gp.mapM.currentRoom.preset);
+        Texture occlusion = roomOcclusionCache.get(gp.world.mapM.currentRoom.preset);
         if (occlusion == null) return;
 
         // --- CONFIG ---
@@ -526,8 +526,8 @@ public class LightingManager {
         }
 
         // --- Build map cache ---
-        int mapW = gp.mapM.currentMapWidth;
-        int mapH = gp.mapM.currentMapHeight;
+        int mapW = gp.world.mapM.currentMapWidth;
+        int mapH = gp.world.mapM.currentMapHeight;
         if (lightPassable == null || lightPassable.length != mapH || lightPassable[0].length != mapW) {
             lightPassable = new byte[mapH][mapW];
             for (int ty = 0; ty < mapH; ty++) {
@@ -604,8 +604,8 @@ public class LightingManager {
 		
 		// Map world pixels → occlusion texture pixels.
 		// Compute room size in world pixels (map width in tiles * tileSize)
-		int roomPixelW = gp.mapM.currentMapWidth * gp.tileSize;
-		int roomPixelH = gp.mapM.currentMapHeight * gp.tileSize;
+		int roomPixelW = gp.world.mapM.currentMapWidth * gp.tileSize;
+		int roomPixelH = gp.world.mapM.currentMapHeight * gp.tileSize;
 		
 		// If your occlusion image was created with frame size (gp.frameWidth/gp.frameHeight)
 		// but the room is larger, use roomPixelW/H. If occlusion image is already room-sized,
@@ -674,8 +674,8 @@ public class LightingManager {
         // Get room tile boundaries
         int startTileX = 0;
         int startTileY = 0;
-        int endTileX = gp.mapM.currentMapWidth;
-        int endTileY = gp.mapM.currentMapHeight;
+        int endTileX = gp.world.mapM.currentMapWidth;
+        int endTileY = gp.world.mapM.currentMapHeight;
 
         // Draw black for solid tiles
         for (int ty = startTileY; ty < endTileY; ty++) {
@@ -693,7 +693,7 @@ public class LightingManager {
         return blurred;
     }
     public void getRoomOcclusion() {
-        int roomId = gp.mapM.currentRoom.preset;
+        int roomId = gp.world.mapM.currentRoom.preset;
         Texture occlusion = getOcclusionForRoom(roomId, gp.frameWidth, gp.frameHeight);
         roomOcclusionCache.put(roomId, occlusion);
         lightPassable = null; 
@@ -1012,7 +1012,7 @@ public class LightingManager {
             startLights();
         }
 
-        float time = gp.world.getRawTime(); // 0–24h
+        float time = gp.world.gameM.getRawTime(); // 0–24h
         Colour ambient;
         float intensity;
 
@@ -1035,7 +1035,7 @@ public class LightingManager {
                 intensity = 0.6f + 0.4f * t;
             }
             
-            if (gp.mapM.currentRoom != null && gp.mapM.currentRoom.darkerRoom) {
+            if (gp.world.mapM.currentRoom != null && gp.world.mapM.currentRoom.darkerRoom) {
                 // Make the room’s lighting darker (reduce intensity + darken color)
                 intensity *= 0.6f; // 40% darker
                 ambient = darkenColor(ambient, 0.75f); // darken by 50%

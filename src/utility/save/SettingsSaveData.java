@@ -10,7 +10,7 @@ public class SettingsSaveData extends SaveData {
     public boolean bloomEnabled;
 	
 	public void applySaveData(GamePanel gp) {
-		gp.world.applySettingsData(this);
+		gp.world.gameM.applySettingsData(this);
 	}
     
 }

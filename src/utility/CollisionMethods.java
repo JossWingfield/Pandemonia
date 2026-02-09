@@ -104,14 +104,14 @@ public class CollisionMethods {
     //Checks if tile at position is solid
     public static boolean isTileSolid(float x, float y, GamePanel gp) {
         //CHECKS IF CORRESPONDING TILE IN 2D ARRAY IS SOLID
-    	if(x > (gp.mapM.currentRoom.mapWidth-1)*gp.tileSize) {
+    	if(x > (gp.world.mapM.currentRoom.mapWidth-1)*gp.tileSize) {
     		return true;
     	}
-        int value = gp.mapM.currentRoom.mapGrid[1][(int)(x/gp.tileSize)][(int)(y/gp.tileSize)];
-        return gp.mapM.tiles[value].solid;
+        int value = gp.world.mapM.currentRoom.mapGrid[1][(int)(x/gp.tileSize)][(int)(y/gp.tileSize)];
+        return gp.world.mapM.tiles[value].solid;
     }
     public static Building getBuildingAt(GamePanel gp, int worldX, int worldY, String name) {
-        for (Building b : gp.buildingM.getBuildings()) {
+        for (Building b : gp.world.buildingM.getBuildings()) {
         	if(b != null && b.getName().equals(name)) {
         		if ((int)b.hitbox.x == worldX && (int)b.hitbox.y == worldY)
         			return b;
@@ -121,12 +121,12 @@ public class CollisionMethods {
     }
     public static boolean canLightPassThroughTile(int tx, int ty, GamePanel gp) {
         // bounds: if outside world, treat as solid (or treat as passable depending on your game)
-        if (tx < 0 || ty < 0 || tx >= gp.mapM.currentMapWidth || ty >= gp.mapM.currentMapHeight) {
+        if (tx < 0 || ty < 0 || tx >= gp.world.mapM.currentMapWidth || ty >= gp.world.mapM.currentMapHeight) {
             return false; // outside = blocked; set to true if you prefer outside to be open
         }
 
-        int value = gp.mapM.currentRoom.mapGrid[3][tx][ty];
-        int value2 = gp.mapM.currentRoom.mapGrid[0][tx][ty];
+        int value = gp.world.mapM.currentRoom.mapGrid[3][tx][ty];
+        int value2 = gp.world.mapM.currentRoom.mapGrid[0][tx][ty];
 
         // If 88 really means "empty/passable" keep equality; otherwise invert.
         return value != 88 && value2 != 1110;
@@ -340,17 +340,17 @@ public class CollisionMethods {
 	}
 	public static boolean canPlaceBuilding(GamePanel gp, Building building, float x, float y, float width, float height) {
 	    if(building.isKitchenBuilding) {
-	    	if(!gp.mapM.isInRoom(RoomHelperMethods.KITCHEN)) {
+	    	if(!gp.world.mapM.isInRoom(RoomHelperMethods.KITCHEN)) {
 	    		return false;
 	    	}
 	    }
 	    if(building.isStoreBuilding) {
-	    	if(!gp.mapM.isInRoom(RoomHelperMethods.STORES)) {
+	    	if(!gp.world.mapM.isInRoom(RoomHelperMethods.STORES)) {
 	    		return false;
 	    	}
 	    }
 	    if(building.isBathroomBuilding) {
-	    	if(!gp.mapM.isInRoom(RoomHelperMethods.BATHROOM)) {
+	    	if(!gp.world.mapM.isInRoom(RoomHelperMethods.BATHROOM)) {
 	    		return false;
 	    	}
 	    }
@@ -359,7 +359,7 @@ public class CollisionMethods {
 	    
 	    if ("Shelf".equals(building.getName())) {
 	        int tileSize = gp.tileSize;
-	        int[][] grid = gp.mapM.currentRoom.mapGrid[1];
+	        int[][] grid = gp.world.mapM.currentRoom.mapGrid[1];
 
 	        int startX = (int) Math.floor(x / tileSize);
 	        int startY = (int) Math.floor(y / tileSize);
@@ -404,7 +404,7 @@ public class CollisionMethods {
 	                }
 	            }
 	            
-	            for (Building b : gp.buildingM.getBuildings()) {
+	            for (Building b : gp.world.buildingM.getBuildings()) {
 		            if (b != null && b.buildHitbox.intersects(buildHitbox)) {
 		            	if(b.getName().equals("Shelf")) {
 		            		return false;
@@ -424,7 +424,7 @@ public class CollisionMethods {
 		
 
 	    // ---------------- Universal corner check (mapGrid == 0) ----------------
-	    int[][] grid = gp.mapM.currentRoom.mapGrid[1];
+	    int[][] grid = gp.world.mapM.currentRoom.mapGrid[1];
 	    int tileSize = gp.tileSize;
 
 	    // corners of the hitbox
@@ -450,7 +450,7 @@ public class CollisionMethods {
 	    }
 	    // ---------------- Floor-only placement ----------------
 	    if (building.mustBePlacedOnFloor) {
-	        for (Building b : gp.buildingM.getBuildings()) {
+	        for (Building b : gp.world.buildingM.getBuildings()) {
 	            if (b != null && b.buildHitbox.intersects(buildHitbox)) {
 	            	if(!b.getName().equals("Shelf")) {
 	            		return false;
@@ -466,7 +466,7 @@ public class CollisionMethods {
 
 	        for (int ix = startX; ix < endX; ix++) {
 	            for (int iy = startY; iy < endY; iy++) {
-	                if (gp.mapM.tiles[grid[ix][iy]].isWall) {
+	                if (gp.world.mapM.tiles[grid[ix][iy]].isWall) {
 	                    return false;
 	                }
 	            }
@@ -476,7 +476,7 @@ public class CollisionMethods {
 	    
 	 // ---------------- Wall-only placement ----------------
 	    if (building.mustBePlacedOnWall) {
-	        for (Building b : gp.buildingM.getBuildings()) {
+	        for (Building b : gp.world.buildingM.getBuildings()) {
 	            if (b != null && b.hitbox.intersects(buildHitbox)) {
 	                return false;
 	            }
@@ -489,7 +489,7 @@ public class CollisionMethods {
 
 	        for (int ix = startX; ix < endX; ix++) {
 	            for (int iy = startY; iy < endY; iy++) {
-	                if (!gp.mapM.tiles[grid[ix][iy]].isWall) {
+	                if (!gp.world.mapM.tiles[grid[ix][iy]].isWall) {
 	                    return false;
 	                }
 	            }
@@ -502,7 +502,7 @@ public class CollisionMethods {
 	        boolean onShelf = false;
 	        boolean onTable = false;
 
-	        for (Building b : gp.buildingM.getBuildings()) {
+	        for (Building b : gp.world.buildingM.getBuildings()) {
 	            if (b == null) continue;
 
 	            boolean isShelf = "Shelf".equals(b.getName());
@@ -555,7 +555,7 @@ public class CollisionMethods {
 
 	        for (int ix = startX; ix < endX; ix++) {
 	            for (int iy = startY; iy < endY; iy++) {
-	                if (gp.mapM.tiles[grid[ix][iy]].isWall) {
+	                if (gp.world.mapM.tiles[grid[ix][iy]].isWall) {
 	                    return false; // floor ok, wall not
 	                }
 	            }

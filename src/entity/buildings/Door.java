@@ -66,9 +66,9 @@ public class Door extends Building {
 	public void setDoorLight(boolean doorLight) {
 		this.drawLight = doorLight;
 		if(doorLight) {
-			gp.lightingM.addLight(light);
+			gp.world.lightingM.addLight(light);
 		} else {
-			gp.lightingM.removeLight(light);
+			gp.world.lightingM.removeLight(light);
 		}
 	}
 	public void unlock() {
@@ -89,9 +89,9 @@ public class Door extends Building {
 	    	} else if(facing == 0){ //0
 	        	animations[0][0][0] = importImage("/decor/door.png").getSubimage(0, 48, 32, 48);
 	        	animations[0][0][1] = importImage("/decor/door.png").getSubimage(32, 0, 32, 48);
-	        	if(gp.mapM != null) {
-					animations[0][0][0] = gp.mapM.getRooms()[doorRoomNum].getDoorSkin().getImage();
-					animations[0][0][1] = gp.mapM.getRooms()[doorRoomNum].getDoorSkin().getOpenImage();
+	        	if(gp.world.mapM != null) {
+					animations[0][0][0] = gp.world.mapM.getRooms()[doorRoomNum].getDoorSkin().getImage();
+					animations[0][0][1] = gp.world.mapM.getRooms()[doorRoomNum].getDoorSkin().getOpenImage();
 	        	}
 	    	} else if(facing == 2 || facing == 3) {
 	    		animations[0][0][0] = importImage("/decor/door.png").getSubimage(128, 48, 16, 48);
@@ -123,19 +123,19 @@ public class Door extends Building {
 	public void refreshImages() {
 		if(preset == 0) {
 			if(facing == 0) {
-				animations[0][0][0] = gp.mapM.getRooms()[roomNum].getDoorSkin().getImage();
-				animations[0][0][1] = gp.mapM.getRooms()[roomNum].getDoorSkin().getOpenImage();
+				animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getDoorSkin().getImage();
+				animations[0][0][1] = gp.world.mapM.getRooms()[roomNum].getDoorSkin().getOpenImage();
 			}
 		}
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		
 		if(entryHitbox != null) {
 			if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
 				if(doorCooldown == 0) {
 					if(doorRoomNum != 2) {
-						gp.mapM.changeRoom(doorRoomNum, this);
+						gp.world.mapM.changeRoom(doorRoomNum, this);
 					}
 				}
 			}
@@ -171,7 +171,7 @@ public class Door extends Building {
         //g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
 		 
-		if((!gp.player.interactHitbox.intersects(doorHitbox) && !gp.npcM.stockerCheck(npcVisualHitbox)) || locked) {
+		if((!gp.player.interactHitbox.intersects(doorHitbox) && !gp.world.npcM.stockerCheck(npcVisualHitbox)) || locked) {
 			if(!open) {
 			}
 			open = true;

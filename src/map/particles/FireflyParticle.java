@@ -22,7 +22,7 @@ public class FireflyParticle extends Particle {
         
         light = new LightSource((int)x, (int)y, colour, lightRadius);
         
-        gp.lightingM.addLight(light); // assume addLight(x, y, radius, color, intensity)
+        gp.world.lightingM.addLight(light); // assume addLight(x, y, radius, color, intensity)
     }
     
     public void update() {
@@ -54,7 +54,7 @@ public class FireflyParticle extends Particle {
 
         // 🔹 Remove when dead
         if (lifetime <= 0) {
-            gp.lightingM.removeLight(light);
+            gp.world.lightingM.removeLight(light);
         }
     }
 

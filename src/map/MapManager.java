@@ -50,8 +50,8 @@ public class MapManager {
 	    }
 	    private void loadRooms() {
 	        currentRoom = new Room(gp, 0);
-	        gp.buildingM.setBuildings(currentRoom.getBuildings());
-	        gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
+	        gp.world.buildingM.setBuildings(currentRoom.getBuildings());
+	        gp.world.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
 	        
 	        rooms = new Room[20];
 	        rooms[0] = currentRoom; //Main
@@ -170,13 +170,26 @@ public class MapManager {
 			Texture texture = AssetPool.getTexture(filePath);
 		    return texture;
 		}
-	    public void update(double dt) {
-	    		    	
+	    public void updateState(double dt) {
+	    	
 	    	for(Room room: rooms) {
 	    		if(room != null) {
 	    			if(currentRoom != room) {
 	    				if(room.containsAnyNPC() || room.getRoomType().equals("Main")) {
-	    					room.update(dt);
+	    					room.updateState(dt);
+	    				}
+	    			}
+	    		}
+	    	}
+	    	
+	    }
+	    public void inputUpdate(double dt) {
+	    	
+	    	for(Room room: rooms) {
+	    		if(room != null) {
+	    			if(currentRoom != room) {
+	    				if(room.containsAnyNPC() || room.getRoomType().equals("Main")) {
+	    					room.inputUpdate(dt);
 	    				}
 	    			}
 	    		}
@@ -188,8 +201,8 @@ public class MapManager {
 	        if (!room.getNPCs().contains(npc)) {
 	            room.addNPC(npc);
 	        }
-	        if (room == currentRoom && !gp.npcM.getNPCs().contains(npc)) {
-	            gp.npcM.addNPC(npc);
+	        if (room == currentRoom && !gp.world.npcM.getNPCs().contains(npc)) {
+	            gp.world.npcM.addNPC(npc);
 	        }
 	    }
 	    public boolean isInRoom(int index) {
@@ -205,32 +218,32 @@ public class MapManager {
 	        Room room = rooms[roomCounter];
 	        room.removeNPC(npc); // always remove from the room
 	        if (room == currentRoom) {
-	            gp.npcM.removeNPC(npc); // also mirror to global if it's the active room
+	            gp.world.npcM.removeNPC(npc); // also mirror to global if it's the active room
 	        }
 	    }
 	    public void enterNewPhase() {
 	    	changingPhase = true;
 	    	/*
-    		gp.customiser.clear();
+    		gp.world.customiser.clear();
 	    	for(Object o: gp.world.boughtItems) {
 	    		if(o instanceof FloorPaper f) {
-	    			gp.customiser.addToInventory(f);
+	    			gp.world.customiser.addToInventory(f);
     			} else if(o instanceof WallPaper f) {
-    				gp.customiser.addToInventory(f);
+    				gp.world.customiser.addToInventory(f);
     			} else if(o instanceof Beam f) {
-    				gp.customiser.addToInventory(f);
+    				gp.world.customiser.addToInventory(f);
     			} else if(o instanceof ChairSkin f) {
-    				gp.customiser.addToInventory(f);
+    				gp.world.customiser.addToInventory(f);
     			} else if(o instanceof TableSkin f) {
-    				gp.customiser.addToInventory(f);
+    				gp.world.customiser.addToInventory(f);
     			} else if(o instanceof Building f) {
-    				gp.customiser.addToInventory(f);
+    				gp.world.customiser.addToInventory(f);
     			}
 	    	}
-	    	gp.lightingM.clearLights();
+	    	gp.world.lightingM.clearLights();
 	    	loadRooms();
-	    	gp.lightingM.clearRoomOcclusionCache();
-	    	gp.lightingM.getRoomOcclusion();
+	    	gp.world.lightingM.clearRoomOcclusionCache();
+	    	gp.world.lightingM.getRoomOcclusion();
 	    	gp.player.currentRoomIndex = 0;
 	    	gp.player.hitbox.x = 8*48;
 	    	gp.player.hitbox.y = 12*48;
@@ -238,35 +251,35 @@ public class MapManager {
 	    	changingPhase = false;
 	    }
 	    public void setRoom(int roomNum) {
-	    	gp.lightingM.removeLight(gp.player.playerLight);
-	    	gp.world.removeLightning();
-	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
-	    	currentRoom.editNPCs(gp.npcM.getNPCs());
-	    	currentRoom.editItems(gp.itemM.getItems());
-	    	//currentRoom.editLights(gp.lightingM.getLights());
+	    	gp.world.lightingM.removeLight(gp.player.playerLight);
+	    	gp.world.gameM.removeLightning();
+	    	currentRoom.editBuildings(gp.world.buildingM.getBuildings(), gp.world.buildingM.getArrayIndex());
+	    	currentRoom.editNPCs(gp.world.npcM.getNPCs());
+	    	currentRoom.editItems(gp.world.itemM.getItems());
+	    	//currentRoom.editLights(gp.world.lightingM.getLights());
 	    	currentRoom = rooms[roomNum];
-	    	gp.buildingM.setBuildings(currentRoom.getBuildings());
-	    	gp.npcM.setNPCs(currentRoom.getNPCs());
-	    	gp.itemM.setItems(currentRoom.getItems());
-	    	gp.lightingM.setLights(currentRoom.getLights());
-	    	gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
-	    	if(!gp.world.isPowerOn()) {
-	    		gp.lightingM.addLight(gp.player.playerLight);
+	    	gp.world.buildingM.setBuildings(currentRoom.getBuildings());
+	    	gp.world.npcM.setNPCs(currentRoom.getNPCs());
+	    	gp.world.itemM.setItems(currentRoom.getItems());
+	    	gp.world.lightingM.setLights(currentRoom.getLights());
+	    	gp.world.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
+	    	if(!gp.world.gameM.isPowerOn()) {
+	    		gp.world.lightingM.addLight(gp.player.playerLight);
 	    	}
 
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;
-	    	gp.lightingM.getRoomOcclusion();
+	    	gp.world.lightingM.getRoomOcclusion();
 	    }
 	    public void saveCurrentBuildingsToRoom() {
-	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
+	    	currentRoom.editBuildings(gp.world.buildingM.getBuildings(), gp.world.buildingM.getArrayIndex());
 	    }
 	    public void changeRoom(int roomNum, Door previousDoor) {
 	        gp.player.isChangingRoom = true;
-	    	gp.buildingM.setDoorCooldowns();
+	    	gp.world.buildingM.setDoorCooldowns();
 	    	switchRoom(roomNum);
 	    	
-	    	Door door = (Door)gp.buildingM.findCorrectDoor(previousDoor.facing);
+	    	Door door = (Door)gp.world.buildingM.findCorrectDoor(previousDoor.facing);
 	    	if(door != null) {
     			gp.player.hitbox.x = door.hitbox.x + door.hitbox.width/2 - gp.player.hitbox.width/2;
 	    		if(door.facing == 0) {
@@ -284,7 +297,7 @@ public class MapManager {
 	    	}
 	        gp.player.currentRoomIndex = roomNum;
 	    	
-	    	gp.buildingM.setDoorCooldowns();
+	    	gp.world.buildingM.setDoorCooldowns();
 	    	gp.player.updateInteractHitbox();
 	    	
 	    	gp.player.isChangingRoom = false;
@@ -310,7 +323,7 @@ public class MapManager {
 	    public void changeRoom(int roomNum, Trapdoor trapdoor) {
 	    	switchRoom(roomNum);
 	    	
-	    	Trapdoor newTrapdoor = (Trapdoor)gp.buildingM.findTrapdoor();
+	    	Trapdoor newTrapdoor = (Trapdoor)gp.world.buildingM.findTrapdoor();
 	    	if(newTrapdoor != null) {
     			gp.player.hitbox.x = newTrapdoor.hitbox.x + newTrapdoor.hitbox.width/2 - gp.player.hitbox.width/2;
 	    		if(newTrapdoor.type == 0) {
@@ -320,30 +333,30 @@ public class MapManager {
 	    			gp.player.hitbox.y = newTrapdoor.hitbox.y + newTrapdoor.hitbox.height;
 	    		}
 	    	}
-	    	gp.buildingM.setDoorCooldowns();
+	    	gp.world.buildingM.setDoorCooldowns();
 	       	gp.player.updateInteractHitbox();
 	    }
 	    private void switchRoom(int roomNum) {
-	     	gp.lightingM.removeLight(gp.player.playerLight);
-	    	gp.world.removeLightning();
-	    	currentRoom.editBuildings(gp.buildingM.getBuildings(), gp.buildingM.getArrayIndex());
-	    	currentRoom.editNPCs(gp.npcM.getNPCs());
-	    	currentRoom.editItems(gp.itemM.getItems());
-	    	currentRoom.editLights(gp.lightingM.getLights());
+	     	gp.world.lightingM.removeLight(gp.player.playerLight);
+	    	gp.world.gameM.removeLightning();
+	    	currentRoom.editBuildings(gp.world.buildingM.getBuildings(), gp.world.buildingM.getArrayIndex());
+	    	currentRoom.editNPCs(gp.world.npcM.getNPCs());
+	    	currentRoom.editItems(gp.world.itemM.getItems());
+	    	currentRoom.editLights(gp.world.lightingM.getLights());
 	    	currentRoom = rooms[roomNum];
-	    	gp.buildingM.setBuildings(currentRoom.getBuildings());
-	    	gp.npcM.setNPCs(currentRoom.getNPCs());
-	    	gp.itemM.setItems(currentRoom.getItems());
-	    	gp.lightingM.setLights(currentRoom.getLights());
-	    	gp.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
-	    	if(!gp.world.isPowerOn()) {
-	    		gp.lightingM.addLight(gp.player.playerLight);
+	    	gp.world.buildingM.setBuildings(currentRoom.getBuildings());
+	    	gp.world.npcM.setNPCs(currentRoom.getNPCs());
+	    	gp.world.itemM.setItems(currentRoom.getItems());
+	    	gp.world.lightingM.setLights(currentRoom.getLights());
+	    	gp.world.buildingM.setArrayCounter(currentRoom.buildingArrayCounter);
+	    	if(!gp.world.gameM.isPowerOn()) {
+	    		gp.world.lightingM.addLight(gp.player.playerLight);
 	    	}
 	    	currentMapWidth = currentRoom.mapWidth;
 	    	currentMapHeight = currentRoom.mapHeight;
 	    	gp.player.currentRoomIndex = roomNum;
-	    	gp.lightingM.getRoomOcclusion();
-	    	gp.cutsceneM.checkCutsceneTrigger();
+	    	gp.world.lightingM.getRoomOcclusion();
+	    	gp.world.cutsceneM.checkCutsceneTrigger();
 	    }
 	    public Room getCurrentRoom(NPC npc) {
 	    	for(Room room: rooms) {
@@ -353,7 +366,7 @@ public class MapManager {
 		    		}
 	    		}
 	    	}
-	    	if(gp.npcM.containsNPC(npc)) {
+	    	if(gp.world.npcM.containsNPC(npc)) {
 	    		return currentRoom;
 	    	}
 	    	return null;
@@ -396,7 +409,7 @@ public class MapManager {
 		public Customer findCustomerWaiting(int roomNum) {
 			Customer c = null;
 			if(isInRoom(roomNum)) {
-				c = gp.npcM.findWaitingCustomer();
+				c = gp.world.npcM.findWaitingCustomer();
 				return c;
 			}
 			Room room = rooms[roomNum];
@@ -416,7 +429,7 @@ public class MapManager {
 		}
 		public boolean isRoomEmpty(int currentRoom) {
 			if(isInRoom(currentRoom)) {
-				return !gp.npcM.containsAnyNPC();
+				return !gp.world.npcM.containsAnyNPC();
 			} else {
 				return !rooms[currentRoom].containsAnyNPC();
 			}
@@ -470,7 +483,7 @@ public class MapManager {
 
 	        if (drawPath) {
 	            //g2.setColor(new Color(255, 220, 100, 80));
-	            gp.npcM.drawPaths(renderer);
+	            gp.world.npcM.drawPaths(renderer);
 	        }
 	    }
 	    private void drawLayer(Renderer renderer, int layer) {

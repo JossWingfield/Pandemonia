@@ -53,7 +53,7 @@ public class NPCMoveEvent extends CutsceneEvent {
         
         if(targetBuilding != null) {
         	if(npc.currentRoomNum != gp.player.currentRoomIndex) {
-        		gp.mapM.changeRoom(npc.currentRoomNum, gp.buildingM.findDoor(npc.currentRoomNum));
+        		gp.world.mapM.changeRoom(npc.currentRoomNum, gp.world.buildingM.findDoor(npc.currentRoomNum));
         	}
 	        if(npc.walkToBuildingInRoom(dt, targetBuilding.getName(), roomNum)) {
 	            finished = true;
@@ -63,7 +63,7 @@ public class NPCMoveEvent extends CutsceneEvent {
 	        };
         } else if(targetBuildingName != null) {
         	if(npc.currentRoomNum != gp.player.currentRoomIndex) {
-        		gp.mapM.changeRoom(npc.currentRoomNum, gp.buildingM.findDoor(npc.currentRoomNum));
+        		gp.world.mapM.changeRoom(npc.currentRoomNum, gp.world.buildingM.findDoor(npc.currentRoomNum));
         	}
         	if(npc.walkToBuildingInRoom(dt, targetBuildingName, roomNum)) {
 	            finished = true;

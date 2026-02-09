@@ -80,7 +80,7 @@ public class Customer extends NPC {
 		
 		talkHitbox = new Rectangle2D.Float(hitbox.x - 16, hitbox.y - 16, hitbox.width + 32, hitbox.height + 32);
 		
-		if(RoomHelperMethods.isCelebrityPresent(gp.mapM.getRoom(0).getNPCs())) {
+		if(RoomHelperMethods.isCelebrityPresent(gp.world.mapM.getRoom(0).getNPCs())) {
 			celebrityPresent = true;
 		}
 		
@@ -254,9 +254,9 @@ public class Customer extends NPC {
 			int petType = r.nextInt(5);
 			pet = new Pet(gp, hitbox.x, hitbox.y, this, petType);
 			if(gp.player.currentRoomIndex == currentRoomNum) {
-				gp.npcM.addNPC(pet);
+				gp.world.npcM.addNPC(pet);
 			} else {
-				gp.mapM.getRoom(currentRoomNum).addNPC(pet);
+				gp.world.mapM.getRoom(currentRoomNum).addNPC(pet);
 			}
 		}
 		
@@ -269,10 +269,10 @@ public class Customer extends NPC {
 	    return currentChair.table.getSeatedCustomers();
 	}
 	protected void findTable() {
-		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
-			currentChair = gp.buildingM.findFreeChair();
+		if(gp.world.mapM.currentRoom.equals(gp.world.mapM.getRoom(currentRoomNum))) {
+			currentChair = gp.world.buildingM.findFreeChair();
 		} else {
-			currentChair = gp.mapM.getRoom(currentRoomNum).findFreeChair();
+			currentChair = gp.world.mapM.getRoom(currentRoomNum).findFreeChair();
 		}
 		if(currentChair != null) {
 			currentChair.setCustomer(this);
@@ -300,10 +300,10 @@ public class Customer extends NPC {
 	    return true;
 	}
 	protected void findToilet() {
-		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
-			toilet = gp.buildingM.findFreeToilet();
+		if(gp.world.mapM.currentRoom.equals(gp.world.mapM.getRoom(currentRoomNum))) {
+			toilet = gp.world.buildingM.findFreeToilet();
 		} else {
-			toilet = gp.mapM.getRoom(currentRoomNum).findFreeToilet();
+			toilet = gp.world.mapM.getRoom(currentRoomNum).findFreeToilet();
 		}
     }
 	public void removeLights() {
@@ -313,10 +313,10 @@ public class Customer extends NPC {
 		if(isGhost) {
 			foodOrder = RecipeManager.getRandomCursedRecipe();
 		} else {
-			foodOrder = gp.world.getRandomMenuRecipe();
+			foodOrder = gp.world.gameM.getRandomMenuRecipe();
 		}
 		
-		if (gp.progressM.seasoningUnlocked) {
+		if (gp.world.progressM.seasoningUnlocked) {
 			if (r.nextFloat() < 0.2f) {
 				String seasoning = "Basil";
 				int num = r.nextInt(4);
@@ -348,7 +348,7 @@ public class Customer extends NPC {
 	public void completeOrder(Plate p) {
 	    if(foodOrder == null) return;
 
-	    int baseCost = foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder));
+	    int baseCost = foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder));
 	    // base payment
 	    gp.player.wealth += baseCost;
 
@@ -358,30 +358,30 @@ public class Customer extends NPC {
 	    int tip = 0;
 
 	    if(progress <= 0.33f) { // green zone
-	        tip = (int)(foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder)) * greenTipMultiplier);
+	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder)) * greenTipMultiplier);
 	    } else if(progress <= 0.66f) { // orange zone
-	        tip = (int)(foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder)) * orangeTipMultiplier);
+	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder)) * orangeTipMultiplier);
 	    } else { // red zone
-	        tip = (int)(foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder)) * redTipMultiplier);
+	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder)) * redTipMultiplier);
 	    }
 	    
 	    boolean addTip = true;
-	    if(gp.world.animalPresent) {
+	    if(gp.world.gameM.animalPresent) {
 	    	addTip = false;
 	    }
-	    if(gp.mapM.isInRoom(4)) {
-    		if(gp.buildingM.hasBuildingWithName("Leak")) {
+	    if(gp.world.mapM.isInRoom(4)) {
+    		if(gp.world.buildingM.hasBuildingWithName("Leak")) {
     			addTip = false;
     		}
     	} else {
-       		if(gp.mapM.getRoom(4).hasBuildingWithName("Leak")) {
+       		if(gp.world.mapM.getRoom(4).hasBuildingWithName("Leak")) {
     			addTip = false;
     		}
     	}
 	    
-	    if(addTip && (gp.progressM.tipJarPresent || gp.progressM.bigTipsPresent)) {
-    		gp.progressM.achievements.get("free_tip").unlock();
-	    	if(gp.progressM.bigTipsPresent) {
+	    if(addTip && (gp.world.progressM.tipJarPresent || gp.world.progressM.bigTipsPresent)) {
+    		gp.world.progressM.achievements.get("free_tip").unlock();
+	    	if(gp.world.progressM.bigTipsPresent) {
 		    	gp.player.wealth += tip;
 	    		additionalCost += (tip);
 	    	} else {
@@ -398,20 +398,20 @@ public class Customer extends NPC {
 	    }
 	    
 	    if(additionalCost >= baseCost*2) {
-    		gp.progressM.achievements.get("sweet_talk").unlock();
+    		gp.world.progressM.achievements.get("sweet_talk").unlock();
 	    }
 	    
 	    gp.player.soulsServed++;
 	    
 	    Statistics.servedCustomers++;
 	    if(Statistics.servedCustomers == 50) {
-    		gp.progressM.achievements.get("50_served").unlock();
+    		gp.world.progressM.achievements.get("50_served").unlock();
 	    } else if(Statistics.servedCustomers == 100) {
-    		gp.progressM.achievements.get("100_served").unlock();
+    		gp.world.progressM.achievements.get("100_served").unlock();
 	    } else if(Statistics.servedCustomers == 500) {
-    		gp.progressM.achievements.get("500_served").unlock();
+    		gp.world.progressM.achievements.get("500_served").unlock();
 	    } else if(Statistics.servedCustomers == 1000) {
-    		gp.progressM.achievements.get("1000_served").unlock();
+    		gp.world.progressM.achievements.get("1000_served").unlock();
 	    }
 
 	    // clean up
@@ -439,8 +439,8 @@ public class Customer extends NPC {
 			removeOtherNPC(pet);
 		}
 	}
-	public void update(double dt) {
-		if(gp.progressM.fasterCustomers) {
+	public void updateState(double dt) {
+		if(gp.world.progressM.fasterCustomers) {
 			speed = 2;
 		}
 	    if(!atTable) {
@@ -529,7 +529,7 @@ public class Customer extends NPC {
 	            float patienceIncrement = patienceFactor;
 	            if(this instanceof GroupCustomer) {
 	            	patienceIncrement *= 0.6f;
-	            } else if(gp.progressM.turntablePresent) {
+	            } else if(gp.world.progressM.turntablePresent) {
 	                patienceIncrement *= 0.8f; // 20% slower patience decrease
 	            }
 	         
@@ -595,6 +595,10 @@ public class Customer extends NPC {
 	            waitingToOrder = false;
 	        }
 	    }
+
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 	    flickerCounter+=dt;
 	    if (flickerCounter >= flickerSpeed) {
 	        flickerCounter = 0;

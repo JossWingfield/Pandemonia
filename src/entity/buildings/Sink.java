@@ -127,10 +127,10 @@ public class Sink extends Building {
 	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		
-		if(gp.progressM.sinkUpgradeI) {
+		if(gp.world.progressM.sinkUpgradeI) {
 			maxWashCount = 6;
 		}
 		
@@ -185,19 +185,6 @@ public class Sink extends Building {
 						gp.player.currentItem = plate;
 						gp.player.clickCounter = 0.1;
 						gp.player.resetAnimation(4);
-						/*
-						if (gp.multiplayer) {
-							 int state = gp.player.currentItem instanceof Food f ? f.getState() : 0;
-					         Packet03PickupItem packet = new Packet03PickupItem(
-					                gp.player.currentItem.getName(),
-					                gp.player.getUsername(),
-					                state
-					            );
-					         packet.writeData(gp.socketClient);
-					         Packet10RemoveSinkPlate packet2 = new Packet10RemoveSinkPlate(gp.player.getUsername(), getArrayCounter());
-						     packet2.writeData(gp.socketClient);
-						}
-						*/
 					}
 				}
 			}

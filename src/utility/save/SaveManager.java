@@ -239,25 +239,25 @@ public class SaveManager {
 
 	public void saveGame() {
 		saveSlots.put(currentSave, true); // mark slot as filled
-		gp.mapM.saveCurrentBuildingsToRoom();
+		gp.world.mapM.saveCurrentBuildingsToRoom();
 		saveMeta();
 		saveToFile("save/player"+Integer.toString(currentSave)+".json", gp.player.toSaveData());
-		saveToFile("save/settings"+Integer.toString(currentSave)+".json", gp.world.saveSettingsData());
+		saveToFile("save/settings"+Integer.toString(currentSave)+".json", gp.world.gameM.saveSettingsData());
 		saveToFile("save/recipes"+Integer.toString(currentSave)+".json", RecipeManager.saveRecipeData());
 		saveToFile("save/upgrades"+Integer.toString(currentSave)+".json", UpgradeManager.saveUpgradeData());
-		saveToFile("save/catalogue"+Integer.toString(currentSave)+".json", gp.catalogue.saveCatalogueData());
+		saveToFile("save/catalogue"+Integer.toString(currentSave)+".json", gp.world.catalogue.saveCatalogueData());
 		int counter = 0;
-		for(Room r: gp.mapM.getRooms()) {
+		for(Room r: gp.world.mapM.getRooms()) {
 			if(r != null) {
 				saveToFile("save/rooms"+Integer.toString(currentSave)+"" + counter +".json", r.saveRoomData());
 			}
 			counter++;
 		}
-		saveToFile("save/world"+Integer.toString(currentSave)+".json", gp.world.saveWorldData());
-		saveToFile("save/order"+Integer.toString(currentSave)+".json", gp.world.saveOrderData());
-		saveToFile("save/customiser"+Integer.toString(currentSave)+".json", gp.customiser.saveCustomiserData());
-		saveToFile("save/progress"+Integer.toString(currentSave)+".json", gp.progressM.saveData());
-		saveToFile("save/statistics"+Integer.toString(currentSave)+".json", gp.progressM.saveStatisticsData());
+		saveToFile("save/world"+Integer.toString(currentSave)+".json", gp.world.gameM.saveWorldData());
+		saveToFile("save/order"+Integer.toString(currentSave)+".json", gp.world.gameM.saveOrderData());
+		saveToFile("save/customiser"+Integer.toString(currentSave)+".json", gp.world.customiser.saveCustomiserData());
+		saveToFile("save/progress"+Integer.toString(currentSave)+".json", gp.world.progressM.saveData());
+		saveToFile("save/statistics"+Integer.toString(currentSave)+".json", gp.world.progressM.saveStatisticsData());
 
 		
 		savePreview(currentSave);
@@ -278,7 +278,7 @@ public class SaveManager {
 	    loadFromFile("save/catalogue" + save + ".json", CatalogueSaveData.class);
 
 	    int counter = 0;
-	    for (Room r : gp.mapM.getRooms()) {
+	    for (Room r : gp.world.mapM.getRooms()) {
 	        if (r != null) {
 	            loadFromFile("save/rooms" + save + counter + ".json", RoomSaveData.class);
 	        }

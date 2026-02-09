@@ -48,8 +48,8 @@ public class Leak extends Building {
 
      	animations[0][0][1] = importImage("/decor/Leak.png").getSubimage(64, 0, 64, 64);
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(hitbox.intersects(gp.player.interactHitbox)) {
 		    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 		    	spillCount+=dt;
@@ -57,7 +57,7 @@ public class Leak extends Building {
 		    		spillCount = 0;
 		    		gp.player.setNormalSpeed();
 		    		removedSpill = true;
-		    		gp.buildingM.removeBuilding(this);
+		    		gp.world.buildingM.removeBuilding(this);
 		    	}
 		    }
 	    }

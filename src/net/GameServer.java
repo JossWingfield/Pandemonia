@@ -37,7 +37,7 @@ public class GameServer extends Thread {
         discoveryManager = new DiscoveryManager(
                 true,
                 gp.player != null ? gp.player.getUsername() : "Host",
-                gp.progressM.worldName,
+                gp.world.progressM.worldName,
                 GAME_PORT
         );
         discoveryManager.start();

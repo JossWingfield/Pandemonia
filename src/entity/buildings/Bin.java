@@ -74,33 +74,21 @@ public class Bin extends Building {
     	xDrawOffset = 24;
     	yDrawOffset = 24;
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
+		
 		if(binHitbox != null) {
 			if(binHitbox.intersects(gp.player.interactHitbox)) {
 				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 					if(gp.player.currentItem != null) {
 						if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {
 							gp.player.currentItem = null;
-							/*
-							if(gp.multiplayer) {
-					            Packet06BinItem packet = new Packet06BinItem(gp.player.getUsername());
-					            packet.writeData(gp.socketClient);
-				            }
-				            */
 						} else if(gp.player.currentItem instanceof Plate plate) {
 							if(!plate.isDirty()) {
 								plate.clearIngredients();
-								/*
-								if(gp.multiplayer) {
-							        Packet03PickupItem packet = new Packet03PickupItem(
-							        new Plate(gp, 0, 0).getName(),
-							        gp.player.getUsername(),
-							        0
-							        );
-							        packet.writeData(gp.socketClient);
-					            }
-					            */
 							}
 						} else if(gp.player.currentItem instanceof CookingItem pan) {
 							pan.bin();

@@ -19,9 +19,11 @@ public class MiniGameManager {
         miniGameActive = true;
     }
 
-    public void update(double dt) {
-        seasoningMiniGame.update(dt);
-        // other UI updates...
+    public void updateState(double dt) {
+        seasoningMiniGame.updateState(dt);
+    }
+    public void inputUpdate(double dt) {
+        seasoningMiniGame.inputUpdate(dt);
     }
 
     public void draw(Renderer renderer) {

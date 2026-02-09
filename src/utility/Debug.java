@@ -46,7 +46,7 @@ public class Debug {
 	                "[%s] Threshold: %d   Strength: %d   Intensity: %.2f",
 	                selectedBloomParam == 0 ? "Threshold" :
 	                selectedBloomParam == 1 ? "Strength" : "Intensity",
-	                gp.lightingM.bloomThreshold, gp.lightingM.bloomStrength, gp.lightingM.bloomIntensity
+	                gp.world.lightingM.bloomThreshold, gp.world.lightingM.bloomStrength, gp.world.lightingM.bloomIntensity
 	            );
 
 	            // --- Centered text ---
@@ -83,13 +83,13 @@ public class Debug {
     private void adjustBloom(int dir) {
         switch (selectedBloomParam) {
             case 0: // Threshold
-            	gp.lightingM.bloomThreshold = Math.max(0, Math.min(255, gp.lightingM.bloomThreshold + dir * 5));
+            	gp.world.lightingM.bloomThreshold = Math.max(0, Math.min(255, gp.world.lightingM.bloomThreshold + dir * 5));
                 break;
             case 1: // Strength
-            	gp.lightingM.bloomStrength = Math.max(1, Math.min(32, gp.lightingM.bloomStrength + dir));
+            	gp.world.lightingM.bloomStrength = Math.max(1, Math.min(32, gp.world.lightingM.bloomStrength + dir));
                 break;
             case 2: // Intensity
-            	gp.lightingM.bloomIntensity = Math.max(0f, Math.min(3f, gp.lightingM.bloomIntensity + dir * 0.01f));
+            	gp.world.lightingM.bloomIntensity = Math.max(0f, Math.min(3f, gp.world.lightingM.bloomIntensity + dir * 0.01f));
                 break;
         }
     }

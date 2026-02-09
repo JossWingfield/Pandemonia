@@ -60,7 +60,7 @@ public class Stocker extends Employee {
 	private void findFridge() {
 		fridge = (Fridge)findBuildingInRoom("Fridge", currentRoomNum);
     }
-	public void update(double dt) {
+	public void updateState(double dt) {
 		if(!walking && inKitchen && !depositing) {
 			walking = true;
 			fetchingItem = true;
@@ -106,7 +106,7 @@ public class Stocker extends Employee {
 							walking = false;
 							fetchingItem = true;
 							retrievingItem = false;
-							fridge.addItem((Food)gp.itemRegistry.getItemFromName(currentItem.getName(), 0));
+							fridge.addItem((Food)gp.world.itemRegistry.getItemFromName(currentItem.getName(), 0));
 							currentItem = null;
 							fridge = null;
 						}
@@ -114,6 +114,8 @@ public class Stocker extends Employee {
 				}
 			}
 		}
+	}	
+	public void inputUpdate(double dt) {
         animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
         if(animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;
@@ -144,7 +146,7 @@ public class Stocker extends Employee {
                 }
             }
         }
-	}	
+	}
 	public void drawCurrentItem(Renderer renderer) {
 	    	if(currentItem == null) {
 	    		return;
@@ -180,10 +182,10 @@ public class Stocker extends Employee {
     	if(storeFridge == null) {
     		storeFridge = (StorageFridge)findBuildingInRoom("Storage Fridge", currentRoomNum);
     	}
-    	if(gp.world.getTodaysMenu().size() > 0) {
-	    	int recipeIndex = r.nextInt(gp.world.getTodaysMenu().size());
-	    	Recipe recipe = gp.world.getTodaysMenu().get(recipeIndex);
-	    	currentItem = (Food)gp.itemRegistry.getItemFromName(recipe.getIngredients().get(r.nextInt(recipe.getIngredients().size())), 0);
+    	if(gp.world.gameM.getTodaysMenu().size() > 0) {
+	    	int recipeIndex = r.nextInt(gp.world.gameM.getTodaysMenu().size());
+	    	Recipe recipe = gp.world.gameM.getTodaysMenu().get(recipeIndex);
+	    	currentItem = (Food)gp.world.itemRegistry.getItemFromName(recipe.getIngredients().get(r.nextInt(recipe.getIngredients().size())), 0);
     	} else {
     		currentItem = storeFridge.getRandomItem();
     	}

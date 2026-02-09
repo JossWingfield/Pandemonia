@@ -125,7 +125,7 @@ public class KeyListener {
         // ----- PLAY STATE -----
         if (gp.currentState == gp.playState) {
         	
-        	if (keyBeginPress(GLFW.GLFW_KEY_L)) gp.progressM.unlockOldKitchen();
+        	if (keyBeginPress(GLFW.GLFW_KEY_L)) gp.world.progressM.unlockOldKitchen();
 
             if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
             if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);
@@ -140,7 +140,7 @@ public class KeyListener {
             if (keyBeginPress(GLFW.GLFW_KEY_KP_EQUAL)) debugMode = !debugMode;
             if (keyBeginPress(GLFW.GLFW_KEY_B)) showHitboxes = !showHitboxes;
             if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) gp.currentState = gp.mapBuildState;
-            if (keyBeginPress(GLFW.GLFW_KEY_MINUS)) gp.mapM.drawPath = !gp.mapM.drawPath;
+            if (keyBeginPress(GLFW.GLFW_KEY_MINUS)) gp.world.mapM.drawPath = !gp.world.mapM.drawPath;
             if (keyBeginPress(GLFW.GLFW_KEY_T)) {
             	gp.currentState = gp.chatState;
               	gp.gui.chatBox.setActive(true);
@@ -150,28 +150,28 @@ public class KeyListener {
         else if (gp.currentState == gp.mapBuildState) {
             if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) gp.currentState = gp.playState;
 
-            if (keyBeginPress(GLFW.GLFW_KEY_E)) gp.mapB.showTiles = !gp.mapB.showTiles;
-            if (keyBeginPress(GLFW.GLFW_KEY_BACKSPACE)) gp.mapB.switchSides();
-            if (keyBeginPress(GLFW.GLFW_KEY_UP)) gp.mapB.upLayer();
-            if (keyBeginPress(GLFW.GLFW_KEY_DOWN)) gp.mapB.downLayer();
-            if (keyBeginPress(GLFW.GLFW_KEY_P)) gp.buildingM.outputMap();
+            if (keyBeginPress(GLFW.GLFW_KEY_E)) gp.world.mapB.showTiles = !gp.world.mapB.showTiles;
+            if (keyBeginPress(GLFW.GLFW_KEY_BACKSPACE)) gp.world.mapB.switchSides();
+            if (keyBeginPress(GLFW.GLFW_KEY_UP)) gp.world.mapB.upLayer();
+            if (keyBeginPress(GLFW.GLFW_KEY_DOWN)) gp.world.mapB.downLayer();
+            if (keyBeginPress(GLFW.GLFW_KEY_P)) gp.world.buildingM.outputMap();
 
             // Page selection
-            if (keyBeginPress(GLFW.GLFW_KEY_1)) gp.mapB.pageNum = 1;
-            if (keyBeginPress(GLFW.GLFW_KEY_2)) gp.mapB.pageNum = 2;
-            if (keyBeginPress(GLFW.GLFW_KEY_3)) gp.mapB.pageNum = 3;
-            if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.mapB.pageNum = 4;
-            if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.mapB.pageNum = 5;
-            if (keyBeginPress(GLFW.GLFW_KEY_6)) gp.mapB.pageNum = 6;
+            if (keyBeginPress(GLFW.GLFW_KEY_1)) gp.world.mapB.pageNum = 1;
+            if (keyBeginPress(GLFW.GLFW_KEY_2)) gp.world.mapB.pageNum = 2;
+            if (keyBeginPress(GLFW.GLFW_KEY_3)) gp.world.mapB.pageNum = 3;
+            if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.world.mapB.pageNum = 4;
+            if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.world.mapB.pageNum = 5;
+            if (keyBeginPress(GLFW.GLFW_KEY_6)) gp.world.mapB.pageNum = 6;
 
             // Tile selection
             if (keyBeginPress(GLFW.GLFW_KEY_0)) {
-                gp.mapB.selectedTile = 0;
-                gp.mapB.selectedBuilding = null;
+                gp.world.mapB.selectedTile = 0;
+                gp.world.mapB.selectedBuilding = null;
             }
             if (keyBeginPress(GLFW.GLFW_KEY_L)) {
-                gp.mapB.selectedTile = 1110;
-                gp.mapB.selectedBuilding = null;
+                gp.world.mapB.selectedTile = 1110;
+                gp.world.mapB.selectedBuilding = null;
             }
         }
         // ----- PAUSE STATE -----
@@ -191,29 +191,29 @@ public class KeyListener {
         // ----- CUSTOMISE RESTAURANT -----
         else if (gp.currentState == gp.customiseRestaurantState) {
             if (keyBeginPress(GLFW.GLFW_KEY_C)) {
-                gp.customiser.selectedBuilding = null;
-                gp.customiser.showBuildings = true;
+                gp.world.customiser.selectedBuilding = null;
+                gp.world.customiser.showBuildings = true;
                 gp.currentState = gp.playState;
             }
             if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
-                if (!gp.customiser.showBuildings) {
-                    gp.customiser.showBuildings = true;
-                    gp.customiser.selectedBuilding = null;
+                if (!gp.world.customiser.showBuildings) {
+                    gp.world.customiser.showBuildings = true;
+                    gp.world.customiser.selectedBuilding = null;
                 } else {
                     gp.currentState = gp.playState;
                 }
             }
             if(keyBeginPress(GLFW.GLFW_KEY_L)) {
-         		gp.customiser.addToInventory(new Beam(gp, 6));
-         		gp.customiser.addToInventory(new WallPaper(gp, 33));
-         		gp.customiser.addToInventory(new FloorPaper(gp, 7));
-         		gp.customiser.addToInventory(new DoorSkin(gp, 3));
-         		gp.customiser.addToInventory(new ChairSkin(gp, 6));
-         		gp.customiser.addToInventory(new TableSkin(gp, 3));
-        		gp.customiser.addToInventory(new Window(gp, 0, 0, 2));
-        		gp.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 108));
-        		gp.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 109));
-        		gp.customiser.addToInventory(new WallDecor_Building(gp, 0, 0, 38));
+         		gp.world.customiser.addToInventory(new Beam(gp, 6));
+         		gp.world.customiser.addToInventory(new WallPaper(gp, 33));
+         		gp.world.customiser.addToInventory(new FloorPaper(gp, 7));
+         		gp.world.customiser.addToInventory(new DoorSkin(gp, 3));
+         		gp.world.customiser.addToInventory(new ChairSkin(gp, 6));
+         		gp.world.customiser.addToInventory(new TableSkin(gp, 3));
+        		gp.world.customiser.addToInventory(new Window(gp, 0, 0, 2));
+        		gp.world.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 108));
+        		gp.world.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 109));
+        		gp.world.customiser.addToInventory(new WallDecor_Building(gp, 0, 0, 38));
          		
             }
         }
@@ -221,16 +221,16 @@ public class KeyListener {
         else if (gp.currentState == gp.catalogueState) {
             if (keyBeginPress(GLFW.GLFW_KEY_E)) {
                 gp.currentState = gp.playState;
-                gp.catalogue.resetBasket();
+                gp.world.catalogue.resetBasket();
             }
-            if (gp.catalogue.checkingOut && keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
-                gp.catalogue.checkingOut = false;
-            } else if (!gp.catalogue.checkingOut && keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
+            if (gp.world.catalogue.checkingOut && keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
+                gp.world.catalogue.checkingOut = false;
+            } else if (!gp.world.catalogue.checkingOut && keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
                 gp.currentState = gp.playState;
-                gp.catalogue.resetBasket();
+                gp.world.catalogue.resetBasket();
             }
-            if (isKeyPressed(GLFW.GLFW_KEY_S) || isKeyPressed(GLFW.GLFW_KEY_DOWN)) gp.catalogue.downLayer();
-            if (isKeyPressed(GLFW.GLFW_KEY_W) || isKeyPressed(GLFW.GLFW_KEY_UP)) gp.catalogue.upLayer();
+            if (isKeyPressed(GLFW.GLFW_KEY_S) || isKeyPressed(GLFW.GLFW_KEY_DOWN)) gp.world.catalogue.downLayer();
+            if (isKeyPressed(GLFW.GLFW_KEY_W) || isKeyPressed(GLFW.GLFW_KEY_UP)) gp.world.catalogue.upLayer();
         }
 
         // ----- ACHIEVEMENT STATE -----

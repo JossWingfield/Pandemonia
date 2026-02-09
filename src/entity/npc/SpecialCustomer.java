@@ -28,7 +28,7 @@ public class SpecialCustomer extends Customer {
 		
 		r = new Random();
 		
-		if(RoomHelperMethods.isCelebrityPresent(gp.mapM.getRoom(0).getNPCs())) {
+		if(RoomHelperMethods.isCelebrityPresent(gp.world.mapM.getRoom(0).getNPCs())) {
 			celebrityPresent = true;
 		}
 		
@@ -56,7 +56,7 @@ public class SpecialCustomer extends Customer {
 		    faceIcon = importImage("/npcs/special/BasicFaceIcon.png").toTextureRegion();
 			moneyMultiplier = 2.0f;
 			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.BLUE, 48);
-			gp.lightingM.addLight(ghostLight);
+			gp.world.lightingM.addLight(ghostLight);
 			break;
 		case 1: //Impatient but pays slightly more
 			moneyMultiplier = 1.5f;
@@ -73,10 +73,10 @@ public class SpecialCustomer extends Customer {
 		     importPlayerSpriteSheet("/npcs/special/Run", 8, 1, 1, 0, 0, 80, 80);
 		     faceIcon = importImage("/npcs/special/BasicFaceIcon.png").toTextureRegion();
 			
-			if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(0))) {
-				RoomHelperMethods.setCelebrityPresent(gp.npcM.npcs, true);
+			if(gp.world.mapM.currentRoom.equals(gp.world.mapM.getRoom(0))) {
+				RoomHelperMethods.setCelebrityPresent(gp.world.npcM.npcs, true);
 			} else {
-				RoomHelperMethods.setCelebrityPresent(gp.mapM.getRoom(0).getNPCs(), true);
+				RoomHelperMethods.setCelebrityPresent(gp.world.mapM.getRoom(0).getNPCs(), true);
 			}
 			break;
 		case 3: //Mystery Order
@@ -92,31 +92,31 @@ public class SpecialCustomer extends Customer {
 		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
 		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
 			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.BLUE, 48);
-			gp.lightingM.addLight(ghostLight);
+			gp.world.lightingM.addLight(ghostLight);
 			isGhost = true;
 			break;
 		}
 		
 	}
 	public void removeLights() {
-		gp.lightingM.removeLight(ghostLight);
+		gp.world.lightingM.removeLight(ghostLight);
 	}
 	public void completeOrder() {
 	    if(foodOrder == null) return;
 
 	    // base payment
-	    gp.player.wealth += (foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder), moneyMultiplier));
+	    gp.player.wealth += (foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder), moneyMultiplier));
 
 	    // tip logic based on patience
 	    float progress = (float)(patienceCounter / maxPatienceTime);
 	    int tip = 0;
 
 	    if(progress <= 0.33f) { // green zone
-	        tip = (int)(foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder), moneyMultiplier) * greenTipMultiplier);
+	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder), moneyMultiplier) * greenTipMultiplier);
 	    } else if(progress <= 0.66f) { // orange zone
-	        tip = (int)(foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder), moneyMultiplier) * orangeTipMultiplier);
+	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder), moneyMultiplier) * orangeTipMultiplier);
 	    } else { // red zone
-	        tip = (int)(foodOrder.getCost(gp.world.isRecipeSpecial(foodOrder), moneyMultiplier) * redTipMultiplier);
+	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder), moneyMultiplier) * redTipMultiplier);
 	    }
 	    gp.player.wealth += tip;
 
@@ -126,10 +126,10 @@ public class SpecialCustomer extends Customer {
 	    eating = true;
 	    waitingToOrder = false;
 		if(isCelebrity) {
-			if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(0))) {
-				RoomHelperMethods.setCelebrityPresent(gp.npcM.npcs, false);
+			if(gp.world.mapM.currentRoom.equals(gp.world.mapM.getRoom(0))) {
+				RoomHelperMethods.setCelebrityPresent(gp.world.npcM.npcs, false);
 			} else {
-				RoomHelperMethods.setCelebrityPresent(gp.mapM.getRoom(0).getNPCs(), false);
+				RoomHelperMethods.setCelebrityPresent(gp.world.mapM.getRoom(0).getNPCs(), false);
 			}
 		}
 	}
@@ -147,7 +147,7 @@ public class SpecialCustomer extends Customer {
 	}
 	public void draw(Renderer renderer) {
 		if(isGhost) {
-			gp.lightingM.moveLight(ghostLight, (int)(hitbox.x + hitbox.width/2 - 8), (int)(hitbox.y +  hitbox.height/2));
+			gp.world.lightingM.moveLight(ghostLight, (int)(hitbox.x + hitbox.width/2 - 8), (int)(hitbox.y +  hitbox.height/2));
 		}
 		super.draw(renderer);
         

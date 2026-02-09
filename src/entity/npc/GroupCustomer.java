@@ -12,10 +12,10 @@ public class GroupCustomer extends Customer {
 	}
 	
 	protected void findTable() {
-		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
-			currentChair = gp.buildingM.takeGroupChair();
+		if(gp.world.mapM.currentRoom.equals(gp.world.mapM.getRoom(currentRoomNum))) {
+			currentChair = gp.world.buildingM.takeGroupChair();
 		} else {
-			currentChair = gp.mapM.getRoom(currentRoomNum).takeGroupChair();
+			currentChair = gp.world.mapM.getRoom(currentRoomNum).takeGroupChair();
 		}
 		if(currentChair != null) {
 			currentChair.setCustomer(this);

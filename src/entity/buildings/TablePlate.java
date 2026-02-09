@@ -130,31 +130,30 @@ public class TablePlate extends Building {
 			break;
 		}
 	}
-	public void update(double dt) {
-		super.update(dt);
-	}
-	public void draw(Renderer renderer) {
-		if(firstUpdate) {
-			initInteractHitbox();
-			firstUpdate = false;
-		}
+	public void updateState(double dt) {
+		super.updateState(dt);
 		if(!chair.available) {
 			if(currentCustomer == null) {
 				currentCustomer = chair.currentCustomer;
 			}
 		}
-	     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
-	     
-		if(currentCustomer != null) {
-		     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
-		}
 		
-	    //g2.setColor(Color.RED);
-      	//g2.drawRect((int)interactHitbox.x, (int)interactHitbox.y, (int)interactHitbox.width, (int)interactHitbox.height);
-	    
+		  if(orderCompleted) {
+		    	if(currentCustomer.isEating()) {
+		    		
+		    	} else {
+		    		orderCompleted = false;
+		    		showDirtyPlate = true;
+		       		plate = new Plate(gp, hitbox.x, hitbox.y);
+		    		plate.setDirty(currentCustomer.foodOrder.dirtyPlate);
+		    		plate.setCurrentStackCount(1);
+		    	}
+		    }
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(currentCustomer != null) {
 		    if(interactHitbox.intersects(gp.player.interactHitbox)) {
-			    renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 			    if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 				    if(currentCustomer != null) {
 				    	if(gp.player.currentItem != null) {
@@ -171,30 +170,49 @@ public class TablePlate extends Building {
 			    }
 		    }
 		}
+		
+		if(showDirtyPlate) {
+		    	if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+			    	if(interactHitbox.intersects(gp.player.interactHitbox)) {
+			    		if(gp.player.currentItem == null) {
+			    			gp.player.currentItem = plate;
+			    			showDirtyPlate = false;
+				    		currentCustomer = null;
+				    		plate = null;
+			    		}
+			    	}
+		    	}
+		    }
+		
+	}
+	public void draw(Renderer renderer) {
+		if(firstUpdate) {
+			initInteractHitbox();
+			firstUpdate = false;
+		}
+		
+	     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
+	     
+		if(currentCustomer != null) {
+		     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
+		}
+		
+	    //g2.setColor(Color.RED);
+      	//g2.drawRect((int)interactHitbox.x, (int)interactHitbox.y, (int)interactHitbox.width, (int)interactHitbox.height);
+	    
+		if(currentCustomer != null) {
+		    if(interactHitbox.intersects(gp.player.interactHitbox)) {
+			    renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
+		    }
+		}
 	    if(orderCompleted) {
 	    	if(currentCustomer.isEating()) {
 	    		renderer.draw(currentCustomer.foodOrder.finishedPlate, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-	    	} else {
-	    		orderCompleted = false;
-	    		showDirtyPlate = true;
-	       		plate = new Plate(gp, hitbox.x, hitbox.y);
-	    		plate.setDirty(currentCustomer.foodOrder.dirtyPlate);
-	    		plate.setCurrentStackCount(1);
 	    	}
 	    }
 	    
 	    if(showDirtyPlate) {
     		renderer.draw(plate.dirtyImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-	    	if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
-		    	if(interactHitbox.intersects(gp.player.interactHitbox)) {
-		    		if(gp.player.currentItem == null) {
-		    			gp.player.currentItem = plate;
-		    			showDirtyPlate = false;
-			    		currentCustomer = null;
-			    		plate = null;
-		    		}
-		    	}
-	    	}
 	    }
 	    
 		if(destructionUIOpen) {

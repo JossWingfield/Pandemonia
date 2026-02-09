@@ -60,13 +60,14 @@ public abstract class Entity implements Cloneable {
     public int getDirection() {
     	return direction;
     }
-    public void update(double dt) {}
+    public void updateState(double dt) {}
+    public void inputUpdate(double dt) {}
     /*
     public boolean isInSimulationChunks(int simulationDistance) {
     	if(gp == null) {
     		return false;
     	}
-        int chunkSize = gp.mapM.chunkSize;
+        int chunkSize = gp.world.mapM.chunkSize;
         int tileSize = gp.tileSize;
 
         // Convert entity's world position to chunk position

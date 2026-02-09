@@ -66,16 +66,16 @@ public class Fireplace extends Building{
 	}
 	public void turnOff() {
 		turnedOn = false;
-		gp.lightingM.removeLight(light);
+		gp.world.lightingM.removeLight(light);
 		resetAnimation(0);
 	}
 	public void turnOn() {
 		turnedOn = true;
-		gp.lightingM.addLight(light);
+		gp.world.lightingM.addLight(light);
 		currentAnimation = 1;
 	}
 	public void destroy() {
-		gp.lightingM.removeLight(light);
+		gp.world.lightingM.removeLight(light);
 	}
 	public void setFlicker(boolean enabled) {
 		this.flickerEnabled = enabled;
@@ -87,17 +87,10 @@ public class Fireplace extends Building{
 			light.setIntensity(0.4f);
 		}
 	}
-	public void update(double dt) {
-		super.update(dt);
-		animationSpeed+=dt; //Updating animation frame
-        if (animationSpeed >= animationSpeedFactor) {
-            animationSpeed = 0;
-            animationCounter++;
-        }
-        
-        if (animations[0][currentAnimation][animationCounter] == null) {
-            animationCounter = 0;
-        }	
+	public void updateState(double dt) {
+		super.updateState(dt);
+	}
+	public void inputUpdate(double dt) {
         
         if(gp.player.hitbox.intersects(interactHitbox)) {
         	if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
@@ -111,6 +104,16 @@ public class Fireplace extends Building{
 	        	}
         	}
         }
+        
+		animationSpeed+=dt; //Updating animation frame
+        if (animationSpeed >= animationSpeedFactor) {
+            animationSpeed = 0;
+            animationCounter++;
+        }
+        
+        if (animations[0][currentAnimation][animationCounter] == null) {
+            animationCounter = 0;
+        }	
 	}
 	public void draw(Renderer renderer) {
 		if (firstUpdate) {
@@ -119,7 +122,7 @@ public class Fireplace extends Building{
 					Colour.RED, 110);
 			light.setIntensity(0.2f);
 			if (turnedOn) {
-				gp.lightingM.addLight(light);
+				gp.world.lightingM.addLight(light);
 			}
 		}
 		

@@ -246,16 +246,16 @@ public class MapBuilder {
 			
 			switch(currentLayer) {
 			case 0:
-				gp.mapM.currentRoom.mapGrid[0][xTile][yTile] = selectedTile;
+				gp.world.mapM.currentRoom.mapGrid[0][xTile][yTile] = selectedTile;
 				break;
 			case 1:
-				gp.mapM.currentRoom.mapGrid[1][xTile][yTile] = selectedTile;
+				gp.world.mapM.currentRoom.mapGrid[1][xTile][yTile] = selectedTile;
 				break;
 			case 2:
-				gp.mapM.currentRoom.mapGrid[2][xTile][yTile] = selectedTile;
+				gp.world.mapM.currentRoom.mapGrid[2][xTile][yTile] = selectedTile;
 				break;
 			case 3:
-				gp.mapM.currentRoom.mapGrid[3][xTile][yTile] = selectedTile;
+				gp.world.mapM.currentRoom.mapGrid[3][xTile][yTile] = selectedTile;
 				break;
 			}
 			
@@ -264,7 +264,7 @@ public class MapBuilder {
 		
 		//SAVE TO MAP
 		try {
-			File[] files = new File("/Users/josswingfield/Documents/Programming/Java/Pandemonia/res/maps" + gp.mapM.currentRoom.getRoomID()).listFiles();
+			File[] files = new File("/Users/josswingfield/Documents/Programming/Java/Pandemonia/res/maps" + gp.world.mapM.currentRoom.getRoomID()).listFiles();
 			File f = null;
 		    
 		    // Traverse through the files array
@@ -272,7 +272,7 @@ public class MapBuilder {
 		      // If a subdirectory is found,
 		      // print the name of the subdirectory
 		    	  if (!file.isDirectory()) {
-		    		  String tag = gp.mapM.currentRoom.getRoomIDTag();
+		    		  String tag = gp.world.mapM.currentRoom.getRoomIDTag();
 		    		  if(file.getName().contains(tag)) {
 		    			  String num = Integer.toString(currentLayer);
 		    			  if(file.getName().contains(num)) {
@@ -286,23 +286,23 @@ public class MapBuilder {
 			
 			int col=0; 
 			int row=0; 
-			int maxWorldCol = gp.mapM.currentRoom.mapWidth;
-			int maxWorldRow = gp.mapM.currentRoom.mapHeight;
+			int maxWorldCol = gp.world.mapM.currentRoom.mapWidth;
+			int maxWorldRow = gp.world.mapM.currentRoom.mapHeight;
 			
 			while(col < maxWorldCol && row < maxWorldRow){
 				
 				switch(currentLayer) {
 				case 0:
-					bw.write(gp.mapM.currentRoom.mapGrid[0][col][row]+" ");
+					bw.write(gp.world.mapM.currentRoom.mapGrid[0][col][row]+" ");
 					break;
 				case 1:
-					bw.write(gp.mapM.currentRoom.mapGrid[1][col][row]+" ");
+					bw.write(gp.world.mapM.currentRoom.mapGrid[1][col][row]+" ");
 					break;
 				case 2:
-					bw.write(gp.mapM.currentRoom.mapGrid[2][col][row]+" ");
+					bw.write(gp.world.mapM.currentRoom.mapGrid[2][col][row]+" ");
 					break;
 				case 3:
-					bw.write(gp.mapM.currentRoom.mapGrid[3][col][row]+" ");
+					bw.write(gp.world.mapM.currentRoom.mapGrid[3][col][row]+" ");
 					break;
 				}
 				col++;
@@ -320,7 +320,11 @@ public class MapBuilder {
 		}
 	}
 	
-	public void update(double dt) {
+	public void updateState(double dt) {
+		
+		
+	}
+	public void inputUpdate(double dt) {
 		
 		int mouseX = (int)gp.mouseL.getWorldX();
 		int mouseY = (int)gp.mouseL.getWorldY();
@@ -331,7 +335,6 @@ public class MapBuilder {
 			
 			writeToMap(xTile, yTile);
 		}
-		
 		
 		if(clickCounter > 0) {
 			clickCounter-=dt;
@@ -967,7 +970,7 @@ public class MapBuilder {
 			if(mouseY < gp.frameHeight-ySize || !showTiles) {
 				int xPos = (int)((mouseX)/gp.tileSize) * gp.tileSize;
 				int yPos = (int)((mouseY)/gp.tileSize) * gp.tileSize;
-				renderer.draw(gp.mapM.tiles[selectedTile].image, xPos, yPos, 48, 48);
+				renderer.draw(gp.world.mapM.tiles[selectedTile].image, xPos, yPos, 48, 48);
 			}
 		} 
 		
@@ -979,18 +982,18 @@ public class MapBuilder {
 				int yPos = (int)((mouseY)/size) * size;
 				renderer.draw(selectedBuilding.animations[0][0][0], xPos - selectedBuilding.xDrawOffset, yPos - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getPixelWidth()*3, selectedBuilding.animations[0][0][0].getPixelHeight()*3);
 				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-					gp.buildingM.addBuilding((Building)selectedBuilding.clone(), xPos, yPos);
+					gp.world.buildingM.addBuilding((Building)selectedBuilding.clone(), xPos, yPos);
 					clickCounter = 0.1;
 				}
 			}
 		}
 		
-		for(Building b: gp.buildingM.getBuildings()) {
+		for(Building b: gp.world.buildingM.getBuildings()) {
 			if(b != null) {
 				if(b.hitbox.contains(mouseX, mouseY)) {
 					if(gp.mouseL.mouseButtonDown(1)) {
 						b.destroy();
-						gp.buildingM.removeBuilding(b);
+						gp.world.buildingM.removeBuilding(b);
 					}
 				}
 			}

@@ -47,8 +47,8 @@ public class Gate extends Building {
     	animations[0][0][1] = importImage("/decor/connected table 2.png").getSubimage(96, 64, 32, 32);
 	}
 	public void refreshImages() {
-       	animations[0][0][0] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(64, 64, 32, 32);
-       	animations[0][0][1] = gp.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(96, 64, 32, 32);
+       	animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(64, 64, 32, 32);
+       	animations[0][0][1] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(96, 64, 32, 32);
 	}
 	public void draw(Renderer renderer) {
 		
@@ -61,13 +61,13 @@ public class Gate extends Building {
 		if(gp.multiplayer) {
 			for(PlayerMP player: gp.playerList) {
 				if(player.currentRoomIndex == 0) {
-					if(hitbox2.intersects(player.hitbox) || !gp.npcM.entityCheck(hitbox2)) {
+					if(hitbox2.intersects(player.hitbox) || !gp.world.npcM.entityCheck(hitbox2)) {
 						i = 1;
 					}
 				}
 			}
 		} else {
-			if(hitbox2.intersects(gp.player.hitbox) || !gp.npcM.entityCheck(hitbox2)) {
+			if(hitbox2.intersects(gp.player.hitbox) || !gp.world.npcM.entityCheck(hitbox2)) {
 				i = 1;
 			}
 		}

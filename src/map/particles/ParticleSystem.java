@@ -64,7 +64,7 @@ public class ParticleSystem {
             if(p.isDead()) it.remove();
         }
         
-        dustActive = gp.mapM.currentRoom.darkerRoom;
+        dustActive = gp.world.mapM.currentRoom.darkerRoom;
         
         if (dustActive) {
             spawnCooldown--;
@@ -175,12 +175,12 @@ public class ParticleSystem {
         int endTileX =  (int)(endX / gp.tileSize);
         int endTileY =  (int)(endY / gp.tileSize);
 
-        Room room = gp.mapM.currentRoom; // or whichever room this path is in
-        gp.pathF.setNodes(startTileX, startTileY, endTileX, endTileY, room);
-        if (!gp.pathF.search(room)) return;
+        Room room = gp.world.mapM.currentRoom; // or whichever room this path is in
+        gp.world.pathF.setNodes(startTileX, startTileY, endTileX, endTileY, room);
+        if (!gp.world.pathF.search(room)) return;
 
         // Clone path nodes so each ember moves independently
-        List<Node> pathCopy = new ArrayList<>(gp.pathF.pathList);
+        List<Node> pathCopy = new ArrayList<>(gp.world.pathF.pathList);
         activeEmberPaths.add(new EmberPath(pathCopy, true));
     }
     public void setSpawnEmbers(float startX, float startY, float endX, float endY, int count) {

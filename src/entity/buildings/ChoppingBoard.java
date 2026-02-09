@@ -68,8 +68,17 @@ public class ChoppingBoard extends Building {
 	    this.currentItem = item;
 	    this.chopCount = 0;
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
+	}
+	public void inputUpdate(double dt) {
+		
+		if (clickCooldown > 0) {
+			clickCooldown -= dt;        // subtract elapsed time in seconds
+			if (clickCooldown < 0) {
+				clickCooldown = 0;      // clamp to zero
+			}
+		}
 		
 		   if(hitbox.intersects(gp.player.hitbox)) {
 			    if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
@@ -83,15 +92,7 @@ public class ChoppingBoard extends Building {
 						    		currentItem.addCookMethod(name);
 						    		clickCooldown = 0.08;
 						    		currentChopCount = f.getChopCount();
-						    		/*
-						    		if(gp.multiplayer) {
-						    			Food foodItem = (Food)currentItem;
-						    			Packet12AddItemToChoppingBoard packet = new Packet12AddItemToChoppingBoard(currentItem.getName(),getArrayCounter(), foodItem.getState());
-						    			packet.writeData(gp.socketClient); 
-						    			Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
-						    			packet2.writeData(gp.socketClient); 
-						    		}
-						    		*/
+						    		
 				    			}
 				    		} else if(gp.player.currentItem instanceof Plate p) {
 				    			if(currentItem != null) {
@@ -108,21 +109,16 @@ public class ChoppingBoard extends Building {
 					    		if(currentItem.foodState == FoodState.RAW && canChop(currentItem.getName())) {
 						    		clickCooldown = 0.08;
 						    		chopCount++;
-						    		/*
-						    		if(gp.multiplayer) {
-						    			Packet14UpdateChoppingProgress packet = new Packet14UpdateChoppingProgress(gp.player.getUsername(), getArrayCounter(), (int)chopCount);
-						    			packet.writeData(gp.socketClient); 
-						    		}
-						    		*/
+						    		
 						    		if(chopCount == currentChopCount) {
 						    			chopCount = 0;
 						    			Statistics.ingredientsChopped++;
 						    			if(Statistics.ingredientsChopped == 100) {
-						    	    		gp.progressM.achievements.get("100_chopped").unlock();
+						    	    		gp.world.progressM.achievements.get("100_chopped").unlock();
 						    			}
 						    			currentItem.foodState = FoodState.CHOPPED;
 						    			if(currentItem.cutIntoNewItem) {
-						    				Food newItem = (Food)gp.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);
+						    				Food newItem = (Food)gp.world.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);
 						    				currentItem = newItem;
 						    	    		currentItem.addCookMethod(name);
 						    			}
@@ -132,15 +128,7 @@ public class ChoppingBoard extends Building {
 					    			gp.player.resetAnimation(4);
 						    		currentItem = null;
 						    		clickCooldown = 0.33;
-						    		/*
-						    		if(gp.multiplayer) {
-						    			Packet15RemoveItemFromChoppingBoard packet = new Packet15RemoveItemFromChoppingBoard(getArrayCounter());
-						    			packet.writeData(gp.socketClient); 
-						    			Food foodItem = (Food)gp.player.currentItem;
-						    			Packet03PickupItem packet2 = new Packet03PickupItem(gp.player.currentItem.getName(), gp.player.getUsername(), foodItem.getState());
-						    			packet2.writeData(gp.socketClient); 
-						    		}
-						    		*/
+						    		
 					    		}
 				    		}else {
 					    		gp.player.currentItem = currentItem;
@@ -151,17 +139,8 @@ public class ChoppingBoard extends Building {
 			    	}
 			    }
 		    }
-		
-		   if (clickCooldown > 0) {
-			   	clickCooldown -= dt;        // subtract elapsed time in seconds
-			    if (clickCooldown < 0) {
-			    	clickCooldown = 0;      // clamp to zero
-			    }
-			}
 	}
 	public void draw(Renderer renderer) {
-		
-		 
 		renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
       		 
 	    if(hitbox.intersects(gp.player.hitbox)) {
@@ -194,7 +173,7 @@ public class ChoppingBoard extends Building {
 			chopCount = 0;
 			currentItem.foodState = FoodState.CHOPPED;
 			if(currentItem.cutIntoNewItem) {
-				Food newItem = (Food)gp.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);
+				Food newItem = (Food)gp.world.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);
 				currentItem = newItem;
 	    		currentItem.addCookMethod(name);
 			}

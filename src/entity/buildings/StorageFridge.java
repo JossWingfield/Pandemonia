@@ -69,7 +69,7 @@ public class StorageFridge extends Building {
 		contents.clear();
 		int counter = 0;
 	    for(String name: fridgeContents) {
-	    	Item i = gp.itemRegistry.getItemFromName(name, fridgeContentsStates.get(counter));
+	    	Item i = gp.world.itemRegistry.getItemFromName(name, fridgeContentsStates.get(counter));
 	    	contents.add((Food)i);
 	    	counter++;
 	    }
@@ -92,7 +92,7 @@ public class StorageFridge extends Building {
 
 	}
 	public Food getRandomItem() {
-		return (Food)gp.itemRegistry.getItemFromName(contents.get(random.nextInt(contents.size())).getName(), 0);
+		return (Food)gp.world.itemRegistry.getItemFromName(contents.get(random.nextInt(contents.size())).getName(), 0);
 	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][2];
@@ -109,8 +109,8 @@ public class StorageFridge extends Building {
     	ui2 = importImage("/UI/fridge/5.png");
     	ui3 = importImage("/UI/fridge/Hover.png");
 	}
-	public void update(double dt) {
-    	super.update(dt);
+	public void inputUpdate(double dt) {
+    	super.inputUpdate(dt);
     	if (clickCooldown > 0) {
     		clickCooldown -= dt;        // subtract elapsed time in seconds
 		    if (clickCooldown < 0) {
@@ -130,6 +130,50 @@ public class StorageFridge extends Building {
 				uiOpen = false;
 			}
     	}
+    	
+	    if (uiOpen) {
+	        int baseX = (int)(hitbox.x - (112 * 1.5));
+	        int baseY = (int)hitbox.y;
+
+	        // Clear old hitboxes
+	        itemHitboxes.clear();
+
+	        // Mouse position relative to screen
+	        float mouseX = gp.mouseL.getWorldX();
+	        float mouseY = gp.mouseL.getWorldY();
+
+	        // Draw each item slot (ui2) and item icon
+	        int slotSize = 16 * 3;      // Tripled size
+	        int padding = 1 * 3;        // Tripled padding
+	        int itemsPerRow = 5;
+	        int startX = baseX + 14 * 3;
+	        int startY = baseY + 16 * 3;
+
+	        for (int i = 0; i < contents.size(); i++) {
+	            int row = i / itemsPerRow;
+	            int col = i % itemsPerRow;
+
+	            int x = startX + col * (slotSize + padding);
+	            int y = startY + row * (slotSize + padding);
+
+	            // Create and store hitbox
+	            Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, slotSize, slotSize);
+	            itemHitboxes.add(hitbox);
+
+	            // If hovering, draw highlight
+	            if (hitbox.contains(mouseX, mouseY)) {
+	                if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	                	if(gp.player.currentItem == null) {
+	                		Food food = contents.get(i);
+	                		gp.player.currentItem = gp.world.itemRegistry.getItemFromName(food.getName(), (food instanceof Food f) ? f.getState() : 0);
+	    			    	clickCooldown = 0.3;
+	    			    	uiOpen = false;
+	    			    	gp.player.resetAnimation(4);
+	    		    	}
+	                }
+	            }
+	        }
+	    }
     }
 	public void draw(Renderer renderer) {
 		
@@ -195,25 +239,6 @@ public class StorageFridge extends Building {
 	            // If hovering, draw highlight
 	            if (hitbox.contains(mouseX, mouseY)) {
 	                renderer.draw(ui3, x, y, slotSize, slotSize);
-	                if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-	                	if(gp.player.currentItem == null) {
-	                		Food food = contents.get(i);
-	                		gp.player.currentItem = gp.itemRegistry.getItemFromName(food.getName(), (food instanceof Food f) ? f.getState() : 0);
-	    			    	clickCooldown = 0.3;
-	    			    	uiOpen = false;
-	    			    	gp.player.resetAnimation(4);
-	    			    	/*
-	    			    	if(gp.multiplayer) {
-	    		    			int state = 0;
-	    		    			if(gp.player.currentItem instanceof Food f) {
-	    		    				state = f.getState();
-	    		    			}
-	    			            Packet03PickupItem packet = new Packet03PickupItem(gp.player.currentItem.getName(), gp.player.getUsername(), state);
-	    			            packet.writeData(gp.socketClient);
-	    		            }
-	    		            */
-	    		    	}
-	                }
 	            }
 	        }
 	    }

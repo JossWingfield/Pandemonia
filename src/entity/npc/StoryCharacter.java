@@ -110,19 +110,22 @@ public class StoryCharacter extends NPC {
 	}
 	public void removeLights() {
 		if(ghostLight != null) {
-			gp.lightingM.removeLight(ghostLight);
+			gp.world.lightingM.removeLight(ghostLight);
 		}
 		ghostLight = null;
 	}
 	protected void leave(double dt) {
 		super.leave(dt);
 	}
-	public void update(double dt) {
+	public void updateState(double dt) {
 		talkHitbox.x = hitbox.x - 16;
 	    talkHitbox.y = hitbox.y - 16;
 	    if(npcToFollow != null) {
 			followNPC(dt, npcToFollow);
 		}
+
+	}
+	public void inputUpdate(double dt) {
 	    if(walking) {
 	    	currentAnimation = 1;
 	    } else {
@@ -145,7 +148,7 @@ public class StoryCharacter extends NPC {
 		if(firstDraw) {
 			if(hasLight) {
 				ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.BLUE, 48);
-				gp.lightingM.addLight(ghostLight);
+				gp.world.lightingM.addLight(ghostLight);
 			}
 			firstDraw = false;
 		}

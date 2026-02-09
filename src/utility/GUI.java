@@ -1735,7 +1735,7 @@ public class GUI {
 		renderer.drawString(text, getXforCenteredText(text, font), 700);
 		
 		List<Achievement> achievementList =
-		        new ArrayList<>(gp.progressM.achievements.values());
+		        new ArrayList<>(gp.world.progressM.achievements.values());
 
 		// Sort so unlocked ones appear first, locked ones after
 		achievementList.sort((a, b) -> {
@@ -2006,9 +2006,9 @@ public class GUI {
 			}
 		}
 		
-		if(gp.world.currentWeather.equals(Weather.RAIN)) {
+		if(gp.world.gameM.currentWeather.equals(Weather.RAIN)) {
 			currentTimeAnimation = 3;
-		} else if(gp.world.currentWeather.equals(Weather.THUNDERSTORM)) {
+		} else if(gp.world.gameM.currentWeather.equals(Weather.THUNDERSTORM)) {
 			currentTimeAnimation = 2;
 		}
 		renderer.draw(timeAnimations[currentTimeAnimation][timeAnimationCounter], gp.frameWidth - (78*3) - 4, 4, 78*3, 77*3);
@@ -2017,8 +2017,8 @@ public class GUI {
 		
 		renderer.setFont(font);
 		renderer.setColour(orderTextColour);
-		renderer.drawString(gp.world.getDate(), gp.frameWidth - (80*3) + 28, 4 + (77*3) + 28);
-		renderer.drawString(gp.world.getTime24h(), gp.frameWidth - (80*3) + 112, 4 + (77*3) + 26 + (16*3));
+		renderer.drawString(gp.world.gameM.getDate(), gp.frameWidth - (80*3) + 28, 4 + (77*3) + 28);
+		renderer.drawString(gp.world.gameM.getTime24h(), gp.frameWidth - (80*3) + 112, 4 + (77*3) + 26 + (16*3));
 		
 		renderer.setColour(Colour.WHITE);
 		renderer.setFont(font);
@@ -2087,16 +2087,16 @@ public class GUI {
 
 	    for (int j = 0; j < ingredients.size(); j++) {
 	        String ingredientName = ingredients.get(j);
-	        Food ingredient = (Food) gp.itemRegistry.getItemFromName(ingredientName, 0);
+	        Food ingredient = (Food) gp.world.itemRegistry.getItemFromName(ingredientName, 0);
 
-	        TextureRegion ingredientImage = gp.itemRegistry.getImageFromName(ingredientName);
+	        TextureRegion ingredientImage = gp.world.itemRegistry.getImageFromName(ingredientName);
 	        if (ingredient.notRawItem) {
-	            ingredientImage = gp.itemRegistry.getRawIngredientImage(ingredientName);
+	            ingredientImage = gp.world.itemRegistry.getRawIngredientImage(ingredientName);
 	        }
 
 	        data.ingredientImages.add(ingredientImage);
-	        data.cookingStateIcons.add(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed));
-	        data.secondaryCookingStateIcons.add(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed));
+	        data.cookingStateIcons.add(gp.world.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed));
+	        data.secondaryCookingStateIcons.add(gp.world.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed));
 	    }
 	    
 	    // Cache text layout
@@ -2112,11 +2112,11 @@ public class GUI {
 	        if (specialCustomer.hideOrder) {
 	            data.cost = "???";
 	        } else {
-	            data.cost = Integer.toString(recipe.getCost(gp.world.isRecipeSpecial(recipe),
+	            data.cost = Integer.toString(recipe.getCost(gp.world.gameM.isRecipeSpecial(recipe),
 	                                                        specialCustomer.getMoneyMultiplier()));
 	        }
 	    } else {
-	        data.cost = Integer.toString(recipe.getCost(gp.world.isRecipeSpecial(recipe)));
+	        data.cost = Integer.toString(recipe.getCost(gp.world.gameM.isRecipeSpecial(recipe)));
 	    }
 
 	    return data;
@@ -2609,7 +2609,7 @@ public class GUI {
 		renderer.draw(computerAnimations[computerAnimationCounter], 0, 0, (int)(260*4.5), (int)(190*4.5));
 		
 		if(computerAnimationCounter >= 9) {
-			if(!gp.catalogue.checkingOut && !gp.catalogue.onMysteryScreen && !gp.catalogue.onCatalogueScreen) {
+			if(!gp.world.catalogue.checkingOut && !gp.world.catalogue.onMysteryScreen && !gp.world.catalogue.onCatalogueScreen) {
 				renderer.draw(shoppingUI, 0, 0, (int)(260*4.5), (int)(190*4.5));
 				renderer.draw(shoppingButtonUI, 0, 0, (int)(260*4.5), (int)(190*4.5));
 				
@@ -2617,22 +2617,22 @@ public class GUI {
 				if(isHovering((int)(81*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.leftPage();
+						gp.world.catalogue.leftPage();
 					}
 				}
 				renderer.draw(rightArrow, (int)((81+11)*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5));
 				if(isHovering((int)((81+11)*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.rightPage();
+						gp.world.catalogue.rightPage();
 					}
 				}
 				
 				if(isHovering((int)(170*4.5), (int)(96*4.5), (int)(16*4.5), (int)(16*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.checkingOut = true;
-						gp.catalogue.layer = 0;
+						gp.world.catalogue.checkingOut = true;
+						gp.world.catalogue.layer = 0;
 					}
 				}
 				
@@ -2640,9 +2640,9 @@ public class GUI {
 				if(isHovering((int)((171)*4.5), (int)(29*4.5), (int)(16*4.5), (int)(16*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.onMysteryScreen = true;
-						gp.catalogue.layer = 0;
-						gp.catalogue.pageNum = 1;
+						gp.world.catalogue.onMysteryScreen = true;
+						gp.world.catalogue.layer = 0;
+						gp.world.catalogue.pageNum = 1;
 					}
 				}
 				
@@ -2650,20 +2650,20 @@ public class GUI {
 				if(isHovering((int)((82)*4.5), (int)(30*4.5), (int)(16*4.5), (int)(16*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.onCatalogueScreen = true;
-						gp.catalogue.layer = 0;
-						gp.catalogue.pageNum = 1;
+						gp.world.catalogue.onCatalogueScreen = true;
+						gp.world.catalogue.layer = 0;
+						gp.world.catalogue.pageNum = 1;
 					}
 				}
 				
-			} else if(gp.catalogue.onMysteryScreen) {
+			} else if(gp.world.catalogue.onMysteryScreen) {
 				renderer.draw(mysteryCrateUI, 0, 0, (int)(260*4.5), (int)(190*4.5));
 				
 				if(isHovering((int)(87*4.5), (int)(108*4.5), (int)(61*4.5), (int)(11*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.buyMysteryCrate();
-						gp.catalogue.layer = 0;
+						gp.world.catalogue.buyMysteryCrate();
+						gp.world.catalogue.layer = 0;
 					}
 				}
 				
@@ -2671,11 +2671,11 @@ public class GUI {
 				if(isHovering((int)((171)*4.5), (int)(29*4.5), (int)(16*4.5), (int)(16*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.onMysteryScreen = false;
-						gp.catalogue.layer = 0;
+						gp.world.catalogue.onMysteryScreen = false;
+						gp.world.catalogue.layer = 0;
 					}
 				}
-			} else if(gp.catalogue.onCatalogueScreen) {
+			} else if(gp.world.catalogue.onCatalogueScreen) {
 				
 				renderer.draw(catalogueMenu, 0, 0, (int)(260*4.5), (int)(190*4.5));
 				renderer.draw(shoppingButtonUI, 0, 0, (int)(260*4.5), (int)(190*4.5));
@@ -2684,22 +2684,22 @@ public class GUI {
 				if(isHovering((int)(81*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.leftPage();
+						gp.world.catalogue.leftPage();
 					}
 				}
 				renderer.draw(rightArrow, (int)((81+11)*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5));
 				if(isHovering((int)((81+11)*4.5), (int)(98*4.5), (int)(11*4.5), (int)(11*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.rightPage();
+						gp.world.catalogue.rightPage();
 					}
 				}
 				
 				if(isHovering((int)(170*4.5), (int)(96*4.5), (int)(16*4.5), (int)(16*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.checkingOut = true;
-						gp.catalogue.layer = 0;
+						gp.world.catalogue.checkingOut = true;
+						gp.world.catalogue.layer = 0;
 					}
 				}
 				
@@ -2707,9 +2707,9 @@ public class GUI {
 				if(isHovering((int)((82)*4.5), (int)(30*4.5), (int)(16*4.5), (int)(16*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.onCatalogueScreen = false;
-						gp.catalogue.layer = 0;
-						gp.catalogue.pageNum = 1;
+						gp.world.catalogue.onCatalogueScreen = false;
+						gp.world.catalogue.layer = 0;
+						gp.world.catalogue.pageNum = 1;
 					}
 				}
 				
@@ -2721,19 +2721,19 @@ public class GUI {
 				if(isHovering((int)(146*4.5), (int)(96*4.5), (int)(42*4.5), (int)(16*4.5))) {
 					if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 						clickCooldown = 0.5;
-						gp.catalogue.tryPay();
+						gp.world.catalogue.tryPay();
 					}
 				}
 			}
 			
-			if(!gp.catalogue.checkingOut && !gp.catalogue.onMysteryScreen && !gp.catalogue.onCatalogueScreen) {
-				gp.catalogue.drawCatalogue(renderer);
-			} else if(gp.catalogue.onMysteryScreen) {
-				gp.catalogue.drawMysteryScreen(renderer);
-			} else if(gp.catalogue.onCatalogueScreen) {
-				gp.catalogue.drawShopCatalogueScreen(renderer);
+			if(!gp.world.catalogue.checkingOut && !gp.world.catalogue.onMysteryScreen && !gp.world.catalogue.onCatalogueScreen) {
+				gp.world.catalogue.drawCatalogue(renderer);
+			} else if(gp.world.catalogue.onMysteryScreen) {
+				gp.world.catalogue.drawMysteryScreen(renderer);
+			} else if(gp.world.catalogue.onCatalogueScreen) {
+				gp.world.catalogue.drawShopCatalogueScreen(renderer);
 			} else {
-				gp.catalogue.drawCheckout(renderer);
+				gp.world.catalogue.drawCheckout(renderer);
 			}
 			
 		}
@@ -2771,7 +2771,7 @@ public class GUI {
 				levelUp = false;
 				clickCooldown = 0.33;
 				gp.player.level++;
-				gp.progressM.handleLevelUp(gp.player.level);
+				gp.world.progressM.handleLevelUp(gp.player.level);
 			}
 		}
 		
@@ -2786,7 +2786,7 @@ public class GUI {
 	    int nodeSize = 32 * 3;
 	    int nodeYOffset = 0; // adjust to lift nodes above the bar if needed
 
-	    int totalLevels = gp.progressM.totalLevels;
+	    int totalLevels = gp.world.progressM.totalLevels;
 	    int[] soulsPerLevel = new int[totalLevels];
 	    for (int i = 0; i < totalLevels; i++) {
 	        soulsPerLevel[i] = gp.player.nextLevelAmount; // replace with per-level array if available
@@ -2800,14 +2800,14 @@ public class GUI {
 	    int playerSoulIndex = accumulatedSouls + displayedSouls;
 	    // Smooth scroll
 	    float targetOffsetX = centerX - playerSoulIndex * soulWidth;
-	    gp.progressM.roadmapOffsetX += (targetOffsetX - gp.progressM.roadmapOffsetX) * 0.1f;
+	    gp.world.progressM.roadmapOffsetX += (targetOffsetX - gp.world.progressM.roadmapOffsetX) * 0.1f;
 
 	    // Draw souls as roadmap line
 	    int soulCounter = 0;
 	    for (int level = 0; level < totalLevels; level++) {
 	        int soulsInThisLevel = soulsPerLevel[level];
 	        for (int s = 0; s < soulsInThisLevel; s++, soulCounter++) {
-	            int x = (int)(soulCounter * soulWidth + gp.progressM.roadmapOffsetX);
+	            int x = (int)(soulCounter * soulWidth + gp.world.progressM.roadmapOffsetX);
 	            if (x + soulWidth < 0 || x > gp.frameWidth) continue;
 
 	            TextureRegion img;
@@ -2828,15 +2828,15 @@ public class GUI {
 	    
 	    for (int level = 1; level <= totalLevels; level++) {
 	        int nodeSoulIndex = accumulatedSouls + soulsPerLevel[level - 1] - 1;
-	        int x = (int)(nodeSoulIndex * soulWidth + gp.progressM.roadmapOffsetX - nodeSize / 2);
+	        int x = (int)(nodeSoulIndex * soulWidth + gp.world.progressM.roadmapOffsetX - nodeSize / 2);
 	        int y = lineY - nodeSize / 2;
 
 	        if (!(x + nodeSize < 0 || x > gp.frameWidth)) {
 	        	TextureRegion icon;
 	        	if (level+1 <= gp.player.level) {
-	        	    icon = gp.progressM.levelRewards[level - 1][1]; // passed/completed
+	        	    icon = gp.world.progressM.levelRewards[level - 1][1]; // passed/completed
 	        	} else {
-	        	    icon = gp.progressM.levelRewards[level - 1][0]; // normal/unreached
+	        	    icon = gp.world.progressM.levelRewards[level - 1][0]; // normal/unreached
 	        	}
 	        	renderer.draw(icon, x, y, nodeSize, nodeSize);
 	        }
@@ -2857,11 +2857,11 @@ public class GUI {
 	private void drawRecipeSelectScreen(Renderer renderer) {
 		renderer.fillRect(0, 0, gp.frameWidth, gp.frameHeight, darkened);
 
-		if (gp.progressM.getRecipeChoices() == null) {
+		if (gp.world.progressM.getRecipeChoices() == null) {
 		    // fallback in case something went wrong
 		    recipeChoices = RecipeManager.getTwoRandomLocked(gp);
 		} else {
-		    recipeChoices = gp.progressM.getRecipeChoices();
+		    recipeChoices = gp.world.progressM.getRecipeChoices();
 		}
 		
 		String text = "Choose New Recipe!";
@@ -2875,7 +2875,7 @@ public class GUI {
 	    	if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	    		RecipeManager.unlockRecipe(recipeChoices[0]);
 	    		gp.currentState = gp.playState;
-	    		gp.progressM.checkRecipeCollect();
+	    		gp.world.progressM.checkRecipeCollect();
 	    	}
 	    }
 	    drawRecipe(renderer, recipeChoices[0], x, y);
@@ -2885,7 +2885,7 @@ public class GUI {
 	    	if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	       		RecipeManager.unlockRecipe(recipeChoices[1]);
 	    		gp.currentState = gp.playState;
-	    		gp.progressM.checkRecipeCollect();
+	    		gp.world.progressM.checkRecipeCollect();
 	    	}
 	    }
 	    drawRecipe(renderer, recipeChoices[1], x, y);
@@ -2893,7 +2893,7 @@ public class GUI {
 	private void drawChooseUpgradeScreen(Renderer renderer) {
 		renderer.fillRect(0, 0, gp.frameWidth, gp.frameHeight, darkened);
 		
-		upgradeChoices = gp.progressM.getUpgradeChoices();
+		upgradeChoices = gp.world.progressM.getUpgradeChoices();
 		
 		String text = "Choose Upgrade!";
 		switch(upgradeChoices[0].getCategory()) {
@@ -2916,7 +2916,7 @@ public class GUI {
 	    	if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	    		UpgradeManager.unlockUpgrade(upgradeChoices[0]);
 	    		if(upgradeChoices[0].getCategory() == RewardType.KITCHEN) {
-	    			gp.progressM.checkKitchenUpgrade();
+	    			gp.world.progressM.checkKitchenUpgrade();
 	    		}
 	    		clickCooldown = 0.33;
 	    		gp.currentState = gp.chooseRecipeState;
@@ -2930,7 +2930,7 @@ public class GUI {
 	    		UpgradeManager.unlockUpgrade(upgradeChoices[1]);
 	    		clickCooldown = 0.33;
 	    		if(upgradeChoices[1].getCategory() == RewardType.KITCHEN) {
-	    			gp.progressM.checkKitchenUpgrade();
+	    			gp.world.progressM.checkKitchenUpgrade();
 	    		}
 	    		gp.currentState = gp.chooseRecipeState;
 	    	}
@@ -2963,16 +2963,16 @@ public class GUI {
 		List<String> secondaryCookingState = recipe.getSecondaryCookingStates();
 		for (int j = 0; j < ingredients.size(); j++) {
 			String ingredientName = ingredients.get(j);
-			TextureRegion ingredientImage = gp.itemRegistry.getImageFromName(ingredientName);
-			Food ingredient = (Food)gp.itemRegistry.getItemFromName(ingredientName, 0);
+			TextureRegion ingredientImage = gp.world.itemRegistry.getImageFromName(ingredientName);
+			Food ingredient = (Food)gp.world.itemRegistry.getItemFromName(ingredientName, 0);
 			if(ingredient.notRawItem) {
-				ingredientImage = gp.itemRegistry.getRawIngredientImage(ingredientName);
+				ingredientImage = gp.world.itemRegistry.getRawIngredientImage(ingredientName);
 			}
 			if (ingredientImage != null) {
 				// Draw each ingredient image 32px apart above the order box
 				renderer.draw(ingredientImage, x + j * (10*3) + 4, y + 4, 10*3, 10*3);
-				renderer.draw(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3);
-				renderer.draw(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3);
+				renderer.draw(gp.world.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16), 10*3, 10*3);
+				renderer.draw(gp.world.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3);
 			}
 		}
 		
@@ -2987,12 +2987,12 @@ public class GUI {
 		
 		renderer.draw(coinImage, x, y + 94 + 48, 48, 48);
 		
-		renderer.drawString(font, Integer.toString(recipe.getCost(gp.world.isRecipeSpecial(recipe))), x + 48+8, y + 94 + 48+32, 1.0f, Colour.WHITE);
+		renderer.drawString(font, Integer.toString(recipe.getCost(gp.world.gameM.isRecipeSpecial(recipe))), x + 48+8, y + 94 + 48+32, 1.0f, Colour.WHITE);
 
     }
 	public void startLevelUpScreen() {
 		gp.currentState = gp.xpState;
-		displayedSouls = gp.world.previousSoulsCollected;
+		displayedSouls = gp.world.gameM.previousSoulsCollected;
 		targetSouls = gp.player.soulsServed;
 		animatingSouls = true;
 		soulCounter = 0;
@@ -3076,7 +3076,7 @@ public class GUI {
 		} else if(gp.currentState == gp.achievementState) {
 		    // --- Handle scrolling ---
 		    if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_S) && clickCooldown == 0) {
-		        if (achievementStartIndex + 2 < gp.progressM.achievements.size()) {
+		        if (achievementStartIndex + 2 < gp.world.progressM.achievements.size()) {
 		            achievementStartIndex++;
 		            clickCooldown = 0.1;
 		        }

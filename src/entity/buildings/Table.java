@@ -67,7 +67,7 @@ public class Table extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	public void refreshImages() {
-		animations[0][0][0] = gp.mapM.getRooms()[roomNum].getTableSkin().getImage1();
+		animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getTableSkin().getImage1();
 	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][1];
@@ -127,24 +127,24 @@ public class Table extends Building {
     	}
     	
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(firstUpdate) {
 			firstUpdate = false;
 	    	if(roomNum == RoomHelperMethods.MAIN) {
-	    		if(gp.mapM.isInRoom(roomNum)) {
+	    		if(gp.world.mapM.isInRoom(roomNum)) {
 					if(chair1 != null) {
-						gp.buildingM.addBuilding(chair1);
+						gp.world.buildingM.addBuilding(chair1);
 					}
 					if(chair2 != null) {
-						gp.buildingM.addBuilding(chair2);
+						gp.world.buildingM.addBuilding(chair2);
 					}
 	    		} else {
 	    			if(chair1 != null) {
-						gp.mapM.getRoom(roomNum).addBuilding(chair1);
+						gp.world.mapM.getRoom(roomNum).addBuilding(chair1);
 					}
 					if(chair2 != null) {
-						gp.mapM.getRoom(roomNum).addBuilding(chair2);
+						gp.world.mapM.getRoom(roomNum).addBuilding(chair2);
 					}
 	    		}
 	    	}

@@ -24,14 +24,14 @@ public class AddNPCEvent extends CutsceneEvent {
 
 	    
 	    public void update(double dt) {
-	    	npc.hitbox.x = gp.mapM.currentRoom.getSpawnX();
-	    	npc.hitbox.y = gp.mapM.currentRoom.getSpawnY();
+	    	npc.hitbox.x = gp.world.mapM.currentRoom.getSpawnX();
+	    	npc.hitbox.y = gp.world.mapM.currentRoom.getSpawnY();
 	    	if(spawnX != -1) {
 	        	npc.hitbox.x = spawnX*gp.tileSize;
 	          	npc.hitbox.y = spawnY*gp.tileSize;
 	    	}
 	    	
-	    	gp.npcM.addNPC(npc);
+	    	gp.world.npcM.addNPC(npc);
 	        finished = true;
 	    }
 }

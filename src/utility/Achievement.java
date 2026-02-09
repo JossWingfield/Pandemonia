@@ -53,7 +53,7 @@ public class Achievement {
             unlocked = true;
             if (onUnlock != null) {
                 onUnlock.run(); // trigger reward, cosmetic, etc.
-                if (gp.progressM != null) {
+                if (gp.world.progressM != null) {
                     gp.gui.showAchievementNotification(this);
                     gp.gui.addMessage("New Achievement Unlocked!", Colour.YELLOW);
                 }

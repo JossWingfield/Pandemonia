@@ -25,7 +25,7 @@ public class SmallPan extends CookingItem {
 		animations[0][0][4] = importImage("/decor/CookingPots.png").getSubimage(0, 48, 16, 16);
 	}
 	public void refreshImages() {
-		animations = gp.mapM.currentRoom.getPanSkin().getSmallPanAnimations();
+		animations = gp.world.mapM.currentRoom.getPanSkin().getSmallPanAnimations();
 	}
 	public void setupRecipes() {
 		rawIngredients = new ArrayList<>();

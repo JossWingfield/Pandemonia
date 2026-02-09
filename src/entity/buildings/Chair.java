@@ -60,12 +60,12 @@ public class Chair extends Building {
 		currentCustomer = customer;
 	}
 	public void refreshImages() {
-		animations[0][0][0] = gp.mapM.getRooms()[roomNum].getChairSkin().getImage();
+		animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getChairSkin().getImage();
 	}
 	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			tablePlate = new TablePlate(gp, hitbox.x, hitbox.y, facing, this);
-			gp.buildingM.addBuilding(tablePlate);
+			gp.world.buildingM.addBuilding(tablePlate);
 			firstUpdate = false;
 		}
 		 

@@ -52,7 +52,7 @@ public class Rat extends NPC {
 	private void findFridge() {
 		fridge = (Fridge)findBuildingInRoom("Fridge", RoomHelperMethods.KITCHEN);
     }
-	public void update(double dt) {
+	public void updateState(double dt) {
 		if(!walking && inKitchen && !depositing) {
 			walking = true;
 		} else {
@@ -101,6 +101,8 @@ public class Rat extends NPC {
 				}
 			}
 		}
+	}	
+	public void inputUpdate(double dt) {
         animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
         if(animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;
@@ -111,7 +113,7 @@ public class Rat extends NPC {
                 animationCounter = 0; //Loops the animation
             }
         }
-	}	
+	}
 	  public void drawCurrentItem(Renderer renderer) {
 	    	if(currentItem == null) {
 	    		return;

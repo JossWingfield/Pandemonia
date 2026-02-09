@@ -461,7 +461,7 @@ public class Renderer {
     }
     public void updateLightsOncePerFrame() {
         lightScreenPositions.clear();
-        for (LightSource L : gp.lightingM.getLights()) {
+        for (LightSource L : gp.world.lightingM.getLights()) {
             Vector2f screenPos = gp.camera.worldToScreen(
                     new Vector2f(L.getX(), L.getY()),
                     camera.getViewMatrix(),
@@ -524,12 +524,12 @@ public class Renderer {
 
         // Upload lighting uniforms ONCE
         lightingShader.uploadVec2f("uScreenSize", new Vector2f(gp.sizeX, gp.sizeY));
-        lightingShader.uploadVec3f("uAmbientColor", gp.lightingM.ambientColor.toVec3());
-        lightingShader.uploadFloat("uAmbientIntensity", gp.lightingM.ambientIntensity);
-        lightingShader.uploadInt("uNumLights", gp.lightingM.getLights().size());
+        lightingShader.uploadVec3f("uAmbientColor", gp.world.lightingM.ambientColor.toVec3());
+        lightingShader.uploadFloat("uAmbientIntensity", gp.world.lightingM.ambientIntensity);
+        lightingShader.uploadInt("uNumLights", gp.world.lightingM.getLights().size());
 
-        for (int i = 0; i < gp.lightingM.getLights().size(); i++) {
-            LightSource L = gp.lightingM.getLights().get(i);
+        for (int i = 0; i < gp.world.lightingM.getLights().size(); i++) {
+            LightSource L = gp.world.lightingM.getLights().get(i);
             Vector2f pos = lightScreenPositions.get(i);
 
             String base = "uLights[" + i + "].";
@@ -556,7 +556,7 @@ public class Renderer {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, sceneFboTexture);
         brightnessShader.uploadInt("uScene", 0);
-        brightnessShader.uploadFloat("uThreshold", gp.lightingM.bloomThreshold);
+        brightnessShader.uploadFloat("uThreshold", gp.world.lightingM.bloomThreshold);
         glBindVertexArray(fsQuadVao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         glBindVertexArray(0);
@@ -608,7 +608,7 @@ public class Renderer {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, bloomTex1);
         bloomCombineShader.uploadInt("uBloom", 1);
-        bloomCombineShader.uploadFloat("uBloomIntensity", gp.lightingM.bloomIntensity);
+        bloomCombineShader.uploadFloat("uBloomIntensity", gp.world.lightingM.bloomIntensity);
 
         // Draw fullscreen quad
         glBindVertexArray(fsQuadVao);

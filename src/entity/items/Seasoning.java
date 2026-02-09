@@ -13,9 +13,10 @@ public class Seasoning extends Food {
 		foodLayer = 5;
 	}
 	
-	public void update(double dt) {
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
             // Check for nearby table or plate
-            var table = gp.buildingM.findTable(
+            var table = gp.world.buildingM.findTable(
                 gp.player.interactHitbox.x, 
                 gp.player.interactHitbox.y, 
                 gp.player.interactHitbox.width, 
@@ -26,7 +27,7 @@ public class Seasoning extends Food {
                 // If player presses E to apply seasoning
                 if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && !miniGameStarted && gp.player.clickCounter == 0) {
                     miniGameStarted = true;
-                    gp.minigameM.startSeasoningMiniGame(plate, this);
+                    gp.world.minigameM.startSeasoningMiniGame(plate, this);
                     gp.player.currentItem = null;
                     gp.player.clickCounter = 0.1;
                 }

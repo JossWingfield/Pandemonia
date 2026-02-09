@@ -94,8 +94,8 @@ public class Rubble extends Building {
 		    fadeAlpha = 255;
 		}
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(hitbox.intersects(gp.player.interactHitbox)) {
 		    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 		    	spillCount+=dt;
@@ -103,7 +103,7 @@ public class Rubble extends Building {
 		    		spillCount = 0;
 		    		gp.player.setNormalSpeed();
 		    		removedSpill = true;
-		    		gp.buildingM.removeBuilding(this);
+		    		gp.world.buildingM.removeBuilding(this);
 		    	}
 		    }
 		}
@@ -129,7 +129,7 @@ public class Rubble extends Building {
 
 	    	    // Remove when fully faded
 	    	    if (fadeAlpha <= 0) {
-	    	        gp.buildingM.removeBuilding(this);
+	    	        gp.world.buildingM.removeBuilding(this);
 	    	        return;
 	    	    }
 	    	}

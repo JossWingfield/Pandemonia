@@ -72,7 +72,7 @@ public class OvenTray extends Item {
 	        if (ingredientName == null) continue;
 
 	        // Spawn a fresh Food instance from registry
-	        Food food = (Food) gp.itemRegistry.getItemFromName(ingredientName, 0);
+	        Food food = (Food) gp.world.itemRegistry.getItemFromName(ingredientName, 0);
 	        if (food == null) continue;
 
 	        // Apply cooked state + method
@@ -202,8 +202,8 @@ public class OvenTray extends Item {
 		
 		                renderer.draw(foodBorder, x - 4, hitbox.y - yDrawOffset - 24, 32, 32);
 		
-		                TextureRegion img = gp.itemRegistry.getImageFromName(i);
-		                Food f = (Food)gp.itemRegistry.getItemFromName(i, 0);
+		                TextureRegion img = gp.world.itemRegistry.getImageFromName(i);
+		                Food f = (Food)gp.world.itemRegistry.getItemFromName(i, 0);
 		                renderer.draw(img, x-f.xDrawOffset, hitbox.y - yDrawOffset - 24, 32, 32);
 		
 		                index++;

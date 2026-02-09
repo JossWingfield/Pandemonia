@@ -21,7 +21,7 @@ public class CustomiserSaveData extends SaveData {
 	public List<BuildingSaveData> bathroomBuildingInventory = new ArrayList<BuildingSaveData>();
 	
 	public void applySaveData(GamePanel gp) {
-		gp.customiser.applySaveData(this);
+		gp.world.customiser.applySaveData(this);
 	}
 	
 }

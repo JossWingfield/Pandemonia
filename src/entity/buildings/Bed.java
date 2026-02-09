@@ -45,23 +45,27 @@ public class Bed extends Building{
 		name = "Bed";
     	animations[0][0][0] = importImage("/decor/bed.png").getSubimage(160, 96, 32, 48);
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
+	    if(hitbox.intersects(gp.player.interactHitbox)) {
+	    	if(gp.world.gameM.getCurrentPhase() == DayPhase.AFTER_HOURS) {
+	    		if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && cooldown == 0) {
+	    			gp.world.gameM.sleep();
+	    			cooldown = 1;
+	    		}
+	    	}
+	    }
 		if (cooldown > 0) {
 		    cooldown -= dt;        // subtract elapsed time in seconds
 		    if (cooldown < 0) {
 		        cooldown = 0;      // clamp to zero
 		    }
 		}
-	    if(hitbox.intersects(gp.player.interactHitbox)) {
-	    	if(gp.world.getCurrentPhase() == DayPhase.AFTER_HOURS) {
-	    		if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) && cooldown == 0) {
-	    			gp.world.sleep();
-	    			cooldown = 1;
-	    		}
-	    	}
-	    }
 	}
+	
 	
 	
 }

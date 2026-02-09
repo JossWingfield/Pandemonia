@@ -102,7 +102,12 @@ public abstract class NPC extends Entity {
 	public void setAbleToUpdate(boolean isAble) {
 		ableToUpdate = isAble;
 	}
-	public void update(double dt) {
+	public void updateState(double dt) {
+		if(npcToFollow != null) {
+			followNPC(dt, npcToFollow);
+		}
+	}
+	public void inputUpdate(double dt) {
 		
 		if(CollisionMethods.getDistance(hitbox.x, hitbox.y, gp.player.hitbox.x, gp.player.hitbox.y) > gp.player.talkDistance) {
 			talking = false;
@@ -122,9 +127,6 @@ public abstract class NPC extends Entity {
 			}
 		}
 		
-		if(npcToFollow != null) {
-			followNPC(dt, npcToFollow);
-		}
 	}
 	protected void fleeFromPlayer(double dt) {
         float playerX = gp.player.hitbox.x + gp.player.hitbox.width / 2f;
@@ -181,7 +183,7 @@ public abstract class NPC extends Entity {
         dx /= mag;
         dy /= mag;
 
-        Room currentRoom = gp.mapM.getCurrentRoom(this);
+        Room currentRoom = gp.world.mapM.getCurrentRoom(this);
 
         for (int attempt = 0; attempt < 8; attempt++) {
             float angleOffset = (r.nextFloat() - 0.5f) * (float) Math.PI / 1.5f;
@@ -240,7 +242,7 @@ public abstract class NPC extends Entity {
         }
     }
 	public void searchFullPath(double dt, int goalCol, int goalRow) {
-	    Room currentRoom = gp.mapM.getCurrentRoom(this);
+	    Room currentRoom = gp.world.mapM.getCurrentRoom(this);
 
 	    // If no path exists, create one
 	    if (pathF.pathList.isEmpty() && pfGoalCol != null && pfGoalRow != null) {
@@ -322,7 +324,7 @@ public abstract class NPC extends Entity {
     }
     public void searchPath(double dt, int goalCol, int goalRow) {
 
-        Room currentRoom = gp.mapM.getRooms()[currentRoomNum];
+        Room currentRoom = gp.world.mapM.getRooms()[currentRoomNum];
 
         // Rebuild path only when needed (goal changed or no current path)
         boolean needNewPath =
@@ -398,7 +400,7 @@ public abstract class NPC extends Entity {
         
     }
     protected void drawNextNode(Renderer renderer) {
-        if (gp.mapM.drawPath) {
+        if (gp.world.mapM.drawPath) {
             renderer.fillRect(nextX * gp.tileSize, nextY * gp.tileSize, 48, 48, new Colour(100, 255, 150, 80));
         }
 
@@ -460,10 +462,10 @@ public abstract class NPC extends Entity {
     }
     protected boolean walkToDoorWithDoorNum(double dt, int doorRoomNum) {
     	Door door;
-    	if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
-			door = gp.buildingM.findDoor(doorRoomNum);
+    	if(gp.world.mapM.currentRoom.equals(gp.world.mapM.getRoom(currentRoomNum))) {
+			door = gp.world.buildingM.findDoor(doorRoomNum);
 		} else {
-			door =gp.mapM.getRoom(currentRoomNum).findDoor(doorRoomNum);
+			door =gp.world.mapM.getRoom(currentRoomNum).findDoor(doorRoomNum);
 		}
     	if(door == null) {
     		return false;
@@ -484,10 +486,10 @@ public abstract class NPC extends Entity {
     	return false;
     }
     protected void removeNPCFromRoom() {
-		if(gp.mapM.isInRoom(currentRoomNum)) {
-			gp.npcM.removeNPC(this);
+		if(gp.world.mapM.isInRoom(currentRoomNum)) {
+			gp.world.npcM.removeNPC(this);
 		} else {
-			gp.mapM.getRoom(currentRoomNum).removeNPC(this);
+			gp.world.mapM.getRoom(currentRoomNum).removeNPC(this);
 		}
     }
     public void walkToPoint(double dt, int x, int y) {
@@ -495,14 +497,14 @@ public abstract class NPC extends Entity {
     	walking = true;
     }
     protected Building findBuildingInRoom(String buildingName, int roomNum) {
-		if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(roomNum))) {
-			return gp.buildingM.findBuildingWithName(buildingName);
+		if(gp.world.mapM.currentRoom.equals(gp.world.mapM.getRoom(roomNum))) {
+			return gp.world.buildingM.findBuildingWithName(buildingName);
 		} else {
-			return gp.mapM.getRoom(roomNum).findBuildingWithName(buildingName);
+			return gp.world.mapM.getRoom(roomNum).findBuildingWithName(buildingName);
 		}
     }
     protected void changeRoom(int newRoomNum, int prevDoorFacing) {
-		Door door = (Door)gp.mapM.findCorrectDoorInRoom(newRoomNum, prevDoorFacing);
+		Door door = (Door)gp.world.mapM.findCorrectDoorInRoom(newRoomNum, prevDoorFacing);
     	if(door != null) {
     		if(door.facing == 2) {
     			hitbox.x = door.hitbox.x + door.hitbox.width + 32;
@@ -520,8 +522,8 @@ public abstract class NPC extends Entity {
     			hitbox.y = door.hitbox.y+48;
     		}
     	}
-		gp.mapM.addNPCToRoom(this, newRoomNum);
-		gp.mapM.removeNPCFromRoom(this, currentRoomNum);
+		gp.world.mapM.addNPCToRoom(this, newRoomNum);
+		gp.world.mapM.removeNPCFromRoom(this, currentRoomNum);
 		currentRoomNum = newRoomNum;
     }
     protected boolean walkToNPC(double dt, NPC npc) {
@@ -666,10 +668,10 @@ public abstract class NPC extends Entity {
 	protected void leave(double dt) {
 		
 		Door door;
-    	if(gp.mapM.currentRoom.equals(gp.mapM.getRoom(currentRoomNum))) {
-			door = gp.buildingM.findDoor(RoomHelperMethods.OUTDOORS);
+    	if(gp.world.mapM.currentRoom.equals(gp.world.mapM.getRoom(currentRoomNum))) {
+			door = gp.world.buildingM.findDoor(RoomHelperMethods.OUTDOORS);
 		} else {
-			door =gp.mapM.getRoom(currentRoomNum).findDoor(RoomHelperMethods.OUTDOORS);
+			door =gp.world.mapM.getRoom(currentRoomNum).findDoor(RoomHelperMethods.OUTDOORS);
 		}
     	
 		int goalCol = (int)((door.npcHitbox.x + door.npcHitbox.width/2)/gp.tileSize);
@@ -681,9 +683,9 @@ public abstract class NPC extends Entity {
     		if(door.npcHitbox.intersects(hitbox)) {
     	    	removeLights();
     	    	if(gp.player.currentRoomIndex == currentRoomNum) {
-    				gp.npcM.removeNPC(this);
+    				gp.world.npcM.removeNPC(this);
     			} else {
-    				gp.mapM.getRoom(currentRoomNum).removeNPC(this);
+    				gp.world.mapM.getRoom(currentRoomNum).removeNPC(this);
     			}
     		}
     	}
@@ -698,9 +700,9 @@ public abstract class NPC extends Entity {
 	}
 	public void removeOtherNPC(NPC npcToRemove) {
 		if(gp.player.currentRoomIndex == npcToRemove.currentRoomNum) {
-			gp.npcM.removeNPC(npcToRemove);
+			gp.world.npcM.removeNPC(npcToRemove);
 		} else {
-			gp.mapM.getRoom(npcToRemove.currentRoomNum).removeNPC(npcToRemove);
+			gp.world.mapM.getRoom(npcToRemove.currentRoomNum).removeNPC(npcToRemove);
 		}
 	}
 	public void drawOverlay(Renderer renderer) {}

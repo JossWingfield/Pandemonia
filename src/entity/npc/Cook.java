@@ -82,8 +82,8 @@ public class Cook extends Employee {
 	    }
 	    return false;
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
 		
 		switch (state) {
 
@@ -174,6 +174,8 @@ public class Cook extends Employee {
 		}
 		}
 		
+	}	
+	public void inputUpdate(double dt) {
         animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
         if(animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;
@@ -192,7 +194,7 @@ public class Cook extends Employee {
                 }
             }
         }
-	}	
+	}
 	public void drawCurrentItem(Renderer renderer) {
     	if(carriedItem == null) {
     		return;

@@ -57,20 +57,20 @@ public class Parcel extends Building {
 			animations[0][0][0] = importImage("/decor/crate-box.png").getSubimage(0, 0, 16, 16);	
 		}
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 	    if(gp.player.hitbox.intersects(hitbox)) {
 	    	if(crateNum == -1) {
-	    		gp.customiser.addOrderToInventory(new ArrayList<>(order));
+	    		gp.world.customiser.addOrderToInventory(new ArrayList<>(order));
 	    	} else {
 	    		//UNLOCK CATALOGUE
-	    		gp.catalogue.unlockById(crateNum);
-	    		ShopCatalogue catalogue = gp.catalogue.getCatalogueByID(crateNum);
+	    		gp.world.catalogue.unlockById(crateNum);
+	    		ShopCatalogue catalogue = gp.world.catalogue.getCatalogueByID(crateNum);
 	    		String text = "Added " + catalogue.getName() + " Catalogue!";
                 gp.gui.addMessage(text, Colour.YELLOW);
 
 	    	}
-	    	gp.buildingM.removeBuilding(this);
+	    	gp.world.buildingM.removeBuilding(this);
 	    }
 	}
 	public void draw(Renderer renderer) {

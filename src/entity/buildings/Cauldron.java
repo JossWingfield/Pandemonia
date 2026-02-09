@@ -51,8 +51,22 @@ public class Cauldron extends Building {
     	animations[0][0][0] = importImage("/decor/Cauldron.png").getSubimage(0, 0, 32, 32);
     	animations[0][0][1] = importImage("/decor/Cauldron.png").getSubimage(32, 0, 32, 32);
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
+		if(isActive) {
+			activeCounter+=dt;
+			if(activeCounter >= activeTime) {
+				activeCounter = 0;
+				isActive = false;
+				Item item = gp.world.itemRegistry.getItemFromName(RecipeManager.getCurrentHauntedIngredient(), 0);
+				gp.player.currentItem = item;
+				gp.world.lightingM.removeLight(light);
+			}
+		}
+		
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(!isActive) {
 			if(gp.player.interactHitbox.intersects(hitbox)) {
 				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
@@ -60,20 +74,10 @@ public class Cauldron extends Building {
 					activeCounter = 0;
 					light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.GREEN, 48*4);
 					light.setIntensity(0.5f);
-					gp.lightingM.addLight(light);
+					gp.world.lightingM.addLight(light);
 				}
 			}
-		} else {
-			activeCounter+=dt;
-			if(activeCounter >= activeTime) {
-				activeCounter = 0;
-				isActive = false;
-				Item item = gp.itemRegistry.getItemFromName(RecipeManager.getCurrentHauntedIngredient(), 0);
-				gp.player.currentItem = item;
-				gp.lightingM.removeLight(light);
-			}
 		}
-		
 	}
 	public void draw(Renderer renderer) {
 

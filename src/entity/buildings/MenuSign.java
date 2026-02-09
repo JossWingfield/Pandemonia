@@ -82,8 +82,11 @@ public class MenuSign extends Building {
 		starLevel = importImage("/UI/recipe/Star.png").getSubimage(0, 0, 16, 16);
 		emptyStar = importImage("/UI/recipe/Star.png").getSubimage(32, 0, 16, 16);
     }
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if (clickCooldown > 0) {
 	    	clickCooldown -= dt;        // subtract elapsed time in seconds
 			if (clickCooldown < 0) {
@@ -100,15 +103,15 @@ public class MenuSign extends Building {
         }
 
         // Interact highlight
-        boolean canInteract = gp.world.getCurrentPhase() == DayPhase.PREPARATION
-                || (gp.world.getCurrentPhase() == DayPhase.SERVICE && !gp.world.isMenuChosen());
+        boolean canInteract = gp.world.gameM.getCurrentPhase() == DayPhase.PREPARATION
+                || (gp.world.gameM.getCurrentPhase() == DayPhase.SERVICE && !gp.world.gameM.isMenuChosen());
         if(interactHitbox.intersects(gp.player.interactHitbox) && canInteract) {
 
             renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , 
                     (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
             // Open UI on key press
-            if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0 && !gp.cutsceneM.cutsceneActive) {
+            if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0 && !gp.world.cutsceneM.cutsceneActive) {
                 uiOpen = !uiOpen;
                 clickCooldown = 0.1;
                 if(uiOpen) {
@@ -146,16 +149,16 @@ public class MenuSign extends Building {
 
 	    for (int j = 0; j < ingredients.size(); j++) {
 	        String ingredientName = ingredients.get(j);
-	        Food ingredient = (Food) gp.itemRegistry.getItemFromName(ingredientName, 0);
+	        Food ingredient = (Food) gp.world.itemRegistry.getItemFromName(ingredientName, 0);
 
-	        TextureRegion ingredientImage = gp.itemRegistry.getImageFromName(ingredientName);
+	        TextureRegion ingredientImage = gp.world.itemRegistry.getImageFromName(ingredientName);
 	        if (ingredient.notRawItem) {
-	            ingredientImage = gp.itemRegistry.getRawIngredientImage(ingredientName);
+	            ingredientImage = gp.world.itemRegistry.getRawIngredientImage(ingredientName);
 	        }
 
 	        data.ingredientImages.add(ingredientImage);
-	        data.cookingStateIcons.add(gp.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed));
-	        data.secondaryCookingStateIcons.add(gp.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed));
+	        data.cookingStateIcons.add(gp.world.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed));
+	        data.secondaryCookingStateIcons.add(gp.world.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed));
 	    }
 	    
 	    for (String line : recipe.getName().split(" ")) {
@@ -165,7 +168,7 @@ public class MenuSign extends Building {
 	    }
 
 	    // Cache cost
-        data.cost = Integer.toString(recipe.getCost(gp.world.isRecipeSpecial(recipe)));
+        data.cost = Integer.toString(recipe.getCost(gp.world.gameM.isRecipeSpecial(recipe)));
 
 	    return data;
 	}
@@ -185,7 +188,7 @@ public class MenuSign extends Building {
 	    }
 
 	    // Remove today’s specials from unlocked list
-	    List<Recipe> specials = gp.world.getTodaysSpecials();
+	    List<Recipe> specials = gp.world.gameM.getTodaysSpecials();
 	    unlocked.removeAll(specials);
 	    
 	    float fontScale = 0.7f;
@@ -216,7 +219,7 @@ public class MenuSign extends Building {
 	            drawRecipe(renderer, data, 8 + 2 * (36*3), 581);
 	            c = Colour.WHITE;
 	            if (gp.mouseL.mouseButtonDown(0)) {
-	                gp.world.addRecipeToMenu(recipe);
+	                gp.world.gameM.addRecipeToMenu(recipe);
 	            }
 	        } else {
 	            c = hoverColor;
@@ -248,7 +251,7 @@ public class MenuSign extends Building {
 	            drawRecipe(renderer, data, 8 + 2 * (36*3), 581); // preview
 	            c2 = specialHover;
 	            if (gp.mouseL.mouseButtonDown(0)) {
-	                gp.world.addRecipeToMenu(recipe);
+	                gp.world.gameM.addRecipeToMenu(recipe);
 	            }
 	        } else {
 	            c2 = specialColour;
@@ -262,7 +265,7 @@ public class MenuSign extends Building {
 	    }
 
 	    // Draw chosen menu slots with cached data
-	    List<Recipe> chosen = gp.world.getTodaysMenu();
+	    List<Recipe> chosen = gp.world.gameM.getTodaysMenu();
 	    for (int i = 0; i < chosen.size(); i++) {
 	        Recipe recipe = chosen.get(i);
 	        RecipeRenderData data = renderCache.get(recipe);
@@ -275,7 +278,7 @@ public class MenuSign extends Building {
 	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
 	                if (border.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY()) &&
 	                    gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-	                    gp.world.removeRecipeFromMenu(recipe);
+	                    gp.world.gameM.removeRecipeFromMenu(recipe);
 	                    clickCooldown = 0.1;
 	                }
 	            }
@@ -285,7 +288,7 @@ public class MenuSign extends Building {
 	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
 	                if (border.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY()) &&
 	                    gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-	                    gp.world.removeRecipeFromMenu(recipe);
+	                    gp.world.gameM.removeRecipeFromMenu(recipe);
 	                    clickCooldown = 0.1;
 	                }
 	            }
@@ -295,7 +298,7 @@ public class MenuSign extends Building {
 	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
 	                if (border.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY()) &&
 	                    gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-	                    gp.world.removeRecipeFromMenu(recipe);
+	                    gp.world.gameM.removeRecipeFromMenu(recipe);
 	                    clickCooldown = 0.1;
 	                }
 	            }
@@ -369,7 +372,7 @@ public class MenuSign extends Building {
     }
     
     public void confirmMenuSelection() {
-        gp.world.setTodaysMenu(selectedRecipes);
+        gp.world.gameM.setTodaysMenu(selectedRecipes);
         selectedRecipes.clear();
         uiOpen = false;
         //gp.resumeTime();

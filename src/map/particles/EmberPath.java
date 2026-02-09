@@ -25,7 +25,7 @@ public class EmberPath {
         if (isFinished()) return null;
 
         Node node = path.get(currentIndex);
-        float cell = gp.tileSize / (float) gp.pathF.nodesPerTile;
+        float cell = gp.tileSize / (float) gp.world.pathF.nodesPerTile;
 
         float x = node.col * cell + cell * 0.5f;
         float y = node.row * cell + cell * 0.5f;

@@ -23,7 +23,7 @@ public class PathFinder {
 
     public PathFinder(GamePanel gp) {
         this.gp = gp;
-        instantiateNodes(gp.mapM.getRoom(0));
+        instantiateNodes(gp.world.mapM.getRoom(0));
     }
 
     public void instantiateNodes(Room room) {
@@ -75,7 +75,7 @@ public class PathFinder {
         for (int i = 0; i < room.mapHeight; i++) {
             for (int j = 0; j < room.mapWidth; j++) {
                 int tileNum = room.mapGrid[1][j][i];
-                if (gp.mapM.tiles[tileNum].solid) {
+                if (gp.world.mapM.tiles[tileNum].solid) {
                     // Mark all sub-nodes in this tile as solid
                     for (int dy = 0; dy < nodesPerTile; dy++) {
                         for (int dx = 0; dx < nodesPerTile; dx++) {

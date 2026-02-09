@@ -48,7 +48,8 @@ public abstract class Item extends Entity {
         hitbox = new Rectangle2D.Float(xPos, yPos, width, height);
     }
 
-    public void update(double dt) {}
+    public void updateState(double dt) {}
+    public void inputUpdate(double dt) {}
 
     public void draw(Renderer renderer) {
         renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);

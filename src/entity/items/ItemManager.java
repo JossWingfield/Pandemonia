@@ -50,7 +50,11 @@ public class ItemManager {
     	return items;
     }
 
-    public void update(double dt) {
+    public void updateState(double dt) {
+
+    }
+    
+    public void inputUpdate (double dt) {
 
     }
 

@@ -143,17 +143,17 @@ public class Food extends Item {
 		return secondaryCookedBy;
 	 }
 	 public int getChopCount() {
-		if(gp.progressM.choppingBoardUpgradeI) {
+		if(gp.world.progressM.choppingBoardUpgradeI) {
 			return (int)(chopCount * 0.75);
 		}
 		return chopCount;
 	}
 	 public int getMaxCookTime() {
-		 if(gp.progressM.stoveUpgradeI) {
+		 if(gp.world.progressM.stoveUpgradeI) {
 			return (int)(cookTime*0.75);
-		 } else if(gp.progressM.stoveUpgradeII) {
+		 } else if(gp.world.progressM.stoveUpgradeII) {
 			return (int)(cookTime*0.5);
-		 } else if(gp.progressM.stoveUpgradeIII) {
+		 } else if(gp.world.progressM.stoveUpgradeIII) {
 			return (int)(cookTime*0.25);
 		 }
 		 return cookTime;

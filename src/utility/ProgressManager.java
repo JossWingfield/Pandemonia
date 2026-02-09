@@ -233,7 +233,7 @@ public class ProgressManager {
    		
     	a.setOnUnlock(() -> {
     		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
-    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+    	    gp.world.recipeM.unlockRecipe(gp.world.recipeM.getRandomLocked(gp));
     	});
     	achievements.put(a.getId(), a);
    		a = new Achievement(gp,
@@ -245,7 +245,7 @@ public class ProgressManager {
    	   		
    	    	a.setOnUnlock(() -> {
    	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
-   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+   	    	    gp.world.recipeM.unlockRecipe(gp.world.recipeM.getRandomLocked(gp));
    	    	});
    	    	achievements.put(a.getId(), a);
    	  		a = new Achievement(gp,
@@ -256,7 +256,7 @@ public class ProgressManager {
    	   	    	);
    	   	    	a.setOnUnlock(() -> {
    	   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
-   	   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+   	   	    	    gp.world.recipeM.unlockRecipe(gp.world.recipeM.getRandomLocked(gp));
    	   	    	});
    	   	    achievements.put(a.getId(), a);
    	  		a = new Achievement(gp,
@@ -267,7 +267,7 @@ public class ProgressManager {
    	   	    	);
    	   	    	a.setOnUnlock(() -> {
    	   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
-   	   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+   	   	    	    gp.world.recipeM.unlockRecipe(gp.world.recipeM.getRandomLocked(gp));
    	   	    	});
    	   	    achievements.put(a.getId(), a);
    	   	    
@@ -279,7 +279,7 @@ public class ProgressManager {
    	   	    	);
    	   	    	a.setOnUnlock(() -> {
    	   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
-   	   	    	    gp.recipeM.unlockRecipe(gp.recipeM.getRandomLocked(gp));
+   	   	    	    gp.world.recipeM.unlockRecipe(gp.world.recipeM.getRandomLocked(gp));
    	   	    	});
    	   	    achievements.put(a.getId(), a);
    	   	    
@@ -292,8 +292,8 @@ public class ProgressManager {
 
    	        	a.setOnUnlock(() -> {
    	        		gp.gui.addMessage("Cat paintings added to catalogue!", Colour.YELLOW);
-   	    			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 0));
-   	    			gp.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 1));
+   	    			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 0));
+   	    			gp.world.catalogue.addToInventory(new WallDecor_Building(gp, 0, 0, 1));
    	        	});
 
    	       achievements.put(a.getId(), a);
@@ -517,7 +517,7 @@ public class ProgressManager {
         }
     }
     public void checkRecipeCollect() {
-    	int num = gp.recipeM.getUnlockedRecipes().size();
+    	int num = gp.world.recipeM.getUnlockedRecipes().size();
     	if(num == 10) {
     		achievements.get("10_recipes").unlock();
     	} else if(num == 20){
@@ -570,7 +570,7 @@ public class ProgressManager {
     	data.moreCustomers = moreCustomers;
     	data.phase = currentPhase;
     	data.seasoningUnlocked = seasoningUnlocked;
-    	data.cutscenesWatched = gp.cutsceneM.getCutscenesWatched();
+    	data.cutscenesWatched = gp.world.cutsceneM.getCutscenesWatched();
     	for (Achievement a : achievements.values()) {
     	    if (a.isUnlocked()) {
     	        data.unlockedAchievements.add(a.getId());
@@ -590,7 +590,7 @@ public class ProgressManager {
     	fasterCustomers = data.fasterCustomers;
     	moreCustomers = data.moreCustomers;
     	seasoningUnlocked = data.seasoningUnlocked;
-    	gp.cutsceneM.setCutscenesWatched(data.cutscenesWatched);
+    	gp.world.cutsceneM.setCutscenesWatched(data.cutscenesWatched);
     	for (String id : data.unlockedAchievements) {
     		Achievement a = achievements.get(id);
     	    if (a != null) {
@@ -614,7 +614,7 @@ public class ProgressManager {
     }
     public void moveToNextPhase() {
     	currentPhase++;
-    	gp.mapM.enterNewPhase();
+    	gp.world.mapM.enterNewPhase();
     }
 	public void unlockOldKitchen() {
 		unlockedKitchen = true;
@@ -624,74 +624,74 @@ public class ProgressManager {
 		
 		currentPhase = 2;
 		
-		if(gp.mapM.isInRoom(9)) {
-			Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+		if(gp.world.mapM.isInRoom(9)) {
+			Stove stove = (Stove)gp.world.buildingM.findBuildingWithName("Stove");
 	    	if(stove != null) {
 	    		//stove.addCookStation();
 	    	}
 			
-			gp.npcM.addCook();
-			Rubble b = (Rubble)gp.buildingM.findBuildingWithName("Barricade");
+			gp.world.npcM.addCook();
+			Rubble b = (Rubble)gp.world.buildingM.findBuildingWithName("Barricade");
 	    	if(b != null) {
 	    		b.explode();
 	    	}
-	    	Building boxes = gp.buildingM.findBuildingWithName("Packages 1");
+	    	Building boxes = gp.world.buildingM.findBuildingWithName("Packages 1");
 	    	if(boxes != null) {
-	    		gp.buildingM.removeBuilding(boxes);
+	    		gp.world.buildingM.removeBuilding(boxes);
 	    	}
-	    	Building Packages = gp.buildingM.findBuildingWithName("Boxes 1");
+	    	Building Packages = gp.world.buildingM.findBuildingWithName("Boxes 1");
 	    	if(Packages != null) {
-	    		gp.buildingM.removeBuilding(Packages);
+	    		gp.world.buildingM.removeBuilding(Packages);
 			}
 		} else {
-			Stove stove = (Stove)gp.mapM.getRoom(9).findBuildingWithName("Stove");
+			Stove stove = (Stove)gp.world.mapM.getRoom(9).findBuildingWithName("Stove");
 	    	if(stove != null) {
 	    		//stove.addCookStation();
 	    	}
 			
-			gp.mapM.getRoom(9).addCook();
-			Rubble b = (Rubble)gp.mapM.getRoom(9).findBuildingWithName("Barricade");
+			gp.world.mapM.getRoom(9).addCook();
+			Rubble b = (Rubble)gp.world.mapM.getRoom(9).findBuildingWithName("Barricade");
 	    	if(b != null) {
 	    		b.explode();
 	    	}
-	    	Building boxes = gp.mapM.getRoom(9).findBuildingWithName("Packages 1");
+	    	Building boxes = gp.world.mapM.getRoom(9).findBuildingWithName("Packages 1");
 	    	if(boxes != null) {
-	    		gp.mapM.getRoom(9).removeBuilding(boxes);
+	    		gp.world.mapM.getRoom(9).removeBuilding(boxes);
 	    	}
-	    	Building Packages = gp.mapM.getRoom(9).findBuildingWithName("Boxes 1");
+	    	Building Packages = gp.world.mapM.getRoom(9).findBuildingWithName("Boxes 1");
 	    	if(Packages != null) {
-	    		gp.mapM.getRoom(9).removeBuilding(Packages);
+	    		gp.world.mapM.getRoom(9).removeBuilding(Packages);
 			}
 		}
 		
-		if(gp.mapM.isInRoom(0)) {
-	      	gp.buildingM.removeAllWithName("Chopping Board");
-			gp.buildingM.removeAllWithName("Stove");
-			gp.buildingM.removeAllWithName("Menu Sign");
-	    	gp.buildingM.removeAllWithName("Bin 1");
-	    	gp.buildingM.removeAllWithName("Sink 1");
-	      	gp.buildingM.removeAllWithName("Table Corner 1");
-	      	gp.buildingM.removeAllWithName("Storage Fridge");
-	      	gp.buildingM.removeAllWithName("Gate 1");
-	    	gp.buildingM.removeAllWithName("Table Piece");
+		if(gp.world.mapM.isInRoom(0)) {
+	      	gp.world.buildingM.removeAllWithName("Chopping Board");
+			gp.world.buildingM.removeAllWithName("Stove");
+			gp.world.buildingM.removeAllWithName("Menu Sign");
+	    	gp.world.buildingM.removeAllWithName("Bin 1");
+	    	gp.world.buildingM.removeAllWithName("Sink 1");
+	      	gp.world.buildingM.removeAllWithName("Table Corner 1");
+	      	gp.world.buildingM.removeAllWithName("Storage Fridge");
+	      	gp.world.buildingM.removeAllWithName("Gate 1");
+	    	gp.world.buildingM.removeAllWithName("Table Piece");
 	    	
-	    	gp.buildingM.addBuilding(new MenuSign(gp, 636, 228));
-	    	gp.buildingM.addBuilding(new LargeTable(gp, 516, 288));
-	    	gp.buildingM.addBuilding(new Table(gp, 348, 264, "Left", false));
+	    	gp.world.buildingM.addBuilding(new MenuSign(gp, 636, 228));
+	    	gp.world.buildingM.addBuilding(new LargeTable(gp, 516, 288));
+	    	gp.world.buildingM.addBuilding(new Table(gp, 348, 264, "Left", false));
 		} else {
-			gp.mapM.getRoom(0).removeAllWithName("Chopping Board");
-			gp.mapM.getRoom(0).removeAllWithName("Stove");
-			gp.mapM.getRoom(0).removeAllWithName("Bin 1");
-			gp.mapM.getRoom(0).removeAllWithName("Sink 1");
-			gp.mapM.getRoom(0).removeAllWithName("Table Corner 1");
-			gp.mapM.getRoom(0).removeAllWithName("Storage Fridge");
-			gp.mapM.getRoom(0).removeAllWithName("Menu Sign");
-			gp.mapM.getRoom(0).removeAllWithName("Gate 1");
-			gp.mapM.getRoom(0).removeAllWithName("Table Piece");
+			gp.world.mapM.getRoom(0).removeAllWithName("Chopping Board");
+			gp.world.mapM.getRoom(0).removeAllWithName("Stove");
+			gp.world.mapM.getRoom(0).removeAllWithName("Bin 1");
+			gp.world.mapM.getRoom(0).removeAllWithName("Sink 1");
+			gp.world.mapM.getRoom(0).removeAllWithName("Table Corner 1");
+			gp.world.mapM.getRoom(0).removeAllWithName("Storage Fridge");
+			gp.world.mapM.getRoom(0).removeAllWithName("Menu Sign");
+			gp.world.mapM.getRoom(0).removeAllWithName("Gate 1");
+			gp.world.mapM.getRoom(0).removeAllWithName("Table Piece");
 			
-			gp.mapM.getRoom(0).addBuilding(new MenuSign(gp, 636, 228));
-			gp.mapM.getRoom(0).addBuilding(new LargeTable(gp, 516, 288));
-			gp.mapM.getRoom(0).addBuilding(new Table(gp, 348, 264, "Left", false));
+			gp.world.mapM.getRoom(0).addBuilding(new MenuSign(gp, 636, 228));
+			gp.world.mapM.getRoom(0).addBuilding(new LargeTable(gp, 516, 288));
+			gp.world.mapM.getRoom(0).addBuilding(new Table(gp, 348, 264, "Left", false));
 		}
 		
 	}

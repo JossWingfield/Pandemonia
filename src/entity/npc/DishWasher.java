@@ -57,9 +57,9 @@ public class DishWasher extends Employee {
 	
 	private void findTable() {
 		if(gp.player.currentRoomIndex == currentRoomNum){
-			table = gp.buildingM.findDirtyPlate();
+			table = gp.world.buildingM.findDirtyPlate();
 		} else {
-			table = gp.mapM.getRoom(currentRoomNum).findDirtyPlate();
+			table = gp.world.mapM.getRoom(currentRoomNum).findDirtyPlate();
 		}
     }
 	private void findSink() {
@@ -122,8 +122,8 @@ public class DishWasher extends Employee {
 	    	plate = null;
 		}
     }
-	public void update(double dt) {
-		updateInteractHitbox();
+	public void updateState(double dt) {
+		super.updateState(dt);
 		
 		if(table == null) {
 			findTable();
@@ -148,6 +148,11 @@ public class DishWasher extends Employee {
 				walkToSink(dt);
 			}
 		}
+	}	
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
+		updateInteractHitbox();
+		
         animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
         if(animationSpeed >= 0.1) {
             animationSpeed = 0;
@@ -177,7 +182,7 @@ public class DishWasher extends Employee {
                 }
             }
         }
-	}	
+	}
 	public void drawCurrentItem(Renderer renderer) {
 	    	if(plate == null) {
 	    		return;

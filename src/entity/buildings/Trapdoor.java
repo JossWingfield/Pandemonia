@@ -91,7 +91,7 @@ public class Trapdoor extends Building {
 				if(cooldown == 0) {
 					if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 						//gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E) = false;
-						gp.mapM.changeRoom(roomNum, this);
+						gp.world.mapM.changeRoom(roomNum, this);
 					}
 				}
 			}
@@ -103,7 +103,7 @@ public class Trapdoor extends Building {
 	        //g2.setColor(Color.YELLOW);
 	      	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
 			 
-			if(!gp.player.hitbox.intersects(doorHitbox) && !gp.npcM.stockerCheck(npcVisualHitbox)) {
+			if(!gp.player.hitbox.intersects(doorHitbox) && !gp.world.npcM.stockerCheck(npcVisualHitbox)) {
 			    renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
 			} else {
 				renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);

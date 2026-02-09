@@ -82,8 +82,19 @@ public class Oven extends Building {
 	public void setDestroyed(boolean destroyed) {
 		this.destroyed = destroyed;
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
+		if(gp.world.progressM.ovenUpgradeI) {
+			maxCookCount = 16;
+		}
+		if(cooking) {
+		    if(gp.world.gameM.isPowerOn()) {
+		    	updateCooking(dt);
+		    }
+		}
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if (clickCooldown > 0) {
 	    	clickCooldown -= dt;        // subtract elapsed time in seconds
 			if (clickCooldown < 0) {
@@ -141,14 +152,6 @@ public class Oven extends Building {
 				    	}
 			    	}
 			    }
-		    }
-			if(gp.progressM.ovenUpgradeI) {
-				maxCookCount = 16;
-			}
-		    if(cooking) {
-		    	if(gp.world.isPowerOn()) {
-		    		updateCooking(dt);
-		    	}
 		    }
 	}
 	public void draw(Renderer renderer) {

@@ -53,7 +53,7 @@ public class CutsceneManager {
         this.cutsceneActive = true;
         this.currentEventIndex = 0;
         gp.player.setControlEnabled(false); // freeze player input
-        gp.world.pauseTime();
+        gp.world.gameM.pauseTime();
     }
 
     public void update(double dt) {
@@ -74,7 +74,7 @@ public class CutsceneManager {
     public void endCutscene() {
     	cutsceneActive = false;
         gp.player.setControlEnabled(true); // re-enable player input
-        gp.world.resumeTime();
+        gp.world.gameM.resumeTime();
     }
 
     public boolean isActive() {
@@ -196,8 +196,8 @@ public class CutsceneManager {
         events.add(new StartFadeOutEvent(gp));
         
         events.add(new ActionEvent(() -> {
-        	gp.mapM.currentRoom.setRestored();
-        	gp.progressM.unlockOldKitchen();
+        	gp.world.mapM.currentRoom.setRestored();
+        	gp.world.progressM.unlockOldKitchen();
         }));
         
         events.add(new StartFadeInEvent(gp));
@@ -218,7 +218,7 @@ public class CutsceneManager {
     public void enterKitchen() {
     	cutscenePlayed.add("Enter Kitchen");
 
-        gp.mapM.getRoom(9).setDestroyed();
+        gp.world.mapM.getRoom(9).setDestroyed();
         List<CutsceneEvent> events = new ArrayList<>();
         
         events.add(new ActionEvent(() -> {
@@ -240,7 +240,7 @@ public class CutsceneManager {
         events.add(new WaitEvent(0.33));
         
         events.add(new StartFadeOutEvent(gp));
-        events.add(new ActionEvent(() -> gp.mapM.currentRoom.setRestored()));
+        events.add(new ActionEvent(() -> gp.world.mapM.currentRoom.setRestored()));
         NPC ignis = new StoryCharacter(gp, 48*13, 48*7, 7);
         NPC chef1 = new StoryCharacter(gp, 48*13, 48*7, 6);
         NPC chef2 = new StoryCharacter(gp, 48*13, 48*7, 6);
@@ -284,7 +284,7 @@ public class CutsceneManager {
         events.add(new RemoveNPCEvent(gp, chef1));
         events.add(new RemoveNPCEvent(gp, chef2));
         events.add(new RemoveNPCEvent(gp, chef3));
-        events.add(new ActionEvent(() -> gp.mapM.currentRoom.setDestroyed()));
+        events.add(new ActionEvent(() -> gp.world.mapM.currentRoom.setDestroyed()));
         
         events.add(new ActionEvent(() -> {
         	ignis.hitbox.x = 48*10;
@@ -293,8 +293,8 @@ public class CutsceneManager {
         }));
         
         events.add(new ActionEvent(() -> {
-        	gp.particleM.roomEmbers = true;
-        	gp.particleM.randomShaking = true;
+        	gp.world.particleM.roomEmbers = true;
+        	gp.world.particleM.randomShaking = true;
         }));
         
         events.add(new CameraFollowEvent(gp, ignis, 1.4f));
@@ -350,8 +350,8 @@ public class CutsceneManager {
         	gp.player.hitbox.x = playerNPC.hitbox.x;
         	gp.player.hitbox.y = playerNPC.hitbox.y;
         	gp.player.setDirection(playerNPC.getDirection());
-        	gp.particleM.roomEmbers = false;
-           	gp.particleM.randomShaking = false;
+        	gp.world.particleM.roomEmbers = false;
+           	gp.world.particleM.randomShaking = false;
         }));
         events.add(new RemoveNPCEvent(gp, playerNPC));
         
@@ -383,7 +383,7 @@ public class CutsceneManager {
         
 
     	events.add(new ActionEvent(() -> {
-    		List<Building> torches = gp.buildingM.findBuildingsWithName("Torch");
+    		List<Building> torches = gp.world.buildingM.findBuildingsWithName("Torch");
     	    for (Building b: torches) {
     	    	Torch t = (Torch)b;
     	    	t.turnOn();
@@ -391,7 +391,7 @@ public class CutsceneManager {
     	}));
         events.add(new WaitEvent(0.33)); 
         events.add(new ActionEvent(() -> {
-    		gp.world.addLightning();
+    		gp.world.gameM.addLightning();
     	}));
         
         events.add(new DialogueEvent(gp, playerNPC, "Did those lights just turn themselves on?"));
@@ -400,14 +400,14 @@ public class CutsceneManager {
         
         
         events.add(new ActionEvent(() -> {
-    		gp.world.addLightning();
+    		gp.world.gameM.addLightning();
     	}));
         
         events.add(new DialogueEvent(gp, playerNPC, "It looks as if they left everything behind. I wonder why this place closed down all those years ago."));
         events.add(new WaitEvent(0.33)); 
         
     	events.add(new ActionEvent(() -> {
-    		List<Building> torches = gp.buildingM.findBuildingsWithName("Torch");
+    		List<Building> torches = gp.world.buildingM.findBuildingsWithName("Torch");
     	    for (Building b: torches) {
     	    	Torch t = (Torch)b;
     	    	t.turnOff();
@@ -440,11 +440,11 @@ public class CutsceneManager {
 
         List<CutsceneEvent> events = new ArrayList<>();
         
-    	Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+    	Lantern lantern = (Lantern)gp.world.buildingM.findBuildingWithName("Lantern");
 
         
         events.add(new ActionEvent(() -> {
-        	Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+        	Stove stove = (Stove)gp.world.buildingM.findBuildingWithName("Stove");
         	stove.lightFlame();
         	highlightArea = new Rectangle2D.Float(10*48, 6*48, 48*2, 48*2);
         	lantern.setFlicker(true);
@@ -475,19 +475,19 @@ public class CutsceneManager {
         events.add(new DialogueEvent(gp, ignis, "We must fix that damned breaker."));
         
         events.add(new ActionEvent(() -> {
-        	Stove stove = (Stove)gp.buildingM.findBuildingWithName("Stove");
+        	Stove stove = (Stove)gp.world.buildingM.findBuildingWithName("Stove");
         	stove.stopFlame();
         	highlightArea = null;
         }));
         
         events.add(new ActionEvent(() -> {
-            gp.world.addLightning();
+            gp.world.gameM.addLightning();
             
         }));
         
         events.add(new RemoveNPCEvent(gp, ignis));
         events.add(new ActionEvent(() -> {
-        	Rubble b = (Rubble)gp.buildingM.findBuildingWithName("Barricade");
+        	Rubble b = (Rubble)gp.world.buildingM.findBuildingWithName("Barricade");
         	if(b != null) {
         		b.explode();
         		highlightArea = null;
@@ -511,14 +511,14 @@ public class CutsceneManager {
     	
         events.add(new WaitEvent(0.66)); 
         
-        Door door = gp.buildingM.findDoor(7);
+        Door door = gp.world.buildingM.findDoor(7);
         
         float x = door.hitbox.x + door.hitbox.width/2 - 100;
         float y = door.hitbox.y + door.hitbox.height/2;
     	  
     	   events.add(new ConditionalWaitEvent(gp, () -> {
     		   if(gp.player.currentRoomIndex == 0) {
-    			   gp.particleM.spawnEmberAlongPath(10*48, 5*48, x+16, y, 20);
+    			   gp.world.particleM.spawnEmberAlongPath(10*48, 5*48, x+16, y, 20);
     		   }
                if(gp.player.currentRoomIndex == 7) {
                	return true;
@@ -532,7 +532,7 @@ public class CutsceneManager {
         }));
         
         events.add(new ActionEvent(() -> {
-        	gp.particleM.setSpawnEmbers(5*48, 9*48, 8*48, 7*48, 20);
+        	gp.world.particleM.setSpawnEmbers(5*48, 9*48, 8*48, 7*48, 20);
         }));
         NPC playerNPC = new StoryCharacter(gp, gp.player.hitbox.x, gp.player.hitbox.y, 2);
         events.add(new AddNPCEvent(gp, playerNPC));
@@ -551,11 +551,11 @@ public class CutsceneManager {
         events.add(new NPCMoveEvent(gp, playerNPC, 7, 8));
         
         events.add(new ActionEvent(() -> {
-        	gp.particleM.stopEmbers();
+        	gp.world.particleM.stopEmbers();
          	playerNPC.setDirection("Up");
-         	Door door1 = gp.buildingM.findDoor(9);
+         	Door door1 = gp.world.buildingM.findDoor(9);
          	door1.setDoorLight(true);
-         	gp.particleM.setRandomShaking(true);
+         	gp.world.particleM.setRandomShaking(true);
         }));
         
         events.add(new WaitEvent(0.33)); 
@@ -565,9 +565,9 @@ public class CutsceneManager {
         events.add(new WaitEvent(0.33)); 
         
         events.add(new ActionEvent(() -> {
-        	Door door1 = gp.buildingM.findDoor(9);
+        	Door door1 = gp.world.buildingM.findDoor(9);
          	door1.setDoorLight(false);
-         	gp.particleM.setRandomShaking(false);
+         	gp.world.particleM.setRandomShaking(false);
         	door1.unlock();
         }));
         events.add(new WaitEvent(0.33)); 
@@ -593,7 +593,7 @@ public class CutsceneManager {
 
         List<CutsceneEvent> events = new ArrayList<>();
         
-    	Lantern lantern = (Lantern)gp.buildingM.findBuildingWithName("Lantern");
+    	Lantern lantern = (Lantern)gp.world.buildingM.findBuildingWithName("Lantern");
         
         events.add(new ActionEvent(() -> {
         	lantern.setFlicker(true);
@@ -624,7 +624,7 @@ public class CutsceneManager {
         events.add(new DialogueEvent(gp, ghost2, "You shouldn't be here."));
         
         events.add(new ActionEvent(() -> {
-            gp.world.addLightning();
+            gp.world.gameM.addLightning();
         }));
         events.add(new RemoveNPCEvent(gp, ghost1));
         events.add(new RemoveNPCEvent(gp, ghost2));
@@ -668,7 +668,7 @@ public class CutsceneManager {
         events.add(new WaitEvent(0.33)); // wait 1 second
         
         events.add(new ActionEvent(() -> {
-        	gp.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 0));
+        	gp.world.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 0));
         }));
         
         events.add(new ResetZoomEvent(gp)); // wait 1 second
@@ -679,7 +679,7 @@ public class CutsceneManager {
         }));
         
         events.add(new ConditionalWaitEvent(gp, () -> {
-        	Building plant = gp.buildingM.findBuildingWithName("Plant 1");
+        	Building plant = gp.world.buildingM.findBuildingWithName("Plant 1");
             if(plant != null && plant.hitbox.x == 756 && plant.hitbox.y == 372) {
             	return true;
             } else {
@@ -711,7 +711,7 @@ public class CutsceneManager {
     	
     	cutscenePlayed.add("Destroyed Restaurant");
     	
-        gp.mapM.getRoom(0).setDestroyed();
+        gp.world.mapM.getRoom(0).setDestroyed();
 
         List<CutsceneEvent> events = new ArrayList<>();
         
@@ -735,7 +735,7 @@ public class CutsceneManager {
         events.add(new ResetZoomEvent(gp)); // wait 1 second
         
         events.add(new ConditionalWaitEvent(gp, () -> {
-            if(!gp.buildingM.hasBuildingWithName("Rubble") && !gp.buildingM.hasBuildingWithName("Spill")) {
+            if(!gp.world.buildingM.hasBuildingWithName("Rubble") && !gp.world.buildingM.hasBuildingWithName("Spill")) {
             	return true;
             } else {
             	return false;
@@ -759,11 +759,11 @@ public class CutsceneManager {
         	));
         
         events.add(new StartFadeOutEvent(gp));
-        events.add(new ActionEvent(() -> gp.mapM.currentRoom.setRestored()));
+        events.add(new ActionEvent(() -> gp.world.mapM.currentRoom.setRestored()));
         events.add(new WaitEvent(0.33)); 
         events.add(new RemoveNPCEvent(gp, builder1));
         events.add(new RemoveNPCEvent(gp, builder2));
-        events.add(new ActionEvent(() -> gp.mapM.currentRoom.setRestored()));
+        events.add(new ActionEvent(() -> gp.world.mapM.currentRoom.setRestored()));
         events.add(new ActionEvent(() -> {
         	gp.player.isInvisible = true;
         }));

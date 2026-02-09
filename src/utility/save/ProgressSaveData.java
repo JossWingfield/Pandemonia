@@ -24,7 +24,7 @@ public class ProgressSaveData extends SaveData {
 	public java.util.Set<String> unlockedAchievements = new java.util.HashSet<>();
 	
 	public void applySaveData(GamePanel gp) {
-		gp.progressM.applySaveData(this);
+		gp.world.progressM.applySaveData(this);
 	}
 	
 	

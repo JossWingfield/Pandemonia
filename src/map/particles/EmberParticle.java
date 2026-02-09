@@ -41,7 +41,7 @@ public class EmberParticle extends Particle {
         if (flare) {
             lightRadius = 9;
             light = new LightSource((int)x, (int)y, colour, lightRadius);
-            gp.lightingM.addLight(light);
+            gp.world.lightingM.addLight(light);
         }
     }
     
@@ -69,7 +69,7 @@ public class EmberParticle extends Particle {
         	light.setIntensity(alpha);
         	light.setPosition((int)x, (int)y);
             if (lifetime <= 0) {
-                gp.lightingM.removeLight(light);
+                gp.world.lightingM.removeLight(light);
             }
         }
 

@@ -113,7 +113,10 @@ public class Building extends Entity {
 		return presetNum;
 	}
 	
-	public void update(double dt) {
+	public void updateState(double dt) {
+
+	}
+	public void inputUpdate(double dt) {
 		if(canBePlaced) {
 			if(hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
 				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
@@ -127,9 +130,9 @@ public class Building extends Entity {
 			if(destructionUIOpen) {
 				if(gp.mouseL.mouseButtonDown(1)) {
 					destroy();
-					gp.customiser.addToInventory(this);
-					gp.buildingM.destroyBuilding(this);
-					gp.buildingM.checkBuildingConnections();
+					gp.world.customiser.addToInventory(this);
+					gp.world.buildingM.destroyBuilding(this);
+					gp.world.buildingM.checkBuildingConnections();
 				}
 			}
 		}

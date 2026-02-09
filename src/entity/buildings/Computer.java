@@ -42,8 +42,11 @@ public class Computer extends Building {
     	animations[0][0][0] = importImage("/decor/Computer.png").toTextureRegion();
 
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(hitbox.intersects(gp.player.interactHitbox)) {
 			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
             	gp.currentState = gp.catalogueState;

@@ -31,7 +31,7 @@ public class Pet extends NPC{
 		r = new Random();
 		
 		
-		gp.world.animalPresent = true;
+		gp.world.gameM.animalPresent = true;
 	
 		importImages();
 	}
@@ -87,20 +87,23 @@ public class Pet extends NPC{
 		}
 		int catNum;
 		if(gp.player.currentRoomIndex == RoomHelperMethods.MAIN) {
-			catNum = gp.npcM.getCatNum();
+			catNum = gp.world.npcM.getCatNum();
 		} else {
-			catNum = gp.mapM.getRoom(RoomHelperMethods.MAIN).getCatNum();
+			catNum = gp.world.mapM.getRoom(RoomHelperMethods.MAIN).getCatNum();
 		}
 		
 		if(catNum == 2) {
-    		gp.progressM.achievements.get("cat_lover").unlock();
+    		gp.world.progressM.achievements.get("cat_lover").unlock();
 		} else if(catNum == 3) {
-    		gp.progressM.achievements.get("cat_cafe").unlock();
+    		gp.world.progressM.achievements.get("cat_cafe").unlock();
 		}
 	}    
-	public void update(double dt) {
+	public void updateState(double dt) {
+		super.updateState(dt);
 		followNPC(dt, owner);
-	       animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
+    }
+	public void inputUpdate(double dt) {
+		animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
 	        if(walking) {
 	        	currentAnimation = 1;
 	        } else {
@@ -115,8 +118,7 @@ public class Pet extends NPC{
 	                animationCounter = 0; //Loops the animation
 	            }
 	        }
-    }
-	   
+	}
 	public void draw(Renderer renderer) {
         if(animations != null) {
             TextureRegion img = animations[0][currentAnimation][animationCounter];

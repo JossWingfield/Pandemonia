@@ -133,14 +133,14 @@ public class Shelf extends Building {
         int tileYEnd = (int)((hitbox.y + hitbox.height) / gp.tileSize);
 
         for (int ty = tileYStart; ty < tileYEnd; ty++) {
-            if (gp.mapM.currentRoom.mapGrid[1][tileX][ty] == 0) onRightWall = true;
-            if (gp.mapM.currentRoom.mapGrid[1][tileX+2][ty] == 0) onLeftWall = true;
+            if (gp.world.mapM.currentRoom.mapGrid[1][tileX][ty] == 0) onRightWall = true;
+            if (gp.world.mapM.currentRoom.mapGrid[1][tileX+2][ty] == 0) onLeftWall = true;
         }
                 
     	int size = 16*3;
 		int xPos = (int)((gp.mouseL.getWorldX())/size) * size;
 		int yPos = (int)((gp.mouseL.getWorldY())/size) * size;
-		if (gp.customiser.selectedBuilding != null && gp.customiser.selectedBuilding.getName().equals("Shelf")) {
+		if (gp.world.customiser.selectedBuilding != null && gp.world.customiser.selectedBuilding.getName().equals("Shelf")) {
 
 		    // Horizontal / vertical neighbors
 		    if ((int)(hitbox.x - gp.tileSize) == xPos && hitbox.y == yPos) leftShelf = true;

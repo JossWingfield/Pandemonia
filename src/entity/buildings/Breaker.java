@@ -56,18 +56,37 @@ public class Breaker extends Building{
     }
 	public void cutPower() {
 		powerOn = false;
-		gp.lightingM.updateLightColor(3, light, Colour.RED);
-		gp.lightingM.addLight(gp.player.playerLight);
+		gp.world.lightingM.updateLightColor(3, light, Colour.RED);
+		gp.world.lightingM.addLight(gp.player.playerLight);
 	}
 	public boolean isPowerOff() {
 		return !powerOn;
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void updateState(double dt) {
+		super.updateState(dt);
+	}
+	public void inputUpdate(double dt) {
 		if(firstUpdate) {
 			firstUpdate = false;
 			light = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.GREEN, 100);
-			gp.mapM.getRoom(3).addLight(light);
+			gp.world.mapM.getRoom(3).addLight(light);
+		}
+		
+		if(!powerOn) {
+			gp.world.lightingM.updateLightColor(3, light, Colour.RED);
+			if(gp.player.interactHitbox.intersects(interactHitbox)) {
+			    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+			    	powerOn = true;
+			    	gp.gui.addMessage("Power Back Online", Colour.GREEN);
+			    	gp.world.lightingM.removeLight(gp.player.playerLight);
+			    	gp.world.lightingM.setPowerOn();
+					gp.world.lightingM.updateLightColor(3, light, Colour.GREEN);
+					if(!gp.world.cutsceneM.cutscenePlayed.contains("Ignis I")) {
+						gp.world.cutsceneM.cutsceneQueued = true;
+						gp.world.cutsceneM.cutsceneName = "Ignis I";
+					}
+			    }
+			}
 		}
 	}
 	public void draw(Renderer renderer) {
@@ -78,20 +97,8 @@ public class Breaker extends Building{
 			    renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    }
 		} else {
-			gp.lightingM.updateLightColor(3, light, Colour.RED);
 			if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			    renderer.draw(animations[0][0][3], (int)(hitbox.x - xDrawOffset ), (int)(hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-			    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
-			    	powerOn = true;
-			    	gp.gui.addMessage("Power Back Online", Colour.GREEN);
-			    	gp.lightingM.removeLight(gp.player.playerLight);
-			    	gp.lightingM.setPowerOn();
-					gp.lightingM.updateLightColor(3, light, Colour.GREEN);
-					if(!gp.cutsceneM.cutscenePlayed.contains("Ignis I")) {
-						gp.cutsceneM.cutsceneQueued = true;
-						gp.cutsceneM.cutsceneName = "Ignis I";
-					}
-			    }
 			} else {
 			    renderer.draw(animations[0][0][1], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		    }

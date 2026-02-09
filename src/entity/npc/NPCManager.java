@@ -21,55 +21,55 @@ public class NPCManager {
         this.gp = gp;
     }
     public void addCustomer() {
-    	Customer customer = new Customer(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    	Customer customer = new Customer(gp, (int)gp.world.mapM.currentRoom.getSpawnX(), (int)gp.world.mapM.currentRoom.getSpawnY());
     	npcs.add(customer);
-    	//gp.mapM.addNPCToRoom(customer, 0);
+    	//gp.world.mapM.addNPCToRoom(customer, 0);
     }
     public void addGroup(int num) {
-    	GroupCustomer customer = new GroupCustomer(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    	GroupCustomer customer = new GroupCustomer(gp, (int)gp.world.mapM.currentRoom.getSpawnX(), (int)gp.world.mapM.currentRoom.getSpawnY());
     	for(int i = 0; i < num; i++) {
-    		customer = new GroupCustomer(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    		customer = new GroupCustomer(gp, (int)gp.world.mapM.currentRoom.getSpawnX(), (int)gp.world.mapM.currentRoom.getSpawnY());
         	npcs.add(customer);
     	}
     }
     public void addStocker() {
-    	Stocker stocker = new Stocker(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    	Stocker stocker = new Stocker(gp, (int)gp.world.mapM.currentRoom.getSpawnX(), (int)gp.world.mapM.currentRoom.getSpawnY());
     	npcs.add(stocker);
-    	//gp.mapM.addNPCToRoom(stocker, 0);
+    	//gp.world.mapM.addNPCToRoom(stocker, 0);
     }
     public void addServer() {
-    	Server server = new Server(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    	Server server = new Server(gp, (int)gp.world.mapM.currentRoom.getSpawnX(), (int)gp.world.mapM.currentRoom.getSpawnY());
     	npcs.add(server);
     }
     public void addCook() {
-    	Cook cook = new Cook(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    	Cook cook = new Cook(gp, (int)gp.world.mapM.currentRoom.getSpawnX(), (int)gp.world.mapM.currentRoom.getSpawnY());
     	npcs.add(cook);
     }
     public void addDishWasher() {
-    	DishWasher server = new DishWasher(gp, (int)gp.mapM.currentRoom.getSpawnX(), (int)gp.mapM.currentRoom.getSpawnY());
+    	DishWasher server = new DishWasher(gp, (int)gp.world.mapM.currentRoom.getSpawnX(), (int)gp.world.mapM.currentRoom.getSpawnY());
     	npcs.add(server);
     }
     public void addDuck() {
-    	Duck duck = new Duck(gp, (int)gp.mapM.getRooms()[0].getSpawnX(), (int)gp.mapM.getRooms()[0].getSpawnY());
-    	if(gp.mapM.isInRoom(0)) {
+    	Duck duck = new Duck(gp, (int)gp.world.mapM.getRooms()[0].getSpawnX(), (int)gp.world.mapM.getRooms()[0].getSpawnY());
+    	if(gp.world.mapM.isInRoom(0)) {
     		npcs.add(duck);
     	} else {
-    		gp.mapM.addNPCToRoom(duck, 0);
+    		gp.world.mapM.addNPCToRoom(duck, 0);
     	}
     }
     public void addRat() {
     	int x = 0;
     	int y = 0;
-    	EscapeHole hole = gp.mapM.findEscapeHole(1);
+    	EscapeHole hole = gp.world.mapM.findEscapeHole(1);
     	x = (int)hole.hitbox.x;
     	y = (int)hole.hitbox.y;
     	Rat rat = new Rat(gp, 10*48, 9*48);
     	rat.hitbox.x = x+32;
     	rat.hitbox.y = y;
-    	if(gp.mapM.isInRoom(1)) {
+    	if(gp.world.mapM.isInRoom(1)) {
     		npcs.add(rat);
     	} else {
-    		gp.mapM.addNPCToRoom(rat, 1);
+    		gp.world.mapM.addNPCToRoom(rat, 1);
     	}
     }
     public boolean containsNPC(NPC npc) {
@@ -204,11 +204,21 @@ public class NPCManager {
 		}
 		return null;
 	}
-    public void update(double dt) {
+    public void updateState(double dt) {
     	for (NPC i : new ArrayList<>(npcs)) {
     	    if (i != null) {
     	    	if(i.ableToUpdate) {
-    	    		i.update(dt);
+    	    		i.updateState(dt);
+    	    	}
+    	    }
+    	}
+        
+    }
+    public void inputUpdate(double dt) {
+    	for (NPC i : new ArrayList<>(npcs)) {
+    	    if (i != null) {
+    	    	if(i.ableToUpdate) {
+    	    		i.inputUpdate(dt);
     	    	}
     	    }
     	}

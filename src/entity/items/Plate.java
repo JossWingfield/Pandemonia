@@ -360,8 +360,8 @@ public class Plate extends Item {
 	
 	                renderer.draw(foodBorder, x - 4, baseY - 24, 32, 32);
 	
-	                TextureRegion img = gp.itemRegistry.getImageFromName(i);
-	                Food f = (Food)gp.itemRegistry.getItemFromName(i, 0);
+	                TextureRegion img = gp.world.itemRegistry.getImageFromName(i);
+	                Food f = (Food)gp.world.itemRegistry.getItemFromName(i, 0);
 	                renderer.draw(img, x-f.xDrawOffset, baseY - 24, 32, 32);
 	
 	                index++;

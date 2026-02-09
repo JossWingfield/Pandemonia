@@ -30,7 +30,7 @@ public class Turntable extends Building {
 	}
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, 48-3*6, 48-3*8);
-		gp.progressM.achievements.get("music_to_my_ears").unlock();
+		gp.world.progressM.achievements.get("music_to_my_ears").unlock();
 	}
 	public Building clone() {
 		Turntable building = new Turntable(gp, hitbox.x, hitbox.y);
@@ -47,12 +47,12 @@ public class Turntable extends Building {
 		importFromSpriteSheet("/decor/turntable.png", 8, 1, 0, 0, 0, 48, 48, 0);
 	}
 	public void destroy() {
-		gp.progressM.turntablePresent = false;
+		gp.world.progressM.turntablePresent = false;
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(firstDraw) {
-			gp.progressM.turntablePresent = true;
+			gp.world.progressM.turntablePresent = true;
 			firstDraw = false;
 		}
 		

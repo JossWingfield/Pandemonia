@@ -103,7 +103,7 @@ public class BuildingManager {
         }
     }
     public void checkBuildingConnections() {
-    	List<Building> shelves = gp.buildingM.findBuildingsWithName("Shelf");
+    	List<Building> shelves = gp.world.buildingM.findBuildingsWithName("Shelf");
 	    for (Building b: shelves) {
 	    	Shelf t = (Shelf)b;
 	    	t.updateConnections();
@@ -530,10 +530,10 @@ public class BuildingManager {
 		}
 	}
 	public void addSpill(int a) {
-		if(gp.progressM.currentPhase == 0) {
+		if(gp.world.progressM.currentPhase == 0) {
 			buildings[arrayCounter] = new Spill(gp, 15*gp.tileSize - 24, 8*gp.tileSize);
 			arrayCounter++;
-		} else if(gp.progressM.currentPhase == 1) {
+		} else if(gp.world.progressM.currentPhase == 1) {
 			if(a == 0) {
 				buildings[arrayCounter] = new Spill(gp, 15*gp.tileSize - 24, 8*gp.tileSize);
 				arrayCounter++;
@@ -576,10 +576,17 @@ public class BuildingManager {
 	public Building getBuilding(int index) {
 		return buildings[index];
 	}
-    public void update(double dt) {
+    public void updateState(double dt) {
     	for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
-            	i.update(dt); //Draws the item
+            	i.updateState(dt); //Draws the item
+            }
+        }
+    }
+    public void inputUpdate(double dt) {
+    	for(Building i: buildings) { //Loops through the items on the current map
+            if(i != null) {
+            	i.inputUpdate(dt); //Draws the item
             }
         }
     }

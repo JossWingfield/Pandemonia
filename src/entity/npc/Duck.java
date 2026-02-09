@@ -25,7 +25,7 @@ public class Duck extends NPC {
 		speed = 4*60;
 		npcType = "Duck";
 		r = new Random();
-		gp.world.animalPresent = true;
+		gp.world.gameM.animalPresent = true;
 	
 		
 		importImages();
@@ -38,23 +38,31 @@ public class Duck extends NPC {
 		importFromSpriteSheet("/npcs/duck/Duck.png", 2, 1, 0, 0, 0, 32, 16, 0);
 		importFromSpriteSheet("/npcs/duck/Duck.png", 5, 1, 1, 0, 16, 32, 16, 0);
 	}    
-	public void update(double dt) {
+	public void updateState(double dt) {
 		if(!leaving) {
 			fleeFromPlayer(dt);
-			if(hitbox.intersects(gp.player.hitbox)) {
-				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
-					timesPetted++;
-					if(timesPetted >= 60) {
-						gp.world.animalPresent = false;
-						gp.npcM.removeNPC(this);
-						leaving = true;
-					}
-				}
-			}
 		} else {
 			walking = true;
 			leave(dt);
 		}
+
+    }
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
+		
+		if(!leaving) {
+			if(hitbox.intersects(gp.player.hitbox)) {
+				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
+					timesPetted++;
+					if(timesPetted >= 60) {
+						gp.world.gameM.animalPresent = false;
+						gp.world.npcM.removeNPC(this);
+						leaving = true;
+					}
+				}
+			}
+		}
+		
 		animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
         if(walking) {
         	currentAnimation = 1;
@@ -72,7 +80,7 @@ public class Duck extends NPC {
                 animationCounter = 0; //Loops the animation
             }
         }
-    }
+	}
 	protected void leave(double dt) {
 		super.leave(dt);
 		gp.gui.addMessage("The duck is leaving now", Colour.GREEN);

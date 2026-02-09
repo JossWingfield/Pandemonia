@@ -44,7 +44,7 @@ public class Window extends Building {
 	}
 	public void destroy() {
 		if(lightsOn) {
-			gp.lightingM.removeLight(light);
+			gp.world.lightingM.removeLight(light);
 		}
 	}
 	private void importImages() {
@@ -79,18 +79,18 @@ public class Window extends Building {
 			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + hitbox.height / 2),
 					Colour.WHITE, 50);
 			light.setIntensity(0.2f);
-			gp.lightingM.addLight(light);
+			gp.world.lightingM.addLight(light);
 		}
 		int state = 0;
-		if(gp.world.getTimeOfDay() == 5) {
+		if(gp.world.gameM.getTimeOfDay() == 5) {
 			state = 1;
 			if(lightsOn) {
-				gp.lightingM.removeLight(light);
+				gp.world.lightingM.removeLight(light);
 				lightsOn = false;
 			}
 		} else {
 			if(!lightsOn) {
-				gp.lightingM.addLight(light);
+				gp.world.lightingM.addLight(light);
 				lightsOn = true;
 			}
 		}
@@ -103,7 +103,7 @@ public class Window extends Building {
 	        
 	}
 	public void drawGodRay(Renderer renderer) {
-		if(gp.world.getTimeOfDay() != 5) {
+		if(gp.world.gameM.getTimeOfDay() != 5) {
 		     renderer.draw(glowImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 	}

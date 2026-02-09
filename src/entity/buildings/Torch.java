@@ -63,16 +63,16 @@ public class Torch extends Building{
 	}
 	public void turnOff() {
 		turnedOn = false;
-		gp.lightingM.removeLight(light);
+		gp.world.lightingM.removeLight(light);
 		currentAnimation = 0;
 	}
 	public void turnOn() {
 		turnedOn = true;
 		currentAnimation = 1;
-		gp.lightingM.addLight(light);
+		gp.world.lightingM.addLight(light);
 	}
 	public void destroy() {
-		gp.lightingM.removeLight(light);
+		gp.world.lightingM.removeLight(light);
 	}
 	public void setFlicker(boolean enabled) {
 		this.flickerEnabled = enabled;
@@ -91,7 +91,7 @@ public class Torch extends Building{
 			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 4),Colour.YELLOW, 32);
 			light.setIntensity(1f);
 			if (turnedOn) {
-				gp.lightingM.addLight(light);
+				gp.world.lightingM.addLight(light);
 			}
 		}
 		

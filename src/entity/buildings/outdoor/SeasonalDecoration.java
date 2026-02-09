@@ -290,7 +290,7 @@ public class SeasonalDecoration extends Building {
 		} 
 		
 		int season = -1;
-		switch(gp.world.getCurrentSeason()) {
+		switch(gp.world.gameM.getCurrentSeason()) {
 		case SPRING:
 			season = 0;
 			break;

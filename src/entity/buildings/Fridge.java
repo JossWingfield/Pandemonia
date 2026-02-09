@@ -56,7 +56,7 @@ public class Fridge extends Building {
     	contents.clear();
     	int counter = 0;
     	for(String name: fridgeContents) {
-    		Item i = gp.itemRegistry.getItemFromName(name, fridgeContentsStates.get(counter));
+    		Item i = gp.world.itemRegistry.getItemFromName(name, fridgeContentsStates.get(counter));
     		contents.add((Food)i);
     		counter++;
     	}
@@ -86,36 +86,26 @@ public class Fridge extends Building {
     public List<Food> getContents() {
         return contents;
     }
-    public void update(double dt) {
-    	super.update(dt);
+    public void updateState(double dt) {
+    	super.updateState(dt);
+    }
+    public void inputUpdate(double dt) {
+    	
     	if (clickCooldown > 0) {
     		clickCooldown -= dt;        // subtract elapsed time in seconds
 		    if (clickCooldown < 0) {
 		    	clickCooldown = 0;      // clamp to zero
 		    }
 		}
-    }
-    public void draw(Renderer renderer) {
-        if(firstUpdate) {
-            firstUpdate = false;
-            fridgeHitbox = new Rectangle2D.Float(hitbox.x + 18, hitbox.y + hitbox.height, 14, 16);
-        }
-        
-        if(gp.progressM.fridgeUpgradeI) {
+    	
+        if(gp.world.progressM.fridgeUpgradeI) {
         	MAX_CAPACITY = 10;
-        	if(gp.progressM.fridgeUpgradeII) {
+        	if(gp.world.progressM.fridgeUpgradeII) {
         		MAX_CAPACITY = 15;
         	}
         }
-
-		renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight); 
-
+        
         if(fridgeHitbox.intersects(gp.player.hitbox)) {
-            renderer.draw(animations[0][0][1], 
-                (int) hitbox.x - xDrawOffset , 
-                (int) (hitbox.y ) - yDrawOffset, 
-                drawWidth, drawHeight);
-
             if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
                 // If player is holding food, try to put it straight in the fridge
                 if (gp.player.currentItem instanceof Food f) {
@@ -123,24 +113,84 @@ public class Fridge extends Building {
                         contents.add((Food) f.clone());
                         gp.player.currentItem = null;
                         clickCooldown = 0.333; 
-                        /*
-                        if(gp.multiplayer) {
-			    			Packet17AddItemToFridge packet = new Packet17AddItemToFridge(gp.player.getUsername(), getArrayCounter(), f.getName(), f.getState());
-			    			packet.writeData(gp.socketClient); 
-			    			Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
-			    			packet2.writeData(gp.socketClient); 
-			    		}
-			    		*/
                         uiOpen = false; // keep fridge closed
                     } else {
                     	clickCooldown = 0.1; 
                     }
                 } else {
-                    // Otherwise toggle fridge UI
                     uiOpen = !uiOpen;
                    	clickCooldown = 0.1; 
                 }
             }
+        } 
+        
+        if (uiOpen) {
+            int baseX = (int)(hitbox.x - (112 * 1.5));
+            int baseY = (int)hitbox.y;
+
+            itemHitboxes.clear();
+
+            float mouseX = gp.mouseL.getWorldX();
+            float mouseY = gp.mouseL.getWorldY();
+
+            int slotSize = 16 * 3;
+            int padding = 1 * 3;
+            int itemsPerRow = 5;
+            int startX = baseX + 14 * 3;
+            int startY = baseY + 16 * 3;
+
+            for (int i = 0; i < contents.size(); i++) {
+                int row = i / itemsPerRow;
+                int col = i % itemsPerRow;
+
+                int x = startX + col * (slotSize + padding);
+                int y = startY + row * (slotSize + padding);
+
+                Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, slotSize, slotSize);
+                itemHitboxes.add(hitbox);
+                
+                if (hitbox.contains(mouseX, mouseY)) {
+
+                    if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+                        if(gp.player.currentItem == null) {
+                            // TAKE OUT ITEM
+                            Food food = contents.remove(i);
+                            gp.player.currentItem = (Food) gp.world.itemRegistry.getItemFromName(food.getName(), food.getState());
+                            clickCooldown = 0.1;
+                            uiOpen = false;
+                        	gp.player.resetAnimation(4);
+                        } else {
+                            // PUT ITEM IN (only if fridge not full)
+                            if (gp.player.currentItem instanceof Food f) {
+                                if (contents.size() < MAX_CAPACITY) {
+                                    contents.add(f);
+                                    gp.player.currentItem = null;
+                                    clickCooldown = 0.1;
+                                    uiOpen = false;
+                                } else {
+                                    clickCooldown = 0.1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+    public void draw(Renderer renderer) {
+        if(firstUpdate) {
+            firstUpdate = false;
+            fridgeHitbox = new Rectangle2D.Float(hitbox.x + 18, hitbox.y + hitbox.height, 14, 16);
+        }
+        
+		renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight); 
+
+        if(fridgeHitbox.intersects(gp.player.hitbox)) {
+            renderer.draw(animations[0][0][1], 
+                (int) hitbox.x - xDrawOffset , 
+                (int) (hitbox.y ) - yDrawOffset, 
+                drawWidth, drawHeight);
         } else {
             uiOpen = false;
         }
@@ -194,52 +244,6 @@ public class Fridge extends Building {
 
                 if (hitbox.contains(mouseX, mouseY)) {
                     renderer.draw(ui3, x, y, slotSize, slotSize);
-
-                    if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-                        if(gp.player.currentItem == null) {
-                            // TAKE OUT ITEM
-                            Food food = contents.remove(i);
-                            gp.player.currentItem = (Food) gp.itemRegistry.getItemFromName(food.getName(), food.getState());
-                            clickCooldown = 0.1;
-                            uiOpen = false;
-                        	gp.player.resetAnimation(4);
-
-                        	/*
-                            if(gp.multiplayer) {
-                                int state = 0;
-                                if(gp.player.currentItem instanceof Food f) {
-                                    state = f.getState();
-                                }
-                                Packet03PickupItem packet = new Packet03PickupItem(
-                                    gp.player.currentItem.getName(), 
-                                    gp.player.getUsername(), state);
-                                packet.writeData(gp.socketClient);
-                                Packet18RemoveItemFromFridge packet2 = new Packet18RemoveItemFromFridge(gp.player.getUsername(), getArrayCounter(), i);
-				    			packet2.writeData(gp.socketClient); 
-                            }
-                            */
-                        } else {
-                            // PUT ITEM IN (only if fridge not full)
-                            if (gp.player.currentItem instanceof Food f) {
-                                if (contents.size() < MAX_CAPACITY) {
-                                    contents.add(f);
-                                    gp.player.currentItem = null;
-                                    clickCooldown = 0.1;
-                                    uiOpen = false;
-                                    /*
-                                    if(gp.multiplayer) {
-    					    			Packet17AddItemToFridge packet = new Packet17AddItemToFridge(gp.player.getUsername(), getArrayCounter(), f.getName(), f.getState());
-    					    			packet.writeData(gp.socketClient); 
-    					    			Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
-    					    			packet2.writeData(gp.socketClient); 
-    					    		}
-    					    		*/
-                                } else {
-                                    clickCooldown = 0.1;
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }

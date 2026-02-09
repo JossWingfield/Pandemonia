@@ -19,6 +19,6 @@ public class OrderSaveData extends SaveData {
 	  public List<Integer> panSkinInventory = new ArrayList<>();
 	  
 	  public void applySaveData(GamePanel gp) {
-		  gp.world.setOrderData(this);
+		  gp.world.gameM.setOrderData(this);
 	  }
 }

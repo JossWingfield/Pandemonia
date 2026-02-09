@@ -31,7 +31,7 @@ public class FryingPan extends CookingItem {
 		animations[0][0][11] = importImage("/decor/CookingPots.png").getSubimage(48, 32 ,16, 16);
 	}
 	public void refreshImages() {
-		animations = gp.mapM.currentRoom.getPanSkin().getFryingPanAnimations();
+		animations = gp.world.mapM.currentRoom.getPanSkin().getFryingPanAnimations();
 	}
 	protected void animatePan(double dt) {
 		if (cooking) {

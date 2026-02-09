@@ -10,7 +10,7 @@ public class StatisticsSaveData extends SaveData {
     public int decorationsPlaced;
 	
 	public void applySaveData(GamePanel gp) {
-		gp.progressM.applySaveStatisticsData(this);
+		gp.world.progressM.applySaveStatisticsData(this);
 	}
 	
 }

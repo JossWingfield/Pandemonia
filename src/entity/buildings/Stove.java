@@ -71,15 +71,15 @@ public class Stove extends Building {
 		//addCookStation();
 	}
 	public void addCookStation() {
-		if(gp.progressM.unlockedKitchen) {
+		if(gp.world.progressM.unlockedKitchen) {
 			CookStation c = new CookStation(gp, hitbox.x-48, hitbox.y+4);
-			if(gp.mapM.isInRoom(9)) {
-				if(!gp.buildingM.hasBuildingWithName("Cook Station")) {
-					gp.buildingM.addBuilding(c);
+			if(gp.world.mapM.isInRoom(9)) {
+				if(!gp.world.buildingM.hasBuildingWithName("Cook Station")) {
+					gp.world.buildingM.addBuilding(c);
 				}
 			} else {
-				if(!gp.mapM.getRoom(9).hasBuildingWithName("Cook Station")) {
-					gp.mapM.getRoom(9).addBuilding(c);
+				if(!gp.world.mapM.getRoom(9).hasBuildingWithName("Cook Station")) {
+					gp.world.mapM.getRoom(9).addBuilding(c);
 				}
 			}
 		}
@@ -114,18 +114,13 @@ public class Stove extends Building {
 
 	    if (food.foodState == FoodState.BURNT) {
 	        item.stopCooking();
-	        gp.lightingM.removeLight(light);
+	        gp.world.lightingM.removeLight(light);
 	    }
 	}
-	public void update(double dt) {
-		super.update(dt);
-		if(firstUpdate) {
-			firstUpdate = false;
-			//addCookStation();
-		}
+	public void updateState(double dt) {
+		super.updateState(dt);
 		
-		
-		if(gp.world.isPowerOn()) {
+		if(gp.world.gameM.isPowerOn()) {
 			if (leftSlot instanceof CookingItem pan) {
 			    pan.updateCooking(dt);
 			    checkBurnAndDisableLight(pan, leftLight);
@@ -135,8 +130,11 @@ public class Stove extends Building {
 			    checkBurnAndDisableLight(pan, rightLight);
 			}
 		}
-
-		if(gp.mapM.isInRoom(roomNum)) { 
+	}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
+		
+		if(gp.world.mapM.isInRoom(roomNum)) { 
 		if(leftSlot != null) {
 			if(leftHitbox.intersects(gp.player.hitbox)) {
 				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
@@ -166,7 +164,7 @@ public class Stove extends Building {
 							gp.player.currentItem = leftSlot;
 							gp.player.resetAnimation(4);
 							gp.player.clickCounter = 0.1;
-							gp.lightingM.removeLight(leftLight);
+							gp.world.lightingM.removeLight(leftLight);
 							String foodName = null;
 							String itemName = null;
 							int foodState = 0;
@@ -179,19 +177,6 @@ public class Stove extends Building {
 								}
 								itemName = leftSlot.getName();
 							}
-							/*
-							if(gp.multiplayer) {
-								Packet08PickUpFromStove packet = new Packet08PickUpFromStove(
-			    	                	gp.player.getUsername(),
-			    	                    foodName,
-			    	                    itemName,
-			    	                    0,
-			    	                    getArrayCounter(),
-			    	                    foodState,
-			    	                    cookTime);
-		    	                packet.writeData(gp.socketClient);
-		    	            }
-		    	            */
 							leftSlot = null;
 						}
 					} else {
@@ -201,21 +186,7 @@ public class Stove extends Building {
 								Food f = (Food)gp.player.currentItem;
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
-									gp.lightingM.addLight(leftLight);
-									/*
-									if(gp.multiplayer) {
-										 // send packet to server
-									    Packet16StartCookingOnStove packet = new Packet16StartCookingOnStove(
-									        gp.player.getUsername(),  // or player ID
-									        getArrayCounter(),       // you'll need a unique ID for each stove
-									        0, // 0 = left slot, 1 = right slot
-									        gp.player.currentItem.getName()
-									    );
-									    packet.writeData(gp.socketClient);
-									    Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
-						    			packet2.writeData(gp.socketClient); 
-									}
-									*/
+									gp.world.lightingM.addLight(leftLight);
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
 								}
@@ -227,17 +198,17 @@ public class Stove extends Building {
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
-										gp.lightingM.removeLight(leftLight);
+										gp.world.lightingM.removeLight(leftLight);
 										pan.resetImages();
 									} else if(pan.cookingItem.foodState == FoodState.BURNT) {
 										pan.cookingItem = null;
-										pan.cookingItem = (Food)gp.itemRegistry.getItemFromName("Burnt Food", 0);
+										pan.cookingItem = (Food)gp.world.itemRegistry.getItemFromName("Burnt Food", 0);
 										pan.cookingItem.foodState = FoodState.PLATED;
 										Plate p = (Plate)gp.player.currentItem;
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
-										gp.lightingM.removeLight(leftLight);
+										gp.world.lightingM.removeLight(leftLight);
 										pan.resetImages();
 									}
 								}
@@ -248,21 +219,7 @@ public class Stove extends Building {
 								Food f = (Food)gp.player.currentItem;
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
-									gp.lightingM.addLight(leftLight);
-									/*
-									if(gp.multiplayer) {
-										 // send packet to server
-									    Packet16StartCookingOnStove packet = new Packet16StartCookingOnStove(
-									        gp.player.getUsername(),  // or player ID
-									        getArrayCounter(),       // you'll need a unique ID for each stove
-									        0, // 0 = left slot, 1 = right slot
-									        gp.player.currentItem.getName()
-									    );
-									    packet.writeData(gp.socketClient);
-									    Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
-						    			packet2.writeData(gp.socketClient); 
-									}
-									*/
+									gp.world.lightingM.addLight(leftLight);
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
 								}
@@ -274,17 +231,17 @@ public class Stove extends Building {
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
-										gp.lightingM.removeLight(leftLight);
+										gp.world.lightingM.removeLight(leftLight);
 										pan.resetImages();
 									} else if(pan.cookingItem.foodState == FoodState.BURNT) {
 										pan.cookingItem = null;
-										pan.cookingItem = (Food)gp.itemRegistry.getItemFromName("Burnt Food", 0);
+										pan.cookingItem = (Food)gp.world.itemRegistry.getItemFromName("Burnt Food", 0);
 										pan.cookingItem.foodState = FoodState.PLATED;
 										Plate p = (Plate)gp.player.currentItem;
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
-										gp.lightingM.removeLight(leftLight);
+										gp.world.lightingM.removeLight(leftLight);
 										pan.resetImages();
 									}
 								}
@@ -308,23 +265,10 @@ public class Stove extends Building {
 									foodName = leftSlot.cookingItem.getName();
 									foodState = leftSlot.cookingItem.getState();
 									cookTime = (int)leftSlot.getCookTime();
-									gp.lightingM.addLight(leftLight);
+									gp.world.lightingM.addLight(leftLight);
 								}
 								itemName = leftSlot.getName();
 							}
-							/*
-							if(gp.multiplayer) {
-								Packet09PlaceItemOnStove packet = new Packet09PlaceItemOnStove(
-			    	                	gp.player.getUsername(),
-			    	                    foodName,
-			    	                    itemName,
-			    	                    0,
-			    	                    getArrayCounter(),
-			    	                    foodState,
-			    	                    cookTime);
-		    	                packet.writeData(gp.socketClient);
-		    	            }
-		    	            */
 							gp.player.currentItem = null;
 							gp.player.clickCounter = 0.1;
 						}
@@ -364,7 +308,7 @@ public class Stove extends Building {
 							String itemName = null;
 							int foodState = 0;
 							int cookTime = 0;
-							gp.lightingM.removeLight(rightLight);
+							gp.world.lightingM.removeLight(rightLight);
 							if(rightSlot != null) {
 								if(rightSlot.cookingItem != null) {
 									foodName = rightSlot.cookingItem.getName();
@@ -373,19 +317,6 @@ public class Stove extends Building {
 								}
 								itemName = rightSlot.getName();
 							}
-							/*
-							if(gp.multiplayer) {
-								Packet08PickUpFromStove packet = new Packet08PickUpFromStove(
-			    	                	gp.player.getUsername(),
-			    	                    foodName,
-			    	                    itemName,
-			    	                    1,
-			    	                    getArrayCounter(),
-			    	                    foodState,
-			    	                    cookTime);
-		    	                packet.writeData(gp.socketClient);
-		    	            }
-		    	            */
 							rightSlot = null;
 						}
 					} else {
@@ -395,21 +326,7 @@ public class Stove extends Building {
 								Food f = (Food)gp.player.currentItem;
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
-									gp.lightingM.addLight(rightLight);
-									/*
-									if(gp.multiplayer) {
-										 // send packet to server
-									    Packet16StartCookingOnStove packet = new Packet16StartCookingOnStove(
-									        gp.player.getUsername(),  // or player ID
-									        getArrayCounter(),       // you'll need a unique ID for each stove
-									        1, // 0 = left slot, 1 = right slot
-									        gp.player.currentItem.getName()
-									    );
-									    packet.writeData(gp.socketClient);
-									    Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
-						    			packet2.writeData(gp.socketClient); 
-									}
-									*/
+									gp.world.lightingM.addLight(rightLight);
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
 								}
@@ -420,17 +337,17 @@ public class Stove extends Building {
 										Plate p = (Plate)gp.player.currentItem;
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
-										gp.lightingM.removeLight(rightLight);
+										gp.world.lightingM.removeLight(rightLight);
 										pan.stopCooking();
 										pan.resetImages();
 									} else if(pan.cookingItem.foodState == FoodState.BURNT) {
 										pan.cookingItem = null;
-										pan.cookingItem = (Food)gp.itemRegistry.getItemFromName("Burnt Food", 0);
+										pan.cookingItem = (Food)gp.world.itemRegistry.getItemFromName("Burnt Food", 0);
 										pan.cookingItem.foodState = FoodState.PLATED;
 										Plate p = (Plate)gp.player.currentItem;
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
-										gp.lightingM.removeLight(rightLight);
+										gp.world.lightingM.removeLight(rightLight);
 										pan.stopCooking();
 										pan.resetImages();
 									}
@@ -442,21 +359,7 @@ public class Stove extends Building {
 								Food f = (Food)gp.player.currentItem;
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
-									gp.lightingM.addLight(rightLight);
-									/*
-									if(gp.multiplayer) {
-										 // send packet to server
-									    Packet16StartCookingOnStove packet = new Packet16StartCookingOnStove(
-									        gp.player.getUsername(),  // or player ID
-									        getArrayCounter(),       // you'll need a unique ID for each stove
-									        1, // 0 = left slot, 1 = right slot
-									        gp.player.currentItem.getName()
-									    );
-									    packet.writeData(gp.socketClient);
-									    Packet13ClearPlayerHand packet2 = new Packet13ClearPlayerHand(gp.player.getUsername());
-						    			packet2.writeData(gp.socketClient); 
-									}
-									*/
+									gp.world.lightingM.addLight(rightLight);
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
 								}
@@ -467,17 +370,17 @@ public class Stove extends Building {
 										Plate p = (Plate)gp.player.currentItem;
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
-										gp.lightingM.removeLight(rightLight);
+										gp.world.lightingM.removeLight(rightLight);
 										pan.stopCooking();
 										pan.resetImages();
 									} else if(pan.cookingItem.foodState == FoodState.BURNT) {
 										pan.cookingItem = null;
-										pan.cookingItem = (Food)gp.itemRegistry.getItemFromName("Burnt Food", 0);
+										pan.cookingItem = (Food)gp.world.itemRegistry.getItemFromName("Burnt Food", 0);
 										pan.cookingItem.foodState = FoodState.PLATED;
 										Plate p = (Plate)gp.player.currentItem;
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
-										gp.lightingM.removeLight(rightLight);
+										gp.world.lightingM.removeLight(rightLight);
 										pan.stopCooking();
 										pan.resetImages();
 									}
@@ -502,23 +405,10 @@ public class Stove extends Building {
 									foodName = rightSlot.cookingItem.getName();
 									foodState = rightSlot.cookingItem.getState();
 									cookTime = (int)rightSlot.getCookTime();
-									gp.lightingM.addLight(rightLight);
+									gp.world.lightingM.addLight(rightLight);
 								}
 								itemName = rightSlot.getName();
 							}
-							/*
-							if(gp.multiplayer) {
-								Packet09PlaceItemOnStove packet = new Packet09PlaceItemOnStove(
-			    	                	gp.player.getUsername(),
-			    	                    foodName,
-			    	                    itemName,
-			    	                    1,
-			    	                    getArrayCounter(),
-			    	                    foodState,
-			    	                	cookTime);
-		    	                packet.writeData(gp.socketClient);
-		    	            }
-		    	            */
 							gp.player.currentItem = null;
 							gp.player.clickCounter = 0.1;
 						}
@@ -543,18 +433,14 @@ public class Stove extends Building {
 		}
 	}
 	public void destroy() {
-		gp.lightingM.removeLight(leftLight);
-		gp.lightingM.removeLight(rightLight);
+		gp.world.lightingM.removeLight(leftLight);
+		gp.world.lightingM.removeLight(rightLight);
 	}
 	public void setDestroyed(boolean destroyed) {
 		this.destroyed = destroyed;
 	}
 	public void draw(Renderer renderer) {
-
-		//g2.setColor(Color.YELLOW);
-		//g2.drawRect((int)leftHitbox.x, (int)leftHitbox.y, (int)leftHitbox.width, (int)leftHitbox.height);
-		//g2.drawRect((int)rightHitbox.x, (int)rightHitbox.y, (int)rightHitbox.width, (int)rightHitbox.height);
-		 
+		
 		if(destroyed) {
 			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {

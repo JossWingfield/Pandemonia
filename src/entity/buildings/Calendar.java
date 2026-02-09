@@ -43,7 +43,7 @@ public class Calendar extends Building {
 	}
 	public void draw(Renderer renderer) {
 		int season = -1;
-		switch(gp.world.getCurrentSeason()) {
+		switch(gp.world.gameM.getCurrentSeason()) {
 		case SPRING:
 			season = 0;
 			break;

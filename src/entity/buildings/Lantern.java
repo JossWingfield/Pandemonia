@@ -56,16 +56,16 @@ public class Lantern extends Building{
 	}
 	public void turnOff() {
 		turnedOn = false;
-		gp.lightingM.removeLight(light);
+		gp.world.lightingM.removeLight(light);
 	}
 	public void turnOn() {
 		if(!turnedOn) {
-			gp.lightingM.addLight(light);
+			gp.world.lightingM.addLight(light);
 		}
 		turnedOn = true;
 	}
 	public void destroy() {
-		gp.lightingM.removeLight(light);
+		gp.world.lightingM.removeLight(light);
 	}
 	public void setFlicker(boolean enabled) {
 		this.flickerEnabled = enabled;
@@ -85,7 +85,7 @@ public class Lantern extends Building{
 					Colour.ORANGE, 240);
 			light.setIntensity(0.4f);
 			if (turnedOn) {
-				gp.lightingM.addLight(light);
+				gp.world.lightingM.addLight(light);
 			}
 		}
 		

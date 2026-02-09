@@ -47,8 +47,8 @@ public class Spill extends Building {
     	animations[0][0][0] = importImage("/decor/kitchen props.png").getSubimage(96, 96, 32, 32);
     	animations[0][0][1] = importImage("/decor/SpillHighlight.png").toTextureRegion();
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(hitbox.intersects(gp.player.interactHitbox)) {
 		    if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
 		    	spillCount+=dt;
@@ -56,7 +56,7 @@ public class Spill extends Building {
 		    		spillCount = 0;
 		    		gp.player.setNormalSpeed();
 		    		removedSpill = true;
-		    		gp.buildingM.removeBuilding(this);
+		    		gp.world.buildingM.removeBuilding(this);
 		    	}
 		    }
 		}

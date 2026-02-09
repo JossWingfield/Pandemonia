@@ -461,7 +461,7 @@ public class RecipeManager {
         return candidates.get(random.nextInt(candidates.size()));
     }
     public static Recipe[] getTwoRandomLocked(GamePanel gp) {
-        int currentPhase = gp.progressM.currentPhase;
+        int currentPhase = gp.world.progressM.currentPhase;
 
         // Filter locked recipes by phase
         List<Recipe> locked = getLockedRecipes().stream()
@@ -479,7 +479,7 @@ public class RecipeManager {
         return new Recipe[] { r1, r2 };
     }
     public static Recipe getRandomLocked(GamePanel gp) {
-        int currentPhase = gp.progressM.currentPhase;
+        int currentPhase = gp.world.progressM.currentPhase;
 
         // Filter locked recipes by phase
         List<Recipe> locked = getLockedRecipes().stream()

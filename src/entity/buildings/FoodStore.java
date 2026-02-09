@@ -90,8 +90,8 @@ public class FoodStore extends Building {
 		}
 		yDrawOffset = 48;
 	}
-	public void update(double dt) {
-		super.update(dt);
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		if(firstUpdate) {
 			firstUpdate = false;
 			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
@@ -116,20 +116,8 @@ public class FoodStore extends Building {
 				    }
 
 				    if (itemName != null) {
-				        gp.player.currentItem = (Food) gp.itemRegistry.getItemFromName(itemName, 0);
+				        gp.player.currentItem = (Food) gp.world.itemRegistry.getItemFromName(itemName, 0);
 				    	gp.player.resetAnimation(4);
-
-				    	/*
-				        if (gp.multiplayer) {
-				            int state = gp.player.currentItem instanceof Food f ? f.getState() : 0;
-				            Packet03PickupItem packet = new Packet03PickupItem(
-				                gp.player.currentItem.getName(),
-				                gp.player.getUsername(),
-				                state
-				            );
-				            packet.writeData(gp.socketClient);
-				        }
-				        */
 				    }
 				}
 			}
