@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import entity.PlayerMP;
+import entity.buildings.ChoppingBoard;
 import entity.buildings.FloorDecor_Building;
+import entity.items.Food;
+import entity.items.FoodState;
 import entity.items.Item;
 import main.GamePanel;
 import main.renderer.Colour;
@@ -22,6 +25,9 @@ import net.packets.Packet08SpawnInfo;
 import net.packets.Packet09PickFridgeItem;
 import net.packets.Packet10PlaceOnTable;
 import net.packets.Packet11PickUpFromTable;
+import net.packets.Packet12PlaceOnChoppingBoard;
+import net.packets.Packet13PickUpFromChoppingBoard;
+import net.packets.Packet14Chop;
 import net.snapshots.PlayerSnapshot;
 
 public class GameServer extends Thread {
@@ -36,14 +42,14 @@ public class GameServer extends Thread {
     private DiscoveryManager discoveryManager;
     long lastSnapshot = 0;
 
-    public GameServer(GamePanel gp) throws IOException {
+    public GameServer(GamePanel gp, String name) throws IOException {
         this.gp = gp;
         this.serverSocket = new ServerSocket(GAME_PORT);
 
         discoveryManager = new DiscoveryManager(
                 true,
                 gp.player != null ? gp.player.getUsername() : "Host",
-                gp.world.progressM.worldName,
+                		name,
                 GAME_PORT
         );
         discoveryManager.start();
@@ -352,6 +358,98 @@ public class GameServer extends Thread {
         // Remove from player
         player.currentItem = placed;
         table.currentItem = null;
+
+
+        sendToAll(packet);
+    }
+    public void handlePlaceOnChoppingBoard(Packet12PlaceOnChoppingBoard packet, ClientHandler sender) {
+
+        PlayerMP player = sender.getPlayer();
+        if (player == null) return;
+
+        // Security: username must match sender
+        if (!player.getUsername().equals(packet.getUsername())) return;
+
+        // Must be holding something
+        if (player.currentItem == null) return;
+
+        int tableIndex = packet.getTableIndex();
+
+        ChoppingBoard board = (ChoppingBoard)gp.world.buildingM.getBuilding(tableIndex);
+        if (board == null) return;
+        Item placed = gp.world.itemRegistry.getItemFromItemData(packet.getItemData());
+
+        if(!(placed instanceof Food f)) return;
+        
+        Food food = (Food)placed;
+        
+        // Table must be empty
+        if (!board.isEmpty()) return;
+        if (!board.canChop(placed.getName()))return;
+        if(!food.foodState.equals(FoodState.RAW)) return;
+
+        board.addItem(food);
+
+        // Remove from player
+        player.currentItem = null;
+
+        sendToAll(packet);
+    }
+    public void handlePickUpFromChoppingBoard(Packet13PickUpFromChoppingBoard packet, ClientHandler sender) {
+
+        PlayerMP player = sender.getPlayer();
+        if (player == null) return;
+
+        // Security: username must match sender
+        if (!player.getUsername().equals(packet.getUsername())) return;
+
+        // Must not be holding something
+        if (player.currentItem != null) return;
+
+        int tableIndex = packet.getTableIndex();
+
+        ChoppingBoard board = (ChoppingBoard)gp.world.buildingM.getBuilding(tableIndex);
+        if (board == null) return;
+
+        // Table must not be empty
+        if (board.isEmpty()) return;
+
+        Item placed = gp.world.itemRegistry.getItemFromItemData(packet.getItemData());
+        if(!(placed instanceof Food f)) return;
+        
+        Food food = (Food)placed;
+        
+        if(food.foodState.equals(FoodState.RAW)) return;
+        
+        // Remove from player
+        player.currentItem = placed;
+        board.removeItem();
+
+
+        sendToAll(packet);
+    }
+    public void handleChop(Packet14Chop packet, ClientHandler sender) {
+
+        PlayerMP player = sender.getPlayer();
+        if (player == null) return;
+
+        // Security: username must match sender
+        if (!player.getUsername().equals(packet.getUsername())) return;
+        
+        // Must not be holding something
+        if (player.currentItem != null) return;
+
+        int tableIndex = packet.getTableIndex();
+
+        ChoppingBoard board = (ChoppingBoard)gp.world.buildingM.getBuilding(tableIndex);
+        if (board == null) return;
+
+        // Table must not be empty
+        if (board.isEmpty()) return;
+        
+        if(!board.canContinueChopping()) return;
+        
+        board.setChopCount(packet.getChopCount()+1);
 
 
         sendToAll(packet);

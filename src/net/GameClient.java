@@ -11,7 +11,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import entity.Player;
 import entity.PlayerMP;
+import entity.buildings.ChoppingBoard;
 import entity.buildings.FloorDecor_Building;
+import entity.items.Food;
 import entity.items.Item;
 import main.GamePanel;
 import main.renderer.Colour;
@@ -28,6 +30,9 @@ import net.packets.Packet08SpawnInfo;
 import net.packets.Packet09PickFridgeItem;
 import net.packets.Packet10PlaceOnTable;
 import net.packets.Packet11PickUpFromTable;
+import net.packets.Packet12PlaceOnChoppingBoard;
+import net.packets.Packet13PickUpFromChoppingBoard;
+import net.packets.Packet14Chop;
 import net.packets.PacketType;
 import net.snapshots.PlayerSnapshot;
 
@@ -98,6 +103,9 @@ public class GameClient extends Thread {
                     case PICK_FRIDGE_ITEM -> new Packet09PickFridgeItem(in);
                     case PLACE_ON_TABLE -> new Packet10PlaceOnTable(in);
                     case PICK_UP_FROM_TABLE-> new Packet11PickUpFromTable(in);
+                    case PLACE_ON_CHOPPING_BOARD -> new Packet12PlaceOnChoppingBoard(in);
+                    case PICK_UP_FROM_CHOPPING_BOARD -> new Packet13PickUpFromChoppingBoard(in);
+                    case CHOP -> new Packet14Chop(in);
                 };
 
                 handlePacket(packet);
@@ -303,6 +311,49 @@ public class GameClient extends Thread {
                     targetPlayer.resetAnimation(2);
                 }
 
+            }
+            case PLACE_ON_CHOPPING_BOARD -> {
+            	Packet12PlaceOnChoppingBoard p = (Packet12PlaceOnChoppingBoard)packet;
+
+                // Place item on table
+                ChoppingBoard cb = (ChoppingBoard)gp.world.buildingM.getBuilding(p.getTableIndex());
+                if (cb != null) {
+                    Food item = (Food)gp.world.itemRegistry.getItemFromItemData(p.getItemData());
+                    cb.addItem(item);
+                }
+
+                
+                Player targetPlayer = gp.getPlayer(p.getUsername());
+                if (targetPlayer == null) return;
+
+                targetPlayer.currentItem = null;
+            }
+            case PICK_UP_FROM_CHOPPING_BOARD -> {
+            	Packet13PickUpFromChoppingBoard p = (Packet13PickUpFromChoppingBoard)packet;
+
+                
+                Player targetPlayer = gp.getPlayer(p.getUsername());
+                if (targetPlayer == null) return;
+
+                // Place item on table
+                ChoppingBoard cb = (ChoppingBoard)gp.world.buildingM.getBuilding(p.getTableIndex());
+                if (cb != null) {
+                	cb.removeItem();
+                    Item item = gp.world.itemRegistry.getItemFromItemData(p.getItemData());
+                    targetPlayer.currentItem = item;
+                    targetPlayer.resetAnimation(2);
+                }
+
+            }
+            case CHOP -> {
+            	Packet14Chop p = (Packet14Chop)packet;
+            	
+                Player targetPlayer = gp.getPlayer(p.getUsername());
+                if (targetPlayer == null) return;
+
+                // Place item on table
+                ChoppingBoard cb = (ChoppingBoard)gp.world.buildingM.getBuilding(p.getTableIndex());
+                cb.setChopCount(p.getChopCount()+1);
             }
 
         }

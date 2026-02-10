@@ -12,7 +12,10 @@ public enum PacketType {
     SPAWN_INFO(8),
     PICK_FRIDGE_ITEM(9),
     PLACE_ON_TABLE(10),
-    PICK_UP_FROM_TABLE(11);
+    PICK_UP_FROM_TABLE(11),
+    PLACE_ON_CHOPPING_BOARD(12),
+    PICK_UP_FROM_CHOPPING_BOARD(13),
+    CHOP(14);
 
 	 private final int id;
 

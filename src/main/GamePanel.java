@@ -267,7 +267,7 @@ public class GamePanel {
 
         // start server
         try {
-			socketServer = new GameServer(this);
+			socketServer = new GameServer(this, worldName);
 	        socketServer.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
