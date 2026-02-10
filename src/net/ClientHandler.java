@@ -19,6 +19,9 @@ import net.packets.Packet05LoginAck;
 import net.packets.Packet06Ping;
 import net.packets.Packet07ServerShutdown;
 import net.packets.Packet08SpawnInfo;
+import net.packets.Packet09PickFridgeItem;
+import net.packets.Packet10PlaceOnTable;
+import net.packets.Packet11PickUpFromTable;
 import net.packets.PacketType;
 
 public class ClientHandler extends Thread {
@@ -65,6 +68,9 @@ public class ClientHandler extends Thread {
                     case PING -> new Packet06Ping(in);
                     case SERVERSHUTDOWN -> new Packet07ServerShutdown();
                     case SPAWN_INFO -> new Packet08SpawnInfo(in);
+                    case PICK_FRIDGE_ITEM -> new Packet09PickFridgeItem(in);
+                    case PLACE_ON_TABLE -> new Packet10PlaceOnTable(in);
+                    case PICK_UP_FROM_TABLE-> new Packet11PickUpFromTable(in);
                 };
                 handlePacket(packet);
             }
@@ -113,6 +119,18 @@ public class ClientHandler extends Thread {
             }
             case PING -> {
                 // nothing to do, just counts as "I'm alive"
+            }
+            case PICK_FRIDGE_ITEM -> {
+                Packet09PickFridgeItem p = (Packet09PickFridgeItem)packet;
+                server.handlePickFridgeItem(p, this);
+            }
+            case PLACE_ON_TABLE -> {
+            	Packet10PlaceOnTable p = (Packet10PlaceOnTable)packet;
+                server.handlePlaceOnTable(p, this);
+            }
+            case PICK_UP_FROM_TABLE -> {
+            	Packet11PickUpFromTable p = (Packet11PickUpFromTable)packet;
+                server.handlePickUpFromTable(p, this);
             }
         }
     }

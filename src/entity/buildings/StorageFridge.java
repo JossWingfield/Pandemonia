@@ -24,6 +24,7 @@ import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
+import net.packets.Packet09PickFridgeItem;
 
 public class StorageFridge extends Building {
 	
@@ -163,18 +164,32 @@ public class StorageFridge extends Building {
 	            // If hovering, draw highlight
 	            if (hitbox.contains(mouseX, mouseY)) {
 	                if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-	                	if(gp.player.currentItem == null) {
-	                		Food food = contents.get(i);
-	                		gp.player.currentItem = gp.world.itemRegistry.getItemFromName(food.getName(), (food instanceof Food f) ? f.getState() : 0);
-	    			    	clickCooldown = 0.3;
-	    			    	uiOpen = false;
-	    			    	gp.player.resetAnimation(4);
-	    		    	}
+	                	 if (gp.player.currentItem == null) {
+	                         Food food = contents.get(i);
+	                         if (gp.multiplayer) {
+	                             gp.socketClient.send(new Packet09PickFridgeItem(gp.player.getUsername(), food.getName(),food.getState()));
+	                             clickCooldown = 0.3;
+	                             uiOpen = false;
+	                         } else {
+	                             applyPickup(food);
+	                         }
+	                     }
 	                }
 	            }
 	        }
 	    }
     }
+	private void applyPickup(Food food) {
+	    gp.player.currentItem =
+	        gp.world.itemRegistry.getItemFromName(
+	            food.getName(),
+	            food.getState()
+	        );
+
+	    clickCooldown = 0.3;
+	    uiOpen = false;
+	    gp.player.resetAnimation(4);
+	}
 	public void draw(Renderer renderer) {
 		
 		if(firstUpdate) {

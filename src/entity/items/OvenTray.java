@@ -64,6 +64,42 @@ public class OvenTray extends Item {
 	public boolean isEmpty() {
 		return ingredients.size() == 0;
 	}
+	public List<Food> getFoodItems() {
+	    List<Food> foodItems = new ArrayList<>();
+
+	    for (int i = 0; i < ingredients.size(); i++) {
+	        String ingredientName = ingredients.get(i);
+	        if (ingredientName == null) continue;
+
+	        // Create a fresh Food instance from the registry
+	        Food food = (Food) gp.world.itemRegistry.getItemFromName(ingredientName, 0);
+	        if (food == null) continue;
+
+	        // Set cook method if it exists
+	        if (i < cookMethods.size() && cookMethods.get(i) != null) {
+	            food.setCookMethod(cookMethods.get(i));
+	        }
+
+	        // Determine the correct FoodState based on setup mapping
+	        if (canBePutInTray.containsKey(ingredientName)) {
+	            Set<FoodState> allowedStates = canBePutInTray.get(ingredientName);
+	            // If the tray's current foodState matches one of the allowed states, use it
+	            if (allowedStates.contains(foodState)) {
+	                food.setState(foodState);
+	            } else {
+	                // Otherwise, default to the first allowed state
+	                food.setState(allowedStates.iterator().next());
+	            }
+	        } else {
+	            // Fallback to RAW if not in mapping
+	            food.setState(FoodState.RAW);
+	        }
+
+	        foodItems.add(food);
+	    }
+
+	    return foodItems;
+	}
 	public void addToPlate(Plate p) {
 
 	    for (int i = 0; i < ingredients.size(); i++) {

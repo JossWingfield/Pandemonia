@@ -85,6 +85,12 @@ public class CookingItem extends Item {
 	public CookStyle getCookStyle() {
 		return cookStyle;
 	}
+	public List<String> getRawIngredients() {
+		return rawIngredients;
+	}
+	public List<String> getCookedResults() {
+		return cookedResults;
+	}
 	public void setCooking(Item i) {
 	    cooking = true;
 	    cookTime = 0;

@@ -9,7 +9,10 @@ public enum PacketType {
     LOGIN_ACK(5),
     PING(6),
     SERVERSHUTDOWN(7),
-    SPAWN_INFO(8);
+    SPAWN_INFO(8),
+    PICK_FRIDGE_ITEM(9),
+    PLACE_ON_TABLE(10),
+    PICK_UP_FROM_TABLE(11);
 
 	 private final int id;
 

@@ -9,7 +9,10 @@ import java.net.SocketException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import entity.Player;
 import entity.PlayerMP;
+import entity.buildings.FloorDecor_Building;
+import entity.items.Item;
 import main.GamePanel;
 import main.renderer.Colour;
 import net.packets.Packet;
@@ -22,9 +25,11 @@ import net.packets.Packet05LoginAck;
 import net.packets.Packet06Ping;
 import net.packets.Packet07ServerShutdown;
 import net.packets.Packet08SpawnInfo;
+import net.packets.Packet09PickFridgeItem;
+import net.packets.Packet10PlaceOnTable;
+import net.packets.Packet11PickUpFromTable;
 import net.packets.PacketType;
 import net.snapshots.PlayerSnapshot;
-import utility.Weather;
 
 public class GameClient extends Thread {
 
@@ -37,8 +42,6 @@ public class GameClient extends Thread {
     private final BlockingQueue<Packet> sendQueue = new LinkedBlockingQueue<>();
     private Thread writerThread;
     private volatile boolean running = true;
-    
-    private boolean spawnInfoApplied = false;
     
     private long lastPingSent = 0;
 
@@ -92,6 +95,9 @@ public class GameClient extends Thread {
                     case PING -> new Packet06Ping(in);
                     case SERVERSHUTDOWN -> new Packet07ServerShutdown();
                     case SPAWN_INFO -> new Packet08SpawnInfo(in);
+                    case PICK_FRIDGE_ITEM -> new Packet09PickFridgeItem(in);
+                    case PLACE_ON_TABLE -> new Packet10PlaceOnTable(in);
+                    case PICK_UP_FROM_TABLE-> new Packet11PickUpFromTable(in);
                 };
 
                 handlePacket(packet);
@@ -251,6 +257,52 @@ public class GameClient extends Thread {
                 // Sync world
                 gp.world.gameM.setTime(p.getTimeOfDay());
                 gp.world.gameM.setWeather(p.getWeatherType());
+            }
+            case PICK_FRIDGE_ITEM -> {
+                Packet09PickFridgeItem p = (Packet09PickFridgeItem) packet;
+
+                Player targetPlayer = gp.getPlayer(p.getUsername());
+                if (targetPlayer == null) return;
+
+                targetPlayer.resetAnimation(4);
+                targetPlayer.currentItem =
+                    gp.world.itemRegistry.getItemFromName(
+                        p.getItemName(),
+                        p.getFoodState()
+                    );
+            }
+            case PLACE_ON_TABLE -> {
+            	Packet10PlaceOnTable p = (Packet10PlaceOnTable)packet;
+
+                // Place item on table
+                FloorDecor_Building table = (FloorDecor_Building)gp.world.buildingM.getBuilding(p.getTableIndex());
+                if (table != null) {
+                    Item item = gp.world.itemRegistry.getItemFromItemData(p.getItemData());
+                    table.currentItem = item;
+                }
+
+                
+                Player targetPlayer = gp.getPlayer(p.getUsername());
+                if (targetPlayer == null) return;
+
+                targetPlayer.currentItem = null;
+            }
+            case PICK_UP_FROM_TABLE -> {
+            	Packet11PickUpFromTable p = (Packet11PickUpFromTable)packet;
+
+                
+                Player targetPlayer = gp.getPlayer(p.getUsername());
+                if (targetPlayer == null) return;
+
+                // Place item on table
+                FloorDecor_Building table = (FloorDecor_Building)gp.world.buildingM.getBuilding(p.getTableIndex());
+                if (table != null) {
+                    table.currentItem = null;
+                    Item item = gp.world.itemRegistry.getItemFromItemData(p.getItemData());
+                    targetPlayer.currentItem = item;
+                    targetPlayer.resetAnimation(2);
+                }
+
             }
 
         }

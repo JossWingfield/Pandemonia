@@ -4,7 +4,6 @@ import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.glfw.GLFW;
 
-import entity.buildings.Building;
 import entity.buildings.FloorDecor_Building;
 import entity.items.CookingItem;
 import entity.items.Food;
@@ -26,6 +25,8 @@ import map.LightSource;
 import map.particles.PlayerDustParticle;
 import net.ConnectionState;
 import net.packets.Packet02Move;
+import net.packets.Packet10PlaceOnTable;
+import net.packets.Packet11PickUpFromTable;
 import utility.CollisionMethods;
 import utility.Settings;
 import utility.save.PlayerSaveData;
@@ -527,24 +528,14 @@ public class Player extends Entity{
 		    		if(gp.world.buildingM.intersectsKitchenBuilding(gp, b, b.interactHitbox)) {
 			    		FloorDecor_Building table = b;
 		    			if(table.currentItem == null) {
-		    				/*
-					    	if(gp.multiplayer) {
-			    				if(currentItem instanceof Plate p) {
-			    					Packet22PlacePlate packet = new Packet22PlacePlate(getUsername(), p, b.getArrayCounter());
-								    packet.writeData(gp.socketClient);
-			    				} else {
-				    				int state = 0;
-					    			if(currentItem instanceof Food f) {
-					    				state = f.getState();
-					    			}
-							        Packet04PlaceItem packet = new Packet04PlaceItem((int)currentItem.hitbox.x, (int)currentItem.hitbox.y, currentItem.getName(), username, state, table.getArrayCounter());
-							        packet.writeData(gp.socketClient);
-							    }
+		    				if(gp.multiplayer) {
+		    					gp.socketClient.send(new Packet10PlaceOnTable(gp.player.getUsername(), table.getArrayCounter(), currentItem));
+		    					clickCounter = 0.1;
+		    				} else {
+		    					table.currentItem = currentItem;
+				    			currentItem = null;
+					    		clickCounter = 0.1;
 		    				}
-		    				*/
-				    		table.currentItem = currentItem;
-				    		currentItem = null;
-					    	clickCounter = 0.1;
 					    	return;
 		    			} else {
 		    				if(currentItem.getName().equals("Plate")) {
@@ -557,12 +548,6 @@ public class Player extends Entity{
 						    				currentItem = plate;
 						    				clickCounter = 0.1;
 						    				int num = table.getArrayCounter();
-						    				/*
-						    				if(gp.multiplayer) {
-						    	                Packet19AddFoodToPlateInHand packet = new Packet19AddFoodToPlateInHand(getUsername(),food.getName(),food.getState(), num);
-						    	                packet.writeData(gp.socketClient);
-						    	            }
-						    	            */
 				    					}
 			    					} else if (table.currentItem instanceof CookingItem pan) {
 			    				        if (tryPlateFromCookingItem(pan, plate)) {
@@ -585,16 +570,6 @@ public class Player extends Entity{
 					    				currentItem = null;
 					    				table.currentItem = plate;
 					    				clickCounter = 0.1;
-					    				/*
-					    				if(gp.multiplayer) {
-					    	                Packet20AddFoodToPlateOnTable packet = new Packet20AddFoodToPlateOnTable(
-						    	                	getUsername(),
-						    	                    table.getArrayCounter(),
-						    	                    food.getName(),
-						    	                    food.getState());
-					    	                packet.writeData(gp.socketClient);
-					    	            }
-					    	            */
 			    					}
 		    					} else if(table.currentItem instanceof CookingItem cookingItem) {
 		    						if(cookingItem.canCook(gp.player.currentItem.getName()) && cookingItem.cookingItem == null) {
@@ -642,28 +617,15 @@ public class Player extends Entity{
 	    		if(b != null) {
 		    		if(gp.world.buildingM.intersectsKitchenBuilding(gp, b, interactHitbox)) {
 		    			if(b.currentItem != null) {
-			    			if(b.currentItem instanceof Plate plate) {
-				    			if(plate.getCurrentStackCount() > 1) {
-					    			plate.decreasePlateStack();
-					    			Plate p = new Plate(gp, 0, 0);
-					    			p.setCurrentStackCount(1);
-					    			currentItem = p;
-					    			clickCounter = 0.1;
-					    			resetAnimation(2);
-				    			} else {
-				    				currentItem = b.currentItem;
-						    		clickCounter = 0.1;
-						    		resetAnimation(2);
-						    		//sendPickupPacket(b);
-						    		b.currentItem = null;
-				    			}
-			    			} else {
-			    				currentItem = b.currentItem;
-					    		clickCounter = 0.1;
-					    		resetAnimation(2);
-					    		//sendPickupPacket(b);
-					    		b.currentItem = null;
-			    			}
+		    				if(gp.multiplayer) {
+		    					gp.socketClient.send(new Packet11PickUpFromTable(gp.player.getUsername(), b.getArrayCounter(), b.currentItem));
+		    					clickCounter = 0.1;
+		    				} else {
+		    					currentItem = b.currentItem;
+				    			clickCounter = 0.1;
+				    			resetAnimation(2);
+				    			b.currentItem = null;
+		    				}
 		    			} 
 		    		}
 		    	}
@@ -890,16 +852,16 @@ public class Player extends Entity{
         TextureRegion hand1Frame = hand1Animations[direction][currentAnimation][animationCounter];
 
         //The image is flipped
-        if(direction == 1) {
-        	hand2Frame = createHorizontalFlipped(hand2Frame);
-        	bodyFrame = createHorizontalFlipped(bodyFrame);
-        	headFrame = createHorizontalFlipped(headFrame);
-       		hairFrame = createHorizontalFlipped(hairFrame);
-        	accessoryFrame = createHorizontalFlipped(accessoryFrame);
-        	hand1Frame = createHorizontalFlipped(hand1Frame);
-        }	            
-
 		if (hand2Frame != null) {
+	        if(direction == 1) {
+	        	hand2Frame = createHorizontalFlipped(hand2Frame);
+	        	bodyFrame = createHorizontalFlipped(bodyFrame);
+	        	headFrame = createHorizontalFlipped(headFrame);
+	       		hairFrame = createHorizontalFlipped(hairFrame);
+	        	accessoryFrame = createHorizontalFlipped(accessoryFrame);
+	        	hand1Frame = createHorizontalFlipped(hand1Frame);
+	        }	            
+
 			applySkinIfNeeded();
 		    renderer.draw(hand2Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
 		    renderer.draw(bodyFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);

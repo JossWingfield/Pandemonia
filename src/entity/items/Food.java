@@ -47,6 +47,9 @@ public class Food extends Item {
 			break;
 		}
 	}
+	public void setState(FoodState state) {
+		this.foodState = state;
+	}
 	public int getState() {
 		switch(foodState) {
 		case RAW:
@@ -141,6 +144,12 @@ public class Food extends Item {
 		 }
 	 public String getSecondaryCookMethod() {
 		return secondaryCookedBy;
+	 }
+	 public void setCookMethod(String cookedBy) {
+		this.cookedBy = cookedBy;
+	 }
+	 public void setSecondaryCookMethod(String secondaryCookedBy) {
+		this.secondaryCookedBy = secondaryCookedBy;
 	 }
 	 public int getChopCount() {
 		if(gp.world.progressM.choppingBoardUpgradeI) {

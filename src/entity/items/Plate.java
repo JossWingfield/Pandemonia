@@ -112,6 +112,34 @@ public class Plate extends Item {
     		seasoningQuality = -1;
     	}
     }
+    public List<Food> getFoodItems() {
+        List<Food> foodItems = new ArrayList<>();
+
+        for (int i = 0; i < ingredients.size(); i++) {
+            String ingredientName = ingredients.get(i);
+            if (ingredientName == null) continue;
+
+            // Create a new Food instance from the ingredient name
+            Food food = (Food) gp.world.itemRegistry.getItemFromName(ingredientName, 0);
+            if (food == null) continue;
+
+            // Set the cooking state
+            if (i < cookMethods.size() && cookMethods.get(i) != null) {
+                food.setCookMethod(cookMethods.get(i));
+            }
+
+            // Set the secondary cook method
+            if (i < secondaryCookMethods.size() && secondaryCookMethods.get(i) != null) {
+                food.setSecondaryCookMethod(secondaryCookMethods.get(i));
+            }
+
+            food.setState(3);
+
+            foodItems.add(food);
+        }
+
+        return foodItems;
+    }
     public void setDirty(boolean isDirty) {
     	this.isDirty = isDirty;
     	
@@ -269,6 +297,9 @@ public class Plate extends Item {
     	seasoning.foodState = FoodState.PLATED;
     	addIngredient(seasoning);
     }
+    public float getSeasoningQuality() {
+		return seasoningQuality;
+	}
     public List<String> getIngredients() {
         List<String> result = new ArrayList<>();
         for (String ing : ingredients) {
@@ -303,7 +334,9 @@ public class Plate extends Item {
     public boolean isFinishedRecipe() {
         return RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods(), getSecondaryCookMethods()) != null;
     }
-
+    public void setSeasoningQuality(float quality) {
+    	this.seasoningQuality = quality;
+    }
     public String getFinishedRecipeName() {
         Recipe matched = RecipeManager.getMatchingRecipe(getIngredients(), getCookMethods(), getSecondaryCookMethods());
         return matched != null ? matched.getName() : null;

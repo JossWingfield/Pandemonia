@@ -12,6 +12,7 @@ import entity.items.Chicken;
 import entity.items.ChickenPieces;
 import entity.items.ChoppedGarlic;
 import entity.items.ChoppedTomatoes;
+import entity.items.CookingItem;
 import entity.items.Corn;
 import entity.items.CursedGreens;
 import entity.items.Egg;
@@ -39,6 +40,7 @@ import entity.items.Thyme;
 import entity.items.Tomato;
 import main.GamePanel;
 import main.renderer.TextureRegion;
+import net.data.ItemData;
 
 public class ItemRegistry {
 	
@@ -142,5 +144,71 @@ public class ItemRegistry {
 			}
 		}
 		return null;
+	}
+	public Item getItemFromItemData(ItemData data) {
+
+	    // 1️⃣ Create base item from name + food state
+	    Item item = getItemFromName(data.itemName, data.hasFoodData ? data.foodState : 0);
+	    if (item == null) return null;
+
+	    // ================= FOOD =================
+	    if (data.hasFoodData && item instanceof Food food) {
+	        food.setState(data.foodState);
+
+	        if (data.cookedBy != null && !data.cookedBy.isEmpty()) {
+	            food.setCookMethod(data.cookedBy);
+	        }
+
+	        if (data.secondaryCookedBy != null && !data.secondaryCookedBy.isEmpty()) {
+	            food.setSecondaryCookMethod(data.secondaryCookedBy);
+	        }
+	    }
+
+	    // ================= PLATE =================
+	    if (data.isPlate && item instanceof Plate plate) {
+
+	        plate.clearIngredients();
+
+	        if (data.plateIngredients != null) {
+	            for (ItemData ingredientData : data.plateIngredients) {
+	                Item ingredient = getItemFromItemData(ingredientData);
+	                if (ingredient instanceof Food food) {
+	                    plate.addIngredient(food);
+	                }
+	            }
+	        }
+
+	        plate.setSeasoningQuality(data.seasoningQuality);
+	    }
+
+	    // ================= PAN / COOKING ITEM =================
+	    if (data.isPan && item instanceof CookingItem cookingItem) {
+
+	        cookingItem.setCookTime((int) data.cookProgress);
+
+	        if (data.cookingFood != null) {
+	            Item foodItem = getItemFromItemData(data.cookingFood);
+	            if (foodItem instanceof Food f) {
+	                cookingItem.cookingItem = f;
+	            }
+	        }
+	    }
+
+	    // ================= OVEN TRAY =================
+	    if (data.isOvenTray && item instanceof OvenTray ovenTray) {
+
+	        ovenTray.clearIngredients();
+
+	        if (data.ovenIngredients != null) {
+	            for (ItemData ingData : data.ovenIngredients) {
+	                Item ingItem = getItemFromItemData(ingData);
+	                if (ingItem instanceof Food f) {
+	                    ovenTray.addIngredient(f);
+	                }
+	            }
+	        }
+	    }
+
+	    return item;
 	}
 }

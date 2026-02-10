@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import entity.PlayerMP;
+import entity.buildings.FloorDecor_Building;
+import entity.items.Item;
 import main.GamePanel;
 import main.renderer.Colour;
 import net.packets.Packet;
@@ -17,6 +19,9 @@ import net.packets.Packet03Snapshot;
 import net.packets.Packet05LoginAck;
 import net.packets.Packet07ServerShutdown;
 import net.packets.Packet08SpawnInfo;
+import net.packets.Packet09PickFridgeItem;
+import net.packets.Packet10PlaceOnTable;
+import net.packets.Packet11PickUpFromTable;
 import net.snapshots.PlayerSnapshot;
 
 public class GameServer extends Thread {
@@ -278,5 +283,77 @@ public class GameServer extends Thread {
             if (c == sender) continue;
             c.send(packet);
         }
+    }
+    public void handlePickFridgeItem(Packet09PickFridgeItem packet, ClientHandler sender) {
+        PlayerMP player = sender.getPlayer();
+        if (player == null) return;
+
+        String itemName = packet.getItemName();
+        int foodState = packet.getFoodState();
+
+        boolean success = false;
+        if(player.currentItem == null) {
+        	success = true;
+        	player.currentItem = gp.world.itemRegistry.getItemFromName(itemName, foodState);
+        }
+
+        if (!success) return;
+
+        sendToAll(packet);
+    }
+    public void handlePlaceOnTable(Packet10PlaceOnTable packet, ClientHandler sender) {
+
+        PlayerMP player = sender.getPlayer();
+        if (player == null) return;
+
+        // Security: username must match sender
+        if (!player.getUsername().equals(packet.getUsername())) return;
+
+        // Must be holding something
+        if (player.currentItem == null) return;
+
+        int tableIndex = packet.getTableIndex();
+
+        FloorDecor_Building table = (FloorDecor_Building)gp.world.buildingM.getBuilding(tableIndex);
+        if (table == null) return;
+
+        // Table must be empty
+        if (table.currentItem != null) return;
+
+        Item placed = gp.world.itemRegistry.getItemFromItemData(packet.getItemData());
+        table.currentItem = placed;
+
+        // Remove from player
+        player.currentItem = null;
+
+        sendToAll(packet);
+    }
+    public void handlePickUpFromTable(Packet11PickUpFromTable packet, ClientHandler sender) {
+
+        PlayerMP player = sender.getPlayer();
+        if (player == null) return;
+
+        // Security: username must match sender
+        if (!player.getUsername().equals(packet.getUsername())) return;
+
+        // Must not be holding something
+        if (player.currentItem != null) return;
+
+        int tableIndex = packet.getTableIndex();
+
+        FloorDecor_Building table = (FloorDecor_Building)gp.world.buildingM.getBuilding(tableIndex);
+        if (table == null) return;
+
+        // Table must not be empty
+        if (table.currentItem == null) return;
+
+        Item placed = gp.world.itemRegistry.getItemFromItemData(packet.getItemData());
+        
+        // Remove from player
+        player.currentItem = placed;
+        table.currentItem = null;
+
+
+        sendToAll(packet);
     }
 }

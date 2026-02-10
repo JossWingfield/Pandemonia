@@ -47,7 +47,12 @@ public abstract class Item extends Entity {
     public void createNewHitbox(float xPos, float yPos, float width, float height) {
         hitbox = new Rectangle2D.Float(xPos, yPos, width, height);
     }
-
+    public int getState() {
+    	return 0;
+    }
+    public boolean isFood() {
+    	return this instanceof Food;
+    }
     public void updateState(double dt) {}
     public void inputUpdate(double dt) {}
 

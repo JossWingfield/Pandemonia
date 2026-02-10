@@ -296,6 +296,7 @@ public class GamePanel {
         multiplayer = true;
         currentState = playState;
         
+    	world.progressM.worldName = worldName;
     	saveM.loadGame(saveSlot);
         
      	world.isServer = true;
@@ -399,7 +400,17 @@ public class GamePanel {
     public synchronized List<PlayerMP> getPlayerList() {
         return playerList;
     }
-    
+    public Player getPlayer(String username) {
+        if (player != null && player.getUsername().equals(username)) {
+            return player;
+        }
+
+        for (PlayerMP p : playerList) {
+            if (p.getUsername().equals(username)) return p;
+        }
+
+        return null;
+    }
     public void removePlayerMP(String username) {
         int index = 0;
         for(PlayerMP p : getPlayerList()) {
