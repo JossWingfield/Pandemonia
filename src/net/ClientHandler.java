@@ -18,6 +18,7 @@ import net.packets.Packet04Chat;
 import net.packets.Packet05LoginAck;
 import net.packets.Packet06Ping;
 import net.packets.Packet07ServerShutdown;
+import net.packets.Packet08SpawnInfo;
 import net.packets.PacketType;
 
 public class ClientHandler extends Thread {
@@ -63,6 +64,7 @@ public class ClientHandler extends Thread {
                     case LOGIN_ACK -> new Packet05LoginAck();
                     case PING -> new Packet06Ping(in);
                     case SERVERSHUTDOWN -> new Packet07ServerShutdown();
+                    case SPAWN_INFO -> new Packet08SpawnInfo(in);
                 };
                 handlePacket(packet);
             }

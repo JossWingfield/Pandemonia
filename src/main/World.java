@@ -39,7 +39,6 @@ public class World {
     public boolean isServer;
 
     // ===== AUTHORITATIVE STATE =====
-    public List<PlayerMP> playerList;
     public BuildingManager buildingM;
     public ItemManager itemM;
     public NPCManager npcM;
@@ -140,7 +139,7 @@ public class World {
 			cutsceneM.update(dt);
 			
 			if(gp.multiplayer) {
-	    		for(Player p: gp.getPlayerList()) {
+	    		for(Player p: gp.playerList) {
 	    			if(p.getUsername() != gp.player.getUsername()) {
 	    				if(p.currentRoomIndex == gp.player.currentRoomIndex) {
 	    					p.updateInteractHitbox();

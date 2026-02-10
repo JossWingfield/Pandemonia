@@ -29,6 +29,18 @@ public class AssetPool {
 			return shader;
 		}
 	}
+	public static Shader cloneShader(String resourceName) {
+	    resourceName = resourceName;
+	    File file = new File("res" + resourceName);
+
+	    // Ensure the original shader is loaded first
+	    Shader original = getShader(resourceName);
+
+	    // Create a new Shader instance using the same source
+	    Shader clone = new Shader("res" +resourceName);
+	    clone.compile(); // compile separately
+	    return clone;
+	}
 	public static Texture getTexture(String resourceName) {
 		resourceName = "res"+resourceName;
 		File file = new File(resourceName);

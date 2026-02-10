@@ -21,8 +21,10 @@ import net.packets.Packet04Chat;
 import net.packets.Packet05LoginAck;
 import net.packets.Packet06Ping;
 import net.packets.Packet07ServerShutdown;
+import net.packets.Packet08SpawnInfo;
 import net.packets.PacketType;
 import net.snapshots.PlayerSnapshot;
+import utility.Weather;
 
 public class GameClient extends Thread {
 
@@ -35,6 +37,8 @@ public class GameClient extends Thread {
     private final BlockingQueue<Packet> sendQueue = new LinkedBlockingQueue<>();
     private Thread writerThread;
     private volatile boolean running = true;
+    
+    private boolean spawnInfoApplied = false;
     
     private long lastPingSent = 0;
 
@@ -87,6 +91,7 @@ public class GameClient extends Thread {
                     case LOGIN_ACK -> new Packet05LoginAck();
                     case PING -> new Packet06Ping(in);
                     case SERVERSHUTDOWN -> new Packet07ServerShutdown();
+                    case SPAWN_INFO -> new Packet08SpawnInfo(in);
                 };
 
                 handlePacket(packet);
@@ -156,7 +161,12 @@ public class GameClient extends Thread {
 
                 // Add remote player
                 PlayerMP newPlayer = new PlayerMP(gp, p.getX(), p.getY(), p.getUsername());
+                newPlayer.currentRoomIndex = p.getRoomNum();
+                newPlayer.setSkin(p.getSkinId());
+                newPlayer.setHairStyle(p.getHairId());
+                newPlayer.setHair(p.getHairColour());
                 gp.playerList.add(newPlayer);
+
                 
                 gp.gui.addMessage(
                         p.getUsername() + " has joined the game.",
@@ -226,6 +236,21 @@ public class GameClient extends Thread {
                 shutdown();                // close socket
                 gp.multiplayer = false;
                 gp.currentState = gp.titleState;
+            }
+            case SPAWN_INFO -> {
+                Packet08SpawnInfo p = (Packet08SpawnInfo) packet;   
+
+                if(!p.getUsername().equals(gp.player.getUsername())) break;
+                gp.player.hitbox.x = p.getX();
+                gp.player.hitbox.y = p.getY();
+
+                gp.player.setSkin(p.getSkinId());
+                gp.player.setHairStyle(p.getHairId());
+                gp.player.setHair(p.getHairColour());
+
+                // Sync world
+                gp.world.gameM.setTime(p.getTimeOfDay());
+                gp.world.gameM.setWeather(p.getWeatherType());
             }
 
         }

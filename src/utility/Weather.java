@@ -18,4 +18,13 @@ public enum Weather {
             return THUNDERSTORM;
         }
     }
+    public static Weather fromInt(int id) {
+        Weather[] values = Weather.values();
+
+        if (id < 0 || id >= values.length) {
+            return SUNNY; // safe default
+        }
+
+        return values[id];
+    }
 }

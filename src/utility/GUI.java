@@ -132,6 +132,7 @@ public class GUI {
 	
 	private int selectedSkinNum = 0;
 	private int selectedHairNum = 0;
+	private int selectedHairStyleNum = 0;
 
 	public GUI(GamePanel gp) {
 		this.gp = gp;
@@ -1056,9 +1057,9 @@ public class GUI {
 		    		selectedHairNum = 0;
 				} else {
 					if(!hostSelected) {
-						gp.playSinglePlayer(saveChosen, "", "", 0, 0);
+						gp.playSinglePlayer(saveChosen, "", "", 0, 0, 0);
 					} else {
-						gp.hostServer(saveChosen, "", "", 0, 0);
+						gp.hostServer(saveChosen, "", "", 0, 0, 0);
 						hostSelected = false;
 					}
 				}
@@ -1151,6 +1152,7 @@ public class GUI {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            clickCooldown = 0.1;
 	            selectedSkinNum--;
+	            
 	            if(selectedSkinNum < 0) {
 	            	selectedSkinNum = 0;
 	            }
@@ -1165,6 +1167,7 @@ public class GUI {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            clickCooldown = 0.1;
 	            selectedSkinNum++;
+	            
 	            if(selectedSkinNum > 6) {
 	            	selectedSkinNum = 6;
 	            }
@@ -1190,6 +1193,7 @@ public class GUI {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            clickCooldown = 0.25;
 	            selectedHairNum--;
+	            
 	            if(selectedHairNum < 0) {
 	            	selectedHairNum = 0;
 	            }
@@ -1205,6 +1209,7 @@ public class GUI {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            clickCooldown = 0.25;
 	            selectedHairNum++;
+	            
 	            if(selectedHairNum > 9) {
 	            	selectedHairNum = 9;
 	            }
@@ -1232,10 +1237,10 @@ public class GUI {
 	            String worldName  = worldNameBox.getText();
 	            
 	            if(!hostSelected) {
-		            gp.playSinglePlayer(saveChosen, playerName, worldName, selectedSkinNum, selectedHairNum);
+		            gp.playSinglePlayer(saveChosen, playerName, worldName, selectedSkinNum, selectedHairNum, selectedHairStyleNum);
 	            } else {
 	            	hostSelected = false;
-		            gp.hostServer(saveChosen, playerName, worldName, selectedSkinNum, selectedHairNum);
+		            gp.hostServer(saveChosen, playerName, worldName, selectedSkinNum, selectedHairNum, selectedHairStyleNum);
 	            }
 	            
 	            playerNameBox.setText("");
@@ -1359,6 +1364,7 @@ public class GUI {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            clickCooldown = 0.1;
 	            selectedSkinNum--;
+	            
 	            if(selectedSkinNum < 0) {
 	            	selectedSkinNum = 0;
 	            }
@@ -1373,6 +1379,7 @@ public class GUI {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            clickCooldown = 0.1;
 	            selectedSkinNum++;
+	            
 	            if(selectedSkinNum > 6) {
 	            	selectedSkinNum = 6;
 	            }
@@ -1398,6 +1405,7 @@ public class GUI {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            clickCooldown = 0.25;
 	            selectedHairNum--;
+	            
 	            if(selectedHairNum < 0) {
 	            	selectedHairNum = 0;
 	            }
@@ -1413,6 +1421,7 @@ public class GUI {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            clickCooldown = 0.25;
 	            selectedHairNum++;
+	            
 	            if(selectedHairNum > 9) {
 	            	selectedHairNum = 9;
 	            }
@@ -1438,7 +1447,7 @@ public class GUI {
 
 	            String playerName = playerNameBox.getText();
 	            
-	            gp.joinServer(playerName, gp.selectedServer.ip, gp.selectedServer.port, selectedSkinNum, selectedHairNum);
+	            gp.joinServer(playerName, gp.selectedServer.ip, gp.selectedServer.port, selectedSkinNum, selectedHairNum, selectedHairStyleNum);
 	            joinSelected = false;
 	            
 	            playerNameBox.setText("");

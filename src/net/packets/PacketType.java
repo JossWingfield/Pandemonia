@@ -8,7 +8,8 @@ public enum PacketType {
     CHAT(4),
     LOGIN_ACK(5),
     PING(6),
-    SERVERSHUTDOWN(7);
+    SERVERSHUTDOWN(7),
+    SPAWN_INFO(8);
 
 	 private final int id;
 

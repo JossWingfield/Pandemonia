@@ -7,6 +7,7 @@ public class PlayerSaveData extends SaveData {
     public String username;
     public int skinNum;
     public int hairNum;
+    public int hairStyleNum;
     public int level;
     public int soulsServed;
     public int nextLevelAmount;

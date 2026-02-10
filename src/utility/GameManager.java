@@ -144,6 +144,9 @@ public class GameManager {
         if (recipe == null) return false;
         return todaysSpecials.contains(recipe);
     }
+    public void setWeather(int weather) {
+    	currentWeather = Weather.fromInt(weather);
+    }
     // === Menu management ===
     public void setTodaysMenu(List<Recipe> menu) {
         todaysMenu.clear();
@@ -503,6 +506,12 @@ public class GameManager {
         } else {
             return 5; // Night
         }
+    }
+    public int getTime() {
+    	return (int)time;
+    }
+    public void setTime(int time) {
+    	this.time = (int)time;
     }
     public DayPhase getCurrentPhase() {
         int hours = (int) time;

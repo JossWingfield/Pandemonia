@@ -100,15 +100,19 @@ public class Player extends Entity{
         
         interactHitbox = new Rectangle2D.Float(0, 0, 1, 1);
         
-        playerShader = AssetPool.getShader("/shaders/player.glsl");
+        //playerShader = new Shader("res/shaders/player.glsl");
+        //playerShader = AssetPool.getShader("/shaders/player.glsl");
+        
         
         appearance = new PlayerAppearance(
         	    new SkinPalette(0),
-        	    new HairPalette(0)
+        	    new HairPalette(0),
+        	    new HairStyle(0)
         	);
         if(!gp.multiplayer) {
         	setPlayerSkin(appearance.skin);
         	setPlayerHair(appearance.hair);
+        	setPlayerHairStyle(appearance.hairStyle);
         }
         
         setUp();
@@ -144,11 +148,16 @@ public class Player extends Entity{
         appearance.setHair(hairNum);
         setPlayerHair(appearance.hair);
     }
+    public void setHairStyle(int hairNum) {
+        appearance.setHairStyle(hairNum);
+        setPlayerHairStyle(appearance.hairStyle);
+    }
     public PlayerSaveData toSaveData() {
         PlayerSaveData data = new PlayerSaveData();
         data.username = username;
         data.skinNum = appearance.skin.getIndex();
         data.hairNum = appearance.hair.getIndex();
+        data.hairStyleNum = appearance.hairStyle.getIndex();
         data.level = level;
         data.soulsServed = soulsServed;
         data.nextLevelAmount = nextLevelAmount;
@@ -169,6 +178,7 @@ public class Player extends Entity{
         this.username = data.username;
         setSkin(data.skinNum);
         setHair(data.hairNum);
+        setHairStyle(data.hairStyleNum);
         this.level = data.level;
         this.soulsServed = data.soulsServed;
         this.nextLevelAmount = data.nextLevelAmount;
@@ -193,6 +203,9 @@ public class Player extends Entity{
     }
     public int getHairColour() {
     	return appearance.hair.getIndex();
+    }
+    public int getHairStyle() {
+    	return appearance.hairStyle.getIndex();
     }
     public void setSpawnPoint(int xPos, int yPos) {
     	hitbox.x = xPos;
@@ -831,31 +844,40 @@ public class Player extends Entity{
     }
     public void setPlayerSkin(SkinPalette palette) {
         if (palette == null) return;
-
         this.appearance.skin = palette;
-
-        // Upload ONCE — uniforms persist on the shader
-        playerShader.use();
-
-        playerShader.uploadVec3fArray("u_SkinFrom", palette.from);
-        playerShader.uploadVec3fArray("u_SkinTo", palette.to);
-
-        playerShader.detach();
     }
     public void setPlayerHair(HairPalette palette) {
         if (palette == null) return;
-
         this.appearance.hair = palette;
+    }
+    public void applySkinIfNeeded() {
+
+        SkinPalette palette = appearance.skin;
+        HairPalette hairPalette = appearance.hair;
+        if (palette == null) return;
+        
+        if(playerShader == null) {
+        	playerShader = AssetPool.cloneShader("/shaders/player.glsl");
+        }
 
         playerShader.use();
-        playerShader.uploadVec3fArray("u_HairFrom", palette.from);
-        playerShader.uploadVec3fArray("u_HairTo", palette.to);
+        playerShader.uploadVec3fArray("u_SkinFrom", palette.from);
+        playerShader.uploadVec3fArray("u_SkinTo", palette.to);
+        
+        playerShader.uploadVec3fArray("u_HairFrom", hairPalette.from);
+        playerShader.uploadVec3fArray("u_HairTo", hairPalette.to);
         playerShader.detach();
+
+    }
+    public void setPlayerHairStyle(HairStyle hairStyle) {
+        this.appearance.hairStyle = hairStyle;
     }
     public void draw(Renderer renderer) {
     	if(isInvisible) {
     		return;
     	}
+    	applySkinIfNeeded();
+    	
     	if(direction == 3) {
     		drawCurrentItem(renderer);
     	}
@@ -878,6 +900,7 @@ public class Player extends Entity{
         }	            
 
 		if (hand2Frame != null) {
+			applySkinIfNeeded();
 		    renderer.draw(hand2Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
 		    renderer.draw(bodyFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
 		    renderer.draw(headFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
@@ -971,6 +994,7 @@ public class Player extends Entity{
     	}
     }
     public void drawPreview(Renderer renderer, int x, int y) {
+    	applySkinIfNeeded();
     	   TextureRegion hand2Frame = hand2Animations[direction][currentAnimation][animationCounter];
            TextureRegion bodyFrame = bodyAnimations[direction][currentAnimation][animationCounter];
            TextureRegion headFrame = headAnimations[direction][currentAnimation][animationCounter];

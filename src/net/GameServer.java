@@ -16,6 +16,7 @@ import net.packets.Packet01Disconnect;
 import net.packets.Packet03Snapshot;
 import net.packets.Packet05LoginAck;
 import net.packets.Packet07ServerShutdown;
+import net.packets.Packet08SpawnInfo;
 import net.snapshots.PlayerSnapshot;
 
 public class GameServer extends Thread {
@@ -142,6 +143,10 @@ public class GameServer extends Thread {
                     packet.getY(),
                     packet.getUsername()
             );
+            newPlayer.currentRoomIndex = packet.getRoomNum();
+            newPlayer.setSkin(packet.getSkinId());
+            newPlayer.setHairStyle(packet.getHairId());
+            newPlayer.setHair(packet.getHairColour());
             gp.playerList.add(newPlayer);
 
             if (senderHandler != null)
@@ -163,7 +168,11 @@ public class GameServer extends Thread {
                 Packet00Login existingPlayer = new Packet00Login(
                         p.getUsername(), 
                         (int) p.hitbox.x, 
-                        (int) p.hitbox.y
+                        (int) p.hitbox.y,
+                        p.currentRoomIndex,
+                        p.getSkinColour(),
+                        p.getHairStyle(),
+                        p.getHairColour()
                 );
                 senderHandler.send(existingPlayer);
             }
@@ -176,9 +185,30 @@ public class GameServer extends Thread {
                 c.send(new Packet00Login(
                     packet.getUsername(),
                     packet.getX(),
-                    packet.getY()
+                    packet.getY(),
+                    packet.getRoomNum(),
+                    packet.getSkinId(),
+                    packet.getHairId(),
+                    packet.getHairColour()
                 ));
             }
+        }
+        
+        PlayerMP p = senderHandler.getPlayer();
+
+        Packet08SpawnInfo spawn = new Packet08SpawnInfo(
+            packet.getUsername(),
+            (int)p.hitbox.x,
+            (int)p.hitbox.y,
+            p.getSkinColour(),
+            p.getHairStyle(),
+            p.getHairColour(),
+            gp.world.gameM.getTime(),
+            gp.world.gameM.currentWeather.ordinal()
+        );
+
+        if (senderHandler.getPlayer().getUsername().equals(packet.getUsername())) {
+            senderHandler.send(spawn);
         }
 
         senderHandler.send(new Packet05LoginAck());

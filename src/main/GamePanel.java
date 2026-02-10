@@ -240,7 +240,7 @@ public class GamePanel {
       	
         //cutsceneM.enterDestroyedRestaurant();
     }
-    public void playSinglePlayer(int saveSlot, String playerName, String worldName, int selectedSkinNum, int selectedHairNum) {
+    public void playSinglePlayer(int saveSlot, String playerName, String worldName, int selectedSkinNum, int selectedHairNum, int selectedHairStyleNum) {
     	saveM.currentSave = saveSlot;
     	player = new Player(this, 48*10, 48*10, keyL, mouseL, playerName);
     	currentState = playState;
@@ -252,8 +252,9 @@ public class GamePanel {
     	player.setUsername(playerName);
     	player.setSkin(selectedSkinNum);
       	player.setHair(selectedHairNum);
+      	player.setHairStyle(selectedHairStyleNum);
     }
-    public void hostServer(int saveSlot, String playerName, String worldName, int selectedSkinNum, int selectedHairNum) {
+    public void hostServer(int saveSlot, String playerName, String worldName, int selectedSkinNum, int selectedHairNum, int selectedHairStyleNum) {
 
         if (serverHost) return;
         
@@ -277,9 +278,18 @@ public class GamePanel {
         socketClient = new GameClient(this, "127.0.0.1", GameServer.GAME_PORT);
         socketClient.start();  
         
+    	world.isServer = true;
+    	player.setUsername(playerName);
+    	world.progressM.worldName = worldName;
+    	player.setSkin(selectedSkinNum);
+      	player.setHair(selectedHairNum);
+      	player.setHairStyle(selectedHairStyleNum);
+      	
         socketClient.send(new Packet00Login(playerName,
             (int) player.hitbox.x,
-            (int) player.hitbox.y
+            (int) player.hitbox.y,
+            player.currentRoomIndex,
+            selectedSkinNum, selectedHairStyleNum, selectedHairNum
         ));
         stopDiscovery();
 
@@ -288,14 +298,14 @@ public class GamePanel {
         
     	saveM.loadGame(saveSlot);
         
-    	world.isServer = true;
+     	world.isServer = true;
     	player.setUsername(playerName);
     	world.progressM.worldName = worldName;
     	player.setSkin(selectedSkinNum);
       	player.setHair(selectedHairNum);
-        
+      	player.setHairStyle(selectedHairStyleNum);
     }
-    public void joinServer(String username, String ip, int port, int selectedSkinNum, int selectedHairNum) {
+    public void joinServer(String username, String ip, int port, int selectedSkinNum, int selectedHairNum, int selectedHairStyleNum) {
 
         if (joiningServer) return;
         joiningServer = true;
@@ -310,10 +320,13 @@ public class GamePanel {
         
     	player.setSkin(selectedSkinNum);
       	player.setHair(selectedHairNum);
+      	player.setHairStyle(selectedHairStyleNum);
 
         socketClient.send(new Packet00Login(username,
             (int) player.hitbox.x,
-            (int) player.hitbox.y
+            (int) player.hitbox.y,
+            player.currentRoomIndex,
+            selectedSkinNum, selectedHairStyleNum, selectedHairNum
         ));
         
         stopDiscovery();
