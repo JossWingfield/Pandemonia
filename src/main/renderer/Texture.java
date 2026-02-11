@@ -47,7 +47,31 @@ public class Texture {
 	        this.filePath = "Generated";
 	    }
 	
-	
+	   public Texture(int width, int height, int[] pixels) {
+		    this.width = width;
+		    this.height = height;
+
+		    texID = glGenTextures();
+		    glBindTexture(GL_TEXTURE_2D, texID);
+
+		    ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
+
+		    for (int pixel : pixels) {
+		        buffer.put((byte)((pixel >> 16) & 0xFF)); // R
+		        buffer.put((byte)((pixel >> 8) & 0xFF));  // G
+		        buffer.put((byte)(pixel & 0xFF));         // B
+		        buffer.put((byte)((pixel >> 24) & 0xFF)); // A
+		    }
+
+		    buffer.flip();
+
+		    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+		                 width, height, 0,
+		                 GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+		    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
 	public Texture(int width, int height) {
 		this.filePath = "Generated";
 		//this.width = width;

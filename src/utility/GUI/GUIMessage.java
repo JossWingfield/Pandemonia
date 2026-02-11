@@ -1,4 +1,4 @@
-package utility;
+package utility.GUI;
 
 import main.renderer.Colour;
 

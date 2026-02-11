@@ -14,6 +14,7 @@ import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE2;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
@@ -42,10 +43,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
 
-import entity.SkinPalette;
 import main.GamePanel;
 import map.LightSource;
+import utility.Settings;
 
 public class Renderer {
 
@@ -521,6 +523,15 @@ public class Renderer {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, gp.emissiveTextureId);
         lightingShader.uploadInt("uEmissive", 1);
+        
+	    glActiveTexture(GL_TEXTURE2);
+	    Texture occ = gp.world.lightingM.getCurrentOcclusionTexture();
+	    lightingShader.uploadBool("uOcclusionEnabled", Settings.occlusionEnabled); 
+	    if(occ != null) {
+	    	glBindTexture(GL_TEXTURE_2D, occ.getTexId());
+	        lightingShader.uploadInt("uOcclusion", 2);
+	    }
+        
 
         // Upload lighting uniforms ONCE
         lightingShader.uploadVec2f("uScreenSize", new Vector2f(gp.sizeX, gp.sizeY));

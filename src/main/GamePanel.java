@@ -121,13 +121,13 @@ import net.packets.Packet01Disconnect;
 import utility.BuildingRegistry;
 import utility.Catalogue;
 import utility.Debug;
-import utility.GUI;
 import utility.ItemRegistry;
 import utility.ProgressManager;
 import utility.RecipeManager;
 import utility.RoomHelperMethods;
 import utility.Settings;
 import utility.UpgradeManager;
+import utility.GUI.GUI;
 import utility.GameManager;
 import utility.cutscene.CutsceneManager;
 import utility.minigame.MiniGameManager;
@@ -145,7 +145,7 @@ public class GamePanel {
 	private long audioContext;
 	private long audioDevice;
 	
-    private final int scale = 3; //The scale factor the tiles will be multiplied by, to make the game more visible
+    public final int scale = 3; //The scale factor the tiles will be multiplied by, to make the game more visible
     private final int baseTileSize = 16; // The base size of each tile
     public final int tileSize = baseTileSize * scale; //The drawn size of each tile
 
@@ -845,14 +845,15 @@ public class GamePanel {
 			        	renderer.endFrame();
 			        	
 			        	int finalTexture = sceneTextureId;
-			        	if (Settings.fancyLighting) {
+			        	
+			        	if (Settings.fancyLighting && (currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState || currentState == chatState)) {
 			        		glBindFramebuffer(GL_FRAMEBUFFER, litFbo);
 			        		applyGameViewport(w, h);
 			        		glClearColor(0, 0, 0, 0);
 			        		glClear(GL_COLOR_BUFFER_BIT);
 							renderer.updateLightsOncePerFrame();
 							renderer.renderLightingPass();
-							finalTexture = litTextureId;   
+							finalTexture = litTextureId;
 							if(Settings.bloomEnabled) {
 							    renderer.applyAndDrawBloom(finalTexture, bloomFbo1, bloomFbo2, bloomTex1, bloomTex2);
 							} else {

@@ -10,7 +10,6 @@ void main() {
     vUV = aUV;
     gl_Position = vec4(aPos, 0.0, 1.0);
 }
-
 #type fragment
 #version 330 core
 
@@ -19,7 +18,6 @@ out vec4 FragColor;
 
 uniform sampler2D uScene;
 uniform sampler2D uEmissive;
-uniform sampler2D uOcclusion;
 
 uniform vec2 uScreenSize;
 
@@ -29,7 +27,7 @@ uniform float uAmbientIntensity;
 uniform int uNumLights;
 
 struct Light {
-    vec2 position;
+    vec2 position;   // SCREEN SPACE (pixels)
     vec3 color;
     float radius;
     float intensity;
@@ -37,28 +35,25 @@ struct Light {
 
 uniform Light uLights[64];
 
-// New boolean uniform to toggle occlusion
-uniform bool uOcclusionEnabled;
-
-
-void main()
-{
+void main() {
     vec4 scene = texture(uScene, vUV);
     vec3 baseColor = scene.rgb;
     float alpha = scene.a;
 
-    if (alpha <= 0.001)
+    // Early out for fully transparent pixels (optional optimization)
+    if (alpha <= 0.001) {
         discard;
+    }
 
     vec2 fragPos = vec2(
         vUV.x * uScreenSize.x,
         (1.0 - vUV.y) * uScreenSize.y
     );
 
-    // -------- Ambient --------
+    // Ambient light (NO alpha here)
     vec3 lighting = uAmbientColor * uAmbientIntensity;
 
-    // -------- Dynamic Lights --------
+    // Dynamic lights
     for (int i = 0; i < uNumLights; i++) {
         Light L = uLights[i];
         vec2 diff = L.position - fragPos;
@@ -70,22 +65,13 @@ void main()
         }
     }
 
-    // -------- Occlusion with smooth edges --------
-    float occlusion = 1.0;
-    if (uOcclusionEnabled) {
-        // first sample the occlusion texture
-        float occ = texture(uOcclusion, vUV).r;
+    // Apply lighting to color
+    vec3 litScene = baseColor * lighting;
 
-
-        // you can tweak these numbers for softer/harder edges
-        occlusion = smoothstep(0.0, 0.7, occ);
-    }
-
-    vec3 litScene = baseColor * lighting * occlusion;
-
-    // Emissive
+    // Emissive adds light, NOT alpha-scaled
     vec3 emissive = texture(uEmissive, vUV).rgb;
     litScene += emissive;
 
+    // Preserve original alpha
     FragColor = vec4(litScene, alpha);
 }

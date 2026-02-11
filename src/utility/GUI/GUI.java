@@ -1,4 +1,4 @@
-package utility;
+package utility.GUI;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -26,6 +26,14 @@ import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import net.DiscoveryManager.DiscoveredServer;
 import net.packets.Packet04Chat;
+import utility.Achievement;
+import utility.Recipe;
+import utility.RecipeManager;
+import utility.RecipeRenderData;
+import utility.Settings;
+import utility.Upgrade;
+import utility.UpgradeManager;
+import utility.Weather;
 import utility.ProgressManager.RewardType;
 
 public class GUI {
@@ -58,7 +66,7 @@ public class GUI {
 	
 	//COUNTERS
 	private int timeAnimationCounter, timeAnimationSpeed, currentTimeAnimation;
-	private double clickCooldown = 0;
+	public double clickCooldown = 0;
 	private int titleAnimationCounter, titleAnimationSpeed, currentTitleAnimation;
 	private double titleAnimationSpeedFactor;
 	private int titlePageNum = -1;
@@ -99,6 +107,12 @@ public class GUI {
 	private final int videoState = 2;
 	private final int audioState = 3;
 	private final int multiplayerState = 4;
+	//VIDEO SETTINGS
+	private List<CheckBox> videoCheckBoxes;
+	private int selectedIndex = 0;        // which checkbox is selected
+	private int firstVisibleIndex = 0;    // first visible checkbox
+	private final int maxVisible = 4;  
+	private final int spacing = 40; 
 	
 	//DIALOGUE
 	private NPC currentTalkingNPC;
@@ -133,6 +147,7 @@ public class GUI {
 	private int selectedSkinNum = 0;
 	private int selectedHairNum = 0;
 	private int selectedHairStyleNum = 0;
+	
 
 	public GUI(GamePanel gp) {
 		this.gp = gp;
@@ -201,6 +216,39 @@ public class GUI {
         );
         
 		importImages();
+		initVideoSettings();
+	}
+
+	private void initVideoSettings() {
+	    videoCheckBoxes = new ArrayList<>();
+	    
+		int x = gp.frameWidth/2 - ((112*3)/2) + 40;
+		int y = gp.frameHeight/2 - ((112*3)/2) + 120+200;
+	
+	    videoCheckBoxes.add(new CheckBox(gp, x, y, 9*3, "FullScreen",
+	        () -> Settings.fullScreen,
+	        () -> {
+	            Settings.fullScreen = !Settings.fullScreen;
+	            if (Settings.fullScreen) gp.setFullScreen();
+	            else gp.stopFullScreen();
+	        }));
+	    
+	    
+	    videoCheckBoxes.add(new CheckBox(gp, x, y+60, 9*3, "Fancy Lighting",
+	        () -> Settings.fancyLighting,
+	        () -> Settings.fancyLighting = !Settings.fancyLighting));
+	
+	    videoCheckBoxes.add(new CheckBox(gp, x, y+120, 9*3, "Bloom",
+	        () -> Settings.bloomEnabled,
+	        () -> Settings.bloomEnabled = !Settings.bloomEnabled));
+	
+	    videoCheckBoxes.add(new CheckBox(gp, x, y+180, 9*3, "God Rays",
+	        () -> Settings.godraysEnabled,
+	        () -> Settings.godraysEnabled = !Settings.godraysEnabled));
+	    
+	    videoCheckBoxes.add(new CheckBox(gp, x, y+240, 9*3, "Occlusion",
+		        () -> Settings.occlusionEnabled,
+		        () -> Settings.occlusionEnabled = !Settings.occlusionEnabled));
 	}
 	
 	protected Texture importImage(String filePath) {
@@ -2547,113 +2595,45 @@ public class GUI {
 		
 	}
 	private void drawVideoSettings(Renderer renderer) {
-		int boxOffset = 220;
-		renderer.setColour(darkened);
-		renderer.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
-		
-		int x = gp.frameWidth/2 - ((112*3)/2);
-		int y = gp.frameHeight/2 - ((112*3)/2);
-		
-		renderer.draw(videoSettingsFrame, x, y, 112*3, 112*3);
-		
-		String text;
-		renderer.setFont(font);
-		x += 40;
-		y += 140;
-		
-		renderer.setColour(titleColour1);
-		text = "FullScreen";
-		renderer.drawString(text, x, y);
-		y-= 20;
-		if(Settings.fullScreen) {
-			renderer.draw(checkedBox, x+boxOffset, y, 9*3, 9*3);
-		} else {
-			renderer.draw(uncheckedBox, x+boxOffset, y, 9*3, 9*3);
-		}
-		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
-			drawCheckBoxHover(renderer, x+boxOffset, y, 9*3, 9*3);
-            if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-            	if(!Settings.fullScreen) {
-            		gp.setFullScreen();
-            	} else {
-            		gp.stopFullScreen();
-            	}
-                clickCooldown = 0.33;
-            }
-        }
-		y += 20;
-		
-		y+=40;
-		renderer.setColour(titleColour1);
-		text = "Fancy Lighting";
-		renderer.drawString(text, x, y);
-		y-= 20;
-		if(Settings.fancyLighting) {
-			renderer.draw(checkedBox, x+boxOffset, y, 9*3, 9*3);
-		} else {
-			renderer.draw(uncheckedBox, x+boxOffset, y, 9*3, 9*3);
-		}
-		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
-			drawCheckBoxHover(renderer, x+boxOffset, y, 9*3, 9*3);
-            if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-            	Settings.fancyLighting = !Settings.fancyLighting;
-                clickCooldown = 0.33;
-            }
-        }
-		y += 20;
-		
-		y+=40;
-		renderer.setColour(titleColour1);
-		text = "Bloom";
-		renderer.drawString(text, x, y);
-		y-= 20;
-		if(Settings.bloomEnabled) {
-			renderer.draw(checkedBox, x+boxOffset, y, 9*3, 9*3);
-		} else {
-			renderer.draw(uncheckedBox, x+boxOffset, y, 9*3, 9*3);
-		}
-		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
-			drawCheckBoxHover(renderer, x+boxOffset, y, 9*3, 9*3);
-            if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-            	Settings.bloomEnabled = !Settings.bloomEnabled;
-                clickCooldown = 0.33;
-            }
-        }
-		y += 20;
-		
-		y+=40;
-		renderer.setColour(titleColour1);
-		text = "God Rays";
-		renderer.drawString(text, x, y);
-		y-= 20;
-		if(Settings.godraysEnabled) {
-			renderer.draw(checkedBox, x+boxOffset, y, 9*3, 9*3);
-		} else {
-			renderer.draw(uncheckedBox, x+boxOffset, y, 9*3, 9*3);
-		}
-		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
-			drawCheckBoxHover(renderer, x+boxOffset, y, 9*3, 9*3);
-            if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-            	Settings.godraysEnabled = !Settings.godraysEnabled;
-                clickCooldown = 0.33;
-            }
-        }
-		y += 20;
-		
-		renderer.setColour(titleColour1);
-		text = "Back";
-		x = 542;
-		y = 510;
-		if (isHovering(text, x, y-24, font)) {
+	    renderer.setColour(darkened);
+	    renderer.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
+	    renderer.draw(videoSettingsFrame, gp.frameWidth/2 - ((112*3)/2), gp.frameHeight/2 - ((112*3)/2), 112*3, 112*3);
+
+	    renderer.setFont(font);
+
+	    // Adjust firstVisibleIndex to keep selection in view
+	    if (selectedIndex < firstVisibleIndex) firstVisibleIndex = selectedIndex;
+	    if (selectedIndex >= firstVisibleIndex + maxVisible) firstVisibleIndex = selectedIndex - maxVisible + 1;
+
+	    // Draw only visible checkboxes
+	    for (int i = firstVisibleIndex; i < Math.min(firstVisibleIndex + maxVisible, videoCheckBoxes.size()); i++) {
+	        CheckBox cb = videoCheckBoxes.get(i);
+
+	        // Move y position according to scrolling
+	        int yPos = 340 + (i - firstVisibleIndex) * spacing;
+	        cb.move(yPos - cb.y); // adjust to correct position for this frame
+
+	        // Highlight the selected checkbox
+	        if (i == selectedIndex) renderer.setColour(titleColour2);
+	        else renderer.setColour(titleColour1);
+
+	        cb.draw(renderer);
+	    }
+
+	    // Back button
+	    String backText = "Back";
+	    int backX = 542;
+	    int backY = 510;
+	    renderer.setColour(titleColour1);
+	    if (isHovering(backText, backX, backY-24, font)) {
             renderer.setColour(titleColour2);
             if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
                 settingsState = baseSettings;
                 clickCooldown = 0.33;
             }
-    		renderer.draw(underline, 512-60, y-16, 80*3, 16*3);
+    		renderer.draw(underline, 512-60, backY-16, 80*3, 16*3);
         }
-		renderer.drawString(text, x, y);
-		
+	    renderer.drawString(backText, backX, backY);
 	}
 	private void drawAudioSettings(Renderer renderer) {
 		
@@ -3175,6 +3155,17 @@ public class GUI {
 		}
 		if(gp.currentState == gp.createJoinPlayerScreen) {
 			playerNameBox.update(dt);
+		}
+		if(settingsState == videoState) {
+		    if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_W) && clickCooldown == 0) {
+		        if (selectedIndex > 0) selectedIndex--;
+		        clickCooldown = 0.05;
+		    }
+
+		    if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_S) && clickCooldown == 0) {
+		        if (selectedIndex < videoCheckBoxes.size()) selectedIndex++;
+		        clickCooldown = 0.05;
+		    }
 		}
 		
 		if(gp.currentState == gp.catalogueState) {

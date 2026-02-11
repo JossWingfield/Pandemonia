@@ -1,8 +1,7 @@
 package map;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +10,8 @@ import main.GamePanel;
 import main.renderer.Colour;
 import main.renderer.GLSLCamera;
 import main.renderer.Texture;
+import utility.CollisionMethods;
+import utility.Settings;
 
 public class LightingManager {
 
@@ -23,30 +24,17 @@ public class LightingManager {
     private boolean firstUpdate = true;
     private boolean powerOff = false;
 
-    // Cache kernels by radius
-    private final Map<Integer, float[]> falloffCache = new HashMap<>();
-
-    private Texture litImageUnscaled; // reused per frame
-    private int[] litData;                  // Premultiplied light colors (optimization #7)
-    private float[] premulR;
-    private float[] premulG;
-    private float[] premulB;
-
     //Bloom Settings
-    private Texture bloomSmall;   // downscaled + bright
-    private Texture bloomBlurred; // blurred, same size as bloomSmall
     public float bloomThreshold = 150 / 255f;     // Only really bright pixels bloom
     public int bloomStrength = 6;        // Softer blur radius
     public float bloomIntensity = 0.12f; //0.15f
-    private int[] bloomSmallData;
-    private int[] bloomBlurredData;
     
     
     //Light Occlusion Settings
-    private final Map<Integer, Texture> roomOcclusionCache = new HashMap<>();
-    private Texture occlusion, lowRes;
-    Graphics2D gLowRes;
-    private int[] pixelData;
+    
+    private Texture currentOcclusionTexture;
+    private Map<Integer, Texture> roomOcclusionCache = new HashMap<>();
+    private int lastRoomId = -1;
 
     final float minBrightness = 0.55f;
     int minBrightness255 = (int)(minBrightness * 255); // 0.55 * 255 ≈ 140
@@ -1011,6 +999,21 @@ public class LightingManager {
             firstUpdate = false;
             startLights();
         }
+        
+        if (!(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.chatState)) {
+            return;
+        }
+        
+	    Room room = gp.world.mapM.currentRoom;
+	
+	        if (room != null) {
+	            int roomId = room.preset; // however you identify rooms
+	
+	            if (roomId != lastRoomId) {
+	                lastRoomId = roomId;
+	                currentOcclusionTexture = getOcclusionForRoom(room);
+	            }
+	        }
 
         float time = gp.world.gameM.getRawTime(); // 0–24h
         Colour ambient;
@@ -1045,6 +1048,65 @@ public class LightingManager {
         } else {
             setAmbientLight(night, 0.6f);
         }
+    }
+    private Texture getOcclusionForRoom(Room room) {
+
+        int roomId = room.preset;
+
+        if (roomOcclusionCache.containsKey(roomId))
+            return roomOcclusionCache.get(roomId);
+
+        int width = gp.frameWidth;
+        int height = gp.frameHeight;
+        int tileSize = gp.tileSize;
+
+        int[] pixels = new int[width * height];
+
+        int white = 0xFFFFFFFF;
+        int black = 0xFF000000;
+
+        // Fill white
+        Arrays.fill(pixels, white);
+
+        // Get room tile bounds
+        int startTileX = 0;
+        int startTileY = 0;
+        int endTileX = 24;
+        int endTileY = 16;
+
+        for (int ty = startTileY; ty < endTileY; ty++) {
+            for (int tx = startTileX; tx < endTileX; tx++) {
+
+                if (!CollisionMethods.canLightPassThroughTile(tx, ty, gp)) {
+
+                    int startX = tx * tileSize;
+                    int startY = ty * tileSize;
+
+                    for (int y = 0; y < tileSize; y++) {
+                        for (int x = 0; x < tileSize; x++) {
+
+                            int px = startX + x;
+                            int py = startY + y;
+
+                            if (px < 0 || py < 0 || px >= width || py >= height)
+                                continue;
+
+                            int flippedY = height - 1 - py;
+                            pixels[flippedY * width + px] = black;
+                        }
+                    }
+                }
+            }
+        }
+
+        Texture texture = new Texture(width, height, pixels);
+
+        roomOcclusionCache.put(roomId, texture);
+
+        return texture;
+    }
+    public Texture getCurrentOcclusionTexture() {
+        return currentOcclusionTexture;
     }
     private Colour darkenColor(Colour color, float factor) {
         // factor = 0.5f means 50% darker
