@@ -84,6 +84,8 @@ public class Player extends Entity{
     private boolean moved = false;
     private double timeSinceLastSend = 0;
     public boolean isChangingRoom = false;
+    
+    public boolean previewHat = true;
 
     public Player(GamePanel gp, int xPos, int yPos, KeyListener keyL, MouseListener mouseL, String username) { //Setting default variables
         super(gp, (xPos), (yPos), 32, 32);
@@ -188,7 +190,7 @@ public class Player extends Entity{
         this.hitbox.y = data.y;
         this.currentRoomIndex = data.currentRoomIndex;
         gp.world.mapM.setRoom(currentRoomIndex);
-
+        
         /*
         // Recreate item if needed
         if (data.currentItemName != null) {
@@ -268,8 +270,8 @@ public class Player extends Entity{
         bodyAnimations = importUniversalAnimation("/player/body/Washing.png", bodyAnimations, 0, 0, 80, 80, 5, 4);
         
         //Hair
-        hairAnimations = importPlayerSpriteSheet("/player/hair", 80, 80);
-        hairAnimations = importUniversalAnimation("/player/hair/Washing.png", hairAnimations, 0, 0, 80, 80, 5, 4);
+        hairAnimations = importPlayerSpriteSheet("/player/hair/hair0", 80, 80);
+        hairAnimations = importUniversalAnimation("/player/hair/hair0/Washing.png", hairAnimations, 0, 0, 80, 80, 5, 4);
         
         //Accessory
         accessoryAnimations = importPlayerSpriteSheet("/player/acc", 80, 80);
@@ -833,6 +835,9 @@ public class Player extends Entity{
     }
     public void setPlayerHairStyle(HairStyle hairStyle) {
         this.appearance.hairStyle = hairStyle;
+        
+        hairAnimations = importPlayerSpriteSheet("/player/hair/hair" + appearance.hairStyle.getIndex(), 80, 80);
+        hairAnimations = importUniversalAnimation("/player/hair/hair" + appearance.hairStyle.getIndex() + "/Washing.png", hairAnimations, 0, 0, 80, 80, 5, 4);
     }
     public void draw(Renderer renderer) {
     	if(isInvisible) {
@@ -981,7 +986,9 @@ public class Player extends Entity{
    		    renderer.draw(bodyFrame, x,y,drawWidth*scale, drawHeight*scale);
    		    renderer.draw(headFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
    		    renderer.draw(hairFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
-   		    renderer.draw(accessoryFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    if(previewHat) {
+   		    	renderer.draw(accessoryFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    }
    		    renderer.draw(hand1Frame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
    		}   
    		

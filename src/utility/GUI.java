@@ -1068,13 +1068,7 @@ public class GUI {
 	}
 	private void drawCreateWorldScreen(Renderer renderer) {
 
-	    renderer.draw(
-	        titleBackground,
-	        (gp.frameWidth / 2) - (int) ((768 * 1.5) / 2),
-	        (gp.frameHeight / 2) - (int) ((560 * 1.5) / 2),
-	        (int) (768 * 1.5),
-	        (int) (560 * 1.5)
-	    );
+	    renderer.draw(titleBackground,(gp.frameWidth / 2) - (int) ((768 * 1.5) / 2),(gp.frameHeight / 2) - (int) ((560 * 1.5) / 2),(int) (768 * 1.5),(int) (560 * 1.5));
 
 	    // ---- Book animation ----
 	    titleAnimationSpeed++;
@@ -1177,10 +1171,52 @@ public class GUI {
 		    renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize);
 	    }
 	    
-	    //Hair
-	    text = "Hair Colour " + (selectedHairNum + 1);
+	    //Hair Style
+	    text = "Hair Style " + (selectedHairStyleNum + 1);
 	    x = centerX + 50;
 	    y = 460;
+	    
+	    renderer.setColour(titleColour1);
+	    renderer.drawString(text, x, y);
+	    
+	    y-= 50;
+	    
+	    imageSize = 32*3;
+	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            selectedHairStyleNum--;
+	            
+	            if(selectedHairStyleNum < 0) {
+	            	selectedHairStyleNum = 0;
+	            }
+	            gp.player.setHairStyle(selectedHairStyleNum);
+	        }
+	    } else {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    int rightArrowOffset = 80;
+	    if (isHovering(x + imageSize+rightArrowOffset, y, imageSize, imageSize)) {
+	    	renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            selectedHairStyleNum++;
+	            
+	            if(selectedHairStyleNum > 1) {
+	            	selectedHairStyleNum = 1;
+	            }
+	            gp.player.setHairStyle(selectedHairStyleNum);
+	        }
+	    } else {
+		    renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize);
+	    }
+	    
+	    //Hair Colour
+	    text = "Hair Colour " + (selectedHairNum + 1);
+	    x = centerX + 50;
+	    y = 560;
 	    
 	    renderer.setColour(titleColour1);
 	    renderer.drawString(text, x, y);
@@ -1203,7 +1239,7 @@ public class GUI {
 	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
 	    }
 	    
-	    int rightArrowOffset = 80;
+	    rightArrowOffset = 80;
 	    if (isHovering(x + imageSize+rightArrowOffset, y, imageSize, imageSize)) {
 	    	renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
@@ -1220,9 +1256,28 @@ public class GUI {
 	    }
 	    
 
+	    //RIGHT SIDE
+	    x = 200+gp.frameWidth / 2 - getTextWidth(text, font) / 2;
+	    //PREVIEW HAT
+		renderer.setColour(titleColour1);
+		text = "Show Hat";
+		int boxOffset = 170;
+		renderer.drawString(text, x, y);
+		y-= 20;
+		if(gp.player.previewHat) {
+			renderer.draw(checkedBox, x+boxOffset, y, 9*3, 9*3);
+		} else {
+			renderer.draw(uncheckedBox, x+boxOffset, y, 9*3, 9*3);
+		}
+		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
+			drawCheckBoxHover(renderer, x+boxOffset, y, 9*3, 9*3);
+            if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+            	gp.player.previewHat = !gp.player.previewHat;
+                clickCooldown = 0.33;
+            }
+        }
 	    // ---- Confirm ----
 	    text = "Confirm";
-	    x = 200+gp.frameWidth / 2 - getTextWidth(text, font) / 2;
 	    y = 640;
 
 	    renderer.setColour(titleColour1);
@@ -1389,10 +1444,53 @@ public class GUI {
 		    renderer.draw(rightTitleArrow, x + imageSize, y, imageSize, imageSize);
 	    }
 	    
+	    
+	    //Hair Style
+	    text = "Hair Style " + (selectedHairStyleNum + 1);
+	    x = centerX + 50;
+	    y = 460;
+	    
+	    renderer.setColour(titleColour1);
+	    renderer.drawString(text, x, y);
+	    
+	    y-= 50;
+	    
+	    imageSize = 32*3;
+	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            selectedHairStyleNum--;
+	            
+	            if(selectedHairStyleNum < 0) {
+	            	selectedHairStyleNum = 0;
+	            }
+	            gp.player.setHairStyle(selectedHairStyleNum);
+	        }
+	    } else {
+	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
+	    }
+	    
+	    int rightArrowOffset = 80;
+	    if (isHovering(x + imageSize+rightArrowOffset, y, imageSize, imageSize)) {
+	    	renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            clickCooldown = 0.25;
+	            selectedHairStyleNum++;
+	            
+	            if(selectedHairStyleNum > 1) {
+	            	selectedHairStyleNum = 1;
+	            }
+	            gp.player.setHairStyle(selectedHairStyleNum);
+	        }
+	    } else {
+		    renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize);
+	    }
+	    
 	    //Hair
 	    text = "Hair Colour " + (selectedHairNum + 1);
 	    x = centerX + 50;
-	    y = 460;
+	    y = 560;
 	    
 	    renderer.setColour(titleColour1);
 	    renderer.drawString(text, x, y);
@@ -1415,7 +1513,7 @@ public class GUI {
 	    	renderer.draw(leftTitleArrow, x - imageSize, y, imageSize, imageSize);
 	    }
 	    
-	    int rightArrowOffset = 80;
+	    rightArrowOffset = 80;
 	    if (isHovering(x + imageSize+rightArrowOffset, y, imageSize, imageSize)) {
 	    	renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize, new Vector4f(87/255, 62/255, 86/255, 1));
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
@@ -1431,10 +1529,29 @@ public class GUI {
 		    renderer.draw(rightTitleArrow, x + imageSize+rightArrowOffset, y, imageSize, imageSize);
 	    }
 	    
+	    //RIGHT SIDE
+	    x = 200+gp.frameWidth / 2 - getTextWidth(text, font) / 2;
+	    //PREVIEW HAT
+		renderer.setColour(titleColour1);
+		text = "Show Hat";
+		int boxOffset = 170;
+		renderer.drawString(text, x, y);
+		y-= 20;
+		if(gp.player.previewHat) {
+			renderer.draw(checkedBox, x+boxOffset, y, 9*3, 9*3);
+		} else {
+			renderer.draw(uncheckedBox, x+boxOffset, y, 9*3, 9*3);
+		}
+		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
+			drawCheckBoxHover(renderer, x+boxOffset, y, 9*3, 9*3);
+            if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+            	gp.player.previewHat = !gp.player.previewHat;
+                clickCooldown = 0.33;
+            }
+        }
 
 	    // ---- Confirm ----
 	    text = "Confirm";
-	    x = 200+gp.frameWidth / 2 - getTextWidth(text, font) / 2;
 	    y = 640;
 
 	    renderer.setColour(titleColour1);
