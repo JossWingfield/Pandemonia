@@ -28,6 +28,13 @@ uniform float uAmbientIntensity;
 
 uniform int uNumLights;
 
+#define MAX_SHADOW_CASTERS 64
+
+uniform int uNumShadowCasters;
+uniform vec2 uShadowCasterPos[MAX_SHADOW_CASTERS];
+uniform vec2 uShadowCasterSize[MAX_SHADOW_CASTERS];
+uniform float uShadowCasterStrength[MAX_SHADOW_CASTERS];
+
 struct Light {
     vec2 position;
     vec3 color;
@@ -39,6 +46,7 @@ uniform Light uLights[64];
 
 // New boolean uniform to toggle occlusion
 uniform bool uOcclusionEnabled;
+uniform bool uShadowsEnabled;
 
 
 void main()
@@ -60,15 +68,64 @@ void main()
 
     // -------- Dynamic Lights --------
     for (int i = 0; i < uNumLights; i++) {
-        Light L = uLights[i];
-        vec2 diff = L.position - fragPos;
-        float dist = length(diff);
 
-        if (dist < L.radius) {
-            float falloff = 1.0 - (dist / L.radius);
-            lighting += L.color * falloff * L.intensity;
-        }
+    Light L = uLights[i];
+
+    vec2 lightToFrag = fragPos - L.position;
+    float fragDist = length(lightToFrag);
+
+    if (fragDist < L.radius) {
+
+        float falloff = 1.0 - (fragDist / L.radius);
+        vec3 lightContribution = L.color * falloff * L.intensity;
+
+        // --- Add Light ---
+        lighting += lightContribution;
+
+		if (uShadowsEnabled) {
+	        for (int s = 0; s < uNumShadowCasters; s++) {
+	
+			    vec2 casterPos = uShadowCasterPos[s];
+			    vec2 casterSize = uShadowCasterSize[s];
+			    float casterStrength = uShadowCasterStrength[s];
+			
+			    float casterDist = length(casterPos - L.position);
+			
+			    // Only cast if inside light
+			    if (casterDist < L.radius * 3.0) {
+			
+			        vec2 shadowDir = normalize(casterPos - L.position);
+			        vec2 fragToCaster = fragPos - casterPos;
+			
+			        float angle = atan(shadowDir.y, shadowDir.x);
+			        float cosA = cos(angle);
+			        float sinA = sin(angle);
+			
+			        vec2 shadowSpace = vec2(
+			            fragToCaster.x * cosA + fragToCaster.y * sinA,
+			            -fragToCaster.x * sinA + fragToCaster.y * cosA
+			        );
+			
+			        if (shadowSpace.x > 0.0) {
+			
+			            float dynamicLength = casterSize.x * (1.0 + (L.radius - casterDist) / L.radius);
+			
+			            float sx = shadowSpace.x / dynamicLength;
+			            float sy = shadowSpace.y / casterSize.y;
+			
+			            float shadowMask = 1.0 - length(vec2(sx, sy));
+			            shadowMask = clamp(shadowMask, 0.0, 1.0);
+			            shadowMask = smoothstep(0.0, 1.0, shadowMask);
+			
+			            lighting -= lightContribution * shadowMask * casterStrength;
+			        }
+			    }
+			}
+		}
     }
+}
+    
+    
 
     // -------- Occlusion with smooth edges --------
     float occlusion = 1.0;
@@ -78,7 +135,7 @@ void main()
 
 
         // you can tweak these numbers for softer/harder edges
-        occlusion = smoothstep(0.0, 0.7, occ);
+        occlusion = smoothstep(0.0, 1.0, occ);
     }
 
     vec3 litScene = baseColor * lighting * occlusion;

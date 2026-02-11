@@ -43,8 +43,10 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFW;
 
+import entity.Entity;
+import entity.PlayerMP;
+import entity.buildings.Building;
 import main.GamePanel;
 import map.LightSource;
 import utility.Settings;
@@ -530,6 +532,60 @@ public class Renderer {
 	    if(occ != null) {
 	    	glBindTexture(GL_TEXTURE_2D, occ.getTexId());
 	        lightingShader.uploadInt("uOcclusion", 2);
+	    }
+	    
+	    // --- PLAYER SHADOW UNIFORMS ---
+	    List<Entity> shadowCasters = new ArrayList<Entity>();
+	    if(gp.multiplayer) {
+	    	for(PlayerMP p: gp.playerList) {
+	    	 	if(p.currentRoomIndex == gp.player.currentRoomIndex) {
+	    	 		shadowCasters.add(p);
+	    	 	}
+	    	}
+	    } else {
+	    	shadowCasters.add(gp.player);
+	    }
+	    
+	    /*
+		Building[] bottomLayer = gp.world.buildingM.getBuildingsToDraw();
+        for(int i = 0; i < bottomLayer.length-1; i++) {
+        	if(bottomLayer[i] != null) {
+        		shadowCasters.add(bottomLayer[i]);
+        	}
+        }
+        */
+
+	    
+	    lightingShader.uploadBool("uShadowsEnabled", Settings.shadowsEnabled); 
+
+	    
+	    int max = Math.min(shadowCasters.size(), 32);
+	    lightingShader.uploadInt("uNumShadowCasters", max);
+
+	    for (int i = 0; i < max; i++) {
+
+	        Entity e = shadowCasters.get(i);
+
+	        Vector2f worldCenter = new Vector2f(
+	                e.hitbox.x + e.hitbox.width / 2f,
+	                e.hitbox.y + e.hitbox.height - 10
+	        );
+
+	        Vector2f screenPos = gp.camera.worldToScreen(
+	                worldCenter,
+	                camera.getViewMatrix(),
+	                camera.getProjectionMatrix(),
+	                gp.sizeX,
+	                gp.sizeY
+	        );
+
+	        lightingShader.uploadVec2f("uShadowCasterPos[" + i + "]", screenPos);
+
+	        // Shadow size per entity
+	        lightingShader.uploadVec2f("uShadowCasterSize[" + i + "]",
+	                new Vector2f(180f, 55f));
+
+	        lightingShader.uploadFloat("uShadowCasterStrength[" + i + "]", 1.0f);
 	    }
         
 

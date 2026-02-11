@@ -249,6 +249,10 @@ public class GUI {
 	    videoCheckBoxes.add(new CheckBox(gp, x, y+240, 9*3, "Occlusion",
 		        () -> Settings.occlusionEnabled,
 		        () -> Settings.occlusionEnabled = !Settings.occlusionEnabled));
+	    
+	    videoCheckBoxes.add(new CheckBox(gp, x, y+300, 9*3, "Shadows",
+		        () -> Settings.shadowsEnabled,
+		        () -> Settings.shadowsEnabled = !Settings.shadowsEnabled));
 	}
 	
 	protected Texture importImage(String filePath) {

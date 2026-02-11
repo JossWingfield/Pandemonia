@@ -657,6 +657,9 @@ public class GameManager {
         data.bloomEnabled = Settings.bloomEnabled;
         data.fancyLighting = Settings.fancyLighting;
         data.showUsernames = Settings.showUsernames;
+        data.occlusionEnabled = Settings.occlusionEnabled;
+        data.godRaysEnabled = Settings.godraysEnabled;
+        data.shadowsEnabled = Settings.shadowsEnabled;
         
         return data;
     }
@@ -665,6 +668,9 @@ public class GameManager {
     	Settings.fancyLighting = data.fancyLighting;
     	Settings.fullScreen = data.fullScreen;
     	Settings.bloomEnabled = data.bloomEnabled;
+    	Settings.occlusionEnabled = data.occlusionEnabled;
+    	Settings.godraysEnabled = data.godRaysEnabled;
+    	Settings.shadowsEnabled = data.shadowsEnabled;
     }
     private void addParcel() {
 		Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));

@@ -8,7 +8,6 @@ import java.util.List;
 import ai.PathFinder;
 import entity.Entity;
 import entity.Player;
-import entity.PlayerMP;
 import entity.buildings.Building;
 import entity.buildings.BuildingManager;
 import entity.items.Item;
@@ -111,6 +110,7 @@ public class World {
           particleM = new ParticleSystem(gp);
           itemRegistry = new ItemRegistry(gp);
           buildingRegistry = new BuildingRegistry(gp);
+          mapB = new MapBuilder(gp);
     }
     public void serverUpdate(double dt) {
         if (!isServer) return;

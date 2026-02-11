@@ -8,5 +8,6 @@ public class Settings {
 	public static boolean bloomEnabled = true;
 	public static boolean godraysEnabled = true;
 	public static boolean occlusionEnabled = true;
+	public static boolean shadowsEnabled = true;
 	
 }
