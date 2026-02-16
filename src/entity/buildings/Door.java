@@ -33,6 +33,7 @@ public class Door extends Building {
 		drawHeight = 48*3;
 		canBePlaced = false;
 		yDrawOffset = 48;
+		castsShadow = false;
 		importImages();
 		if(facing == 0) {
 			npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height-48, 48, 48);

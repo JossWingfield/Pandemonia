@@ -34,6 +34,7 @@ public class TablePlate extends Building {
 		//isSecondLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
+		castsShadow = false;
 		this.chair = chair;
 		switch(direction) {
 		case 0:

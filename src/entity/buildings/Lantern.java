@@ -31,6 +31,7 @@ public class Lantern extends Building{
         drawHeight = 96;
         hitbox.height = 80;
 		isSolid = false;
+		castsShadow = false;
 		
 		importImages();
 		mustBePlacedOnWall = true;

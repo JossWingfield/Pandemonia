@@ -20,6 +20,7 @@ public class Building extends Entity {
 	public boolean isWall = false;
 	public boolean isWireable = false;
 	public boolean canBePlaced = true;
+	public boolean castsShadow = true;
 	
 	public boolean isSecondLayer = false;
 	public boolean isThirdLayer = false;

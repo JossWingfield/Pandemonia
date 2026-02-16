@@ -26,6 +26,7 @@ public class Candle extends Building{
 		importImages();
 		canBePlacedOnTable = true;
 		canBePlacedOnShelf = true;
+		castsShadow = false;
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*4, hitbox.y+3*4, hitbox.width-3*8, hitbox.height-3*8);
 	}
 	public void onPlaced() {

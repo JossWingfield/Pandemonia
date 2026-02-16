@@ -20,6 +20,7 @@ public class SoulLantern extends Building{
 		
 		drawWidth = 48;
 		isDecor = true;
+		castsShadow = false;
         drawHeight = 96;
         hitbox.height = 80;
 		isSolid = false;

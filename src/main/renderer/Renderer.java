@@ -546,48 +546,65 @@ public class Renderer {
 	    	shadowCasters.add(gp.player);
 	    }
 	    
-	    /*
-		Building[] bottomLayer = gp.world.buildingM.getBuildingsToDraw();
+	    
+		//Building[] bottomLayer = gp.world.buildingM.getBuildings();
+	    Building[] bottomLayer = gp.world.buildingM.getBuildingsToDraw();
         for(int i = 0; i < bottomLayer.length-1; i++) {
         	if(bottomLayer[i] != null) {
-        		shadowCasters.add(bottomLayer[i]);
+        		if(bottomLayer[i].castsShadow) {
+        			shadowCasters.add(bottomLayer[i]);
+        		}
         	}
         }
-        */
-
+        
+        
 	    
 	    lightingShader.uploadBool("uShadowsEnabled", Settings.shadowsEnabled); 
-
 	    
-	    int max = Math.min(shadowCasters.size(), 32);
+	    
+	    int max = Math.min(shadowCasters.size(), 64);
 	    lightingShader.uploadInt("uNumShadowCasters", max);
+        lightingShader.uploadFloat("uShadowLengthMultiplier", 0.5f);
 
 	    for (int i = 0; i < max; i++) {
 
 	        Entity e = shadowCasters.get(i);
 
-	        Vector2f worldCenter = new Vector2f(
-	                e.hitbox.x + e.hitbox.width / 2f,
-	                e.hitbox.y + e.hitbox.height - 10
+	        float bottomY = e.hitbox.y + e.hitbox.height;
+
+
+	        Vector2f bottomLeftWorld = new Vector2f(
+	                e.hitbox.x,
+	                bottomY
 	        );
 
-	        Vector2f screenPos = gp.camera.worldToScreen(
-	                worldCenter,
+	        Vector2f bottomRightWorld = new Vector2f(
+	                e.hitbox.x + e.hitbox.width,
+	                bottomY
+	        );
+
+	        Vector2f screenLeft = gp.camera.worldToScreen(
+	        		bottomLeftWorld,
+	                camera.getViewMatrix(),
+	                camera.getProjectionMatrix(),
+	                gp.sizeX,
+	                gp.sizeY
+	        );
+	        Vector2f screenRight = gp.camera.worldToScreen(
+	        		bottomRightWorld,
 	                camera.getViewMatrix(),
 	                camera.getProjectionMatrix(),
 	                gp.sizeX,
 	                gp.sizeY
 	        );
 
-	        lightingShader.uploadVec2f("uShadowCasterPos[" + i + "]", screenPos);
-
-	        // Shadow size per entity
-	        lightingShader.uploadVec2f("uShadowCasterSize[" + i + "]",
-	                new Vector2f(180f, 55f));
-
+	        lightingShader.uploadVec2f("uShadowCasterLeft[" + i + "]", screenLeft);
+	        lightingShader.uploadVec2f("uShadowCasterRight[" + i + "]", screenRight);
+  
 	        lightingShader.uploadFloat("uShadowCasterStrength[" + i + "]", 1.0f);
 	    }
         
+	    
 
         // Upload lighting uniforms ONCE
         lightingShader.uploadVec2f("uScreenSize", new Vector2f(gp.sizeX, gp.sizeY));

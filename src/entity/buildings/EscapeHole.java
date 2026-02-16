@@ -19,6 +19,7 @@ public class EscapeHole extends Building {
 		drawHeight = 16*3;
 		importImages();
 		canBePlaced = false;
+		castsShadow = false;
 		npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48, 48, 80);
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*8);
 	}

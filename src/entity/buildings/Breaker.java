@@ -28,6 +28,7 @@ public class Breaker extends Building{
 		importImages();
 		isSolid = true;
 		canBePlaced = false;
+		castsShadow = false;
 		interactHitbox = new Rectangle2D.Float(hitbox.x+56, hitbox.y+48, 32, hitbox.height);
 		npcHitbox = interactHitbox;
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*5);
