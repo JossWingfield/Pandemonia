@@ -30,11 +30,18 @@ uniform int uNumLights;
 
 #define MAX_SHADOW_CASTERS 64
 
-uniform int uNumShadowCasters;
-uniform float uShadowCasterStrength[MAX_SHADOW_CASTERS];
-uniform vec2 uShadowCasterLeft[MAX_SHADOW_CASTERS];
-uniform vec2 uShadowCasterRight[MAX_SHADOW_CASTERS];
-uniform float uShadowLengthMultiplier;
+// Building shadows (quad method)
+uniform int uNumBuildingCasters;
+uniform vec2 uBuildingCasterLeft[MAX_SHADOW_CASTERS];
+uniform vec2 uBuildingCasterRight[MAX_SHADOW_CASTERS];
+uniform float uBuildingCasterStrength[MAX_SHADOW_CASTERS];
+uniform float uBuildingShadowLengthMultiplier;
+
+// Player shadows (old method)
+uniform int uNumPlayerCasters;
+uniform vec2 uPlayerCasterPos[MAX_SHADOW_CASTERS];
+uniform vec2 uPlayerCasterSize[MAX_SHADOW_CASTERS];
+uniform float uPlayerCasterStrength[MAX_SHADOW_CASTERS];
 
 struct Light {
     vec2 position;
@@ -92,49 +99,81 @@ void main()
         if (!uShadowsEnabled)
             continue;
 
-        // ---------- Shadow Casters ----------
-        for (int s = 0; s < uNumShadowCasters; s++)
-        {
-            vec2 left  = uShadowCasterLeft[s];
-            vec2 right = uShadowCasterRight[s];
-
-            // Project endpoints away from light
-            vec2 edgeMid = (left + right) * 0.5;
-
-			vec2 dirL = normalize(left  - L.position);
-			vec2 dirR = normalize(right - L.position);
-			
-			float projectionLength = (L.radius - length(edgeMid - L.position)) * uShadowLengthMultiplier;
-			projectionLength = max(projectionLength, 1.0);
-
-            vec2 farLeft  = left  + dirL * projectionLength;
-            vec2 farRight = right + dirR * projectionLength;
-
-            // Ensure correct winding (counter-clockwise)
-            // Quad: left → right → farRight → farLeft
-            bool inside =
-                edgeTest(left, right, fragPos)     >= 0.0 &&
-                edgeTest(right, farRight, fragPos) >= 0.0 &&
-                edgeTest(farRight, farLeft, fragPos) >= 0.0 &&
-                edgeTest(farLeft, left, fragPos)   >= 0.0;
-
-if (inside)
+        for (int s = 0; s < uNumBuildingCasters; s++)
 {
-    // Compute center of near and far edges
-    vec2 nearCenter = (left + right) * 0.5;
-    vec2 farCenter  = (farLeft + farRight) * 0.5;
+    vec2 left  = uBuildingCasterLeft[s];
+    vec2 right = uBuildingCasterRight[s];
 
-    vec2 shadowAxis = normalize(farCenter - nearCenter);
+    vec2 edgeMid = (left + right) * 0.5;
 
-    // Distance along true quad axis
-    float forwardDist = dot(fragPos - nearCenter, shadowAxis);
+    vec2 dirL = normalize(left - L.position);
+    vec2 dirR = normalize(right - L.position);
 
-    float fade = 1.0 - (forwardDist / projectionLength);
-    fade = clamp(fade, 0.0, 1.0);
+    float projectionLength = (L.radius - length(edgeMid - L.position)) * uBuildingShadowLengthMultiplier;
+    projectionLength = max(projectionLength, 1.0);
 
-    lighting -= lightContribution * fade * uShadowCasterStrength[s];
+    vec2 farLeft  = left  + dirL * projectionLength;
+    vec2 farRight = right + dirR * projectionLength;
+
+    bool inside =
+        edgeTest(left, right, fragPos)     >= 0.0 &&
+        edgeTest(right, farRight, fragPos) >= 0.0 &&
+        edgeTest(farRight, farLeft, fragPos) >= 0.0 &&
+        edgeTest(farLeft, left, fragPos)   >= 0.0;
+
+    if (inside)
+    {
+        vec2 nearCenter = (left + right) * 0.5;
+        vec2 farCenter  = (farLeft + farRight) * 0.5;
+
+        vec2 shadowAxis = normalize(farCenter - nearCenter);
+        float forwardDist = dot(fragPos - nearCenter, shadowAxis);
+
+        float fade = 1.0 - (forwardDist / projectionLength);
+        fade = clamp(fade, 0.0, 1.0);
+
+        lighting -= lightContribution * fade * uBuildingCasterStrength[s];
+    }
 }
+
+// --- Player Shadows (old method) ---
+for (int s = 0; s < uNumPlayerCasters; s++)
+{
+    vec2 casterPos = uPlayerCasterPos[s];
+    vec2 casterSize = uPlayerCasterSize[s];
+    float casterStrength = uPlayerCasterStrength[s];
+
+    float casterDist = length(casterPos - L.position);
+
+    if (casterDist < L.radius * 3.0)
+    {
+        vec2 shadowDir = normalize(casterPos - L.position);
+        vec2 fragToCaster = fragPos - casterPos;
+
+        float angle = atan(shadowDir.y, shadowDir.x);
+        float cosA = cos(angle);
+        float sinA = sin(angle);
+
+        vec2 shadowSpace = vec2(
+            fragToCaster.x * cosA + fragToCaster.y * sinA,
+            -fragToCaster.x * sinA + fragToCaster.y * cosA
+        );
+
+        if (shadowSpace.x > 0.0)
+        {
+            float dynamicLength = casterSize.x * (1.0 + (L.radius - casterDist) / L.radius);
+
+            float sx = shadowSpace.x / dynamicLength;
+            float sy = shadowSpace.y / casterSize.y;
+
+            float shadowMask = 1.0 - length(vec2(sx, sy));
+            shadowMask = clamp(shadowMask, 0.0, 1.0);
+            shadowMask = smoothstep(0.0, 1.0, shadowMask);
+
+            lighting -= lightContribution * shadowMask * casterStrength;
         }
+    }
+}
     }
 
     // -------- Occlusion --------

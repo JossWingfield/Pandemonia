@@ -45,6 +45,7 @@ import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 import entity.Entity;
+import entity.Player;
 import entity.PlayerMP;
 import entity.buildings.Building;
 import main.GamePanel;
@@ -534,52 +535,40 @@ public class Renderer {
 	        lightingShader.uploadInt("uOcclusion", 2);
 	    }
 	    
-	    // --- PLAYER SHADOW UNIFORMS ---
-	    List<Entity> shadowCasters = new ArrayList<Entity>();
-	    if(gp.multiplayer) {
-	    	for(PlayerMP p: gp.playerList) {
-	    	 	if(p.currentRoomIndex == gp.player.currentRoomIndex) {
-	    	 		shadowCasters.add(p);
-	    	 	}
-	    	}
-	    } else {
-	    	shadowCasters.add(gp.player);
-	    }
 	    
+	    
+
+        
+        
+	    
+	    lightingShader.uploadBool("uShadowsEnabled", Settings.shadowsEnabled); 
+        lightingShader.uploadFloat("uBuildingShadowLengthMultiplier", 0.5f);
+	    
+	    // --- Buildings ---
+	    List<Building> buildingCasters = new ArrayList<Building>();
 	    
 		//Building[] bottomLayer = gp.world.buildingM.getBuildings();
 	    Building[] bottomLayer = gp.world.buildingM.getBuildingsToDraw();
         for(int i = 0; i < bottomLayer.length-1; i++) {
         	if(bottomLayer[i] != null) {
         		if(bottomLayer[i].castsShadow) {
-        			shadowCasters.add(bottomLayer[i]);
+        			buildingCasters.add(bottomLayer[i]);
         		}
         	}
         }
-        
-        
-	    
-	    lightingShader.uploadBool("uShadowsEnabled", Settings.shadowsEnabled); 
-	    
-	    
-	    int max = Math.min(shadowCasters.size(), 64);
-	    lightingShader.uploadInt("uNumShadowCasters", max);
-        lightingShader.uploadFloat("uShadowLengthMultiplier", 0.5f);
 
-	    for (int i = 0; i < max; i++) {
-
-	        Entity e = shadowCasters.get(i);
-
-	        float bottomY = e.hitbox.y + e.hitbox.height;
-
-
+	    lightingShader.uploadInt("uNumBuildingCasters", buildingCasters.size());
+	    lightingShader.uploadFloat("uBuildingShadowLengthMultiplier", 0.5f);
+	    for (int i = 0; i < buildingCasters.size(); i++) {
+	        Building b = buildingCasters.get(i);
+	        float bottomY = b.buildHitbox.y + b.buildHitbox.height;
 	        Vector2f bottomLeftWorld = new Vector2f(
-	                e.hitbox.x,
+	                b.buildHitbox.x,
 	                bottomY
 	        );
 
 	        Vector2f bottomRightWorld = new Vector2f(
-	                e.hitbox.x + e.hitbox.width,
+	        		b.buildHitbox.x + b.buildHitbox.width,
 	                bottomY
 	        );
 
@@ -597,11 +586,43 @@ public class Renderer {
 	                gp.sizeX,
 	                gp.sizeY
 	        );
+	        lightingShader.uploadVec2f("uBuildingCasterLeft[" + i + "]", screenLeft);
+	        lightingShader.uploadVec2f("uBuildingCasterRight[" + i + "]", screenRight);
+	        lightingShader.uploadFloat("uBuildingCasterStrength[" + i + "]", 1.0f);
+	    }
+	    
+	    List<Entity> playerCasters = new ArrayList<Entity>();
+	    // --- PLAYER SHADOW UNIFORMS ---
+	    if(gp.multiplayer) {
+	    	for(PlayerMP p: gp.playerList) {
+	    	 	if(p.currentRoomIndex == gp.player.currentRoomIndex) {
+	    	 		playerCasters.add(p);
+	    	 	}
+	    	}
+	    } else {
+	    	playerCasters.add(gp.player);
+	    }
 
-	        lightingShader.uploadVec2f("uShadowCasterLeft[" + i + "]", screenLeft);
-	        lightingShader.uploadVec2f("uShadowCasterRight[" + i + "]", screenRight);
-  
-	        lightingShader.uploadFloat("uShadowCasterStrength[" + i + "]", 1.0f);
+	    // --- Players ---
+	    lightingShader.uploadInt("uNumPlayerCasters", playerCasters.size());
+	    for (int i = 0; i < playerCasters.size(); i++) {
+	        Entity p = playerCasters.get(i);
+	        Vector2f centre = new Vector2f(
+	                p.hitbox.x + p.hitbox.width/2,
+	                p.hitbox.y + p.hitbox.width
+	        );
+
+	        Vector2f screenCentre = gp.camera.worldToScreen(
+	        		centre,
+	                camera.getViewMatrix(),
+	                camera.getProjectionMatrix(),
+	                gp.sizeX,
+	                gp.sizeY
+	        );
+	        Vector2f size = new Vector2f(180f, 55f);
+	        lightingShader.uploadVec2f("uPlayerCasterPos[" + i + "]", screenCentre);
+	        lightingShader.uploadVec2f("uPlayerCasterSize[" + i + "]", size);
+	        lightingShader.uploadFloat("uPlayerCasterStrength[" + i + "]", 1.0f);
 	    }
         
 	    
