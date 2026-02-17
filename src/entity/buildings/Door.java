@@ -119,13 +119,22 @@ public class Door extends Building {
     		locked = false;
 			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 25),Colour.RED, 16);
 			break;
+		case 3:
+			animations[0][0][0] = importImage("/decor/FreezerDoor.png").getSubimage(0, 0, 32, 48);
+        	animations[0][0][1] = importImage("/decor/FreezerDoor.png").getSubimage(32, 0, 32, 48);
+         	locked = true;
+        	locked = false;
+			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 25),Colour.RED, 16);
+			break;
 		}
 	}
 	public void refreshImages() {
-		if(preset == 0) {
-			if(facing == 0) {
-				animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getDoorSkin().getImage();
-				animations[0][0][1] = gp.world.mapM.getRooms()[roomNum].getDoorSkin().getOpenImage();
+		if(!locked) {
+			if(preset == 0) {
+				if(facing == 0) {
+					animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getDoorSkin().getImage();
+					animations[0][0][1] = gp.world.mapM.getRooms()[roomNum].getDoorSkin().getOpenImage();
+				}
 			}
 		}
 	}

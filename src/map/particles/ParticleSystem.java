@@ -33,7 +33,24 @@ public class ParticleSystem {
     public boolean randomShaking = false;
     private int shakeCooldown = 0;
     private final Random rand = new Random();
+    
+    //PAN EMBERS
+    private static class PanEmber {
+        int slot;       // 0, 1, etc.
+        float x, y, width, height;
+        boolean active;
 
+        public PanEmber(int slot, float x, float y, float width, float height) {
+            this.slot = slot;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.active = true;
+        }
+    }
+
+    private final List<PanEmber> panEmbers = new ArrayList<>();
     
     private static final int ROOM_EMBER_TARGET = 7000;
     private static final int ROOM_EMBER_SPAWN_RATE = 1; // frames
@@ -44,6 +61,7 @@ public class ParticleSystem {
 
     private static final float CLUMP_RADIUS = 24f; // pixels
     private static final float CLUMP_CHANCE = 0.35f;
+  
     
     public ParticleSystem(GamePanel gp) {
     	this.gp = gp;
@@ -62,6 +80,10 @@ public class ParticleSystem {
             Particle p = it.next();
             p.update();
             if(p.isDead()) it.remove();
+        }
+        
+        if(gp.player == null) {
+        	return;
         }
         
         dustActive = gp.world.mapM.currentRoom.darkerRoom;
@@ -155,6 +177,45 @@ public class ParticleSystem {
                 addParticle(new EmberParticle(gp, gp.player.currentRoomIndex, pos[0], pos[1], flare));
             }
         }
+        if (!panEmbers.isEmpty()) {
+            spawnCooldown--;
+
+            if (spawnCooldown <= 0) {
+                spawnCooldown = 5; // slower spawn for pan embers (less frequent)
+
+                int totalPanEmbers = 0;
+                for (Particle p : particles) {
+                    if (p instanceof EmberParticle) totalPanEmbers++;
+                }
+
+                int maxPanEmbers = 20; // total maximum across all pans
+
+                for (PanEmber pan : panEmbers) {
+                    if (!pan.active) continue;
+
+                    boolean clump = rand.nextFloat() < CLUMP_CHANCE;
+                    int burstCount = clump ? 1 : 1; // only 1 per spawn for low density
+
+                    for (int i = 0; i < burstCount && totalPanEmbers < maxPanEmbers; i++) {
+                        float x = pan.x + rand.nextFloat() * pan.width - pan.width / 2;
+                        float y = pan.y + rand.nextFloat() * pan.height - pan.height / 2;
+
+                        // optional clump randomness
+                        if (clump) {
+                            float angle = rand.nextFloat() * (float)Math.PI * 2f;
+                            float radius = rand.nextFloat() * CLUMP_RADIUS * 0.3f; // smaller clump
+                            x += Math.cos(angle) * radius;
+                            y += Math.sin(angle) * radius;
+                        }
+
+                        boolean flare = rand.nextFloat() < ROOM_FLARE_CHANCE;
+                        addParticle(new EmberParticle(gp, gp.player.currentRoomIndex, x, y, flare));
+
+                        totalPanEmbers++;
+                    }
+                }
+            }
+        }
         if (randomShaking) {
             if (shakeCooldown <= 0) {
                 // Small random chance each frame to trigger a shake
@@ -216,7 +277,38 @@ public class ParticleSystem {
     	    if (p != null) p.drawEmissive(renderer);
     	}
     }
-    
+    // Start ember for a pan slot
+    public void addPanEmber(int slot, float x, float y, float width, float height) {
+        // Check if this slot already exists
+        for (PanEmber p : panEmbers) {
+            if (p.slot == slot) {
+                // update existing pan position & size
+                p.x = x;
+                p.y = y;
+                p.width = width;
+                p.height = height;
+                p.active = true;
+                return;
+            }
+        }
+        // Add new pan ember for this slot
+        panEmbers.add(new PanEmber(slot, x, y, width, height));
+    }
+
+    // Stop ember for a pan slot
+    public void removePanEmber(int slot) {
+        for (PanEmber p : panEmbers) {
+            if (p.slot == slot) {
+                p.active = false;
+                return;
+            }
+        }
+    }
+
+    // Optional: stop all
+    public void clearPanEmbers() {
+        panEmbers.clear();
+    }
     public void clear() {
         particles.clear();
     }

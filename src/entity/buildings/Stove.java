@@ -186,6 +186,7 @@ public class Stove extends Building {
 								Food f = (Food)gp.player.currentItem;
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
+									startParticles(true);
 									gp.world.lightingM.addLight(leftLight);
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
@@ -198,6 +199,7 @@ public class Stove extends Building {
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
+										stopParticles(true);
 										gp.world.lightingM.removeLight(leftLight);
 										pan.resetImages();
 									} else if(pan.cookingItem.foodState == FoodState.BURNT) {
@@ -208,6 +210,7 @@ public class Stove extends Building {
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
+										stopParticles(true);
 										gp.world.lightingM.removeLight(leftLight);
 										pan.resetImages();
 									}
@@ -219,6 +222,7 @@ public class Stove extends Building {
 								Food f = (Food)gp.player.currentItem;
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
+									startParticles(true);
 									gp.world.lightingM.addLight(leftLight);
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
@@ -231,6 +235,7 @@ public class Stove extends Building {
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
+										stopParticles(true);
 										gp.world.lightingM.removeLight(leftLight);
 										pan.resetImages();
 									} else if(pan.cookingItem.foodState == FoodState.BURNT) {
@@ -241,6 +246,7 @@ public class Stove extends Building {
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
+										stopParticles(true);
 										gp.world.lightingM.removeLight(leftLight);
 										pan.resetImages();
 									}
@@ -326,6 +332,7 @@ public class Stove extends Building {
 								Food f = (Food)gp.player.currentItem;
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
+									startParticles(false);
 									gp.world.lightingM.addLight(rightLight);
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
@@ -339,6 +346,7 @@ public class Stove extends Building {
 										pan.cookingItem = null;
 										gp.world.lightingM.removeLight(rightLight);
 										pan.stopCooking();
+										stopParticles(false);
 										pan.resetImages();
 									} else if(pan.cookingItem.foodState == FoodState.BURNT) {
 										pan.cookingItem = null;
@@ -349,6 +357,7 @@ public class Stove extends Building {
 										pan.cookingItem = null;
 										gp.world.lightingM.removeLight(rightLight);
 										pan.stopCooking();
+										stopParticles(false);
 										pan.resetImages();
 									}
 								}
@@ -359,6 +368,7 @@ public class Stove extends Building {
 								Food f = (Food)gp.player.currentItem;
 								if(f.foodState == FoodState.RAW) {
 									pan.setCooking(gp.player.currentItem);
+									startParticles(false);
 									gp.world.lightingM.addLight(rightLight);
 									gp.player.currentItem = null;
 									gp.player.clickCounter = 0.1;
@@ -372,6 +382,7 @@ public class Stove extends Building {
 										pan.cookingItem = null;
 										gp.world.lightingM.removeLight(rightLight);
 										pan.stopCooking();
+										stopParticles(false);
 										pan.resetImages();
 									} else if(pan.cookingItem.foodState == FoodState.BURNT) {
 										pan.cookingItem = null;
@@ -382,6 +393,7 @@ public class Stove extends Building {
 										pan.cookingItem = null;
 										gp.world.lightingM.removeLight(rightLight);
 										pan.stopCooking();
+										stopParticles(false);
 										pan.resetImages();
 									}
 								}
@@ -539,4 +551,19 @@ public class Stove extends Building {
 		}
 		
 	}
+	private void stopParticles(boolean isLeft) {
+		if(isLeft) {
+			gp.world.particleM.removePanEmber(0);
+		} else {
+			gp.world.particleM.removePanEmber(1);
+		}
+	}
+	private void startParticles(boolean isLeft) {
+		if(isLeft) {
+			gp.world.particleM.addPanEmber(0, (int) hitbox.x - xDrawOffset  + 18, (int) (hitbox.y )-yDrawOffset+48+16, 32, 32);
+		} else {
+			gp.world.particleM.addPanEmber(1, (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 32, 32);
+		}
+	}
+	
 }

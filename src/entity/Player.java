@@ -960,6 +960,12 @@ public class Player extends Entity{
     		break;
     	}
     }
+    public int getX() {
+    	return (int)(hitbox.x + hitbox.width/2);
+    }
+    public int getY() {
+    	return (int)(hitbox.y + hitbox.height/2);
+    }
     public void drawPreview(Renderer renderer, int x, int y) {
     	applySkinIfNeeded();
     	   TextureRegion hand2Frame = hand2Animations[direction][currentAnimation][animationCounter];

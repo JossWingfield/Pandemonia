@@ -817,7 +817,6 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
         	mustBePlacedOnWall = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
-
         	break;
         case 60:
         	name = "Circle Table";
@@ -1455,6 +1454,101 @@ public class FloorDecor_Building extends Building {
         	isDecor = true;
     		mustBePlacedOnTable = true;
           	cost = 15;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
+        case 110:
+        	name = "Freezer Shelf 1";
+        	animations[0][0][0] = importImage("/decor/Shelves.png").getSubimage(0, 0, 64, 48);
+        	drawWidth = 64*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 48*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+         	xDrawOffset = 24;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
+        case 111:
+        	name = "Freezer Shelf 2";
+        	animations[0][0][0] = importImage("/decor/Shelves.png").getSubimage(64, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 24*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+         	xDrawOffset = 12;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
+        case 112:
+        	name = "Freezer Shelf 3";
+        	animations[0][0][0] = importImage("/decor/Shelves.png").getSubimage(64+32, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 24*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
+        case 113:
+        	name = "Freezer Shelf 4";
+        	animations[0][0][0] = importImage("/decor/Shelves.png").getSubimage(64+64, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 24*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
+        case 114:
+        	name = "Freezer Shelf 5";
+        	animations[0][0][0] = importImage("/decor/Shelves.png").getSubimage(64+64+32, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 12*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	xDrawOffset = 40;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
+        case 115:
+        	name = "Freezer Shelf 6";
+        	animations[0][0][0] = importImage("/decor/Shelves.png").getSubimage(128+64, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 24*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+        	break;
+        case 116:
+        	name = "Freezer Shelf 7";
+        	animations[0][0][0] = importImage("/decor/Shelves.png").getSubimage(128+64+32, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 12*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	xDrawOffset = 40;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
         	break;
         }

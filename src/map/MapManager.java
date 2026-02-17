@@ -64,6 +64,7 @@ public class MapManager {
 	        rooms[7] = new Room(gp, 7); //Abandoned Corridor
 	        rooms[8] = new Room(gp, 8); //Corridor 1
 	        rooms[9] = new Room(gp, 9); //Old Kitchen
+	        rooms[10] = new Room(gp, 10); //Freezer
 	        
 	        currentMapHeight = currentRoom.mapHeight;
 	        currentMapWidth = currentRoom.mapWidth;
@@ -279,7 +280,7 @@ public class MapManager {
 	    	gp.world.buildingM.setDoorCooldowns();
 	    	switchRoom(roomNum);
 	    	
-	    	Door door = (Door)gp.world.buildingM.findCorrectDoor(previousDoor.facing);
+	    	Door door = (Door)gp.world.buildingM.findCorrectDoor(previousDoor.facing, previousDoor.roomNum);
 	    	if(door != null) {
     			gp.player.hitbox.x = door.hitbox.x + door.hitbox.width/2 - gp.player.hitbox.width/2;
 	    		if(door.facing == 0) {
@@ -370,6 +371,9 @@ public class MapManager {
 	    		return currentRoom;
 	    	}
 	    	return null;
+	    }
+	    public boolean isFreezerRoom() {
+	    	return currentRoom.preset == 10;
 	    }
 	    public Building findCorrectDoorInRoom(int roomNum, int facing) {
 	    	Room room = rooms[roomNum];

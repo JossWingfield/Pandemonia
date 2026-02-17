@@ -32,6 +32,7 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -46,9 +47,9 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 
 import entity.Entity;
-import entity.Player;
 import entity.PlayerMP;
 import entity.buildings.Building;
+import entity.npc.NPC;
 import main.GamePanel;
 import map.LightSource;
 import utility.Settings;
@@ -96,6 +97,8 @@ public class Renderer {
     // Per-frame command list (painter's algorithm)
     private final List<DrawCommand> frameCommands = new ArrayList<>();
     private final List<Vector2f> lightScreenPositions = new ArrayList<>();
+    private final List<Vector2f> buildingLeftScreenPositions = new ArrayList<>();
+    private final List<Vector2f> buildingRightScreenPositions = new ArrayList<>();
     
     private int fsQuadVao;
     private int fsQuadVbo;
@@ -107,7 +110,7 @@ public class Renderer {
     private int BLOOM_BLUR_PASSES = 5;
     
     private Shader godRay = null;
-
+    
     public Renderer(GamePanel gp, GLSLCamera camera) {
         this.gp = gp;
         this.camera = camera;
@@ -476,6 +479,44 @@ public class Renderer {
             );
             lightScreenPositions.add(screenPos);
         }
+        
+        buildingLeftScreenPositions.clear();
+        buildingRightScreenPositions.clear();
+	    Building[] bottomLayer = gp.world.buildingM.getBuildingsToDraw();
+        for(int i = 0; i < bottomLayer.length-1; i++) {
+        	if(bottomLayer[i] != null) {
+        		if(bottomLayer[i].castsShadow) {
+        	        Building b = bottomLayer[i];
+        	        float bottomY = b.buildHitbox.y + b.buildHitbox.height;
+        	        Vector2f bottomLeftWorld = new Vector2f(
+        	                b.buildHitbox.x,
+        	                bottomY
+        	        );
+
+        	        Vector2f bottomRightWorld = new Vector2f(
+        	        		b.buildHitbox.x + b.buildHitbox.width,
+        	                bottomY
+        	        );
+
+        	        Vector2f screenLeft = gp.camera.worldToScreen(
+        	        		bottomLeftWorld,
+        	                camera.getViewMatrix(),
+        	                camera.getProjectionMatrix(),
+        	                gp.sizeX,
+        	                gp.sizeY
+        	        );
+        	        Vector2f screenRight = gp.camera.worldToScreen(
+        	        		bottomRightWorld,
+        	                camera.getViewMatrix(),
+        	                camera.getProjectionMatrix(),
+        	                gp.sizeX,
+        	                gp.sizeY
+        	        );
+        	        buildingRightScreenPositions.add(screenRight);
+        	        buildingLeftScreenPositions.add(screenLeft);
+        		}
+        	}
+        }
     }
     
     // helper to write a vertex into the host vertexArray
@@ -542,52 +583,15 @@ public class Renderer {
 	    
 	    lightingShader.uploadBool("uShadowsEnabled", Settings.shadowsEnabled); 
         lightingShader.uploadFloat("uBuildingShadowLengthMultiplier", 0.5f);
-	    
-	    // --- Buildings ---
-	    List<Building> buildingCasters = new ArrayList<Building>();
-	    
-		//Building[] bottomLayer = gp.world.buildingM.getBuildings();
-	    Building[] bottomLayer = gp.world.buildingM.getBuildingsToDraw();
-        for(int i = 0; i < bottomLayer.length-1; i++) {
-        	if(bottomLayer[i] != null) {
-        		if(bottomLayer[i].castsShadow) {
-        			buildingCasters.add(bottomLayer[i]);
-        		}
-        	}
-        }
-        
 
-	    lightingShader.uploadInt("uNumBuildingCasters", buildingCasters.size());
+        int listSize = buildingLeftScreenPositions.size();
+	    lightingShader.uploadInt("uNumBuildingCasters", listSize);
 	    lightingShader.uploadFloat("uBuildingShadowLengthMultiplier", 0.5f);
-	    for (int i = 0; i < buildingCasters.size(); i++) {
-	        Building b = buildingCasters.get(i);
-	        float bottomY = b.buildHitbox.y + b.buildHitbox.height;
-	        Vector2f bottomLeftWorld = new Vector2f(
-	                b.buildHitbox.x,
-	                bottomY
-	        );
-
-	        Vector2f bottomRightWorld = new Vector2f(
-	        		b.buildHitbox.x + b.buildHitbox.width,
-	                bottomY
-	        );
-
-	        Vector2f screenLeft = gp.camera.worldToScreen(
-	        		bottomLeftWorld,
-	                camera.getViewMatrix(),
-	                camera.getProjectionMatrix(),
-	                gp.sizeX,
-	                gp.sizeY
-	        );
-	        Vector2f screenRight = gp.camera.worldToScreen(
-	        		bottomRightWorld,
-	                camera.getViewMatrix(),
-	                camera.getProjectionMatrix(),
-	                gp.sizeX,
-	                gp.sizeY
-	        );
-	        lightingShader.uploadVec2f("uBuildingCasterLeft[" + i + "]", screenLeft);
-	        lightingShader.uploadVec2f("uBuildingCasterRight[" + i + "]", screenRight);
+	    for (int i = 0; i < listSize; i++) {
+	        Vector2f leftPos = buildingLeftScreenPositions.get(i);
+	        Vector2f rightPos = buildingRightScreenPositions.get(i);
+	        lightingShader.uploadVec2f("uBuildingCasterLeft[" + i + "]", leftPos);
+	        lightingShader.uploadVec2f("uBuildingCasterRight[" + i + "]", rightPos);
 	        lightingShader.uploadFloat("uBuildingCasterStrength[" + i + "]", 1.0f);
 	    }
 	    
@@ -601,6 +605,10 @@ public class Renderer {
 	    	}
 	    } else {
 	    	playerCasters.add(gp.player);
+	    }
+	    
+	    for(NPC npc: gp.world.npcM.npcs) {
+	      	playerCasters.add(npc);
 	    }
 
 	    // --- Players ---
@@ -700,7 +708,7 @@ public class Renderer {
         }
 
         // 3. Combine scene + bloom in one pass to default framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //TODO change to finalFbo
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		gp.applyGameViewport(gp.sizeX, gp.sizeY);
         bloomCombineShader.use();
 

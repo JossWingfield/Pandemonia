@@ -21,6 +21,7 @@ public class RoomHelperMethods {
 	public static int ABANDONEDCORRIDOR = 7;
 	public static int CORRIDOR1 = 8;
 	public static int OLDKITCHEN = 9;
+	public static int FREEZER = 10;
 	
     public static Map<Integer, int[]> roomGraph = new HashMap<>();
 
@@ -34,7 +35,8 @@ public class RoomHelperMethods {
         roomGraph.put(RoomHelperMethods.BEDROOM, new int[]{RoomHelperMethods.CORRIDOR1});
         roomGraph.put(RoomHelperMethods.CORRIDOR1, new int[]{RoomHelperMethods.MAIN, RoomHelperMethods.BEDROOM, RoomHelperMethods.ELECTRICS});
         roomGraph.put(RoomHelperMethods.ABANDONEDCORRIDOR, new int[]{RoomHelperMethods.MAIN, RoomHelperMethods.OLDKITCHEN});
-        roomGraph.put(RoomHelperMethods.OLDKITCHEN, new int[]{RoomHelperMethods.STORES, RoomHelperMethods.ABANDONEDCORRIDOR});
+        roomGraph.put(RoomHelperMethods.OLDKITCHEN, new int[]{RoomHelperMethods.STORES, RoomHelperMethods.ABANDONEDCORRIDOR, RoomHelperMethods.FREEZER});
+        roomGraph.put(RoomHelperMethods.FREEZER, new int[]{RoomHelperMethods.OLDKITCHEN});
     }
 	
 	public static List<NPC> setCelebrityPresent(List<NPC> npcs, boolean isPresent) {

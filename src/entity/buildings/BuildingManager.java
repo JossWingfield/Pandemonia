@@ -437,32 +437,34 @@ public class BuildingManager {
 			}
 		}
 	}
-	public Building findCorrectDoor(int facing) {
+	public Building findCorrectDoor(int facing, int doorRoomNum) {
 		for(Building b: buildings) {
 			if(b != null) {
 				if(b.getName().equals("Door 1")) {
 					Door door = (Door)b;
-					switch(facing) {
-					case 0:
-						if(door.facing == 1) {
-							return b;
+					if(doorRoomNum == door.doorRoomNum) {
+						switch(facing) {
+						case 0:
+							if(door.facing == 1) {
+								return b;
+							}
+							break;
+						case 1:
+							if(door.facing == 0) {
+								return b;
+							}
+							break;
+						case 2:
+							if(door.facing == 3) {
+								return b;
+							}
+							break;
+						case 3:
+							if(door.facing == 2) {
+								return b;
+							}
+							break;
 						}
-						break;
-					case 1:
-						if(door.facing == 0) {
-							return b;
-						}
-						break;
-					case 2:
-						if(door.facing == 3) {
-							return b;
-						}
-						break;
-					case 3:
-						if(door.facing == 2) {
-							return b;
-						}
-						break;
 					}
 				}
 			}

@@ -23,6 +23,7 @@ import entity.buildings.Door;
 import entity.buildings.EscapeHole;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
+import entity.buildings.Freezer;
 import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.Lantern;
@@ -48,7 +49,6 @@ import entity.buildings.outdoor.OutdoorDecor;
 import entity.buildings.outdoor.OutdoorWallDecor;
 import entity.buildings.outdoor.SeasonalDecoration;
 import entity.items.Item;
-import entity.items.OvenTray;
 import entity.npc.Cook;
 import entity.npc.Customer;
 import entity.npc.GroupCustomer;
@@ -222,6 +222,18 @@ public class Room {
 			setChairSkin(0);
 			setCounterSkin(0);
 			break;
+		case 10:
+			roomType = "Freezer";
+			filePath = "/maps/freezer/Layer";
+		    importMap(filePath, mapWidth, mapHeight);
+		    roomID = "/freezer";
+		    roomIDTag = "Layer";
+		    setWallpaper(34);
+			setFloorpaper(9);
+			setBeam(7);
+			setChairSkin(0);
+			setCounterSkin(0);
+			break;
 		}
 		setBuildings(preset);
 		for(Building b: buildings) {
@@ -246,7 +258,7 @@ public class Room {
 			setWallpaper(1);
 			break;
 		}
-
+		
 	}
 	
 	public void setDestroyed() {
@@ -2017,13 +2029,13 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new ChoppingBoard(gp, 636, 396);
 			arrayCounter++;
-			buildings[arrayCounter] = new Stove(gp, 456+48, 300);
+			buildings[arrayCounter] = new Stove(gp, 456, 300);
 			arrayCounter++;
-			buildings[arrayCounter] = new Oven(gp, 564+48, 300);
+			buildings[arrayCounter] = new Oven(gp, 564, 300);
 			arrayCounter++;
-			buildings[arrayCounter] = new Fridge(gp, 624+48, 252);
+			buildings[arrayCounter] = new Fridge(gp, 624, 252);
 			arrayCounter++;
-			buildings[arrayCounter] = new Lantern(gp, 720, 180);
+			buildings[arrayCounter] = new Lantern(gp, 756, 180);
 			arrayCounter++;
 			buildings[arrayCounter] = new Lantern(gp, 312, 180);
 			arrayCounter++;
@@ -2035,6 +2047,37 @@ public class Room {
 			arrayCounter++;		
 			buildings[arrayCounter] = new Bin(gp, 576+48*4 - 12, 396, 2);
 			arrayCounter++;
+			door = new Door(gp, 696-24, 192+48, 0, 3);
+			door.setDoorNum(10);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			break;
+		case 10: //Freezer
+			door = new Door(gp, 456, 600, 1, 0);
+			door.setDoorNum(9);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 456, 252, 110);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 432, 324, 113);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 432, 384, 115);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 432, 444, 112);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 672, 348, 114);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 672, 408, 116);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 672, 468, 116);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 624, 252, 111);
+			arrayCounter++;
+			buildings[arrayCounter] = new Freezer(gp, 588, 348);
+			arrayCounter++;
+			buildings[arrayCounter] = new Freezer(gp, 516, 348);
+			arrayCounter++;
+
 			break;
 		}
 		buildingArrayCounter = arrayCounter;

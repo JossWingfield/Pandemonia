@@ -6,6 +6,7 @@ import entity.items.Item;
 import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.TextureRegion;
+import map.Room;
 
 public class CornerTable extends Building {
 	
@@ -117,6 +118,7 @@ public class CornerTable extends Building {
 	}
 	public void destroy() {
 	    	
+		if(gp.world.mapM.isInRoom(roomNum)) {
 	        BuildingManager bm = gp.world.buildingM;
 	        
 	        for (int i = 0; i < bm.getBuildings().length; i++) {
@@ -141,6 +143,32 @@ public class CornerTable extends Building {
 	                }
 	            }
 	        }
+		} else {
+			Room r = gp.world.mapM.getRoom(roomNum);
+			
+			for (int i = 0; i < r.getBuildings().length; i++) {
+	            Building b = r.getBuildings()[i];
+
+	            if (b == null || b == this) continue;
+
+	            // If it was placed on a table
+	            if (b.mustBePlacedOnTable || b.canBePlacedOnTable) {
+
+	                // Optional: ensure it's actually on THIS table
+	                if (this.hitbox.intersects(b.hitbox)) {
+
+	                    // Return to customiser inventory
+	                	if(b.canBePlaced) {
+	                		gp.world.customiser.addToInventory(b);
+	                	}
+	                    
+	                    // Destroy & remove it
+	                    b.destroy();
+	                    r.getBuildings()[i] = null;
+	                }
+	            }
+	        }
+		}
 
 	    // Any other per-building cleanup here
 	}

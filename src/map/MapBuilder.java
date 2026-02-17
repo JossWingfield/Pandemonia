@@ -24,6 +24,7 @@ import entity.buildings.Door;
 import entity.buildings.EscapeHole;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
+import entity.buildings.Freezer;
 import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.Lantern;
@@ -86,6 +87,10 @@ public class MapBuilder {
 	}
 	
 	private void addBuildings() {
+		for(int i = 0; i < 117; i++) {
+			buildings[totalBuildingCount] = new FloorDecor_Building(gp, 0, 0, i);
+			totalBuildingCount++;
+		}
 		for(int i = 0; i < 36; i++) {
 			buildings[totalBuildingCount] = new CursedDecor(gp, 0, 0, i);
 			totalBuildingCount++;
@@ -94,10 +99,9 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new WallDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
-		for(int i = 0; i < 70; i++) {
-			buildings[totalBuildingCount] = new FloorDecor_Building(gp, 0, 0, i);
-			totalBuildingCount++;
-		}
+
+		buildings[totalBuildingCount] = new Freezer(gp, 0, 0);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Bin(gp, 0, 0, 2);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Bin(gp, 0, 0, 1);

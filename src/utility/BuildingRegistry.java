@@ -10,7 +10,6 @@ import entity.buildings.Building;
 import entity.buildings.Calendar;
 import entity.buildings.Candle;
 import entity.buildings.Cauldron;
-import entity.buildings.Chair;
 import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
 import entity.buildings.Computer;
@@ -21,6 +20,7 @@ import entity.buildings.EscapeHole;
 import entity.buildings.Fireplace;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
+import entity.buildings.Freezer;
 import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.HerbBasket;
@@ -234,6 +234,7 @@ public class BuildingRegistry {
 			case "Torch" -> i = new Torch(gp, x, y);
 			case "Computer" -> i = new Computer(gp, x, y);
 			case "Fireplace" -> i = new Fireplace(gp, x, y);
+			case "Freezer" -> i = new Freezer(gp, x, y);
 		}
 
 		return i;

@@ -401,9 +401,8 @@ public class World {
 	        gameM.drawFilters(renderer);
 	        gameM.drawWeather(renderer); 
 	        cutsceneM.draw(renderer);
-	        
-			
-			
+	}
+    	 
 			if(gp.currentState == gp.mapBuildState) {
 				mapM.draw(renderer);
 				mapM.drawForeground(renderer);
@@ -434,13 +433,13 @@ public class World {
 			    		secondLayer[i].draw(renderer);
 			    	}
 			    }
-			    thirdLayer = buildingM.getFourthLayer();
+			    Building[] thirdLayer = buildingM.getFourthLayer();
 			    for(int i = 0; i < thirdLayer.length-1; i++) {
 			    	if(thirdLayer[i] != null) {
 			    		thirdLayer[i].draw(renderer);
 			    	}
 			    }
-			    fourthLayer = buildingM.getFifthLayer();
+			    Building[] fourthLayer = buildingM.getFifthLayer();
 			    for(int i = 0; i < fourthLayer.length-1; i++) {
 			    	if(fourthLayer[i] != null) {
 			    		fourthLayer[i].draw(renderer);
@@ -452,8 +451,7 @@ public class World {
 				customiser.draw(renderer);
 			}
 			minigameM.draw(renderer);
-			
-	}
+    	 
     }
     public void drawGodRays(Renderer renderer) {
     	Building[] main = buildingM.getBuildingsToDraw();

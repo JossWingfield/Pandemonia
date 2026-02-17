@@ -53,6 +53,9 @@ public class Beam {
 			name = "Farm Beams";
 	        importBeamFromSpriteSheet("/decor/catalogue/farm/FarmBeam", 3, 6, true);
 			break;
+		case 7:
+	        importBeamFromSpriteSheet("/tiles/beams/FreezerBeam", 3, 6, true);
+			break;
 		}
 		
 	}

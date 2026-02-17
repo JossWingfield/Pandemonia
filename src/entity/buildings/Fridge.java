@@ -105,6 +105,9 @@ public class Fridge extends Building {
         	}
         }
         
+        if(fridgeHitbox == null) {
+        	return;
+        }
         if(fridgeHitbox.intersects(gp.player.hitbox)) {
             if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
                 // If player is holding food, try to put it straight in the fridge

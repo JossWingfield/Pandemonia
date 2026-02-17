@@ -161,6 +161,9 @@ public class WallPaper {
 		    name = "Barn Walls";
 			description = "Needs a repaint.";
 			break;
+		case 34:
+		    importWallFromSpriteSheet("/tiles/walls/FreezerWalls", 6, 4, true);
+			break;
 		}
 		
 	}
