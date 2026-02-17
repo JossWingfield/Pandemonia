@@ -11,6 +11,7 @@ public class SettingsSaveData extends SaveData {
     public boolean godRaysEnabled;
     public boolean occlusionEnabled;
     public boolean shadowsEnabled;
+    public boolean particlesEnabled;
 	
 	public void applySaveData(GamePanel gp) {
 		gp.world.gameM.applySettingsData(this);

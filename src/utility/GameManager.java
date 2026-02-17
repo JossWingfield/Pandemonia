@@ -660,6 +660,7 @@ public class GameManager {
         data.occlusionEnabled = Settings.occlusionEnabled;
         data.godRaysEnabled = Settings.godraysEnabled;
         data.shadowsEnabled = Settings.shadowsEnabled;
+        data.particlesEnabled = Settings.particlesEnabled;
         
         return data;
     }
@@ -671,6 +672,7 @@ public class GameManager {
     	Settings.occlusionEnabled = data.occlusionEnabled;
     	Settings.godraysEnabled = data.godRaysEnabled;
     	Settings.shadowsEnabled = data.shadowsEnabled;
+    	Settings.particlesEnabled = data.particlesEnabled;
     }
     private void addParcel() {
 		Parcel parcel = new Parcel(gp, 10*48, 9*48, new ArrayList<>(orderList));

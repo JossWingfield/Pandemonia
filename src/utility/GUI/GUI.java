@@ -253,6 +253,9 @@ public class GUI {
 	    videoCheckBoxes.add(new CheckBox(gp, x, y+300, 9*3, "Shadows",
 		        () -> Settings.shadowsEnabled,
 		        () -> Settings.shadowsEnabled = !Settings.shadowsEnabled));
+	    videoCheckBoxes.add(new CheckBox(gp, x, y+360, 9*3, "Particles",
+		        () -> Settings.particlesEnabled,
+		        () -> Settings.particlesEnabled = !Settings.particlesEnabled));
 	}
 	
 	protected Texture importImage(String filePath) {

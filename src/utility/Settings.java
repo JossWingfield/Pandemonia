@@ -9,5 +9,6 @@ public class Settings {
 	public static boolean godraysEnabled = true;
 	public static boolean occlusionEnabled = true;
 	public static boolean shadowsEnabled = true;
+	public static boolean particlesEnabled = true;
 	
 }

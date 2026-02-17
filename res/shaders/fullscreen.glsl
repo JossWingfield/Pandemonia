@@ -36,6 +36,7 @@ uniform vec2 uBuildingCasterLeft[MAX_SHADOW_CASTERS];
 uniform vec2 uBuildingCasterRight[MAX_SHADOW_CASTERS];
 uniform float uBuildingCasterStrength[MAX_SHADOW_CASTERS];
 uniform float uBuildingShadowLengthMultiplier;
+uniform float uTime;
 
 // Player shadows (old method)
 uniform int uNumPlayerCasters;
@@ -50,11 +51,66 @@ struct Light {
     float intensity;
 };
 
+float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+}
+
+// Dust mote intensity based on position and time
+float dustMote(vec2 fragPos, float time)
+{
+    float dust = 0.0;
+    const int PARTICLE_COUNT = 50;
+    float scale = 3.0;
+
+    for (int i = 0; i < PARTICLE_COUNT; i++)
+    {
+        // Unique time offset per particle
+        float particleOffset = hash21(vec2(i, 9.0)) * 5.0; // 0-5s
+        float localTime = time + particleOffset;
+
+        // Spawn only in visible vertical zone
+        float minY = uScreenSize.y * 0.2;
+        float maxY = uScreenSize.y * 0.8;
+        vec2 spawn = vec2(
+            hash21(vec2(i, 1.0)) * uScreenSize.x,
+            mix(minY, maxY, hash21(vec2(i, 2.0)))
+        );
+
+        // Skip if occluded
+        float occ = texture(uOcclusion, spawn / uScreenSize).r;
+        if (occ < 0.1) continue;
+
+        // Vertical movement (UPWARDS)
+        float speedY = 3.0 + hash21(vec2(i, 3.0)) * 8.0;
+        spawn.y = mod(spawn.y - localTime * speedY - minY, maxY - minY) + minY;
+
+        // Sideways drifting
+        float sideSpeed = (hash21(vec2(i, 4.0)) - 0.5) * 40.0;
+        spawn.x += sin(localTime * 0.8 + hash21(vec2(i, 5.0)) * 20.0) * sideSpeed;
+
+        // Snap to pixel grid
+        spawn = floor(spawn / scale) * scale;
+
+        // 3x3 square
+        vec2 diff = fragPos - spawn;
+        if (abs(diff.x) < scale && abs(diff.y) < scale)
+        {
+            float life = sin(localTime * (1.5 + hash21(vec2(i, 6.0))) 
+                             + hash21(vec2(i, 7.0)) * 10.0) * 0.5 + 0.5;
+            life = smoothstep(0.2, 0.8, life);
+            dust += life;
+        }
+    }
+
+    return clamp(dust, 0.0, 1.0);
+}
 uniform Light uLights[64];
 
-// New boolean uniform to toggle occlusion
 uniform bool uOcclusionEnabled;
 uniform bool uShadowsEnabled;
+uniform bool uDustEnabled;
 
 float edgeTest(vec2 a, vec2 b, vec2 p)
 {
@@ -185,7 +241,44 @@ for (int s = 0; s < uNumPlayerCasters; s++)
     }
 
     vec3 litScene = baseColor * lighting * occlusion;
-
+    
+    if(uDustEnabled) {
+	    float brightness = max(lighting.r, max(lighting.g, lighting.b));
+		brightness = clamp(brightness - uAmbientIntensity, 0.0, 1.0);
+	    
+	    //DUST MOTES
+	    float directLight = 0.0;
+	
+		for (int i = 0; i < uNumLights; i++)
+		{
+		    Light L = uLights[i];
+		    float dist = length(fragPos - L.position);
+		
+		    if (dist < L.radius)
+		    {
+		        float falloff = 1.0 - (dist / L.radius);
+		        directLight += falloff * L.intensity;
+		    }
+		}
+		
+		directLight = clamp(directLight, 0.0, 1.0);
+	    
+	    float dust = dustMote(fragPos, uTime);
+	
+		// Strong threshold so dust only appears in bright zones
+		float lightMask = smoothstep(0.05, 0.2, brightness);
+			
+		// Kill dust in shadowed areas
+		dust *= lightMask;
+		dust *= occlusion;
+			
+		vec3 dustColor = vec3(1.0, 0.95, 0.85);
+			
+		// Softer strength
+		litScene += dustColor * dust * 0.5;
+	}
+	
+    
     // -------- Emissive --------
     vec3 emissive = texture(uEmissive, vUV).rgb;
     litScene += emissive;

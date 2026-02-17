@@ -43,6 +43,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
 
 import entity.Entity;
 import entity.Player;
@@ -535,11 +536,9 @@ public class Renderer {
 	        lightingShader.uploadInt("uOcclusion", 2);
 	    }
 	    
+	    lightingShader.uploadBool("uDustEnabled", Settings.particlesEnabled); 
 	    
-	    
-
-        
-        
+	    lightingShader.uploadFloat("uTime", (float)GLFW.glfwGetTime());
 	    
 	    lightingShader.uploadBool("uShadowsEnabled", Settings.shadowsEnabled); 
         lightingShader.uploadFloat("uBuildingShadowLengthMultiplier", 0.5f);
@@ -556,6 +555,7 @@ public class Renderer {
         		}
         	}
         }
+        
 
 	    lightingShader.uploadInt("uNumBuildingCasters", buildingCasters.size());
 	    lightingShader.uploadFloat("uBuildingShadowLengthMultiplier", 0.5f);
