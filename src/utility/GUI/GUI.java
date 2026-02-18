@@ -27,6 +27,8 @@ import main.renderer.TextureRegion;
 import net.DiscoveryManager.DiscoveredServer;
 import net.packets.Packet04Chat;
 import utility.Achievement;
+import utility.Constants;
+import utility.ProgressManager.RewardType;
 import utility.Recipe;
 import utility.RecipeManager;
 import utility.RecipeRenderData;
@@ -34,7 +36,6 @@ import utility.Settings;
 import utility.Upgrade;
 import utility.UpgradeManager;
 import utility.Weather;
-import utility.ProgressManager.RewardType;
 
 public class GUI {
 	
@@ -1259,7 +1260,7 @@ public class GUI {
 	            clickCooldown = 0.25;
 	            selectedHairStyleNum++;
 	            
-	            if(selectedHairStyleNum > 1) {
+	            if(selectedHairStyleNum > Constants.MAXHAIRNUM) {
 	            	selectedHairStyleNum = 1;
 	            }
 	            gp.player.setHairStyle(selectedHairStyleNum);
@@ -1533,7 +1534,7 @@ public class GUI {
 	            clickCooldown = 0.25;
 	            selectedHairStyleNum++;
 	            
-	            if(selectedHairStyleNum > 1) {
+	            if(selectedHairStyleNum > Constants.MAXHAIRNUM) {
 	            	selectedHairStyleNum = 1;
 	            }
 	            gp.player.setHairStyle(selectedHairStyleNum);

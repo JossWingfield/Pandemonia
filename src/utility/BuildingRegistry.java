@@ -21,6 +21,7 @@ import entity.buildings.Fireplace;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
 import entity.buildings.Freezer;
+import entity.buildings.FreezerLight;
 import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.HerbBasket;
@@ -235,6 +236,7 @@ public class BuildingRegistry {
 			case "Computer" -> i = new Computer(gp, x, y);
 			case "Fireplace" -> i = new Fireplace(gp, x, y);
 			case "Freezer" -> i = new Freezer(gp, x, y);
+			case "Freezer Light" -> i = new FreezerLight(gp, x, y);
 		}
 
 		return i;

@@ -55,9 +55,10 @@ public class Player extends Entity{
     public Rectangle2D.Float interactHitbox;
     
     //CUSTOMISATION 
-    public TextureRegion[][][] hand1Animations, hand2Animations, headAnimations, bodyAnimations, hairAnimations, accessoryAnimations, vfxAnimations;
+    public TextureRegion[][][] hand1Animations, hand2Animations, headAnimations, bodyAnimations, skinShadowAnimations, hairAnimations, accessoryAnimations, vfxAnimations;
     public PlayerAppearance appearance;
     private Shader playerShader;
+    public boolean previewHat = true;
     
     //ATTRIBUTES
     public int level = 1;
@@ -84,8 +85,6 @@ public class Player extends Entity{
     private boolean moved = false;
     private double timeSinceLastSend = 0;
     public boolean isChangingRoom = false;
-    
-    public boolean previewHat = true;
 
     public Player(GamePanel gp, int xPos, int yPos, KeyListener keyL, MouseListener mouseL, String username) { //Setting default variables
         super(gp, (xPos), (yPos), 32, 32);
@@ -254,6 +253,7 @@ public class Player extends Entity{
         hairAnimations = new TextureRegion[4][20][15];
         accessoryAnimations = new TextureRegion[4][20][15];
         vfxAnimations = new TextureRegion[4][20][15];
+        skinShadowAnimations = new TextureRegion[4][20][15];
         
         //Hand 1
         hand1Animations = importPlayerSpriteSheet("/player/hand1", 80, 80);
@@ -264,6 +264,9 @@ public class Player extends Entity{
         //Head
         headAnimations = importPlayerSpriteSheet("/player/head", 80, 80);
         headAnimations = importUniversalAnimation("/player/head/Washing.png", headAnimations, 0, 0, 80, 80, 5, 4);
+        
+        skinShadowAnimations = importPlayerSpriteSheet("/player/acc/skinShadow/chefHat", 80, 80);
+        skinShadowAnimations = importUniversalAnimation("/player/acc/skinShadow/chefHat/Washing.png", skinShadowAnimations, 0, 0, 80, 80, 5, 4);
         
         //Body
         bodyAnimations = importPlayerSpriteSheet("/player/body", 80, 80);
@@ -486,6 +489,7 @@ public class Player extends Entity{
     		int tileY = (int) ((mouseY) / gp.tileSize);
 
     		System.out.println(tileX + "   " + tileY);    	
+    		System.out.println(mouseX + "   " + mouseY);
     	}
     }
     public void takeDamage(int damage) {
@@ -852,6 +856,7 @@ public class Player extends Entity{
         TextureRegion hand2Frame = hand2Animations[direction][currentAnimation][animationCounter];
         TextureRegion bodyFrame = bodyAnimations[direction][currentAnimation][animationCounter];
         TextureRegion headFrame = headAnimations[direction][currentAnimation][animationCounter];
+        TextureRegion skinShadowFrame = skinShadowAnimations[direction][currentAnimation][animationCounter];
         TextureRegion hairFrame = hairAnimations[direction][currentAnimation][animationCounter];
         TextureRegion accessoryFrame = accessoryAnimations[direction][currentAnimation][animationCounter];
         TextureRegion hand1Frame = hand1Animations[direction][currentAnimation][animationCounter];
@@ -862,6 +867,7 @@ public class Player extends Entity{
 	        	hand2Frame = createHorizontalFlipped(hand2Frame);
 	        	bodyFrame = createHorizontalFlipped(bodyFrame);
 	        	headFrame = createHorizontalFlipped(headFrame);
+	     		skinShadowFrame = createHorizontalFlipped(skinShadowFrame);
 	       		hairFrame = createHorizontalFlipped(hairFrame);
 	        	accessoryFrame = createHorizontalFlipped(accessoryFrame);
 	        	hand1Frame = createHorizontalFlipped(hand1Frame);
@@ -871,8 +877,9 @@ public class Player extends Entity{
 		    renderer.draw(hand2Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
 		    renderer.draw(bodyFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
 		    renderer.draw(headFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
-   		    renderer.draw(hairFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
-		    renderer.draw(accessoryFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
+		    renderer.draw(skinShadowFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
+		    renderer.draw(hairFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
+		    renderer.draw(accessoryFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
 		    renderer.draw(hand1Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
 		}     
         if(direction != 3) {
@@ -971,6 +978,7 @@ public class Player extends Entity{
     	   TextureRegion hand2Frame = hand2Animations[direction][currentAnimation][animationCounter];
            TextureRegion bodyFrame = bodyAnimations[direction][currentAnimation][animationCounter];
            TextureRegion headFrame = headAnimations[direction][currentAnimation][animationCounter];
+           TextureRegion skinShadowFrame = skinShadowAnimations[direction][currentAnimation][animationCounter];
            TextureRegion hairFrame = hairAnimations[direction][currentAnimation][animationCounter];
            TextureRegion accessoryFrame = accessoryAnimations[direction][currentAnimation][animationCounter];
            TextureRegion hand1Frame = hand1Animations[direction][currentAnimation][animationCounter];
@@ -980,6 +988,7 @@ public class Player extends Entity{
            		hand2Frame = createHorizontalFlipped(hand2Frame);
            		bodyFrame = createHorizontalFlipped(bodyFrame);
            		headFrame = createHorizontalFlipped(headFrame);
+           		skinShadowFrame = createHorizontalFlipped(skinShadowFrame);
            		hairFrame = createHorizontalFlipped(hairFrame);
            		accessoryFrame = createHorizontalFlipped(accessoryFrame);
            		hand1Frame = createHorizontalFlipped(hand1Frame);
@@ -991,9 +1000,12 @@ public class Player extends Entity{
    		    renderer.draw(hand2Frame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
    		    renderer.draw(bodyFrame, x,y,drawWidth*scale, drawHeight*scale);
    		    renderer.draw(headFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    if(previewHat) {
+   			    renderer.draw(skinShadowFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    }
    		    renderer.draw(hairFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
    		    if(previewHat) {
-   		    	renderer.draw(accessoryFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    	renderer.draw(accessoryFrame, x,y,drawWidth*scale, drawHeight*scale);
    		    }
    		    renderer.draw(hand1Frame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
    		}   

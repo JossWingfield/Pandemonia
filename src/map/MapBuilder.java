@@ -25,6 +25,7 @@ import entity.buildings.EscapeHole;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
 import entity.buildings.Freezer;
+import entity.buildings.FreezerLight;
 import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.Lantern;
@@ -100,6 +101,8 @@ public class MapBuilder {
 			totalBuildingCount++;
 		}
 
+		buildings[totalBuildingCount] = new FreezerLight(gp, 0, 0);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Freezer(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Bin(gp, 0, 0, 2);

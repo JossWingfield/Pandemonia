@@ -1469,6 +1469,7 @@ public class FloorDecor_Building extends Building {
         	canBePlaced = false;
         	mustBePlacedOnFloor = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
         	break;
         case 111:
         	name = "Freezer Shelf 2";
@@ -1483,6 +1484,7 @@ public class FloorDecor_Building extends Building {
         	canBePlaced = false;
         	mustBePlacedOnFloor = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
         	break;
         case 112:
         	name = "Freezer Shelf 3";
@@ -1496,6 +1498,7 @@ public class FloorDecor_Building extends Building {
         	canBePlaced = false;
         	mustBePlacedOnFloor = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
         	break;
         case 113:
         	name = "Freezer Shelf 4";
@@ -1509,6 +1512,7 @@ public class FloorDecor_Building extends Building {
         	canBePlaced = false;
         	mustBePlacedOnFloor = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
         	break;
         case 114:
         	name = "Freezer Shelf 5";
@@ -1523,6 +1527,7 @@ public class FloorDecor_Building extends Building {
         	canBePlaced = false;
         	mustBePlacedOnFloor = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
         	break;
         case 115:
         	name = "Freezer Shelf 6";
@@ -1536,6 +1541,7 @@ public class FloorDecor_Building extends Building {
         	canBePlaced = false;
         	mustBePlacedOnFloor = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
         	break;
         case 116:
         	name = "Freezer Shelf 7";
@@ -1550,6 +1556,7 @@ public class FloorDecor_Building extends Building {
         	canBePlaced = false;
         	mustBePlacedOnFloor = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
         	break;
         }
 		

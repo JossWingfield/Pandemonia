@@ -1038,10 +1038,19 @@ public class LightingManager {
                 intensity = 0.6f + 0.4f * t;
             }
             
-            if (gp.world.mapM.currentRoom != null && gp.world.mapM.currentRoom.darkerRoom) {
-                // Make the room’s lighting darker (reduce intensity + darken color)
-                intensity *= 0.6f; // 40% darker
-                ambient = darkenColor(ambient, 0.75f); // darken by 50%
+            if (gp.world.mapM.currentRoom != null) {
+
+                if (gp.world.mapM.currentRoom.darkerRoom) {
+                    intensity *= 0.6f;
+                    ambient = darkenColor(ambient, 0.75f);
+                }
+
+                if (gp.world.mapM.isFreezerRoom()) {
+                    ambient = applyFreezerTint(ambient);
+
+                    // Slightly dim freezer for cold sterile feel
+                    intensity *= 0.85f;
+                }
             }
             
             setAmbientLight(ambient, intensity);
@@ -1104,6 +1113,15 @@ public class LightingManager {
         roomOcclusionCache.put(roomId, texture);
 
         return texture;
+    }
+    private Colour applyFreezerTint(Colour base) {
+
+        // Shift toward cold blue
+        float r = base.r * 0.75f;     // reduce warmth
+        float g = base.g * 0.9f;      // slightly mute green
+        float b = Math.min(base.b * 1.2f + 0.05f, 1f); // boost blue
+
+        return new Colour(r, g, b, base.a);
     }
     public Texture getCurrentOcclusionTexture() {
         return currentOcclusionTexture;

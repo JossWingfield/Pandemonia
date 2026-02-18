@@ -153,7 +153,9 @@ public class ChoppingBoard extends Building {
 			gp.socketClient.send(new Packet13PickUpFromChoppingBoard(gp.player.getUsername(), getArrayCounter(), currentItem));
 			clickCooldown = 0.08;
 		} else {
-			gp.player.resetAnimation(2);
+			if(currentItem != null) {
+				gp.player.resetAnimation(2);
+			}
 			gp.player.currentItem = currentItem;
 			currentItem = null;
 			clickCooldown = 0.333;

@@ -34,7 +34,7 @@ public class HairPalette {
                 to = hairFromHex("#c29979", "#d1b28e");
                 break;
             case 5:
-                to = hairFromHex("#f2d16b", "#e0b84f");
+                to = hairFromHex("#f2d16b", "#e6dfa1");
                 break;
             case 6:
                 to = hairFromHex("#97543c", "#bb724b");

@@ -83,6 +83,8 @@ public class Freezer extends Building {
 			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
 		}
 		
+		gp.world.particleM.startFreezerMist(453, 173, 698-453, 595-173);
+		
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		} else {

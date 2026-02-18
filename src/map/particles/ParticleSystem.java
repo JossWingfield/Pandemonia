@@ -64,7 +64,7 @@ public class ParticleSystem {
     
     //FREEZER MIST
     private boolean freezerMistActive = false;
-    private int freezerMistTarget = 400;
+    private int freezerMistTarget = 1000;
     private float mistAreaX, mistAreaY, mistAreaW, mistAreaH;
   
     
@@ -240,10 +240,10 @@ public class ParticleSystem {
 
                 mistCount++;
             }
-            float playerX = gp.player.getX();
-            float playerY = gp.player.getY();
+            float playerX = gp.player.interactHitbox.x + gp.player.interactHitbox.width/2;
+            float playerY = gp.player.interactHitbox.y + gp.player.interactHitbox.height/2;
 
-            float clearRadius = 40f;
+            float clearRadius = 60f;
 
             for (Particle p : particles) {
                 if (p instanceof FreezerMistParticle) {

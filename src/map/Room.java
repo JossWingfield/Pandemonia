@@ -24,6 +24,7 @@ import entity.buildings.EscapeHole;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FoodStore;
 import entity.buildings.Freezer;
+import entity.buildings.FreezerLight;
 import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.Lantern;
@@ -2077,7 +2078,14 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Freezer(gp, 516, 348);
 			arrayCounter++;
-
+			buildings[arrayCounter] = new Freezer(gp, 612, 576);
+			arrayCounter++;
+			buildings[arrayCounter] = new Freezer(gp, 540, 576);
+			arrayCounter++;
+			buildings[arrayCounter] = new FreezerLight(gp, 648, 180);
+			arrayCounter++;
+			buildings[arrayCounter] = new FreezerLight(gp, 456, 180);
+			arrayCounter++;
 			break;
 		}
 		buildingArrayCounter = arrayCounter;
