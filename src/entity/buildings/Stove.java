@@ -162,6 +162,7 @@ public class Stove extends Building {
 							}
 						} else {
 							gp.player.currentItem = leftSlot;
+							stopParticles(true);
 							gp.player.resetAnimation(4);
 							gp.player.clickCounter = 0.1;
 							gp.world.lightingM.removeLight(leftLight);
@@ -310,6 +311,7 @@ public class Stove extends Building {
 							gp.player.resetAnimation(4);
 							gp.player.currentItem = rightSlot;
 							gp.player.clickCounter = 0.1;
+							stopParticles(false);
 							String foodName = null;
 							String itemName = null;
 							int foodState = 0;
@@ -560,9 +562,9 @@ public class Stove extends Building {
 	}
 	private void startParticles(boolean isLeft) {
 		if(isLeft) {
-			gp.world.particleM.addPanEmber(0, (int) hitbox.x - xDrawOffset  + 18, (int) (hitbox.y )-yDrawOffset+48+16, 32, 32);
+			gp.world.particleM.addPanEmber(0, (int) hitbox.x - xDrawOffset  + 40, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32);
 		} else {
-			gp.world.particleM.addPanEmber(1, (int) hitbox.x - xDrawOffset  + 48 + 30, (int) (hitbox.y )-yDrawOffset+48+16, 32, 32);
+			gp.world.particleM.addPanEmber(1, (int) hitbox.x - xDrawOffset  + 48 + 48, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32);
 		}
 	}
 	

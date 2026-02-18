@@ -61,6 +61,11 @@ public class ParticleSystem {
 
     private static final float CLUMP_RADIUS = 24f; // pixels
     private static final float CLUMP_CHANCE = 0.35f;
+    
+    //FREEZER MIST
+    private boolean freezerMistActive = false;
+    private int freezerMistTarget = 400;
+    private float mistAreaX, mistAreaY, mistAreaW, mistAreaH;
   
     
     public ParticleSystem(GamePanel gp) {
@@ -216,6 +221,56 @@ public class ParticleSystem {
                 }
             }
         }
+        if (freezerMistActive) {
+
+            int mistCount = 0;
+            for (Particle p : particles) {
+                if (p instanceof FreezerMistParticle) mistCount++;
+            }
+
+            while (mistCount < freezerMistTarget) {
+
+                float x = mistAreaX + rand.nextFloat() * mistAreaW;
+                float y = mistAreaY + rand.nextFloat() * mistAreaH;
+
+                addParticle(new FreezerMistParticle(
+                        gp,
+                        gp.player.currentRoomIndex,
+                        x, y));
+
+                mistCount++;
+            }
+            float playerX = gp.player.getX();
+            float playerY = gp.player.getY();
+
+            float clearRadius = 40f;
+
+            for (Particle p : particles) {
+                if (p instanceof FreezerMistParticle) {
+
+                    float dx = p.x - playerX;
+                    float dy = p.y - playerY;
+
+                    float distSq = dx * dx + dy * dy;
+
+                    if (distSq < clearRadius * clearRadius) {
+
+                        float dist = (float)Math.sqrt(distSq);
+                        if (dist < 0.01f) dist = 0.01f;
+
+                        float pushStrength = (clearRadius - dist) * 0.15f;
+
+                        p.x += (dx / dist) * pushStrength;
+                        p.y += (dy / dist) * pushStrength;
+
+                        // Optional: fade alpha near player
+                        p.colour.a = 0.05f;
+                    } else {
+                        p.colour.a = 0.12f; // normal opacity
+                    }
+                }
+            }
+        }
         if (randomShaking) {
             if (shakeCooldown <= 0) {
                 // Small random chance each frame to trigger a shake
@@ -303,6 +358,17 @@ public class ParticleSystem {
                 return;
             }
         }
+    }
+    public void startFreezerMist(float x, float y, float width, float height) {
+        freezerMistActive = true;
+        mistAreaX = x;
+        mistAreaY = y;
+        mistAreaW = width;
+        mistAreaH = height;
+    }
+
+    public void stopFreezerMist() {
+        freezerMistActive = false;
     }
 
     // Optional: stop all
