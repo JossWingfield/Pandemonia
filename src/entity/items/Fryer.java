@@ -68,7 +68,7 @@ public class Fryer extends Item {
 		animations[0][0][11] = importImage("/decor/SingleFryer.png").getSubimage(32, 0, 16, 16);
 	}
 	private void setUp() {
-		allowInFryer("Potato", FoodState.CHOPPED);
+		allowInFryer("Potato", FoodState.FROZEN);
 	}
 	private void allowInFryer(String ingredientName, FoodState... allowedStates) {
 		canBeFried.putIfAbsent(ingredientName, new HashSet<>());
@@ -138,7 +138,7 @@ public class Fryer extends Item {
 		flickerThreshold = Math.round(maxCookTime * flickerFraction);
 		maxBurnTime = Math.round(maxCookTime * burnFraction);
 		cookStyle = CookStyle.FRY;
-		cookingItem.addCookMethod(name);
+		cookingItem.addCookMethod("Fryer");
 	}
 	public boolean isCooking() {
 		return cooking;
@@ -216,13 +216,12 @@ public class Fryer extends Item {
 		renderer.draw(burntSign,(int)(x ),(int)(y  - 48),48, 48);
 	}
 	public void drawCookingUI(Renderer renderer, int x, int y, boolean isLeft) {
-		
 		switch(cookStyle) {
-		case PASSIVE:
+		case FRY:
 			// Left slot cooking bar
 			if(isLeft) {
 				if(cookingItem != null) {
-					if(cookingItem.foodState.equals(FoodState.RAW)) {
+					if(!cookingItem.foodState.equals(FoodState.BURNT) && !cookingItem.foodState.equals(FoodState.COOKED)) {
 						drawPassiveCookingBar(renderer, x + 16, y + 48 + 16, getCookTime(), getMaxCookTime());
 					} else if(cookingItem.foodState.equals(FoodState.BURNT)) {
 						drawBurntSign(renderer, (int)(x), (int)y);
@@ -232,7 +231,7 @@ public class Fryer extends Item {
 				}
 			} else {
 				if(cookingItem != null) {
-					if(cookingItem.foodState.equals(FoodState.RAW)) {
+					if(!cookingItem.foodState.equals(FoodState.BURNT) && !cookingItem.foodState.equals(FoodState.COOKED)) {
 						drawPassiveCookingBar(renderer, x + 48 + 30, y + 48 + 16, getCookTime(), getMaxCookTime());
 					} else if(cookingItem.foodState.equals(FoodState.BURNT)) {
 						drawBurntSign(renderer, (int)(x + 56), (int)y);
@@ -261,7 +260,7 @@ public class Fryer extends Item {
 	    int g = (int) (progress * 255);
 
 	    // Optional: draw a border
-	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight, Colour.BLACK);
+	    renderer.fillRect((int) screenX + xOffset-3, (int) screenY + yOffset-3, barWidth+6, barHeight+6, Colour.BASE_COLOUR);
 	    
 	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 	}

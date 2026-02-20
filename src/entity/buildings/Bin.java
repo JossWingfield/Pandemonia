@@ -6,6 +6,8 @@ import org.lwjgl.glfw.GLFW;
 
 import entity.Player;
 import entity.items.CookingItem;
+import entity.items.Fryer;
+import entity.items.OvenTray;
 import entity.items.Plate;
 import main.GamePanel;
 import main.renderer.Renderer;
@@ -84,14 +86,18 @@ public class Bin extends Building {
 			if(binHitbox.intersects(gp.player.interactHitbox)) {
 				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E)) {
 					if(gp.player.currentItem != null) {
-						if(!(gp.player.currentItem instanceof CookingItem) && !(gp.player.currentItem instanceof Plate)) {
-							gp.player.currentItem = null;
-						} else if(gp.player.currentItem instanceof Plate plate) {
+						if(gp.player.currentItem instanceof Plate plate) {
 							if(!plate.isDirty()) {
 								plate.clearIngredients();
 							}
 						} else if(gp.player.currentItem instanceof CookingItem pan) {
 							pan.bin();
+						} else if(gp.player.currentItem instanceof OvenTray pan) {
+							pan.clearIngredients();
+						} else if(gp.player.currentItem instanceof Fryer pan) {
+							pan.bin();
+						} else {
+							gp.player.currentItem = null;
 						}
 					}
 				}

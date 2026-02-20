@@ -240,8 +240,8 @@ public class ParticleSystem {
 
                 mistCount++;
             }
-            float playerX = gp.player.interactHitbox.x + gp.player.interactHitbox.width/2;
-            float playerY = gp.player.interactHitbox.y + gp.player.interactHitbox.height/2;
+            float playerX = gp.player.interactHitbox.x + gp.player.interactHitbox.width/2 - 24f;
+            float playerY = gp.player.interactHitbox.y + gp.player.interactHitbox.height/2 - 24f;
 
             float clearRadius = 60f;
 

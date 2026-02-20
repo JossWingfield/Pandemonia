@@ -1974,6 +1974,10 @@ public class Room {
 			door.setDoorNum(1);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
+			door = new Door(gp, 696-24, 192+48, 0, 3);
+			door.setDoorNum(10);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 384, 8);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 432, 8);
@@ -2022,13 +2026,9 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 576, 408, 5);
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 672, 408, 6);
+			buildings[arrayCounter] = new ChoppingBoard(gp, 408, 396);
 			arrayCounter++;
-			buildings[arrayCounter] = new ChoppingBoard(gp, 420, 396);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 624, 408, 5);
-			arrayCounter++;
-			buildings[arrayCounter] = new ChoppingBoard(gp, 636, 396);
+			buildings[arrayCounter] = new ChoppingBoard(gp, 468, 396);
 			arrayCounter++;
 			buildings[arrayCounter] = new Stove(gp, 456, 300);
 			arrayCounter++;
@@ -2045,12 +2045,10 @@ public class Room {
 			buildings[arrayCounter] = new CornerTable(gp, 300, 516, 2);
 			arrayCounter++;
 			buildings[arrayCounter] = new CornerTable(gp, 732, 516, 3);
-			arrayCounter++;		
-			buildings[arrayCounter] = new Bin(gp, 576+48*4 - 12, 396, 2);
 			arrayCounter++;
-			door = new Door(gp, 696-24, 192+48, 0, 3);
-			door.setDoorNum(10);
-			buildings[arrayCounter] = door;
+			buildings[arrayCounter] = new Bin(gp, 756, 372, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 624, 408, 6);
 			arrayCounter++;
 			break;
 		case 10: //Freezer
@@ -2396,10 +2394,12 @@ public class Room {
 	}
     public void addCustomer() {
     	Customer customer = new Customer(gp, (int)getSpawnX(), (int)getSpawnY());
+    	customer.currentRoomNum = preset;
     	npcs.add(customer);
     }
     public void addCook() {
     	Cook cook = new Cook(gp, (int)getSpawnX(), (int)getSpawnY());
+    	cook.currentRoomNum = preset;
     	npcs.add(cook);
     }
 	public Chair findFreeChair() {
@@ -2445,11 +2445,14 @@ public class Room {
 		GroupCustomer customer = new GroupCustomer(gp, (int)getSpawnX(), (int)getSpawnY());
 	     for(int i = 0; i < num; i++) {
 	    	 customer = new GroupCustomer(gp, (int)getSpawnX(), (int)getSpawnY());
+	    	 customer.currentRoomNum = preset;
 	         npcs.add(customer);
 	     }
 	}
 	public void addSpecialCustomer() {
-		npcs.add(new SpecialCustomer(gp, (int)getSpawnX(), (int)getSpawnY()));
+		SpecialCustomer customer = new SpecialCustomer(gp, (int)getSpawnX(), (int)getSpawnY());
+		customer.currentRoomNum = preset;
+		npcs.add(customer);
 	}
 	public boolean hasBuildingWithName(String name) {
 		for(Building b: buildings) {
@@ -2622,21 +2625,23 @@ public class Room {
     	}
     }
     public void inputUpdate(double dt) {
-    	for(Building i: buildings) { //Loops through the items on the current map
-            if(i != null) {
-            	i.inputUpdate(dt);
-            }
-        }
-    	for(Item i: items) { //Loops through the items on the current map
-            if(i != null) {
-            	i.inputUpdate(dt);
-            }
-        }
-    	
-    	for (NPC i : new ArrayList<>(npcs)) {
-    	    if (i != null) {
-    	        i.inputUpdate(dt);
-    	    }
+    	if(gp.world.mapM.isInRoom(preset)) {
+	    	for(Building i: buildings) { //Loops through the items on the current map
+	            if(i != null) {
+	            		i.inputUpdate(dt);
+	            }
+	        }
+	    	for(Item i: items) { //Loops through the items on the current map
+	            if(i != null) {
+	            	i.inputUpdate(dt);
+	            }
+	        }
+	    	
+	    	for (NPC i : new ArrayList<>(npcs)) {
+	    	    if (i != null) {
+	    	        i.inputUpdate(dt);
+	    	    }
+	    	}
     	}
     }
 }

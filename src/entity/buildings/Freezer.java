@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFW;
 
 import entity.items.Food;
 import entity.items.FoodState;
+import entity.items.IceBlock;
 import entity.items.Item;
 import main.GamePanel;
 import main.renderer.Colour;
@@ -29,6 +30,10 @@ public class Freezer extends Building {
 	private Map<String, Set<FoodState>> canBeFrozen = new HashMap<>();
 	
 	private double clickCounter = 0;
+	
+	private double freezeTime = 0;
+	private double maxFreezeTime = 8;
+	private boolean freezing = false;
 	
 	public Freezer(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 80, 40);
@@ -100,18 +105,17 @@ public class Freezer extends Building {
 		if(gp.player.interactHitbox.intersects(interactHitbox)) {
 			if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCounter == 0) {
 				if (gp.player.currentItem == null) {
-				    String itemName = null;
-				    //PICK UP
 				    clickCounter = 0.33;
-				    if (itemName != null) {
-				        //gp.player.currentItem = (Food) gp.world.itemRegistry.getItemFromName(itemName, 0);
-				    	//gp.player.resetAnimation(4);
-				    }
+				    gp.player.currentItem = new IceBlock(gp, currentFood);
+				    currentFood = null;
+				    gp.player.resetAnimation(4);
 				} else {
 					if(canFreezeItem(gp.player.currentItem)) {
 						currentFood = (Food)gp.player.currentItem;
 						clickCounter = 0.33;
 						gp.player.currentItem = null;
+						freezeTime = 0;
+						freezing = true;
 					}
 				}
 			}
@@ -137,6 +141,19 @@ public class Freezer extends Building {
 		}
 		return false;
 	}
+	public void updateState(double dt) {
+		super.updateState(dt);
+		updateFreezing(dt);
+	}
+	private void updateFreezing(double dt) {
+	 	if(freezing && currentFood != null) {
+	 		freezeTime += dt;
+        	if (freezeTime >= maxFreezeTime) {
+        		currentFood.foodState = FoodState.FROZEN;
+        		freezing = false;
+        	}
+        }
+	}
 	public void draw(Renderer renderer) {
 		if(interactHitbox == null) {
 			interactHitbox = new Rectangle2D.Float(hitbox.x + 16, hitbox.y+hitbox.height - 48, 16, 32);
@@ -161,6 +178,33 @@ public class Freezer extends Building {
 	        
 	}
 	public void drawOverlayUI(Renderer renderer) {
+		//drawContents(renderer);
+		if(currentFood != null && freezing) {
+			drawFreezingBar(renderer, hitbox.x+24, hitbox.y+32);
+		}
+	}
+	private void drawFreezingBar(Renderer renderer, float worldX, float worldY) {
+	    float screenX = worldX - xDrawOffset ;
+	    float screenY = worldY - yDrawOffset ;
+
+	    int barWidth = 48;
+	    int barHeight = 6;
+	    int xOffset = 0;
+	    int yOffset = -10; // raise the bar above the pan
+
+	    float progress = Math.min(1.0f, (float)freezeTime / (float) maxFreezeTime);
+
+	    // Interpolate from red to green
+	    int r = (int) ((1 - progress) * 255);
+	    int g = (int) (progress * 255);
+
+	    // Optional: draw a border
+	    renderer.fillRect((int) screenX + xOffset-3, (int) screenY + yOffset-3, barWidth+6, barHeight+6, Colour.BASE_COLOUR);
+	    
+	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
+
+	}
+	public void drawContents(Renderer renderer) {
 		if(currentFood == null) {
 			return;
 		}

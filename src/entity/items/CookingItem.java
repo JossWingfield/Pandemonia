@@ -440,13 +440,9 @@ public class CookingItem extends Item {
 	    int r = (int) ((1 - stirLevel) * 255);
 	    int g = (int) (stirLevel * 255);
 
-	    renderer.fillRect(
-	        (int) screenX,
-	        (int) screenY,
-	        width,
-	        height,
-	        Colour.BLACK
-	    );
+	    //BACKGROUND
+	    renderer.fillRect((int) screenX -3, (int) screenY -3, width+6, height+6, Colour.BASE_COLOUR);
+
 
 	    renderer.fillRect(
 	        (int) screenX,
@@ -465,7 +461,7 @@ public class CookingItem extends Item {
 	    int barHeight = 6;
 
 	    // Background
-	    renderer.fillRect((int)screenX, (int)screenY, barWidth, barHeight, Colour.BLACK);
+	    renderer.fillRect((int) screenX -3, (int) screenY -3, barWidth+6, barHeight+6, Colour.BASE_COLOUR);
 
 	    // Safe zone
 	    int safeX = (int)(barWidth * safeZoneMin);
@@ -504,7 +500,7 @@ public class CookingItem extends Item {
 	    int g = (int) (progress * 255);
 
 	    // Optional: draw a border
-	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight, Colour.BLACK);
+	    renderer.fillRect((int) screenX + xOffset-3, (int) screenY + yOffset-3, barWidth+6, barHeight+6, Colour.BASE_COLOUR);
 	    
 	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 	}
@@ -519,13 +515,9 @@ public class CookingItem extends Item {
 	    float progress = Math.min(1f, (float) cookTime / maxCookTime);
 
 	    // --- Background ---
-	    renderer.fillRect(
-	        (int) screenX,
-	        (int) screenY + yOffset,
-	        barWidth,
-	        barHeight,
-	        Colour.BLACK
-	    );
+	    renderer.fillRect((int) screenX -3, (int) screenY + yOffset-3, barWidth+6, barHeight+6, Colour.BASE_COLOUR);
+
+	    
 
 	    // --- Base cook progress (dimmed) ---
 	    renderer.fillRect(

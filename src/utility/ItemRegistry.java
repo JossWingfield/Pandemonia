@@ -22,6 +22,7 @@ import entity.items.Fryer;
 import entity.items.FryingPan;
 import entity.items.Garlic;
 import entity.items.Greens;
+import entity.items.IceBlock;
 import entity.items.Item;
 import entity.items.Lasagna;
 import entity.items.Leek;
@@ -83,6 +84,7 @@ public class ItemRegistry {
 			case "Basil" -> i = new Basil(gp, 0, 0);
 			case "Rosemary" -> i = new Rosemary(gp, 0, 0);
 			case "Sage" -> i = new Sage(gp, 0, 0);
+			case "Ice Block" -> i = new IceBlock(gp, null);
 			case "Cursed Greens" -> i = new CursedGreens(gp, 0, 0);
 			case "Burnt Food" -> i = new BurntFood(gp, 0, 0);
 			case "Plate" -> i = new Plate(gp, 0, 0);

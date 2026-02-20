@@ -18,6 +18,8 @@ public class Potato extends Food {
 		
 		rawImage = importImage("/food/crops/potato.png").getSubimage(16, 16, 16, 16);
 		choppedImage = importImage("/food/potato/Fries.png").getSubimage(0, 0, 16, 16);
+		frozenImage = importImage("/food/potato/Fries.png").getSubimage(48, 0, 16, 16);
+		friedPlated = importImage("/food/potato/Fries.png").getSubimage(16, 0, 16, 16);
 		ovenPlated = importImage("/food/food.png").getSubimage(0, 0, 16, 16);
 	}
 	

@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFW;
 
 import entity.items.Food;
 import entity.items.FoodState;
+import entity.items.IceBlock;
 import entity.items.Plate;
 import main.GamePanel;
 import main.renderer.Colour;
@@ -97,20 +98,22 @@ public class ChoppingBoard extends Building {
 			    	if(clickCooldown == 0) {
 				    	if(gp.player.currentItem != null) {
 				    		if(canChop(gp.player.currentItem.getName())) {
-				    			Food f = (Food)gp.player.currentItem;
-				    			if(f.foodState == FoodState.RAW) {
-				    				if(gp.multiplayer) {
-				    					gp.socketClient.send(new Packet12PlaceOnChoppingBoard(gp.player.getUsername(), getArrayCounter(), gp.player.currentItem));
-				    					clickCooldown = 0.08;
-				    				} else {
-							    		currentItem = (Food)gp.player.currentItem;
-							    		gp.player.currentItem = null;
-							    		currentItem.addCookMethod(name);
-							    		clickCooldown = 0.08;
-							    		currentChopCount = f.getChopCount();
-				    				}
-						    		
-				    			}
+						    		if(currentItem == null) {
+					    			Food f = (Food)gp.player.currentItem;
+					    			if(f.foodState == FoodState.RAW) {
+					    				if(gp.multiplayer) {
+					    					gp.socketClient.send(new Packet12PlaceOnChoppingBoard(gp.player.getUsername(), getArrayCounter(), gp.player.currentItem));
+					    					clickCooldown = 0.08;
+					    				} else {
+								    		currentItem = (Food)gp.player.currentItem;
+								    		gp.player.currentItem = null;
+								    		currentItem.addCookMethod(name);
+								    		clickCooldown = 0.08;
+								    		currentChopCount = f.getChopCount();
+					    				}
+							    		
+					    			}
+					    		}
 				    		} else if(gp.player.currentItem instanceof Plate p) {
 				    			if(currentItem != null) {
 					    			if(p.canBePlated(currentItem.getName(), currentItem.foodState)) {
@@ -206,6 +209,9 @@ public class ChoppingBoard extends Building {
 			currentItem = newItem;
     		currentItem.addCookMethod(name);
 		}
+		if(currentItem instanceof IceBlock ice) {
+			currentItem = ice.enclosedItem;
+		}
 	}
 	private void drawChoppingBar(Renderer renderer , float worldX, float worldY, double cookTime, double maxCookTime) {
 	    float screenX = worldX - xDrawOffset ;
@@ -223,7 +229,7 @@ public class ChoppingBoard extends Building {
 	    int g = (int) (progress * 255);
 
 	    // Optional: draw a border
-	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, barWidth, barHeight, Colour.BLACK);
+	    renderer.fillRect((int) screenX + xOffset-3, (int) screenY + yOffset-3, barWidth+6, barHeight+6, Colour.BASE_COLOUR);
 	    
 	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 
@@ -267,6 +273,9 @@ public class ChoppingBoard extends Building {
 	     
 	     rawIngredients.add("Potato");
 	     choppedResults.add("Fries");
+	     
+	     rawIngredients.add("Ice Block");
+	     choppedResults.add("???");
 	}
 	public boolean canChop(String itemName) {
 		return rawIngredients.contains(itemName);

@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Random;
 
 import entity.buildings.Building;
-import entity.buildings.Chair;
+import entity.buildings.FloorDecor_Building;
+import entity.buildings.FryingStation;
 import entity.buildings.LargeTable;
 import entity.buildings.MenuSign;
 import entity.buildings.Rubble;
@@ -703,13 +704,14 @@ public class ProgressManager {
 		
 		currentPhase = 3;
 		
-		
+		FryingStation f = new FryingStation(gp, 564, 408);
+		f.roomNum = 9;
 		if(gp.world.mapM.isInRoom(9)) {
-	      	gp.world.buildingM.removeAllWithName("Chopping Board");
-
+			gp.world.buildingM.addBuilding(f);
+			gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 528, 408, 6));
 		} else {
-			gp.world.mapM.getRoom(0).removeAllWithName("Chopping Board");
-
+			gp.world.mapM.getRoom(9).addBuilding(f);
+			gp.world.mapM.getRoom(9).addBuilding(new FloorDecor_Building(gp, 528, 408, 6));
 		}
     }
 }

@@ -57,6 +57,38 @@ public class FryingStation extends Building {
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*6);
 	}
+	public void removeBuildingsInWay() {
+		    	
+		BuildingManager bm = gp.world.buildingM;
+		        
+		Building[] buildings = bm.getBuildings();
+		        
+		if(!gp.world.mapM.isInRoom(roomNum)) {
+			buildings = gp.world.mapM.getRoom(roomNum).getBuildings();
+		}
+		        
+		        for (int i = 0; i < buildings.length; i++) {
+		            Building b = buildings[i];
+
+		            if (b == null || b == this) continue;
+
+		                if (this.hitbox.intersects(b.hitbox)) {
+		                	
+		                    // Return to customiser inventory
+		                	if(b.canBePlaced) {
+		                		gp.world.customiser.addToInventory(b);
+		                	}
+		                    
+		                    // Destroy & remove it
+		                    b.destroy();
+		                    if(gp.world.mapM.isInRoom(roomNum)) {
+			                    bm.getBuildings()[i] = null;
+		                    } else {
+		                    	gp.world.mapM.getRoom(roomNum).getBuildings()[i] = null;
+		                    }
+		                }
+		        }
+	}
 	public Building clone() {
 		FryingStation building = new FryingStation(gp, hitbox.x, hitbox.y);
 		return building;
@@ -118,6 +150,7 @@ public class FryingStation extends Building {
 			leftHitbox = new Rectangle2D.Float(hitbox.x - xDrawOffset + 24 + hitboxWidth/2, (int) (hitbox.y)-yDrawOffset+70, hitboxWidth, 24);
 			rightHitbox = new Rectangle2D.Float((int) hitbox.x - xDrawOffset + 48 + 30 + hitboxWidth/2, (int) (hitbox.y)-yDrawOffset+70, hitboxWidth, 24);
 			firstUpdate = false;
+			removeBuildingsInWay();
 		}
 		
 		if(gp.world.mapM.isInRoom(roomNum)) { 
@@ -197,6 +230,7 @@ public class FryingStation extends Building {
 									foodState = leftSlot.cookingItem.getState();
 									cookTime = (int)leftSlot.getCookTime();
 									gp.world.lightingM.addLight(leftLight);
+									startParticles(true);
 								}
 								itemName = leftSlot.getName();
 							}
@@ -282,6 +316,7 @@ public class FryingStation extends Building {
 									foodName = rightSlot.cookingItem.getName();
 									foodState = rightSlot.cookingItem.getState();
 									cookTime = (int)rightSlot.getCookTime();
+									startParticles(false);
 									gp.world.lightingM.addLight(rightLight);
 								}
 								itemName = rightSlot.getName();
@@ -389,25 +424,25 @@ public class FryingStation extends Building {
 		}
 		
 		if(leftSlot != null) {
-			leftSlot.drawCookingUI(renderer, (int)hitbox.x, (int)hitbox.y, true);
+			leftSlot.drawCookingUI(renderer, (int)hitbox.x+8, (int)hitbox.y, true);
 		}
 		if(rightSlot != null) {
-			rightSlot.drawCookingUI(renderer, (int)hitbox.x, (int)hitbox.y, false);
+			rightSlot.drawCookingUI(renderer, (int)hitbox.x-8, (int)hitbox.y, false);
 		}
 		
 	}
 	private void stopParticles(boolean isLeft) {
 		if(isLeft) {
-			gp.world.particleM.removePanEmber(0);
+			gp.world.particleM.removePanEmber(2);
 		} else {
-			gp.world.particleM.removePanEmber(1);
+			gp.world.particleM.removePanEmber(3);
 		}
 	}
 	private void startParticles(boolean isLeft) {
 		if(isLeft) {
-			gp.world.particleM.addPanEmber(0, (int) hitbox.x - xDrawOffset  + 40, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32);
+			gp.world.particleM.addPanEmber(2, (int) hitbox.x - xDrawOffset  + 40, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32);
 		} else {
-			gp.world.particleM.addPanEmber(1, (int) hitbox.x - xDrawOffset  + 48 + 48, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32);
+			gp.world.particleM.addPanEmber(3, (int) hitbox.x - xDrawOffset  + 48 + 48, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32);
 		}
 	}
 	

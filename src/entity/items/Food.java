@@ -11,7 +11,7 @@ public class Food extends Item {
 	
 	protected int foodLayer = 0;
 	protected TextureRegion burntImage;
-	public TextureRegion potPlated, panPlated, rawImage, frozenImage, choppedImage, generalPlated, ovenPlated;
+	public TextureRegion potPlated, panPlated, rawImage, frozenImage, choppedImage, friedPlated, generalPlated, ovenPlated;
 	private String cookedBy = "";
 	private String secondaryCookedBy = "";
 	public boolean cutIntoNewItem = false;
@@ -84,7 +84,9 @@ public class Food extends Item {
 				 img = potPlated;
 			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
 				 img = ovenPlated;
-			 }
+			 } else if(cookedBy.equals("Fryer")){
+				 img = friedPlated;
+			 } 
 			 break;
 		 case PLATED:
 			 if(cookedBy.equals("Frying Pan")) {
@@ -93,8 +95,16 @@ public class Food extends Item {
 				 img = potPlated;
 			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
 				 img = ovenPlated;
+			 } else if(cookedBy.equals("Fryer")){
+				 img = friedPlated;
 			 } else {
-				 img = generalPlated;
+				 if(secondaryCookedBy.equals("Fryer")) {
+					 img = friedPlated;
+				 } else if(secondaryCookedBy.equals("Oven")|| cookedBy.equals("Oven Tray")) {
+					 img = ovenPlated;
+				 } else {
+					 img = generalPlated;
+				 }
 			 }
 			 break;
 		 case CHOPPED:
@@ -123,7 +133,9 @@ public class Food extends Item {
 				 img = potPlated;
 			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
 				 img = ovenPlated;
-			 }
+			 } else if(cookedBy.equals("Fryer")){
+				 img = friedPlated;
+			 } 
 			 break;
 		 case PLATED:
 			 //2
@@ -133,8 +145,16 @@ public class Food extends Item {
 				 img = potPlated;
 			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
 				 img = ovenPlated;
+			 } else if(cookedBy.equals("Fryer")){
+				 img = friedPlated;
 			 } else {
-				 img = generalPlated;
+				 if(secondaryCookedBy.equals("Fryer")) {
+					 img = friedPlated;
+				 } else if(secondaryCookedBy.equals("Oven")|| cookedBy.equals("Oven Tray")) {
+					 img = ovenPlated;
+				 } else {
+					 img = generalPlated;
+				 }
 			 }
 			 break;
 		 case CHOPPED:

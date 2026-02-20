@@ -8,6 +8,7 @@ import entity.buildings.FloorDecor_Building;
 import entity.items.CookingItem;
 import entity.items.Food;
 import entity.items.FoodState;
+import entity.items.Fryer;
 import entity.items.Item;
 import entity.items.OvenTray;
 import entity.items.Plate;
@@ -561,6 +562,12 @@ public class Player extends Entity{
 			    				            currentItem = plate;
 			    				            clickCounter = 0.1;
 			    				        }
+			    				    } else if (table.currentItem instanceof Fryer fryer) {
+			    				        if (tryPlateFromFryer(fryer, plate)) {
+			    				            table.currentItem = fryer; // fryer stays on table
+			    				            currentItem = plate;
+			    				            clickCounter = 0.1;
+			    				        }
 			    				    } else if (table.currentItem instanceof OvenTray ovenTray) {
 			    						if(ovenTray.getFoodState().equals(FoodState.COOKED)) {
 			    				    		clickCounter = 0.1;
@@ -583,6 +590,12 @@ public class Player extends Entity{
 		    							gp.player.currentItem = null;
 		    							clickCounter = 0.1;
 		    						}
+		    					} else if(table.currentItem instanceof Fryer fryer) {
+		    						if(fryer.canCook(gp.player.currentItem) && fryer.cookingItem == null) {
+		    							fryer.setCooking(gp.player.currentItem);
+		    							gp.player.currentItem = null;
+		    							clickCounter = 0.1;
+		    						}
 		    					} else if(table.currentItem instanceof OvenTray ovenTray) {
 		    						if(ovenTray.canBeAddedToTray(food.getName(), food.foodState)) {
 		    							ovenTray.addIngredient(food);
@@ -597,6 +610,26 @@ public class Player extends Entity{
 		    					        table.currentItem = plate;
 		    					        clickCounter = 0.1;
 		    					    }
+		    					} else if(table.currentItem instanceof Food food) {
+		    						if(pan.canCook(table.currentItem.getName()) && pan.cookingItem == null) {
+		    							pan.setCooking(table.currentItem);
+		    							table.currentItem = null;
+		    							clickCounter = 0.1;
+		    						}
+		    					}
+		    				} else if (currentItem instanceof Fryer fryer) {
+		    					if (table.currentItem instanceof Plate plate) {
+		    					    if (tryPlateFromFryer(fryer, plate)) {
+		    					        currentItem = fryer;      // pan stays in hand
+		    					        table.currentItem = plate;
+		    					        clickCounter = 0.1;
+		    					    }
+		    					} else if(table.currentItem instanceof Food food) {
+		    						if(fryer.canCook(table.currentItem) && fryer.cookingItem == null) {
+		    							fryer.setCooking(table.currentItem);
+		    							table.currentItem = null;
+		    							clickCounter = 0.1;
+		    						}
 		    					}
 		    				} else if (currentItem instanceof OvenTray ovenTray) {
 		    					if (table.currentItem instanceof Food food) {
@@ -651,6 +684,22 @@ public class Player extends Entity{
         pan.cookingItem = null;
         pan.stopCooking();
         pan.resetImages();
+
+        return true;
+    }
+    private boolean tryPlateFromFryer(Fryer fryer, Plate plate) {
+        if (fryer.cookingItem == null) return false;
+
+        Food food = fryer.cookingItem;
+        if (food.foodState != FoodState.COOKED && food.foodState != FoodState.BURNT)
+            return false;
+
+        food.foodState = FoodState.PLATED;
+        plate.addIngredient(food);
+
+        fryer.cookingItem = null;
+        fryer.stopCooking();
+        fryer.resetImages();
 
         return true;
     }

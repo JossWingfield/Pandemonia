@@ -273,6 +273,7 @@ public class Stove extends Building {
 									foodState = leftSlot.cookingItem.getState();
 									cookTime = (int)leftSlot.getCookTime();
 									gp.world.lightingM.addLight(leftLight);
+									startParticles(true);
 								}
 								itemName = leftSlot.getName();
 							}
@@ -420,6 +421,7 @@ public class Stove extends Building {
 									foodState = rightSlot.cookingItem.getState();
 									cookTime = (int)rightSlot.getCookTime();
 									gp.world.lightingM.addLight(rightLight);
+									startParticles(false);
 								}
 								itemName = rightSlot.getName();
 							}

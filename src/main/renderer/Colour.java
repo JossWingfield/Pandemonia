@@ -68,4 +68,5 @@ public class Colour {
     public static final Colour CYAN   = new Colour(0f, 1f, 1f, 1f);
     public static final Colour MAGENTA= new Colour(1f, 0f, 1f, 1f);
     public static final Colour ORANGE = new Colour(1f, 0.784f, 0f, 1f);
+    public static final Colour BASE_COLOUR = new Colour(0.2f, 0.235f, 0.227f, 1f);
 }
