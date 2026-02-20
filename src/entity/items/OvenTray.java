@@ -36,6 +36,7 @@ public class OvenTray extends Item {
 		
 		animations[0][0][0] = importImage("/decor/OvenTray.png").getSubimage(0, 0, 16, 16);
 		animations[0][0][1] = importImage("/decor/OvenTray.png").getSubimage(16, 0, 16, 16);
+		foodBorder = importImage("/food/FoodBorder.png").toTextureRegion();
 	}
 	public FoodState getFoodState() {
 		return foodState;

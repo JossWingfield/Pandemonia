@@ -1,5 +1,6 @@
 package utility;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
@@ -45,7 +46,7 @@ public class ProgressManager {
         }
     }
     
-    private static Map<Integer, RewardType> rewardMap = new java.util.HashMap<>();
+    private static Map<Integer, RewardType> rewardMap = new HashMap<>();
 
     static {
         rewardMap.put(1, RewardType.RECIPE);
@@ -94,6 +95,7 @@ public class ProgressManager {
     public boolean seasoningUnlocked = false;
     //ROOM UNLOCKS
     public boolean unlockedKitchen = false;
+    public boolean unlockedFreezer = false;
     
     //ACHIEVEMENTS
     public Map<String, Achievement> achievements = new LinkedHashMap<>();
@@ -693,6 +695,21 @@ public class ProgressManager {
 			gp.world.mapM.getRoom(0).addBuilding(new LargeTable(gp, 516, 288));
 			gp.world.mapM.getRoom(0).addBuilding(new Table(gp, 348, 264, "Left", false));
 		}
-		
 	}
+    public void unlockFreezerRoom() {
+    	unlockedFreezer = true;
+		gp.gui.addMessage("Frial has found peace.", Colour.GREEN);
+		//achievements.get("master_of_heat").unlock();
+		
+		currentPhase = 3;
+		
+		
+		if(gp.world.mapM.isInRoom(9)) {
+	      	gp.world.buildingM.removeAllWithName("Chopping Board");
+
+		} else {
+			gp.world.mapM.getRoom(0).removeAllWithName("Chopping Board");
+
+		}
+    }
 }

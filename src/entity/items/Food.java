@@ -11,7 +11,7 @@ public class Food extends Item {
 	
 	protected int foodLayer = 0;
 	protected TextureRegion burntImage;
-	public TextureRegion potPlated, panPlated, rawImage, choppedImage, generalPlated, ovenPlated;
+	public TextureRegion potPlated, panPlated, rawImage, frozenImage, choppedImage, generalPlated, ovenPlated;
 	private String cookedBy = "";
 	private String secondaryCookedBy = "";
 	public boolean cutIntoNewItem = false;
@@ -45,6 +45,9 @@ public class Food extends Item {
 		case 3:
 			this.foodState = FoodState.PLATED;
 			break;
+		case 5:
+			this.foodState = FoodState.FROZEN;
+			break;
 		}
 	}
 	public void setState(FoodState state) {
@@ -60,6 +63,8 @@ public class Food extends Item {
 			return 2;
 		case PLATED:
 			return 3;
+		case FROZEN:
+			return 5;
 		}
 		return -1;
 	}
@@ -94,6 +99,9 @@ public class Food extends Item {
 			 break;
 		 case CHOPPED:
 			 img = choppedImage;
+			 break;
+		 case FROZEN:
+			 img = frozenImage;
 			 break;
 		 }
 		 
@@ -135,6 +143,9 @@ public class Food extends Item {
 			 break;
 		 case BURNT:
 			 img = burntImage;
+			 break;
+		 case FROZEN:
+			 img = frozenImage;
 			 break;
 		 }
 		 return img;

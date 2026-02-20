@@ -18,6 +18,7 @@ import entity.items.CursedGreens;
 import entity.items.Egg;
 import entity.items.Fish;
 import entity.items.Food;
+import entity.items.Fryer;
 import entity.items.FryingPan;
 import entity.items.Garlic;
 import entity.items.Greens;
@@ -88,6 +89,7 @@ public class ItemRegistry {
 			case "Frying Pan" -> i = new FryingPan(gp, 0, 0);
 			case "Small Pot" -> i = new SmallPan(gp, 0, 0);
 			case "Oven Tray" -> i = new OvenTray(gp, 0, 0);
+			case "Fryer" -> i = new Fryer(gp, 0, 0);
 		}
 		if(i instanceof Food food) {
 			food.setState(state);

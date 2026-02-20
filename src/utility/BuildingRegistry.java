@@ -23,6 +23,7 @@ import entity.buildings.FoodStore;
 import entity.buildings.Freezer;
 import entity.buildings.FreezerLight;
 import entity.buildings.Fridge;
+import entity.buildings.FryingStation;
 import entity.buildings.Gate;
 import entity.buildings.HerbBasket;
 import entity.buildings.Lantern;
@@ -225,6 +226,7 @@ public class BuildingRegistry {
 			case "Kitchen Sink 1" -> i = new Sink(gp, x, y);
 			case "Soul Lantern" -> i = new SoulLantern(gp, x, y);
 			case "Stove" -> i = new Stove(gp, x, y);
+			case "Frying Station" -> i = new FryingStation(gp, x, y);
 			case "Large Table" -> i = new LargeTable(gp, x, y);
 			case "Chopping Board" -> i = new ChoppingBoard(gp, x, y);
 			case "Turntable" -> i = new Turntable(gp, x, y);

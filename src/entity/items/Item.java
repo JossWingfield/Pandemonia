@@ -11,7 +11,9 @@ public abstract class Item extends Entity {
     GamePanel gp;
     
     private int counter = -1;
-    protected int drawWidth, drawHeight, yDrawOffset, xDrawOffset; //Variables to draw the item correctly
+    protected int drawWidth, drawHeight, yDrawOffset; //Variables to draw the item correctly
+
+	public int xDrawOffset;
     public boolean weapon = false;
     protected String name;
     protected String outputName = "";

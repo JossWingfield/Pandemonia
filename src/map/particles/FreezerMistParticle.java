@@ -24,7 +24,7 @@ public class FreezerMistParticle extends Particle {
     		    (float)(Math.random() - 0.5f) * 0.6f,   // much faster initial drift
     		    (float)(Math.random() - 0.5f) * 0.6f,
     		    9999f,
-    		    16f + (float)Math.random() * 16f,
+    		    48f,
     		    new Colour(0.85f, 0.9f, 1f, 0.12f)
     		);
 
@@ -69,6 +69,7 @@ public class FreezerMistParticle extends Particle {
         // --- MOVE ---
         x += vx;
         y += vy;
+        
 
         lifetime--;
     }

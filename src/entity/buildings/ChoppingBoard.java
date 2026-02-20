@@ -264,6 +264,9 @@ public class ChoppingBoard extends Building {
 	     
 	     rawIngredients.add("Cursed Greens");
 	     choppedResults.add("Chopped Cursed Greens");
+	     
+	     rawIngredients.add("Potato");
+	     choppedResults.add("Fries");
 	}
 	public boolean canChop(String itemName) {
 		return rawIngredients.contains(itemName);

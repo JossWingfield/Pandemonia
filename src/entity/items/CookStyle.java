@@ -5,5 +5,6 @@ public enum CookStyle {
     SAUTE,    // requires interaction
     FLIP,      // press E at window
     STIR,
-    BOIL
+    BOIL,
+    FRY
 }

@@ -886,7 +886,6 @@ public class Player extends Entity{
     		drawCurrentItem(renderer);
     	}	 
         
-        
         //g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)interactHitbox.x, (int)interactHitbox.y, (int)interactHitbox.width, (int)interactHitbox.height);
         

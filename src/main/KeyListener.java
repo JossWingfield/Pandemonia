@@ -125,7 +125,10 @@ public class KeyListener {
         // ----- PLAY STATE -----
         if (gp.currentState == gp.playState) {
         	
-        	if (keyBeginPress(GLFW.GLFW_KEY_L)) gp.world.progressM.unlockOldKitchen();
+        	if (keyBeginPress(GLFW.GLFW_KEY_L)) {
+        		gp.world.progressM.unlockOldKitchen();
+        		gp.world.progressM.unlockFreezerRoom();
+        	}
 
             if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
             if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);

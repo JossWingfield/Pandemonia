@@ -64,7 +64,7 @@ public class ParticleSystem {
     
     //FREEZER MIST
     private boolean freezerMistActive = false;
-    private int freezerMistTarget = 1000;
+    private int freezerMistTarget = 300;
     private float mistAreaX, mistAreaY, mistAreaW, mistAreaH;
   
     

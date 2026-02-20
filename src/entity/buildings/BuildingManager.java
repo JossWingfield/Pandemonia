@@ -588,7 +588,9 @@ public class BuildingManager {
     public void inputUpdate(double dt) {
     	for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
-            	i.inputUpdate(dt); //Draws the item
+            	if(gp.world.mapM.isInRoom(i.roomNum)) {
+            		i.inputUpdate(dt); //Draws the item
+            	}
             }
         }
     }

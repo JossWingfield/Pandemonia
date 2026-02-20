@@ -27,6 +27,7 @@ import entity.buildings.FoodStore;
 import entity.buildings.Freezer;
 import entity.buildings.FreezerLight;
 import entity.buildings.Fridge;
+import entity.buildings.FryingStation;
 import entity.buildings.Gate;
 import entity.buildings.Lantern;
 import entity.buildings.MenuSign;
@@ -101,6 +102,8 @@ public class MapBuilder {
 			totalBuildingCount++;
 		}
 
+		buildings[totalBuildingCount] = new FryingStation(gp, 0, 0);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new FreezerLight(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Freezer(gp, 0, 0);
@@ -989,8 +992,11 @@ public class MapBuilder {
 				int yPos = (int)((mouseY)/size) * size;
 				renderer.draw(selectedBuilding.animations[0][0][0], xPos - selectedBuilding.xDrawOffset, yPos - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getPixelWidth()*3, selectedBuilding.animations[0][0][0].getPixelHeight()*3);
 				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
-					gp.world.buildingM.addBuilding((Building)selectedBuilding.clone(), xPos, yPos);
+					Building b = (Building)selectedBuilding.clone();
+					b.roomNum = gp.player.currentRoomIndex;
+					gp.world.buildingM.addBuilding(b, xPos, yPos);
 					clickCounter = 0.1;
+					
 				}
 			}
 		}
