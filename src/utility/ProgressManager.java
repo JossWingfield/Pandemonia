@@ -696,6 +696,9 @@ public class ProgressManager {
 			gp.world.mapM.getRoom(0).addBuilding(new LargeTable(gp, 516, 288));
 			gp.world.mapM.getRoom(0).addBuilding(new Table(gp, 348, 264, "Left", false));
 		}
+		
+		//Restore old corridor
+		gp.world.mapM.getRoom(7).setRestored();
 	}
     public void unlockFreezerRoom() {
     	unlockedFreezer = true;

@@ -238,6 +238,8 @@ public class GamePanel {
         world = new World(this, false);
         world.startGame();
       	
+        world.progressM.unlockOldKitchen();
+		world.progressM.unlockFreezerRoom();
         //cutsceneM.enterDestroyedRestaurant();
     }
     public void playSinglePlayer(int saveSlot, String playerName, String worldName, int selectedSkinNum, int selectedHairNum, int selectedHairStyleNum) {

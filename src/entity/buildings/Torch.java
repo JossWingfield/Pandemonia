@@ -19,6 +19,7 @@ public class Torch extends Building{
 	private float flickerTimer = 0;
 	private float nextFlickerTime = 0;
 	private Random random = new Random();
+	private boolean addLight = false;
 	
 	public Torch(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48*2);
@@ -26,7 +27,7 @@ public class Torch extends Building{
 		description = "Light up your restaurant.";
 		cost = 20;
 		
-		animationSpeedFactor = 1;
+		animationSpeedFactor = 0.05;
 		
 		drawWidth = 48;
 		isDecor = true;
@@ -69,7 +70,7 @@ public class Torch extends Building{
 	public void turnOn() {
 		turnedOn = true;
 		currentAnimation = 1;
-		gp.world.lightingM.addLight(light);
+		addLight = true;
 	}
 	public void destroy() {
 		gp.world.lightingM.removeLight(light);
@@ -84,19 +85,11 @@ public class Torch extends Building{
 			light.setIntensity(0.4f);
 		}
 	}
-
-	public void draw(Renderer renderer) {
-		if (firstUpdate) {
-			firstUpdate = false;
-			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 4),Colour.YELLOW, 32);
-			light.setIntensity(1f);
-			if (turnedOn) {
-				gp.world.lightingM.addLight(light);
-			}
-		}
+	public void inputUpdate(double dt) {
+		super.inputUpdate(dt);
 		
 		if (flickerEnabled && turnedOn) {
-			flickerTimer += 0.02f;
+			flickerTimer += dt;
 			
 			if (flickerTimer >= nextFlickerTime) {
 				// briefly turn off or dim the light
@@ -111,15 +104,30 @@ public class Torch extends Building{
 				nextFlickerTime = random.nextFloat() * 0.05f + 0.01f; // next flicker between 0.05s–0.45s
 			}
 		}
-		 	animationSpeed++; //Updating animation frame
-	        if (animationSpeed == animationSpeedFactor) {
-	            animationSpeed = 0;
-	            animationCounter++;
-	        }
+		
+	 	animationSpeed+=dt; //Updating animation frame
+        if (animationSpeed >= animationSpeedFactor) {
+            animationSpeed = 0;
+            animationCounter++;
+        }
 
-	        if (animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
-	            animationCounter = 0;
-	        }
+        if (animations[direction][currentAnimation][animationCounter] == null) { //If the next frame is empty
+            animationCounter = 0;
+        }
+	}
+	public void draw(Renderer renderer) {
+		if (firstUpdate) {
+			firstUpdate = false;
+			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 4),Colour.YELLOW, 32);
+			light.setIntensity(1f);
+			if (turnedOn) {
+				gp.world.lightingM.addLight(light);
+			}
+		}
+		if(addLight) {
+			gp.world.lightingM.addLight(light);
+			addLight = false;
+		}
 		
 	     renderer.draw(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    

@@ -36,12 +36,13 @@ public class ParticleSystem {
     
     //PAN EMBERS
     private static class PanEmber {
-        int slot;       // 0, 1, etc.
+        int slot, roomNum;       // 0, 1, etc.
         float x, y, width, height;
         boolean active;
 
-        public PanEmber(int slot, float x, float y, float width, float height) {
+        public PanEmber(int slot, float x, float y, float width, float height, int roomNum) {
             this.slot = slot;
+            this.roomNum = roomNum;
             this.x = x;
             this.y = y;
             this.width = width;
@@ -154,7 +155,7 @@ public class ParticleSystem {
 
                         boolean flare = rand.nextFloat() < ROOM_FLARE_CHANCE;
                         addParticle(new EmberParticle(gp, gp.player.currentRoomIndex, x, y, flare));
-
+                        
                         emberCount++;
                     }
                 }
@@ -212,9 +213,9 @@ public class ParticleSystem {
                             x += Math.cos(angle) * radius;
                             y += Math.sin(angle) * radius;
                         }
-
+                        
                         boolean flare = rand.nextFloat() < ROOM_FLARE_CHANCE;
-                        addParticle(new EmberParticle(gp, gp.player.currentRoomIndex, x, y, flare));
+                        addParticle(new EmberParticle(gp, pan.roomNum, x, y, flare));
 
                         totalPanEmbers++;
                     }
@@ -329,11 +330,15 @@ public class ParticleSystem {
     public void drawEmissive(Renderer renderer) {
     	for (int i = 0; i < particles.size(); i++) {
     	    Particle p = particles.get(i);
-    	    if (p != null) p.drawEmissive(renderer);
+    	    if (p != null) { 
+       	    	if(p.roomNum == gp.player.currentRoomIndex) {
+       	    		p.drawEmissive(renderer);
+       	    	}
+    	    }
     	}
     }
     // Start ember for a pan slot
-    public void addPanEmber(int slot, float x, float y, float width, float height) {
+    public void addPanEmber(int slot, float x, float y, float width, float height, int roomNum) {
         // Check if this slot already exists
         for (PanEmber p : panEmbers) {
             if (p.slot == slot) {
@@ -347,7 +352,7 @@ public class ParticleSystem {
             }
         }
         // Add new pan ember for this slot
-        panEmbers.add(new PanEmber(slot, x, y, width, height));
+        panEmbers.add(new PanEmber(slot, x, y, width, height, roomNum));
     }
 
     // Stop ember for a pan slot

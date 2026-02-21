@@ -227,6 +227,9 @@ public class Plate extends Item {
 
         matchedRecipe = RecipeManager.getMatchingRecipe(currentIngredients, currentMethods, secondaryCurrentMethods);
         matchedRecipeImage = getMatchingRecipeIgnoringSeasoning();
+        if(matchedRecipe != null) {
+            //System.out.println(matchedRecipe.getName());
+        }
     }
     public TextureRegion getMatchingRecipeIgnoringSeasoning() {
 
@@ -442,7 +445,6 @@ public class Plate extends Item {
          }
          
          // Draw food layers from bottom to top
-         
          if (matchedRecipeImage != null) {
          	renderer.draw(matchedRecipeImage, baseX, baseY, drawWidth, drawHeight);
          }  else {

@@ -61,7 +61,7 @@ public class CursedDecor extends Building {
 			break;
 		case 2:
 			mustBePlacedOnFloor = true;
-			name = "Ruined Carpet";
+			name = "Mess";
 			isSolid = false;
 			animations[0][0][0] = importImage("/decor/Ruined Carpet.png").toTextureRegion();
 			hitbox.width = 208*3;
@@ -72,7 +72,7 @@ public class CursedDecor extends Building {
 			break;
 		case 3:
 			mustBePlacedOnFloor = true;
-			name = "Ruined Chair";
+			name = "Mess";
 			isSolid = true;
 			animations[0][0][0] = importImage("/decor/CorridorProps.png").getSubimage(0, 0, 16, 16);
 			hitbox.width = 16*3;
@@ -82,7 +82,7 @@ public class CursedDecor extends Building {
 			break;
 		case 4:
 			mustBePlacedOnFloor = true;
-			name = "Ruined Sofa";
+			name = "Mess";
 			isSolid = true;
 			animations[0][0][0] = importImage("/decor/CorridorProps.png").getSubimage(16, 0, 32, 32);;
 			hitbox.width = 32*3;

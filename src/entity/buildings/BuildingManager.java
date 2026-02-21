@@ -51,6 +51,7 @@ public class BuildingManager {
         }
     }
     public void addBuilding(Building b) {
+    	b.roomNum = gp.player.currentRoomIndex;
         buildings[arrayCounter] = b;
         b.setArrayCounter(arrayCounter);
         arrayCounter++;

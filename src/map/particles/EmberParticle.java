@@ -41,7 +41,9 @@ public class EmberParticle extends Particle {
         if (flare) {
             lightRadius = 9;
             light = new LightSource((int)x, (int)y, colour, lightRadius);
-            gp.world.lightingM.addLight(light);
+            if(roomNum == gp.player.currentRoomIndex) {
+            	gp.world.lightingM.addLight(light);
+            }
         }
     }
     

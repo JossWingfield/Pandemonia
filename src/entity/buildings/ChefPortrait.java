@@ -20,10 +20,10 @@ public class ChefPortrait extends Building{
 		canBePlaced = false;
 		isDecor = true;
 		mustBePlacedOnWall = true;
-		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*3);
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
 	}
 	public void onPlaced() {
-		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*3);
+		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*6, hitbox.height-3*6);
 	}
 	public Building clone() {
 		ChefPortrait building = new ChefPortrait(gp, hitbox.x, hitbox.y);

@@ -379,6 +379,21 @@ public class RecipeManager {
             );
         registerRecipe(pastaBake);
         
+        
+        //PHASE 3 RECIPES
+        Recipe chips = new Recipe(
+                "Chips",
+                Arrays.asList("Potato"),
+                Arrays.asList("Chopping Board"),
+                Arrays.asList("Fryer"),
+                false, 
+                importImage("/food/potato/Fries.png").getSubimage(32, 0, 16, 16),
+                null,
+                10,
+                3
+            );
+        registerRecipe(chips);
+        
         //ADDITIONAL RECIPES TO ADD:
         //OVEN RECIPES
         //mac and cheese, pasta al forno, pizza types + calzone + flatbread(dough in oven)
@@ -428,7 +443,7 @@ public class RecipeManager {
         PotIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(16, 0, 16, 16);
         ovenIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(48, 0, 16, 16);
         
-        //unlockAllRecipes();
+        unlockAllRecipes();
     }
 
     public void unlockAllRecipes() {

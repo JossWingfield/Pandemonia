@@ -176,9 +176,7 @@ public class MapManager {
 	    	for(Room room: rooms) {
 	    		if(room != null) {
 	    			if(currentRoom != room) {
-	    				if(room.containsAnyNPC() || room.getRoomType().equals("Main")) {
-	    					room.updateState(dt);
-	    				}
+	    				room.updateState(dt);
 	    			}
 	    		}
 	    	}
@@ -190,7 +188,7 @@ public class MapManager {
 	    		if(room != null) {
 	    			if(currentRoom != room) {
 	    				if(room.containsAnyNPC() || room.getRoomType().equals("Main")) {
-	    					room.inputUpdate(dt);
+	    					//room.inputUpdate(dt);
 	    				}
 	    			}
 	    		}

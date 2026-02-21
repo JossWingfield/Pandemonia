@@ -564,9 +564,9 @@ public class Stove extends Building {
 	}
 	private void startParticles(boolean isLeft) {
 		if(isLeft) {
-			gp.world.particleM.addPanEmber(0, (int) hitbox.x - xDrawOffset  + 40, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32);
+			gp.world.particleM.addPanEmber(0, (int) hitbox.x - xDrawOffset  + 40, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32, roomNum);
 		} else {
-			gp.world.particleM.addPanEmber(1, (int) hitbox.x - xDrawOffset  + 48 + 48, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32);
+			gp.world.particleM.addPanEmber(1, (int) hitbox.x - xDrawOffset  + 48 + 48, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32, roomNum);
 		}
 	}
 	

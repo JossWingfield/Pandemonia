@@ -246,10 +246,12 @@ public class Room {
 	public void setDefaultValues() {
 		switch(preset) {
 		case 7:
-		    setWallpaper(1);
-		    darkerRoom = true;
-		    setFloorpaper(4);
-		    setBeam(5);
+			if(!gp.world.progressM.unlockedKitchen) {
+			    setWallpaper(1);
+			    darkerRoom = true;
+			    setFloorpaper(4);
+			    setBeam(5);
+			}
 			break;
 		case 6:
 			darkerRoom = true;
@@ -325,7 +327,7 @@ public class Room {
 			
 			Lantern lantern = (Lantern)gp.world.buildingM.findBuildingWithName("Lantern");
 			lantern.turnOn();
-		
+			gp.world.buildingM.refreshBuildings();
 		} else if(preset == 9) {
 			setBeam(0);
 			setCounterSkin(0);
@@ -343,8 +345,25 @@ public class Room {
     	    for (Building b: mess) {
     	    	gp.world.buildingM.removeBuilding(b);
     	    }
+    		gp.world.buildingM.refreshBuildings();
+		} else if(preset == 7) {
+			setBeam(0);
+			//setCounterSkin(0);
+			darkerRoom = false;
+    	    List<Building> mess = findBuildingsWithName("Mess");
+    	    for (Building b: mess) {
+    	    	removeBuilding(b);
+    	    }
+    	    
+    	    addBuilding(new FloorDecor_Building(gp, 300, 384, 117));
+	 	    addBuilding(new FloorDecor_Building(gp, 480, 336, 118));
+	 	    addBuilding(new FloorDecor_Building(gp, 660, 336, 118));
+    	    List<Building> torches = findBuildingsWithName("Torch");
+    	    for (Building b: torches) {
+    	    	Torch t = (Torch)b;
+    	    	t.turnOn();
+    	    }
 		}
-		gp.world.buildingM.refreshBuildings();
 	}
 	private void setBuildings(int preset) {
 		buildings = new Building[250];
@@ -2089,6 +2108,7 @@ public class Room {
 		buildingArrayCounter = arrayCounter;
 	}
 	public void addBuilding(Building building) {
+		building.roomNum = preset;
 		buildings[buildingArrayCounter] = building;
 		buildingArrayCounter++;
 	}
@@ -2592,6 +2612,15 @@ public class Room {
 			}
 		}
 		return null;
+	}
+	public List<Building> findBuildingsWithName(String name) {
+	    List<Building> result = new ArrayList<>();
+	    for (Building b : buildings) {
+	        if (b != null && b.getName().equals(name)) {
+	            result.add(b);
+	        }
+	    }
+	    return result;
 	}
 	 public void removeAllWithName(String name) {
 	        for (int i = 0; i < buildings.length; i++) {

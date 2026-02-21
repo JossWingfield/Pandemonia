@@ -1558,6 +1558,36 @@ public class FloorDecor_Building extends Building {
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
     		castsShadow = false;
         	break;
+        case 117:
+        	cost = 16;
+        	description = "A regal rug, many royals have walked upon this rug.";
+            name = "Corridor Rug";
+        	animations[0][0][0] = importImage("/decor/carpet/CorridorCarpet.png").toTextureRegion();
+        	isSolid = false;
+        	drawWidth = 48*2;
+        	isDecor = true;
+        	hitbox.width = 208*3;
+			hitbox.height = 48*3;
+			drawWidth = 208*3;
+			drawHeight = 48*3;
+        	isBottomLayer = true;
+        	mustBePlacedOnFloor = true;
+           	canBuildingBePlacedOn = true;
+        	break;
+        case 118:
+            name = "Corridor Sofa";
+          	cost = 20;
+        	description = "Worth Millions";
+        	animations[0][0][0] = importImage("/decor/CorridorSofa.png").toTextureRegion();
+        	isSolid = true;
+			hitbox.width = 32*3;
+			hitbox.height = 16*3;
+			drawWidth = 32*3;
+			drawHeight = 32*3;
+			yDrawOffset = 24;
+			mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
+        	break;
         }
 		
 	}
