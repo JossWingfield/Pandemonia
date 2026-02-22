@@ -65,6 +65,7 @@ public class MapManager {
 	        rooms[8] = new Room(gp, 8); //Corridor 1
 	        rooms[9] = new Room(gp, 9); //Old Kitchen
 	        rooms[10] = new Room(gp, 10); //Freezer
+	        rooms[11] = new Room(gp, 11); //Downstairs
 	        
 	        currentMapHeight = currentRoom.mapHeight;
 	        currentMapWidth = currentRoom.mapWidth;

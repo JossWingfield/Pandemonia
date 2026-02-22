@@ -1588,6 +1588,55 @@ public class FloorDecor_Building extends Building {
 			mustBePlacedOnFloor = true;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*5, hitbox.width-3*6, hitbox.height-3*8);
         	break;
+        case 119:
+        	name = "Multilevel 1";
+        	animations[0][0][0] = importImage("/tiles/beams/Multilevel.png").getSubimage(32, 0, 16, 16);
+        	hitbox.width = 16*3;
+        	hitbox.height = 10*3;
+        	yDrawOffset = 24;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 120:
+        	name = "Multilevel 2";
+        	animations[0][0][0] = importImage("/tiles/beams/Multilevel.png").getSubimage(48, 32, 16, 16);
+        	hitbox.width = 16*3;
+        	hitbox.height = 16*3;
+        	isDecor = true;
+        	isSolid = false;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 121:
+        	name = "Multilevel 3";
+        	animations[0][0][0] = importImage("/tiles/beams/Multilevel.png").getSubimage(64, 32, 16, 16);
+        	hitbox.width = 16*3;
+        	hitbox.height = 16*3;
+        	isSolid = false;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 122:
+        	name = "Multilevel 4";
+        	animations[0][0][0] = importImage("/tiles/beams/Multilevel.png").getSubimage(112, 48, 16, 16);
+        	hitbox.width = 16*3;
+        	hitbox.height = 16*3;
+        	isDecor = true;
+        	isSolid = false;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+    		canBuildingBePlacedOn = true;
+        	break;
         }
 		
 	}

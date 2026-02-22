@@ -36,6 +36,7 @@ import entity.buildings.Rubble;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
 import entity.buildings.Spill;
+import entity.buildings.Stairs;
 import entity.buildings.StorageFridge;
 import entity.buildings.Stove;
 import entity.buildings.Table;
@@ -235,6 +236,18 @@ public class Room {
 			setChairSkin(0);
 			setCounterSkin(0);
 			break;
+		case 11:
+			roomType = "Downstairs";
+			filePath = "/maps/downstairs/Layer";
+		    importMap(filePath, mapWidth, mapHeight);
+		    roomID = "/downstairs";
+		    roomIDTag = "Layer";
+		    setWallpaper(5);
+			setFloorpaper(0);
+			setBeam(0);
+			setChairSkin(0);
+			setCounterSkin(0);
+			break;
 		}
 		setBuildings(preset);
 		for(Building b: buildings) {
@@ -357,11 +370,20 @@ public class Room {
     	    
     	    addBuilding(new FloorDecor_Building(gp, 300, 384, 117));
 	 	    addBuilding(new FloorDecor_Building(gp, 480, 336, 118));
-	 	    addBuilding(new FloorDecor_Building(gp, 660, 336, 118));
+	 	    addBuilding(new FloorDecor_Building(gp, 660+48, 336, 118));
+	 	    addBuilding(new CursedDecor(gp, 804, 348, 31));
     	    List<Building> torches = findBuildingsWithName("Torch");
     	    for (Building b: torches) {
     	    	Torch t = (Torch)b;
     	    	t.turnOn();
+    	    }
+    	    
+    	    List<Building> doors = findBuildingsWithName("Door 1");
+    	    for (Building b: doors) {
+    	    	Door d = (Door)b;
+    	    	if(d.preset == 2) {
+
+    	    	}
     	    }
 		}
 	}
@@ -1900,6 +1922,10 @@ public class Room {
 			door.setDoorNum(9);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
+			door = new Door(gp, 576, 288, 0, 4);
+			door.setDoorNum(11);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
 			buildings[arrayCounter] = new ChefPortrait(gp, 312-32, 216-32);
 			arrayCounter++;
 			buildings[arrayCounter] = new ChefPortrait(gp, 420-32, 216-32);
@@ -1962,7 +1988,7 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new Torch(gp, 432, 288);
 			arrayCounter++;
-			buildings[arrayCounter] = new Torch(gp, 624, 288);
+			buildings[arrayCounter] = new Torch(gp, 624+48, 288);
 			arrayCounter++;
 			break;
 		case 8: //Corridor 1
@@ -2103,6 +2129,32 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FreezerLight(gp, 456, 180);
 			arrayCounter++;
+			break;
+		case 11:
+			door = new Door(gp, 456, 600, 1, 0);
+			door.setDoorNum(7);
+			buildings[arrayCounter] = door;
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 600, 360, 119);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 648, 360, 119);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 696, 360, 119);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 732, 336, 120);
+			arrayCounter++;
+			buildings[arrayCounter] = new Stairs(gp, 732, 384);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 780, 336, 122);
+			arrayCounter++;
+			buildings[arrayCounter] = new FloorDecor_Building(gp, 828, 336, 122);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 348, 336);
+			arrayCounter++;
+			buildings[arrayCounter] = new Lantern(gp, 612, 144);
+			arrayCounter++;
+
+
 			break;
 		}
 		buildingArrayCounter = arrayCounter;

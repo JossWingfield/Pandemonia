@@ -35,6 +35,7 @@ import entity.buildings.Rubble;
 import entity.buildings.Shelf;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
+import entity.buildings.Stairs;
 import entity.buildings.StorageFridge;
 import entity.buildings.Stove;
 import entity.buildings.Table;
@@ -237,6 +238,7 @@ public class BuildingRegistry {
 			case "Torch" -> i = new Torch(gp, x, y);
 			case "Computer" -> i = new Computer(gp, x, y);
 			case "Fireplace" -> i = new Fireplace(gp, x, y);
+			case "Stairs" -> i = new Stairs(gp, x, y);
 			case "Freezer" -> i = new Freezer(gp, x, y);
 			case "Freezer Light" -> i = new FreezerLight(gp, x, y);
 		}

@@ -38,7 +38,7 @@ public class Torch extends Building{
 		isSolid = true;
 		
 		importImages();
-		mustBePlacedOnWall = true;
+		mustBePlacedOnFloor = true;
 		turnedOn = false;
 		currentAnimation = 0;
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*4, hitbox.width-3*6, hitbox.height-3*4);

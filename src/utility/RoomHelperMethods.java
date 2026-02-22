@@ -22,6 +22,7 @@ public class RoomHelperMethods {
 	public static int CORRIDOR1 = 8;
 	public static int OLDKITCHEN = 9;
 	public static int FREEZER = 10;
+	public static int DOWNSTAIRS = 11;
 	
     public static Map<Integer, int[]> roomGraph = new HashMap<>();
 

@@ -58,8 +58,8 @@ public class Door extends Building {
 		return building;
     }
 	public void printOutput() {
-		//System.out.println("buildings[arrayCounter] = new Door(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + facing + ", " + preset + ");");
-		//System.out.println("arrayCounter++;");
+		System.out.println("buildings[arrayCounter] = new Door(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + facing + ", " + preset + ");");
+		System.out.println("arrayCounter++;");
 	}
 	public void setDoorNum(int num) {
 		doorRoomNum = num;
@@ -75,9 +75,12 @@ public class Door extends Building {
 	public void unlock() {
 		locked = false;
 		justUnlocked = true;
+		if(preset == 2) {
+			animations[0][0][0] = animations[0][0][2];
+		}
 	}
 	private void importImages() {
-		animations = new TextureRegion[1][1][3];
+		animations = new TextureRegion[1][1][4];
 		
 		name = "Door 1";
 		switch(preset) {
@@ -115,9 +118,11 @@ public class Door extends Building {
 			animations[0][0][0] = importImage("/decor/Chefdoor.png").getSubimage(0, 0, 32, 48);
         	animations[0][0][1] = importImage("/decor/door.png").getSubimage(32, 0, 32, 48);
         	animations[0][0][2] = importImage("/decor/Chefdoor.png").getSubimage(64, 0, 32, 48);
+        	animations[0][0][3] = importImage("/decor/Chefdoor.png").getSubimage(32, 0, 32, 48);
+        	animations[0][0][0] = 	animations[0][0][3];
         	locked = true;
-    		locked = false;
 			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 25),Colour.RED, 16);
+			locked = false;
 			break;
 		case 3:
 			animations[0][0][0] = importImage("/decor/FreezerDoor.png").getSubimage(0, 0, 32, 48);
@@ -125,6 +130,12 @@ public class Door extends Building {
          	locked = true;
         	locked = false;
 			light = new LightSource((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y + 25),Colour.RED, 16);
+			break;
+		case 4:
+			animations[0][0][0] = importImage("/decor/Lift.png").getSubimage(0, 0, 32, 48);
+        	animations[0][0][1] = importImage("/decor/Lift.png").getSubimage(32, 0, 32, 48);
+         	locked = true;
+        	locked = false;
 			break;
 		}
 	}
@@ -199,13 +210,6 @@ public class Door extends Building {
 			}
 			renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
-		
-	    //g2.setColor(Color.YELLOW);
-	    //renderer.fillRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
-		
-		//g2.setColor(Color.YELLOW);
-      	//g2.drawRect((int)gp.player.interactHitbox.x, (int)gp.player.interactHitbox.y, (int)gp.player.interactHitbox.width, (int)gp.player.interactHitbox.height);
-		
 		
 		if(drawLight && animations[0][0][2] != null) {
 			renderer.draw(animations[0][0][2], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
