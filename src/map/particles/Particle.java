@@ -28,7 +28,7 @@ public abstract class Particle {
         maxLifetime = lifetime;
     }
     
-    public abstract void update();
+    public abstract void update(double dt);
     
     public abstract void draw(Renderer renderer);
     public abstract void drawEmissive(Renderer renderer);

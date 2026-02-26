@@ -3,6 +3,7 @@ package entity.items;
 import org.lwjgl.glfw.GLFW;
 
 import main.GamePanel;
+import main.renderer.Colour;
 
 public class Seasoning extends Food {
 	
@@ -34,4 +35,7 @@ public class Seasoning extends Food {
             }
         }
 	
+	public Colour getColour() {
+		return Colour.GREEN;
+	}
 }

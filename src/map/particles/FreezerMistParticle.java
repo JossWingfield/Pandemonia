@@ -39,7 +39,7 @@ public class FreezerMistParticle extends Particle {
 	    return texture;
 	}
     @Override
-    public void update() {
+    public void update(double dt) {
 
         // --- SPRING RETURN FORCE ---
         float springStrength = 0.01f;   // higher = stronger snap back

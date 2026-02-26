@@ -35,6 +35,7 @@ import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
 import entity.buildings.Sink;
 import entity.buildings.SoulLantern;
+import entity.buildings.SpiceTable;
 import entity.buildings.Stairs;
 import entity.buildings.StorageFridge;
 import entity.buildings.Stove;
@@ -90,7 +91,7 @@ public class MapBuilder {
 	}
 	
 	private void addBuildings() {
-		for(int i = 0; i < 123; i++) {
+		for(int i = 0; i < 137; i++) {
 			buildings[totalBuildingCount] = new FloorDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
@@ -103,6 +104,8 @@ public class MapBuilder {
 			totalBuildingCount++;
 		}
 
+		buildings[totalBuildingCount] = new SpiceTable(gp, 0, 0);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Stairs(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Door(gp, 0, 0, 0, 4);
@@ -196,7 +199,7 @@ public class MapBuilder {
 		buildings[totalBuildingCount] = new Trapdoor(gp, 0, 0, 1);
 		totalBuildingCount++;
 		
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 24; i++) {
 			buildings[totalBuildingCount] = new FoodStore(gp, 0, 0, i);
 			totalBuildingCount++;
 		}

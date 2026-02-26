@@ -87,6 +87,62 @@ public class FoodStore extends Building {
     		animations[0][0][0] = importImage("/decor/general store props.png").getSubimage(128+64, 32, 16, 32);
     		animations[0][0][1] = importImage("/decor/general store props.png").getSubimage(128+64, 32, 16, 32);
 			break;
+		case 10:
+    		animations[0][0][0] = importImage("/decor/HerbJars.png").getSubimage(16, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/HerbJars.png").getSubimage(16, 32, 16, 32);
+			break;
+		case 11:
+    		animations[0][0][0] = importImage("/decor/HerbJars.png").getSubimage(32, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/HerbJars.png").getSubimage(32, 32, 16, 32);
+			break;
+		case 12:
+    		animations[0][0][0] = importImage("/decor/HerbJars.png").getSubimage(48, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/HerbJars.png").getSubimage(48, 32, 16, 32);
+			break;
+		case 13:
+    		animations[0][0][0] = importImage("/decor/HerbJars.png").getSubimage(64, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/HerbJars.png").getSubimage(64, 32, 16, 32);
+			break;
+		case 14:
+    		animations[0][0][0] = importImage("/decor/HerbJars.png").getSubimage(80, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/HerbJars.png").getSubimage(80, 32, 16, 32);
+			break;
+		case 15:
+    		animations[0][0][0] = importImage("/decor/HerbJars.png").getSubimage(96, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/HerbJars.png").getSubimage(96, 32, 16, 32);
+			break;
+		case 16:
+    		animations[0][0][0] = importImage("/decor/SpiceBarrels.png").getSubimage(16, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/SpiceBarrels.png").getSubimage(16, 32, 16, 32);
+			break;
+		case 17:
+    		animations[0][0][0] = importImage("/decor/SpiceBarrels.png").getSubimage(32, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/SpiceBarrels.png").getSubimage(32, 32, 16, 32);
+			break;
+		case 18:
+    		animations[0][0][0] = importImage("/decor/SpiceBarrels.png").getSubimage(48, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/SpiceBarrels.png").getSubimage(48, 32, 16, 32);
+			break;
+		case 19:
+    		animations[0][0][0] = importImage("/decor/SpiceBarrels.png").getSubimage(64, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/SpiceBarrels.png").getSubimage(64, 32, 16, 32);
+			break;
+		case 20:
+    		animations[0][0][0] = importImage("/decor/AromaticSpices.png").getSubimage(0, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/AromaticSpices.png").getSubimage(0, 32, 16, 32);
+			break;
+		case 21:
+    		animations[0][0][0] = importImage("/decor/AromaticSpices.png").getSubimage(16, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/AromaticSpices.png").getSubimage(16, 32, 16, 32);
+			break;
+		case 22:
+    		animations[0][0][0] = importImage("/decor/AromaticSpices.png").getSubimage(32, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/AromaticSpices.png").getSubimage(32, 32, 16, 32);
+			break;
+		case 23:
+    		animations[0][0][0] = importImage("/decor/AromaticSpices.png").getSubimage(48, 0, 16, 32);
+    		animations[0][0][1] = importImage("/decor/AromaticSpices.png").getSubimage(48, 32, 16, 32);
+			break;
 		}
 		yDrawOffset = 48;
 	}
@@ -113,6 +169,20 @@ public class FoodStore extends Building {
 				        case 6 -> itemName = "Greens";
 				        case 7 -> itemName = "Leek";
 				        case 8 -> itemName = "Asparagus";
+				        case 10 -> itemName = "Chamomile";
+				        case 11 -> itemName = "Basil";
+				        case 12 -> itemName = "Mint";
+				        case 13 -> itemName = "Thyme";
+				        case 14 -> itemName = "Rosemary";
+				        case 15 -> itemName = "Sage";
+				        case 16 -> itemName = "Paprika";
+				        case 17 -> itemName = "Turmeric";
+				        case 18 -> itemName = "Cumin";
+				        case 19 -> itemName = "Chilli Flakes";
+				        case 20 -> itemName = "Star Anise";
+				        case 21 -> itemName = "Fennel Seeds";
+				        case 22 -> itemName = "Coriander Seeds";
+				        case 23 -> itemName = "Garlic Powder";
 				    }
 
 				    if (itemName != null) {

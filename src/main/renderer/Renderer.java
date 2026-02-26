@@ -577,7 +577,11 @@ public class Renderer {
 	        lightingShader.uploadInt("uOcclusion", 2);
 	    }
 	    
-	    lightingShader.uploadBool("uDustEnabled", Settings.particlesEnabled); 
+	    boolean particlesEnabled = Settings.particlesEnabled;
+	    if(!gp.world.mapM.isInRoom(12)) {
+	    	particlesEnabled = false;
+	    }
+	    lightingShader.uploadBool("uDustEnabled", particlesEnabled); 
 	    
 	    lightingShader.uploadFloat("uTime", (float)GLFW.glfwGetTime());
 	    

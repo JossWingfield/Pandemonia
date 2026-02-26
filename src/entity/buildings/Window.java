@@ -28,6 +28,7 @@ public class Window extends Building {
 		yDrawOffset = 24;
 		importImages();
 		isDecor = true;
+		castsShadow = false;
 		mustBePlacedOnWall = true;
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, hitbox.width-3*2, hitbox.height-3*4);
 	}

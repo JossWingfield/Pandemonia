@@ -164,6 +164,9 @@ public class WallPaper {
 		case 34:
 		    importWallFromSpriteSheet("/tiles/walls/FreezerWalls", 6, 4, true);
 			break;
+		case 35:
+		    importWallFromSpriteSheet("/tiles/walls/SpiceCellarWall", 6, 4, true);
+			break;
 		}
 		
 	}

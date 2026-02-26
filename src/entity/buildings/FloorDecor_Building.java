@@ -1637,6 +1637,176 @@ public class FloorDecor_Building extends Building {
     		castsShadow = false;
     		canBuildingBePlacedOn = true;
         	break;
+        case 123:
+        	name = "Herb Shelf 1";
+        	animations[0][0][0] = importImage("/decor/HerbShelves.png").getSubimage(0, 0, 64, 48);
+        	drawWidth = 64*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 48*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+         	xDrawOffset = 24;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 124:
+        	name = "Herb Shelf 2";
+        	animations[0][0][0] = importImage("/decor/HerbShelves.png").getSubimage(64, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 24*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+         	xDrawOffset = 12;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 125:
+        	name = "Herb Shelf 3";
+        	animations[0][0][0] = importImage("/decor/HerbShelves.png").getSubimage(64+32, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 24*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 126:
+        	name = "Herb Shelf 4";
+        	animations[0][0][0] = importImage("/decor/HerbShelves.png").getSubimage(64+64, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 24*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 127:
+        	name = "Herb Shelf 5";
+        	animations[0][0][0] = importImage("/decor/HerbShelves.png").getSubimage(64+64+32, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 12*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	xDrawOffset = 40;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 128:
+        	name = "Herb Shelf 6";
+        	animations[0][0][0] = importImage("/decor/HerbShelves.png").getSubimage(128+64, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 24*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 129:
+        	name = "Herb Shelf 7";
+        	animations[0][0][0] = importImage("/decor/HerbShelves.png").getSubimage(128+64+32, 0, 32, 48);
+        	drawWidth = 32*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 12*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	xDrawOffset = 40;
+        	isDecor = true;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = false;
+        	break;
+        case 130:
+        	name = "Aromatic Spice Table";
+        	animations[0][0][0] = importImage("/decor/AromaticSpiceTable.png").toTextureRegion();
+        	drawWidth = 64*3;
+        	drawHeight = 48*3;
+        	hitbox.width = 64*3;
+        	hitbox.height = 32*3;
+        	yDrawOffset = 24;
+        	xDrawOffset = 0;
+        	canBePlaced = false;
+        	mustBePlacedOnFloor = true;
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*4, hitbox.height-3*4);
+    		castsShadow = true;
+        	break;
+        case 131:
+            name = "Spice Decoration 1";
+        	animations[0][0][0] = importImage("/decor/SpiceDecorations.png").getSubimage(0, 0, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	canBePlaced = false;
+        	castsShadow = false;
+        	break;
+        case 132:
+            name = "Spice Decoration 2";
+        	animations[0][0][0] = importImage("/decor/SpiceDecorations.png").getSubimage(16, 0, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	canBePlaced = false;
+        	castsShadow = false;
+        	break;
+        case 133:
+            name = "Spice Decoration 3";
+        	animations[0][0][0] = importImage("/decor/SpiceDecorations.png").getSubimage(32, 0, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	canBePlaced = false;
+        	castsShadow = false;
+        	break;
+        case 134:
+            name = "Spice Decoration 4";
+        	animations[0][0][0] = importImage("/decor/SpiceDecorations.png").getSubimage(48, 0, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	canBePlaced = false;
+        	castsShadow = false;
+        	break;
+        case 135:
+            name = "Spice Decoration 5";
+        	animations[0][0][0] = importImage("/decor/SpiceDecorations.png").getSubimage(64, 0, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	canBePlaced = false;
+        	castsShadow = false;
+        	break;
+        case 136:
+            name = "Spice Decoration 6";
+        	animations[0][0][0] = importImage("/decor/SpiceDecorations.png").getSubimage(80, 0, 16, 16);
+        	isDecor = true;
+        	mustBePlacedOnFloor = true;
+        	isSolid = false;
+        	canBePlaced = false;
+        	castsShadow = false;
+        	break;
         }
 		
 	}

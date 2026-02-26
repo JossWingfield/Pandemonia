@@ -84,7 +84,7 @@ public class ParticleSystem {
         Iterator<Particle> it = particles.iterator();
         while(it.hasNext()) {
             Particle p = it.next();
-            p.update();
+            p.update(dt);
             if(p.isDead()) it.remove();
         }
         

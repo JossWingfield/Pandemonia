@@ -43,7 +43,7 @@ public class DustParticle extends Particle {
     }
 
     //@Override
-    public void update() {
+    public void update(double dt) {
         x += vx;
         y += vy;
         

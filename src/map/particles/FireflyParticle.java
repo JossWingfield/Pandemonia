@@ -25,7 +25,7 @@ public class FireflyParticle extends Particle {
         gp.world.lightingM.addLight(light); // assume addLight(x, y, radius, color, intensity)
     }
     
-    public void update() {
+    public void update(double dt) {
         // 🔹 Occasionally change direction
         changeTimer--;
         if (changeTimer <= 0) {
