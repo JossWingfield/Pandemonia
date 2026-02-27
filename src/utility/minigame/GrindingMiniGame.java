@@ -43,6 +43,8 @@ public class GrindingMiniGame {
     private Seasoning seasoning;
 
     private Random rand = new Random();
+    
+    private ArrayList<Colour> particleColours = null;
 
     public GrindingMiniGame(GamePanel gp) {
         this.gp = gp;
@@ -60,6 +62,8 @@ public class GrindingMiniGame {
         resultText = "";
         resultTimer = 0;
         particles.clear();
+        
+        setParticleColours(seasoning.getColours());
 
         generateTargetZone();
         gp.world.minigameM.miniGameActive = true;
@@ -74,7 +78,9 @@ public class GrindingMiniGame {
         targetMinAngle = targetCenterAngle - targetWidth / 2f;
         targetMaxAngle = targetCenterAngle + targetWidth / 2f;
     }
-
+    public void setParticleColours(ArrayList<Colour> colours) {
+        this.particleColours = colours;
+    }
     public boolean isActive() {
         return active;
     }
@@ -153,7 +159,7 @@ public class GrindingMiniGame {
             quality = 0.2f;
         }
 
-        if (plate != null && seasoning != null) {
+        if (plate != null && seasoning != null && !resultText.equals("MISS!")) {
             plate.addSeasoning(seasoning, quality);
         }
 
@@ -205,6 +211,12 @@ public class GrindingMiniGame {
             );
         }
     }
+    public void drawEmissive(Renderer renderer) {
+    	 if (!active) return;
+
+         for (SprinkleParticle p : particles) p.drawEmissive(renderer);
+         drawTargetIndicator(renderer);
+    }
 
     private void drawTargetIndicator(Renderer renderer) {
         int centerX = gp.frameWidth / 2;
@@ -228,7 +240,12 @@ public class GrindingMiniGame {
         float spawnX = centerX + (float)Math.cos(rad) * bowlRadius;
         float spawnY = centerY + (float)Math.sin(rad) * bowlRadius;
 
-        Colour base = seasoning.getColour();
+        Colour base;
+        if (particleColours != null && !particleColours.isEmpty()) {
+            base = particleColours.get(rand.nextInt(particleColours.size()));
+        } else {
+            base = Colour.GREEN;
+        }
 
         for (int i = 0; i < 3; i++) {
             float offsetX = rand.nextFloat() * 6f - 3f;
@@ -236,19 +253,20 @@ public class GrindingMiniGame {
             float vx = rand.nextFloat() * 0.6f - 0.3f;
             float vy = 1.2f + rand.nextFloat() * 0.8f;
 
-            float brightness = 0.85f + rand.nextFloat() * 0.3f;
-            float r = clamp(base.r * brightness);
-            float g = clamp(base.g * brightness);
-            float b = clamp(base.b * brightness);
-
-            Colour varied = new Colour(r, g, b, 1f);
+            // Make a copy of the colour for this particle
+            Colour bright = new Colour(
+                clamp(base.r * 1.3f),  // increase red
+                clamp(base.g * 1.3f),  // increase green
+                clamp(base.b * 1.3f),  // increase blue
+                base.a                 // keep alpha
+            );
 
             particles.add(new SprinkleParticle(
                 spawnX + offsetX,
                 spawnY + offsetY,
                 vx,
                 vy,
-                varied
+                bright
             ));
         }
     }
@@ -280,11 +298,18 @@ public class GrindingMiniGame {
             x += vx * 60f * dt;
             y += vy * 60f * dt;
             lifetime -= dt;
-            colour.a = lifetime / 0.8f;
+
+            // Fade alpha from 1 -> 0 over lifetime
+            //colour.a = clamp(lifetime / 0.8f);
+
             if (lifetime <= 0) dead = true;
         }
+        private float clamp(float v) { return Math.max(0f, Math.min(1f, v)); }
 
         void draw(Renderer renderer) {
+            renderer.fillRect(x - size / 2f, y - size / 2f, size, size, colour);
+        }
+        void drawEmissive(Renderer renderer) {
             renderer.fillRect(x - size / 2f, y - size / 2f, size, size, colour);
         }
     }

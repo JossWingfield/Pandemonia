@@ -43,6 +43,7 @@ import entity.items.Potato;
 import entity.items.RedOnion;
 import entity.items.Rosemary;
 import entity.items.Sage;
+import entity.items.SeasoningBlend;
 import entity.items.SmallPan;
 import entity.items.Spaghetti;
 import entity.items.StarAnise;
@@ -104,6 +105,7 @@ public class ItemRegistry {
 			case "Coriander Seeds" -> i = new CorianderSeeds(gp, 0, 0);
 			case "Fennel Seeds" -> i = new FennelSeeds(gp, 0, 0);
 			case "Garlic Powder" -> i = new GarlicPowder(gp, 0, 0);
+			case "Seasoning Blend" -> i = new SeasoningBlend(gp, 0, 0);
 			case "Ice Block" -> i = new IceBlock(gp, null);
 			case "Cursed Greens" -> i = new CursedGreens(gp, 0, 0);
 			case "Burnt Food" -> i = new BurntFood(gp, 0, 0);

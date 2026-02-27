@@ -40,6 +40,33 @@ public class Colour {
             this.a = a;
         }
     }
+    public Colour(String hex) {
+        // Remove '#' if present
+        if (hex.startsWith("#")) {
+            hex = hex.substring(1);
+        }
+
+        // Must be 6 (RGB) or 8 (RGBA) characters
+        if (hex.length() != 6 && hex.length() != 8) {
+            throw new IllegalArgumentException("Hex color must be 6 or 8 characters long: " + hex);
+        }
+
+        // Parse hex components
+        int ri = Integer.parseInt(hex.substring(0, 2), 16);
+        int gi = Integer.parseInt(hex.substring(2, 4), 16);
+        int bi = Integer.parseInt(hex.substring(4, 6), 16);
+        int ai = 255; // default alpha
+
+        if (hex.length() == 8) {
+            ai = Integer.parseInt(hex.substring(6, 8), 16);
+        }
+
+        // Normalize 0–255 to 0–1 floats
+        this.r = ri / 255f;
+        this.g = gi / 255f;
+        this.b = bi / 255f;
+        this.a = ai / 255f;
+    }
     private static float normalize(float v) {
         // If value is > 1, treat as 0–255 and convert
         if (v > 1.0f) {

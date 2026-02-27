@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFW;
 
 import entity.items.Plate;
 import entity.items.Seasoning;
+import entity.items.SeasoningBlend;
 import main.GamePanel;
 import main.renderer.AssetPool;
 import main.renderer.BitmapFont;
@@ -63,7 +64,7 @@ public class SeasoningMiniGame {
     private int currentBurstLength = 0;
     
     private Plate plate;
-    private Seasoning seasoning;
+    private SeasoningBlend seasoning;
     
 	private BitmapFont font;
 
@@ -82,7 +83,7 @@ public class SeasoningMiniGame {
         beatImg = importImage("/UI/minigame/Beat.png").toTextureRegion();
     }
 
-    public void start(Plate p, Seasoning s) {
+    public void start(Plate p, SeasoningBlend s) {
     	this.plate = p;
     	this.seasoning = s;
         active = true;

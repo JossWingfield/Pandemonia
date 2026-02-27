@@ -12,6 +12,7 @@ import entity.items.Fryer;
 import entity.items.Item;
 import entity.items.OvenTray;
 import entity.items.Plate;
+import entity.items.SeasoningBlend;
 import main.GamePanel;
 import main.KeyListener;
 import main.MouseListener;
@@ -829,7 +830,10 @@ public class Player extends Entity{
     	if(currentItem instanceof Plate plate) {
     		boolean flip = direction == 1;
     		plate.drawInHand(renderer, (int)(hitbox.x - xDrawOffset + xOffset), (int)(hitbox.y - yDrawOffset + yOffset), flip);
-    	} else if(currentItem instanceof OvenTray tray) {
+    	} else if(currentItem instanceof SeasoningBlend blend) {
+    		boolean flip = direction == 1;
+    		blend.drawInHand(renderer, (int)(hitbox.x - xDrawOffset + xOffset), (int)(hitbox.y - yDrawOffset + yOffset), flip);
+    	}  else if(currentItem instanceof OvenTray tray) {
     		boolean flip = direction == 1;
     		tray.drawInHand(renderer, (int)(hitbox.x - xDrawOffset + xOffset), (int)(hitbox.y - yDrawOffset + yOffset), flip);
     	} else {
@@ -957,7 +961,7 @@ public class Player extends Entity{
     	        if(direction == 1) {
     	        	handFrame = createHorizontalFlipped(handFrame);
     	        	vfxFrame = createHorizontalFlipped(vfxFrame);
-    	        }	    
+    	        }
     	     
 
     			if (handFrame != null) {

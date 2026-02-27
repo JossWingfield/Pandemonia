@@ -344,6 +344,7 @@ public class World {
 	        
             
             particleM.draw(renderer);
+			//minigameM.draw(renderer);
     	}
 
 
@@ -357,8 +358,9 @@ public class World {
 	        		builds[i].drawEmissive(renderer);
 	        	}
 	        }
-    	
+	        
 	        particleM.drawEmissive(renderer);
+	        minigameM.drawEmissive(renderer);
         }
     }
     public void drawGUI(Renderer renderer) {

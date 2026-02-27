@@ -295,10 +295,13 @@ public class Plate extends Item {
             || ingredientName.equalsIgnoreCase("Sage")
             || ingredientName.equalsIgnoreCase("Thyme");
     }
-    public void addSeasoning(Seasoning seasoning, float quality) {
+    public void addSeasoning(SeasoningBlend seasoningBlend, float quality) {
     	this.seasoningQuality = quality;
-    	seasoning.foodState = FoodState.PLATED;
-    	addIngredient(seasoning);
+    	seasoningBlend.foodState = FoodState.PLATED;
+    	for(String ingredient: seasoningBlend.getIngredients()) {
+    		
+    	}
+    	//addIngredient(seasoningBlend);
     }
     public float getSeasoningQuality() {
 		return seasoningQuality;

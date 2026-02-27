@@ -1,6 +1,7 @@
 package entity.items;
 
 import main.GamePanel;
+import main.renderer.Colour;
 import main.renderer.TextureRegion;
 
 public class Sage extends Seasoning {
@@ -9,6 +10,10 @@ public class Sage extends Seasoning {
 		super(gp, xPos, yPos);
 		name = "Sage";
 		importImages();
+		particleColours.add(new Colour("b2bd93"));
+		particleColours.add(new Colour("869d6e"));
+		particleColours.add(new Colour("557454"));
+		isHerb = true;
 	}
 		
 	private void importImages() {

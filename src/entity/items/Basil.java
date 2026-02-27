@@ -1,6 +1,7 @@
 package entity.items;
 
 import main.GamePanel;
+import main.renderer.Colour;
 import main.renderer.TextureRegion;
 
 public class Basil extends Seasoning {
@@ -9,6 +10,10 @@ public class Basil extends Seasoning {
 		super(gp, xPos, yPos);
 		name = "Basil";
 		importImages();
+		isHerb = true;
+		particleColours.add(new Colour("64a693"));
+		particleColours.add(new Colour("85be8c"));
+		particleColours.add(new Colour("518782"));
 	}
 		
 	private void importImages() {
