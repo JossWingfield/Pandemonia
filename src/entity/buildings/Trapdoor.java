@@ -7,7 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.TextureRegion;
-import utility.RecipeManager;
+import utility.recipe.RecipeManager;
 
 public class Trapdoor extends Building {
 	

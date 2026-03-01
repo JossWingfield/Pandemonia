@@ -25,11 +25,11 @@ import utility.Catalogue;
 import utility.GameManager;
 import utility.ItemRegistry;
 import utility.ProgressManager;
-import utility.RecipeManager;
 import utility.RoomHelperMethods;
 import utility.UpgradeManager;
 import utility.cutscene.CutsceneManager;
 import utility.minigame.MiniGameManager;
+import utility.recipe.RecipeManager;
 
 public class World {
 	

@@ -11,6 +11,7 @@ import entity.items.Food;
 import entity.items.Item;
 import entity.items.OvenTray;
 import entity.items.Plate;
+import utility.recipe.CookStep;
 
 public class ItemData {
 
@@ -20,8 +21,7 @@ public class ItemData {
     // ===== FOOD =====
     public boolean hasFoodData;
     public int foodState;
-    public String cookedBy;
-    public String secondaryCookedBy;
+    public List<String> steps;
 
     // ===== PLATE =====
     public boolean isPlate;
@@ -46,9 +46,15 @@ public class ItemData {
         // Food
         hasFoodData = in.readBoolean();
         if (hasFoodData) {
+
             foodState = in.readInt();
-            cookedBy = in.readUTF();
-            secondaryCookedBy = in.readUTF();
+
+            int stepCount = in.readInt();
+            steps = new ArrayList<>(stepCount);
+
+            for (int i = 0; i < stepCount; i++) {
+                steps.add(in.readUTF());
+            }
         }
 
         // Plate
@@ -92,9 +98,17 @@ public class ItemData {
         // Food
         out.writeBoolean(hasFoodData);
         if (hasFoodData) {
+
             out.writeInt(foodState);
-            out.writeUTF(cookedBy != null ? cookedBy : "");
-            out.writeUTF(secondaryCookedBy != null ? secondaryCookedBy : "");
+
+            if (steps != null) {
+                out.writeInt(steps.size());
+                for (String step : steps) {
+                    out.writeUTF(step);
+                }
+            } else {
+                out.writeInt(0);
+            }
         }
 
         // Plate
@@ -138,9 +152,13 @@ public class ItemData {
         // Food
         if (item instanceof Food food) {
             hasFoodData = true;
+
             foodState = food.getState();
-            cookedBy = food.getCookMethod();
-            secondaryCookedBy = food.getSecondaryCookMethod();
+
+            steps = new ArrayList<>();
+            for (CookStep step : food.getPerformedSteps()) {
+                steps.add(step.getStation());
+            }
         }
 
         // Plate

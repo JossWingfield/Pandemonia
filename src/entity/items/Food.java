@@ -1,202 +1,128 @@
 package entity.items;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import main.GamePanel;
 import main.renderer.Renderer;
-import main.renderer.Texture;
 import main.renderer.TextureRegion;
+import utility.recipe.CookStep;
 
 public class Food extends Item {
-	
-	public FoodState foodState;
-	
-	protected int foodLayer = 0;
-	protected TextureRegion burntImage;
-	public TextureRegion potPlated, panPlated, rawImage, frozenImage, choppedImage, friedPlated, generalPlated, ovenPlated;
-	private String cookedBy = "";
-	private String secondaryCookedBy = "";
-	public boolean cutIntoNewItem = false;
-	public boolean notRawItem = false;
-	protected int chopCount = 12;
-	protected int cookTime = 24;
 
-	public Food(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
-		foodState = FoodState.RAW;
-		burntImage = importImage("/food/BurntFood.png").toTextureRegion();
-	}
-	public void addCookMethod(String method) {
-		if(cookedBy == null || cookedBy.equals("")) {
-			cookedBy = method;
-		} else {
-			secondaryCookedBy = method;
-		}
-	}
-	public void setState(int state) {
-		switch(state) {
-		case 0:
-			this.foodState = FoodState.RAW;
-			break;
-		case 1:
-			this.foodState = FoodState.CHOPPED;
-			break;
-		case 2:
-			this.foodState = FoodState.COOKED;
-			break;
-		case 3:
-			this.foodState = FoodState.PLATED;
-			break;
-		case 5:
-			this.foodState = FoodState.FROZEN;
-			break;
-		}
-	}
-	public void setState(FoodState state) {
-		this.foodState = state;
-	}
-	public int getState() {
-		switch(foodState) {
-		case RAW:
-			return 0;
-		case CHOPPED:
-			return 1;
-		case COOKED:
-			return 2;
-		case PLATED:
-			return 3;
-		case FROZEN:
-			return 5;
-		}
-		return -1;
-	}
-	public int getFoodLayer() {
-		return foodLayer;
-	}
-	 public void draw(Renderer renderer) {
-		 TextureRegion img = animations[0][0][0];
-		 switch(foodState) {
-		 case RAW:
-			 img = rawImage;
-			 break;
-		 case COOKED:
-			 if(cookedBy.equals("Frying Pan")) {
-				 img = panPlated;
-			 } else if(cookedBy.equals("Small Pot")){
-				 img = potPlated;
-			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
-				 img = ovenPlated;
-			 } else if(cookedBy.equals("Fryer")){
-				 img = friedPlated;
-			 } 
-			 break;
-		 case PLATED:
-			 if(cookedBy.equals("Frying Pan")) {
-				 img = panPlated;
-			 } else if(cookedBy.equals("Small Pot")){
-				 img = potPlated;
-			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
-				 img = ovenPlated;
-			 } else if(cookedBy.equals("Fryer")){
-				 img = friedPlated;
-			 } else {
-				 if(secondaryCookedBy.equals("Fryer")) {
-					 img = friedPlated;
-				 } else if(secondaryCookedBy.equals("Oven")|| cookedBy.equals("Oven Tray")) {
-					 img = ovenPlated;
-				 } else {
-					 img = generalPlated;
-				 }
-			 }
-			 break;
-		 case CHOPPED:
-			 img = choppedImage;
-			 break;
-		 case FROZEN:
-			 img = frozenImage;
-			 break;
-		 }
-		 
-		 renderer.draw(img, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
+    public FoodState foodState;
+    protected int foodLayer = 0;
 
-	 }
-	 public TextureRegion getImage() {
-		 TextureRegion img = animations[0][0][0];
-		 switch(foodState) {
-		 case RAW:
-			 //0
-			 img = rawImage;
-			 break;
-		 case COOKED:
-			 //1
-			 if(cookedBy.equals("Frying Pan")) {
-				 img = panPlated;
-			 } else if(cookedBy.equals("Small Pot")){
-				 img = potPlated;
-			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
-				 img = ovenPlated;
-			 } else if(cookedBy.equals("Fryer")){
-				 img = friedPlated;
-			 } 
-			 break;
-		 case PLATED:
-			 //2
-			 if(cookedBy.equals("Frying Pan")) {
-				 img = panPlated;
-			 } else if(cookedBy.equals("Small Pot")){
-				 img = potPlated;
-			 } else if(cookedBy.equals("Oven") || cookedBy.equals("Oven Tray")){
-				 img = ovenPlated;
-			 } else if(cookedBy.equals("Fryer")){
-				 img = friedPlated;
-			 } else {
-				 if(secondaryCookedBy.equals("Fryer")) {
-					 img = friedPlated;
-				 } else if(secondaryCookedBy.equals("Oven")|| cookedBy.equals("Oven Tray")) {
-					 img = ovenPlated;
-				 } else {
-					 img = generalPlated;
-				 }
-			 }
-			 break;
-		 case CHOPPED:
-			 //4
-			 img = choppedImage;
-			 break;
-		 case BURNT:
-			 img = burntImage;
-			 break;
-		 case FROZEN:
-			 img = frozenImage;
-			 break;
-		 }
-		 return img;
-	 }
-	 public String getCookMethod() {
-			return cookedBy;
-		 }
-	 public String getSecondaryCookMethod() {
-		return secondaryCookedBy;
-	 }
-	 public void setCookMethod(String cookedBy) {
-		this.cookedBy = cookedBy;
-	 }
-	 public void setSecondaryCookMethod(String secondaryCookedBy) {
-		this.secondaryCookedBy = secondaryCookedBy;
-	 }
-	 public int getChopCount() {
-		if(gp.world.progressM.choppingBoardUpgradeI) {
-			return (int)(chopCount * 0.75);
-		}
-		return chopCount;
-	}
-	 public int getMaxCookTime() {
-		 if(gp.world.progressM.stoveUpgradeI) {
-			return (int)(cookTime*0.75);
-		 } else if(gp.world.progressM.stoveUpgradeII) {
-			return (int)(cookTime*0.5);
-		 } else if(gp.world.progressM.stoveUpgradeIII) {
-			return (int)(cookTime*0.25);
-		 }
-		 return cookTime;
-	 } 
-	
+    // Images for different states
+    public TextureRegion rawImage, choppedImage, frozenImage, burntImage;
+    public TextureRegion panPlated, potPlated, ovenPlated, friedPlated, generalPlated;
+
+    protected List<CookStep> performedSteps = new ArrayList<>();
+
+    public boolean cutIntoNewItem = false;
+    public boolean notRawItem = false;
+
+    protected int chopCount = 12;
+    protected int cookTime = 24;
+
+    // Constructor
+    public Food(GamePanel gp, float xPos, float yPos) {
+        super(gp, xPos, yPos);
+        foodState = FoodState.RAW;
+        burntImage = importImage("/food/BurntFood.png").toTextureRegion();
+    }
+
+    // --- Step Handling ---
+    public void addStep(String station) {
+        performedSteps.add(new CookStep(station));
+    }
+
+    public List<CookStep> getPerformedSteps() {
+        return performedSteps;
+    }
+
+    // --- State Handling ---
+    public void setState(FoodState state) {
+        this.foodState = state;
+    }
+    public void setState(int state) {
+        FoodState[] values = FoodState.values();
+
+        if (state < 0 || state >= values.length) {
+            this.foodState = FoodState.RAW; // safe fallback
+        } else {
+            this.foodState = values[state];
+        }
+    }
+    public FoodState getStateEnum() {
+        return foodState;
+    }
+
+    // --- Cook Method Accessors (linked to last performed step) ---
+    public String getCookMethod() {
+        if (performedSteps.isEmpty()) return "";
+        return performedSteps.get(0).getStation(); // Primary station
+    }
+
+    public String getSecondaryCookMethod() {
+        if (performedSteps.size() < 2) return "";
+        return performedSteps.get(1).getStation(); // Secondary station
+    }
+
+    // --- Draw / Image ---
+    public TextureRegion getImage() {
+        switch (foodState) {
+            case RAW: return rawImage;
+            case CHOPPED: return choppedImage;
+            case FROZEN: return frozenImage;
+            case BURNT: return burntImage;
+            case COOKED:
+            case PLATED: return getPlatedImage();
+            default: return rawImage;
+        }
+    }
+
+    private TextureRegion getPlatedImage() {
+        if (performedSteps.isEmpty()) return generalPlated;
+
+        String primary = getCookMethod();
+        String secondary = getSecondaryCookMethod();
+
+        // Prioritize primary station images
+        switch (primary) {
+            case "Frying Pan": return panPlated;
+            case "Small Pot": return potPlated;
+            case "Oven": case "Oven Tray": return ovenPlated;
+            case "Fryer": return friedPlated;
+        }
+
+        // Fallback to secondary
+        switch (secondary) {
+            case "Fryer": return friedPlated;
+            case "Oven": case "Oven Tray": return ovenPlated;
+        }
+
+        return generalPlated;
+    }
+
+    public void draw(Renderer renderer) {
+        TextureRegion img = getImage();
+        renderer.draw(img, (int) hitbox.x - xDrawOffset, (int) hitbox.y - yDrawOffset, drawWidth, drawHeight);
+    }
+
+    // --- Upgrade Logic ---
+    public int getChopCount() {
+        if (gp.world.progressM.choppingBoardUpgradeI) return (int) (chopCount * 0.75);
+        return chopCount;
+    }
+
+    public int getMaxCookTime() {
+        if (gp.world.progressM.stoveUpgradeI) return (int)(cookTime*0.75);
+        if (gp.world.progressM.stoveUpgradeII) return (int)(cookTime*0.5);
+        if (gp.world.progressM.stoveUpgradeIII) return (int)(cookTime*0.25);
+        return cookTime;
+    }
+
+    public int getFoodLayer() { return foodLayer; }
+
 }

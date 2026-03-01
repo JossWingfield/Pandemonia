@@ -118,7 +118,7 @@ public class ItemRegistry {
 		if(i instanceof Food food) {
 			food.setState(state);
 			if(state == 1) {
-				food.addCookMethod("Chopping Board");
+				food.addStep("Chopping Board");
 			}
 		}
 		return i;
@@ -181,12 +181,10 @@ public class ItemRegistry {
 	    if (data.hasFoodData && item instanceof Food food) {
 	        food.setState(data.foodState);
 
-	        if (data.cookedBy != null && !data.cookedBy.isEmpty()) {
-	            food.setCookMethod(data.cookedBy);
-	        }
-
-	        if (data.secondaryCookedBy != null && !data.secondaryCookedBy.isEmpty()) {
-	            food.setSecondaryCookMethod(data.secondaryCookedBy);
+	        if (data.steps != null) {
+	            for (String station : data.steps) {
+	                food.addStep(station);
+	            }
 	        }
 	    }
 

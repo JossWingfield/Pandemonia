@@ -10,7 +10,7 @@ import main.renderer.Colour;
 import main.renderer.Renderer;
 import main.renderer.TextureRegion;
 import map.LightSource;
-import utility.RecipeManager;
+import utility.recipe.RecipeManager;
 
 public class Cauldron extends Building {
 	

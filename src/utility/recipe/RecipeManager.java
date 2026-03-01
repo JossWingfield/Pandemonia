@@ -1,4 +1,4 @@
-package utility;
+package utility.recipe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,44 +18,51 @@ public class RecipeManager {
     private static final List<Recipe> cursedRecipes = new ArrayList<>(); 
     
     private static final Random random = new Random();
-
+    
     private TextureRegion  PanIcon, choppedIcon, PotIcon, ovenIcon;
     private TextureRegion  PanIcon2, choppedIcon2, PotIcon2, ovenIcon2;
 
     public RecipeManager() {
         // Register all recipes here (master list)
         Recipe fish = new Recipe(
-            "Fish",
-            Arrays.asList("Fish"),
-            Arrays.asList("Small Pot"),
-            Arrays.asList(""),
-            false, 
-            importImage("/food/food.png").getSubimage(16, 96, 16, 16),
-            importImage("/food/food.png").getSubimage(16, 112, 16, 16),
-            6,
-            1
-        );
+        	    "Fish",
+        	    Arrays.asList(
+
+        	        new RecipeIngredient("Fish")
+        	            .addStep("Small Pot")
+
+        	    ),
+        	    importImage("/food/food.png").getSubimage(16, 96, 16, 16),
+                importImage("/food/food.png").getSubimage(16, 112, 16, 16),
+        	    6,
+        	    1
+        	);
         registerRecipe(fish);
 
         Recipe egg = new Recipe(
-            "Egg",
-            Arrays.asList("Egg", "Greens"),
-            Arrays.asList("Frying Pan", "Chopping Board"),
-            Arrays.asList("", ""),
-            false, 
-            importImage("/food/food.png").getSubimage(32, 96, 16, 16),
-            importImage("/food/food.png").getSubimage(32, 112, 16, 16),
-            8,
-            1
-        );
+        	    "Egg",
+        	    Arrays.asList(
+
+        	        new RecipeIngredient("Egg")
+        	            .addStep("Frying Pan"),
+
+        	        new RecipeIngredient("Greens")
+        	            .addStep("Chopping Board")
+
+        	    ),
+        	    importImage("/food/food.png").getSubimage(32, 96, 16, 16),
+        	    importImage("/food/food.png").getSubimage(32, 112, 16, 16),
+        	    8,
+        	    1
+        	);
         registerRecipe(egg);
         
         Recipe friedEgg = new Recipe(
                 "Fried Egg",
-                Arrays.asList("Egg"),
-                Arrays.asList("Frying Pan"),
-                Arrays.asList(""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Egg")
+            	            .addStep("Frying Pan")
+            	    ),
                 importImage("/food/egg/PlatedEgg.png").toTextureRegion(),
                 null,
                 5,
@@ -64,10 +71,10 @@ public class RecipeManager {
         registerRecipe(friedEgg);
         Recipe steak = new Recipe(
                 "Steak",
-                Arrays.asList("Steak"),
-                Arrays.asList("Frying Pan"),
-                Arrays.asList(""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Steak")
+            	            .addStep("Frying Pan")
+            	    ),
                 importImage("/food/Steak.png").getSubimage(32, 0, 16, 16),
                 null,
                 6,
@@ -77,10 +84,12 @@ public class RecipeManager {
 
         Recipe steakAndVeg = new Recipe(
                 "Steak and Veg",
-                Arrays.asList("Steak", "Asparagus"),
-                Arrays.asList("Frying Pan", "Chopping Board"),
-                Arrays.asList("", ""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Steak")
+            	            .addStep("Frying Pan"),
+            	        new RecipeIngredient("Asparagus")
+            	            .addStep("Chopping Board")
+            	    ), 
                 importImage("/food/food.png").getSubimage(48, 96, 16, 16),
                 importImage("/food/food.png").getSubimage(48, 96+16, 16, 16),
                 6,
@@ -91,10 +100,14 @@ public class RecipeManager {
         
         Recipe eggSandwich = new Recipe(
                 "Egg Sandwich",
-                Arrays.asList("Egg", "Greens", "Bread Slice"),
-                Arrays.asList("Frying Pan", "Chopping Board", "Chopping Board"),
-                Arrays.asList("", "", ""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Egg")
+            	            .addStep("Frying Pan"),
+            	        new RecipeIngredient("Greens")
+            	            .addStep("Chopping Board"),
+            	        new RecipeIngredient("Bread Slice")
+            	            .addStep("Chopping Board")
+            	    ),
                 importImage("/food/food.png").getSubimage(48, 16, 16, 16),
                 null,
                 8,
@@ -104,10 +117,12 @@ public class RecipeManager {
         
         Recipe cheeseSandwich = new Recipe(
                 "Cheese Sandwich",
-                Arrays.asList("Cheese", "Bread Slice"),
-                Arrays.asList("Chopping Board", "Chopping Board"),
-                Arrays.asList("", ""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Cheese")
+            	            .addStep("Chopping Board"),
+            	        new RecipeIngredient("Bread Slice")
+            	            .addStep("Chopping Board")
+            	    ),
                 importImage("/food/CheeseSandwich.png").getSubimage(0, 0, 16, 16),
                 null,
                 5,
@@ -116,10 +131,13 @@ public class RecipeManager {
         registerRecipe(cheeseSandwich);
         Recipe spaghettiNapoli = new Recipe(
                 "Napolitana",
-                Arrays.asList("Spaghetti", "Chopped Tomatoes"),
-                Arrays.asList("Small Pot", "Chopping Board"),
-                Arrays.asList("", "Frying Pan"),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Spaghetti")
+            	            .addStep("Small Pot"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan")
+            	    ),
                 importImage("/food/pasta/Spaghetti.png").getSubimage(48, 0, 16, 16),
                 null,
                 7,
@@ -128,10 +146,13 @@ public class RecipeManager {
         registerRecipe(spaghettiNapoli);
         Recipe penneNapoli = new Recipe(
                 "Napolitana",
-                Arrays.asList("Penne", "Chopped Tomatoes"),
-                Arrays.asList("Small Pot", "Chopping Board"),
-                Arrays.asList("", "Frying Pan"),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Penne")
+            	            .addStep("Small Pot"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan")
+            	    ),
                 importImage("/food/pasta/Penne.png").getSubimage(32, 0, 16, 16),
                 null,
                 7,
@@ -140,10 +161,16 @@ public class RecipeManager {
         registerRecipe(penneNapoli);
         Recipe penneMeatballs = new Recipe(
                 "Meatballs",
-                Arrays.asList("Penne", "Chopped Tomatoes", "Meatball"),
-                Arrays.asList("Small Pot", "Chopping Board", "Chopping Board"),
-                Arrays.asList("", "Frying Pan", "Frying Pan"),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Penne")
+            	            .addStep("Small Pot"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan"),
+            	        new RecipeIngredient("Meatball")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan")
+            	    ),
                 importImage("/food/pasta/Meatball.png").getSubimage(48, 0, 16, 16),
                 null,
                 10,
@@ -152,10 +179,16 @@ public class RecipeManager {
         registerRecipe(penneMeatballs);
         Recipe spaghettiMeatballs = new Recipe(
                 "Meatballs",
-                Arrays.asList("Spaghetti", "Chopped Tomatoes", "Meatball"),
-                Arrays.asList("Small Pot", "Chopping Board", "Chopping Board"),
-                Arrays.asList("", "Frying Pan", "Frying Pan"),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Spaghetti")
+            	            .addStep("Small Pot"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan"),
+            	        new RecipeIngredient("Meatball")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan")
+            	    ),
                 importImage("/food/pasta/Meatball.png").getSubimage(32, 0, 16, 16),
                 null,
                 10,
@@ -164,10 +197,14 @@ public class RecipeManager {
         registerRecipe(spaghettiMeatballs);
         Recipe spaghettiCarbonara = new Recipe(
                 "Carbonara",
-                Arrays.asList("Spaghetti", "Egg", "Cheese"),
-                Arrays.asList("Small Pot", "Frying Pan", "Chopping Board"),
-                Arrays.asList("", "", ""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Spaghetti")
+            	            .addStep("Small Pot"),
+            	        new RecipeIngredient("Egg")
+            	            .addStep("Frying Pan"),
+            	        new RecipeIngredient("Cheese")
+            	            .addStep("Chopping Board")
+            	    ),
                 importImage("/food/pasta/Carbonara.png").getSubimage(0, 0, 16, 16),
                 null,
                 8,
@@ -176,10 +213,14 @@ public class RecipeManager {
         registerRecipe(spaghettiCarbonara);
         Recipe penneCarbonara = new Recipe(
                 "Carbonara",
-                Arrays.asList("Penne", "Egg", "Cheese"),
-                Arrays.asList("Small Pot", "Frying Pan", "Chopping Board"),
-                Arrays.asList("", "", ""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Penne")
+            	            .addStep("Small Pot"),
+            	        new RecipeIngredient("Egg")
+            	            .addStep("Frying Pan"),
+            	        new RecipeIngredient("Cheese")
+            	            .addStep("Chopping Board")
+            	    ),
                 importImage("/food/pasta/Carbonara.png").getSubimage(16, 0, 16, 16),
                 null,
                 8,
@@ -188,10 +229,16 @@ public class RecipeManager {
         registerRecipe(penneCarbonara);
         Recipe penneDiavola = new Recipe(
                 "Diavola",
-                Arrays.asList("Penne", "Chopped Tomatoes", "Chicken Pieces"),
-                Arrays.asList("Small Pot", "Chopping Board", "Chopping Board"),
-                Arrays.asList("", "Frying Pan", "Frying Pan"),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Penne")
+            	            .addStep("Small Pot"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan"),
+            	        new RecipeIngredient("Chicken Pieces")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan")
+            	    ),
                 importImage("/food/pasta/Chicken.png").getSubimage(32, 0, 16, 16),
                 null,
                 10,
@@ -200,10 +247,16 @@ public class RecipeManager {
         registerRecipe(penneDiavola);
         Recipe spaghettiDiavola = new Recipe(
                 "Diavola",
-                Arrays.asList("Spaghetti", "Chopped Tomatoes", "Chicken Pieces"),
-                Arrays.asList("Small Pot", "Chopping Board", "Chopping Board"),
-                Arrays.asList("", "Frying Pan", "Frying Pan"),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Spaghetti")
+            	            .addStep("Small Pot"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan"),
+            	        new RecipeIngredient("Chicken Pieces")
+            	            .addStep("Chopping Board")
+            	            .addStep("Frying Pan")
+            	    ),
                 importImage("/food/pasta/Chicken.png").getSubimage(48, 0, 16, 16),
                 null,
                 10,
@@ -212,10 +265,12 @@ public class RecipeManager {
         registerRecipe(spaghettiDiavola);
         Recipe salad = new Recipe(
                 "Salad",
-                Arrays.asList("Greens", "Chopped Tomatoes"),
-                Arrays.asList("Chopping Board", "Chopping Board"),
-                Arrays.asList("", ""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Greens")
+            	            .addStep("Chopping Board"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	            .addStep("Chopping Board")
+            	    ),
                 importImage("/food/Salad.png").toTextureRegion(),
                 null,
                 5,
@@ -224,10 +279,12 @@ public class RecipeManager {
         registerRecipe(salad);
         Recipe bruschetta = new Recipe(
                 "Bruschetta",
-                Arrays.asList("Bread Slice", "Chopped Tomatoes"),
-                Arrays.asList("Chopping Board", "Chopping Board"),
-                Arrays.asList("", ""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Bread Slice")
+            	            .addStep("Chopping Board"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	            .addStep("Chopping Board")
+            	    ),
                 importImage("/food/Bruschetta.png").toTextureRegion(),
                 null,
                 5,
@@ -239,10 +296,10 @@ public class RecipeManager {
         
         Recipe Potato = new Recipe(
                 "Potato",
-                Arrays.asList("Potato"),
-                Arrays.asList("Oven"),
-                Arrays.asList(""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Potato")
+            	            .addStep("Oven")
+            	    ),
                 importImage("/food/food.png").getSubimage(16, 16, 16, 16),
                 null,
                 5,
@@ -252,10 +309,10 @@ public class RecipeManager {
         
         Recipe chicken = new Recipe(
                 "Chicken",
-                Arrays.asList("Chicken"),
-                Arrays.asList("Oven"),
-                Arrays.asList(""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Chicken")
+            	            .addStep("Oven")
+            	    ),
                 importImage("/food/food.png").getSubimage(0, 96, 16, 16),
                 importImage("/food/food.png").getSubimage(0, 112, 16, 16),
                 8,
@@ -264,10 +321,13 @@ public class RecipeManager {
         registerRecipe(chicken);
         Recipe scrambledEgg = new Recipe(
                     "Scrambled Egg",
-                    Arrays.asList("Egg", "Bread Slice"),
-                    Arrays.asList("Small Pot", "Chopping Board"),
-                    Arrays.asList("", "Oven"),
-                    false, 
+                    Arrays.asList(
+                	        new RecipeIngredient("Egg")
+                	            .addStep("Small Pot"),
+                	        new RecipeIngredient("Bread Slice")
+                	            .addStep("Chopping Board")
+                	            .addStep("Oven")
+                	    ),
                     importImage("/food/egg/ScrambledEgg.png").getSubimage(32, 0, 16, 16),
                     null,
                     9,
@@ -277,10 +337,14 @@ public class RecipeManager {
    
         Recipe garlicBread = new Recipe(
                 "Garlic Bread",
-                Arrays.asList("Bread Slice", "Chopped Garlic"),
-                Arrays.asList("Oven Tray", "Chopping Board"),
-                Arrays.asList("", "Oven Tray"),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Chopped Garlic")
+            	        	.addStep("Chopping Board")
+            	        	.addStep("Oven Tray"),
+            	        new RecipeIngredient("Bread Slice")
+            	            .addStep("Chopping Board")
+            	            .addStep("Oven Tray")
+            	    ),
                 importImage("/food/GarlicBread.png").getSubimage(16, 0, 16, 16),
                 null,
                 9,
@@ -290,10 +354,14 @@ public class RecipeManager {
         
         Recipe grilledCheese = new Recipe(
         	    "Cheese Toast",
-                Arrays.asList("Bread Slice", "Cheese"),
-                Arrays.asList("Oven Tray", "Chopping Board"),
-                Arrays.asList("", "Oven Tray"),
-                false, 
+        	    Arrays.asList(
+            	        new RecipeIngredient("Cheese")
+            	        	.addStep("Chopping Board")
+            	        	.addStep("Oven Tray"),
+            	        new RecipeIngredient("Bread Slice")
+            	            .addStep("Chopping Board")
+            	            .addStep("Oven Tray")
+            	    ),
                 importImage("/food/CheeseToast.png").getSubimage(16, 0, 16, 16),
                 null,
                 9,
@@ -303,10 +371,14 @@ public class RecipeManager {
         
         Recipe carrotSalad = new Recipe(
         	    "Carrot Salad",
-                Arrays.asList("Carrot", "Red Onion", "Greens"),
-                Arrays.asList("Chopping Board", "Chopping Board", "Chopping Board"),
-                Arrays.asList("", "", ""),
-                false, 
+        	    Arrays.asList(
+            	        new RecipeIngredient("Carrot")
+            	        	.addStep("Chopping Board"),
+            	        new RecipeIngredient("Red Onion")
+            	            .addStep("Chopping Board"),
+            	        new RecipeIngredient("Greens")
+            	            .addStep("Chopping Board")
+            	    ),
                 importImage("/food/CarrotSalad.png").getSubimage(0, 0, 16, 16),
                 null,
                 7,
@@ -316,10 +388,15 @@ public class RecipeManager {
         
         Recipe roastChicken = new Recipe(
         	    "Roast Chicken",
-                Arrays.asList("Chicken", "Potato", "Greens"),
-                Arrays.asList("Oven Tray", "Oven Tray", "Chopping Board"),
-                Arrays.asList("", "", "Oven Tray"),
-                false, 
+        	    Arrays.asList(
+            	        new RecipeIngredient("Chicken")
+            	        	.addStep("Oven Tray"),
+            	        new RecipeIngredient("Potato")
+            	            .addStep("Oven Tray"),
+            	        new RecipeIngredient("Greens")
+            	        	.addStep("Chopping Board")
+            	        	.addStep("Oven Tray")
+            	    ),
                 importImage("/food/RoastChicken.png").getSubimage(0, 0, 16, 16),
                 null,
                 11,
@@ -329,10 +406,15 @@ public class RecipeManager {
         
         Recipe vegRoast = new Recipe(
         	    "Vegetable Roast",
-                Arrays.asList("Carrot", "Potato", "Aubergine"),
-                Arrays.asList("Chopping Board", "Oven Tray", "Oven Tray"),
-                Arrays.asList("Oven Tray", "", ""),
-                false, 
+        	    Arrays.asList(
+            	        new RecipeIngredient("Carrot")
+            	        	.addStep("Chopping Board")
+            	        	.addStep("Oven Tray"),
+            	        new RecipeIngredient("Potato")
+            	            .addStep("Oven Tray"),
+            	        new RecipeIngredient("Aubergine")
+            	        	.addStep("Oven Tray")
+            	    ),
                 importImage("/food/VegRoast.png").getSubimage(0, 0, 16, 16),
                 null,
                 10,
@@ -342,10 +424,17 @@ public class RecipeManager {
         
         Recipe aubergineBake = new Recipe(
         	    "Aubergine Bake",
-                Arrays.asList("Tomato", "Cheese", "Aubergine"),
-                Arrays.asList("Chopping Board", "Chopping Board", "Chopping Board"),
-                Arrays.asList("Oven Tray", "Oven Tray", "Oven Tray"),
-                false, 
+        	    Arrays.asList(
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	        	.addStep("Chopping Board")
+            	        	.addStep("Oven Tray"),
+            	        new RecipeIngredient("Cheese")
+            	    		.addStep("Chopping Board")
+            	            .addStep("Oven Tray"),
+            	        new RecipeIngredient("Aubergine")
+            	        	.addStep("Chopping Board")
+            	        	.addStep("Oven Tray")
+            	    ),
                 importImage("/food/AubergineBake.png").getSubimage(0, 0, 16, 16),
                 null,
                 10,
@@ -355,10 +444,16 @@ public class RecipeManager {
         
         Recipe lasagna = new Recipe(
         	    "Lasagna",
-                Arrays.asList("Lasagna", "Tomato", "Cheese"),
-                Arrays.asList("Oven Tray", "Chopping Board", "Chopping Board"),
-                Arrays.asList("", "Oven Tray", "Oven Tray"),
-                false, 
+        	    Arrays.asList(
+            	        new RecipeIngredient("Lasagna")
+            	        	.addStep("Oven Tray"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	    		.addStep("Chopping Board")
+            	            .addStep("Oven Tray"),
+            	        new RecipeIngredient("Cheese")
+            	        	.addStep("Chopping Board")
+            	        	.addStep("Oven Tray")
+            	    ),
                 importImage("/food/pasta/Lasagna.png").getSubimage(32, 0, 16, 16),
                 null,
                 10,
@@ -368,25 +463,34 @@ public class RecipeManager {
         
         Recipe pastaBake = new Recipe(
         	    "Pasta Bake",
-                Arrays.asList("Penne", "Tomato", "Cheese"),
-                Arrays.asList("Small Pot", "Chopping Board", "Chopping Board"),
-                Arrays.asList("OvenTray", "Oven Tray", "Oven Tray"),
-                false, 
+        	    Arrays.asList(
+            	        new RecipeIngredient("Penne")
+            	        	.addStep("Small Pot")
+            	        	.addStep("Oven Tray"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	    		.addStep("Chopping Board")
+            	            .addStep("Oven Tray"),
+            	        new RecipeIngredient("Cheese")
+            	        	.addStep("Chopping Board")
+            	        	.addStep("Oven Tray")
+            	    ),
                 importImage("/food/pasta/PastaBake.png").getSubimage(0, 0, 16, 16),
                 null,
                 10,
                 2
             );
         registerRecipe(pastaBake);
+        //TODO make it so small pot and frying pan can put stuff in the oventray
         
         
         //PHASE 3 RECIPES
         Recipe chips = new Recipe(
                 "Chips",
-                Arrays.asList("Potato"),
-                Arrays.asList("Chopping Board"),
-                Arrays.asList("Fryer"),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Potato")
+            	        	.addStep("Chopping Board")
+            	        	.addStep("Fryer")
+            	    ),
                 importImage("/food/potato/Fries.png").getSubimage(32, 0, 16, 16),
                 null,
                 10,
@@ -414,10 +518,12 @@ public class RecipeManager {
         //CURSED RECIPES
         Recipe cursedGreens = new Recipe(
                 "Cursed Salad",
-                Arrays.asList("Cursed Greens", "Chopped Tomatoes"),
-                Arrays.asList("Chopping Board", "Chopping Board"),
-                Arrays.asList("", ""),
-                false, 
+                Arrays.asList(
+            	        new RecipeIngredient("Cursed Greens")
+            	        	.addStep("Chopping Board"),
+            	        new RecipeIngredient("Chopped Tomatoes")
+            	            .addStep("Chopping Board")
+            	    ),
                 importImage("/food/cursed/CursedGreens.png").getSubimage(16, 0, 16, 16),
                 null,
                 15,
@@ -432,6 +538,7 @@ public class RecipeManager {
         unlockRecipe(friedEgg);
         unlockRecipe(bruschetta);
         unlockRecipe(salad);
+        
         
         // Icons
         PanIcon = importImage("/UI/recipe/Icons.png").getSubimage(0, 0, 16, 16);
@@ -522,7 +629,6 @@ public class RecipeManager {
     public static ArrayList<Recipe> getUnlockedRecipes() {
         return new ArrayList<>(unlockedRecipes);
     }
-
     public static List<Recipe> getAllRecipes() {
         return new ArrayList<>(allRecipes);
     }
@@ -535,24 +641,26 @@ public class RecipeManager {
     	return false;
     }
     public static String getCurrentHauntedIngredient() {
+    	/*
     	for (Recipe recipe : currentOrders) {
             if(recipe.isCursed) {
             	return recipe.getIngredients().get(0);
             }
         }
+    	*/
     	return null;
     }
-    public static Recipe getMatchingRecipe(List<String> plateIngredients, List<String> cookMethods, List<String> secondaryCookMethods) {
-        for (Recipe recipe : unlockedRecipes) { // only match unlocked ones
-            if (recipe.matches(plateIngredients, cookMethods, secondaryCookMethods)) {
-                return recipe;
-            }
-        }
-        for (Recipe recipe : cursedRecipes) { // only match unlocked ones
-            if (recipe.matches(plateIngredients, cookMethods, secondaryCookMethods)) {
-                return recipe;
-            }
-        }
+    public static Recipe getMatchingRecipe(List<PreparedIngredient> plate) {
+    	for (Recipe recipe : unlockedRecipes) {
+    	    if (recipe.matches(plate)) {
+    	        return recipe;
+    	    }
+    	}
+    	for (Recipe recipe : cursedRecipes) {
+    	    if (recipe.matches(plate)) {
+    	        return recipe;
+    	    }
+    	}
         return null;
     }
     public TextureRegion getIconFromName(String name, boolean isCursed) {
@@ -592,10 +700,10 @@ public class RecipeManager {
         currentOrders.remove(recipe);
     }
 
-    public static boolean completeOrder(List<String> plateIngredients, List<String> cookMethods, List<String> secondaryCookMethods) {
+    public static boolean completeOrder(List<PreparedIngredient> plate) {
         for (int i = 0; i < currentOrders.size(); i++) {
             Recipe order = currentOrders.get(i);
-            if (order.matches(plateIngredients, cookMethods, secondaryCookMethods)) {
+            if (order.matches(plate)) {
                 order.incrementCookCount();
                 currentOrders.remove(i);
                 return true;

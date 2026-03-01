@@ -1,9 +1,5 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +14,13 @@ import main.renderer.AssetPool;
 import main.renderer.BitmapFont;
 import main.renderer.Colour;
 import main.renderer.Renderer;
-import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import utility.DayPhase;
-import utility.Recipe;
-import utility.RecipeManager;
-import utility.RecipeRenderData;
+import utility.recipe.CookStep;
+import utility.recipe.Recipe;
+import utility.recipe.RecipeIngredient;
+import utility.recipe.RecipeManager;
+import utility.recipe.RecipeRenderData;
 
 public class MenuSign extends Building {
 
@@ -132,45 +129,77 @@ public class MenuSign extends Building {
 	    renderCache.put(recipe, data);
 	}
 	public RecipeRenderData buildRenderData(Recipe recipe, BitmapFont nameFont, Renderer renderer) {
-	    RecipeRenderData data = new RecipeRenderData();
-	    data.recipe = recipe;
 
-	    // Cache base images
-	    data.borderImage = recipeBorder;
-	    data.starLevel = recipe.getStarLevel();
-
-	    data.coinImage = coinImage;
-	    data.plateImage = recipe.finishedPlate;
-
-	    // Cache ingredient + states
-	    List<String> ingredients = recipe.getIngredients();
-	    List<String> cookingState = recipe.getCookingStates();
-	    List<String> secondaryCookingState = recipe.getSecondaryCookingStates();
-
-	    for (int j = 0; j < ingredients.size(); j++) {
-	        String ingredientName = ingredients.get(j);
-	        Food ingredient = (Food) gp.world.itemRegistry.getItemFromName(ingredientName, 0);
-
-	        TextureRegion ingredientImage = gp.world.itemRegistry.getImageFromName(ingredientName);
-	        if (ingredient.notRawItem) {
-	            ingredientImage = gp.world.itemRegistry.getRawIngredientImage(ingredientName);
-	        }
-
-	        data.ingredientImages.add(ingredientImage);
-	        data.cookingStateIcons.add(gp.world.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed));
-	        data.secondaryCookingStateIcons.add(gp.world.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed));
-	    }
-	    
-	    for (String line : recipe.getName().split(" ")) {
-	        data.nameLines.add(line);
-	        int offset = (int)(((48) - gp.renderer.measureStringWidth(font, line, 0.6f) / 2));
-	        data.nameLineOffsets.add(offset);
-	    }
-
-	    // Cache cost
-        data.cost = Integer.toString(recipe.getCost(gp.world.gameM.isRecipeSpecial(recipe)));
-
-	    return data;
+		RecipeRenderData data = new RecipeRenderData();
+		data.recipe = recipe;
+		
+		data.borderImage = recipeBorder;
+		data.starLevel = recipe.getStarLevel();
+		data.coinImage = coinImage;
+		data.plateImage = recipe.finishedPlate;
+		
+		List<RecipeIngredient> required =
+		recipe.getRequiredIngredients();
+		
+		for (RecipeIngredient req : required) {
+		
+		String ingredientName = req.getName();
+		
+		Food ingredient =
+		(Food) gp.world.itemRegistry
+		.getItemFromName(ingredientName, 0);
+		
+		TextureRegion ingredientImage =
+		gp.world.itemRegistry
+		.getImageFromName(ingredientName);
+		
+		if (ingredient.notRawItem) {
+		ingredientImage =
+		gp.world.itemRegistry
+		.getRawIngredientImage(ingredientName);
+		}
+		
+		data.ingredientImages.add(ingredientImage);
+		
+		// Build step icon list for this ingredient
+		List<TextureRegion> ingredientStepIcons =
+		new ArrayList<>();
+		
+		for (CookStep step : req.getRequiredSteps()) {
+		
+		TextureRegion icon =
+		gp.world.recipeM.getIconFromName(
+		step.getStation(),
+		recipe.isCursed
+		);
+		
+		ingredientStepIcons.add(icon);
+		}
+		
+		data.stepIcons.add(ingredientStepIcons);
+		}
+		
+		// Name formatting
+		for (String line : recipe.getName().split(" ")) {
+		
+		data.nameLines.add(line);
+		
+		int offset = (int) ((48)
+		- gp.renderer.measureStringWidth(
+		nameFont,
+		line,
+		0.6f) / 2);
+		
+		data.nameLineOffsets.add(offset);
+		}
+		
+		data.cost = Integer.toString(
+		recipe.getCost(
+		gp.world.gameM.isRecipeSpecial(recipe)
+		)
+		);
+		
+		return data;
 	}
     // Draw the menu UI
 	public void drawOverlayUI(Renderer renderer) {
@@ -321,46 +350,90 @@ public class MenuSign extends Building {
 	    }
 	    renderer.drawString(font, text, textX, textY, 1.0f, newCol);
 	}
-	private void drawRecipe(Renderer renderer, RecipeRenderData data, int x, int y) {
-	    // Base
-	    renderer.draw(data.borderImage, x, y, 32*3, 48*3);
+	private void drawRecipe(Renderer renderer,RecipeRenderData data,int x,int y) {
 
-	    // Ingredients
-	    for (int j = 0; j < data.ingredientImages.size(); j++) {
-	        renderer.draw(data.ingredientImages.get(j), x + j*(10*3) + 4, y + 4, 10*3, 10*3);
-	        renderer.draw(data.cookingStateIcons.get(j), x + j*(10*3) + 4, y + 20, 10*3, 10*3);
-	        renderer.draw(data.secondaryCookingStateIcons.get(j), x + j*(10*3) + 4, y + 44, 10*3, 10*3);
-	    }
-	    
-	    // Name
-	    Colour c = orderTextColour;
-	    for (int i = 0; i < data.nameLines.size(); i++) {
-	        renderer.drawString(font, data.nameLines.get(i), x + data.nameLineOffsets.get(i), y + 84 + i*15, 0.6f, c);
-	    }
-	    
-	    for (int i = 0; i < data.starLevel; i++) {
-	        //renderer.draw(starLevel, x +10 + i * 36, y + 50, 8*3, 8*3);
-	    }
-        renderer.draw(starLevel, x +10 + 0 * 36, y + 50, 8*3, 8*3);
-        if(data.starLevel > 2) {
-            renderer.draw(starLevel, x +10 + 1 * 36 - 11, y + 50, 8*3, 8*3);
-        } else {
-            renderer.draw(emptyStar, x +10 + 1 * 36 - 11, y + 50, 8*3, 8*3);
-        }
-        
-        if(data.starLevel > 3) {
-            renderer.draw(starLevel, x +10 + 1 * 36 - 11 + 8*3, y + 50, 8*3, 8*3);
-        } else {
-            renderer.draw(emptyStar, x +10 + 1 * 36 - 11 + 8*3, y + 50, 8*3, 8*3);
-        }
-
-
-	    // Plate
-	    renderer.draw(data.plateImage, x + 24, y + 94, 48, 48);
-
-	    // Coin + cost
-	    renderer.draw(data.coinImage, x, y + 142, 48, 48);
-	    renderer.drawString(font, data.cost, x + 56, y + 174, 1.0f, Colour.WHITE);
+		// Base
+		renderer.draw(data.borderImage, x, y, 32*3, 48*3);
+		
+		// Ingredients + Dynamic Step Icons
+		for (int j = 0; j < data.ingredientImages.size(); j++) {
+		
+		int ingredientX = x + j * (10 * 3) + 4;
+		int ingredientY = y + 4;
+		
+		// Draw ingredient
+		renderer.draw(
+		    data.ingredientImages.get(j),
+		    ingredientX,
+		    ingredientY,
+		    10 * 3,
+		    10 * 3
+		);
+		
+		// Draw step icons (horizontal row under ingredient)
+		List<TextureRegion> icons = data.stepIcons.get(j);
+		
+		int iconSize = 8 * 3;
+		int iconSpacing = iconSize + 2;
+		
+		int totalWidth = icons.size() * iconSpacing;
+		int startX = ingredientX + (10 * 3) / 2 - totalWidth / 2;
+		int iconY = ingredientY + 32; // below ingredient
+		
+		for (int s = 0; s < icons.size(); s++) {
+		renderer.draw(
+		        icons.get(s),
+		        startX + s * iconSpacing,
+		        iconY,
+		        iconSize,
+		        iconSize
+		);
+		}
+		}
+		
+		// Name
+		Colour c = orderTextColour;
+		for (int i = 0; i < data.nameLines.size(); i++) {
+		renderer.drawString(
+		    font,
+		    data.nameLines.get(i),
+		    x + data.nameLineOffsets.get(i),
+		    y + 84 + i * 15,
+		    0.6f,
+		    c
+		);
+		}
+		
+		// Star Rendering (unchanged logic, slightly cleaned)
+		int starX = x + 10;
+		int starY = y + 50;
+		int starSize = 8 * 3;
+		
+		renderer.draw(starLevel, starX, starY, starSize, starSize);
+		
+		if (data.starLevel > 2)
+		renderer.draw(starLevel, starX + 25, starY, starSize, starSize);
+		else
+		renderer.draw(emptyStar, starX + 25, starY, starSize, starSize);
+		
+		if (data.starLevel > 3)
+		renderer.draw(starLevel, starX + 25 + starSize, starY, starSize, starSize);
+		else
+		renderer.draw(emptyStar, starX + 25 + starSize, starY, starSize, starSize);
+		
+		// Plate
+		renderer.draw(data.plateImage, x + 24, y + 94, 48, 48);
+		
+		// Coin + cost
+		renderer.draw(data.coinImage, x, y + 142, 48, 48);
+		renderer.drawString(
+		font,
+		data.cost,
+		x + 56,
+		y + 174,
+		1.0f,
+		Colour.WHITE
+		);
 	}
     // Called from input handling to select/deselect recipes or confirm
     public void toggleRecipeSelection(Recipe r) {

@@ -59,7 +59,7 @@ import entity.npc.NPC;
 import entity.npc.Pet;
 import entity.npc.SpecialCustomer;
 import main.GamePanel;
-import utility.Recipe;
+import utility.recipe.Recipe;
 import utility.save.RoomSaveData;
 
 public class Room {

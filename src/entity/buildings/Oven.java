@@ -110,7 +110,7 @@ public class Oven extends Building {
 				    			// ===== NORMAL FOOD =====
 				    			if (held instanceof Food food) {
 				    				if (canCook(food.getName()) && food.foodState == FoodState.RAW) {
-				    					food.addCookMethod(name);
+				    					food.addStep(name);
 				    			        currentItem = food;
 				    			        cooking = true;
 				    			        cookCount = 0;

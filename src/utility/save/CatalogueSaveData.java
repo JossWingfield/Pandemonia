@@ -8,8 +8,8 @@ import main.GamePanel;
 import map.Beam;
 import map.FloorPaper;
 import map.WallPaper;
-import utility.Recipe;
-import utility.RecipeManager;
+import utility.recipe.Recipe;
+import utility.recipe.RecipeManager;
 
 public class CatalogueSaveData extends SaveData {
 	

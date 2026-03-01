@@ -10,8 +10,8 @@ import java.util.Set;
 import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.TextureRegion;
-import utility.Recipe;
-import utility.RecipeManager;
+import utility.recipe.Recipe;
+import utility.recipe.RecipeManager;
 
 public class OvenTray extends Item {
 	
@@ -61,6 +61,8 @@ public class OvenTray extends Item {
 	    allowInTray("Carrot", FoodState.CHOPPED);
 	    allowInTray("Aubergine", FoodState.RAW);
 	    allowInTray("Lasagna", FoodState.RAW);
+	    allowInTray("Penne", FoodState.COOKED);
+	    allowInTray("Chicken", FoodState.RAW);
 	}
 	public boolean isEmpty() {
 		return ingredients.size() == 0;
@@ -78,7 +80,7 @@ public class OvenTray extends Item {
 
 	        // Set cook method if it exists
 	        if (i < cookMethods.size() && cookMethods.get(i) != null) {
-	            food.setCookMethod(cookMethods.get(i));
+	            food.addStep(cookMethods.get(i));
 	        }
 
 	        // Determine the correct FoodState based on setup mapping
@@ -114,8 +116,11 @@ public class OvenTray extends Item {
 
 	        // Apply cooked state + method
 	        food.foodState = FoodState.PLATED;
-	        food.addCookMethod(cookMethods.get(i));
-	        food.addCookMethod("Oven Tray");
+	        
+	        if (i < cookMethods.size() && cookMethods.get(i) != null) {
+	            food.addStep(cookMethods.get(i));
+	        }
+	        food.addStep("Oven Tray");
 
 	        // Add to plate
 	        p.addIngredient(food);

@@ -123,7 +123,6 @@ import utility.Catalogue;
 import utility.Debug;
 import utility.ItemRegistry;
 import utility.ProgressManager;
-import utility.RecipeManager;
 import utility.RoomHelperMethods;
 import utility.Settings;
 import utility.UpgradeManager;
@@ -131,6 +130,7 @@ import utility.GUI.GUI;
 import utility.GameManager;
 import utility.cutscene.CutsceneManager;
 import utility.minigame.MiniGameManager;
+import utility.recipe.RecipeManager;
 import utility.save.SaveManager;
 
 

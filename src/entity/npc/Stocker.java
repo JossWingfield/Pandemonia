@@ -1,6 +1,6 @@
 package entity.npc;
 
-import java.awt.Graphics2D;
+import java.util.List;
 import java.util.Random;
 
 import entity.buildings.Fridge;
@@ -8,10 +8,10 @@ import entity.buildings.StorageFridge;
 import entity.items.Food;
 import main.GamePanel;
 import main.renderer.Renderer;
-import main.renderer.Texture;
 import main.renderer.TextureRegion;
-import utility.Recipe;
 import utility.RoomHelperMethods;
+import utility.recipe.Recipe;
+import utility.recipe.RecipeIngredient;
 
 public class Stocker extends Employee {
 	
@@ -185,10 +185,12 @@ public class Stocker extends Employee {
     	if(gp.world.gameM.getTodaysMenu().size() > 0) {
 	    	int recipeIndex = r.nextInt(gp.world.gameM.getTodaysMenu().size());
 	    	Recipe recipe = gp.world.gameM.getTodaysMenu().get(recipeIndex);
-	    	currentItem = (Food)gp.world.itemRegistry.getItemFromName(recipe.getIngredients().get(r.nextInt(recipe.getIngredients().size())), 0);
-    	} else {
-    		currentItem = storeFridge.getRandomItem();
-    	}
+	    	List<RecipeIngredient> required = recipe.getRequiredIngredients();
+	    	RecipeIngredient randomIngredient =required.get(r.nextInt(required.size()));
+	    	currentItem = (Food) gp.world.itemRegistry.getItemFromName(randomIngredient.getName(), 0);    	
+	    } else {
+	    	currentItem = storeFridge.getRandomItem();
+	    }
 		
     }
     public void draw(Renderer renderer) {

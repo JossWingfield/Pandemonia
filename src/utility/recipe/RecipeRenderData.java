@@ -1,4 +1,4 @@
-package utility;
+package utility.recipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +17,7 @@ public class RecipeRenderData {
 
     // Cached ingredient + state images
     public List<TextureRegion> ingredientImages = new ArrayList<>();
-    public List<TextureRegion> cookingStateIcons = new ArrayList<>();
-    public List<TextureRegion> secondaryCookingStateIcons = new ArrayList<>();
+    public List<List<TextureRegion>> stepIcons = new ArrayList<>();
     
     public int starLevel;
 

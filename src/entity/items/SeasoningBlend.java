@@ -79,7 +79,7 @@ public class SeasoningBlend extends Food {
             if (img != null) {
             	renderer.draw(img, baseX, baseY, drawWidth, drawHeight);
             }
-        }
+        } 
 
 	 }
 	public void drawInHand(Renderer renderer, int x, int y, boolean flip) {

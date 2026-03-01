@@ -19,6 +19,8 @@ import map.LightSource;
 import map.Room;
 import map.CounterSkin;
 import map.WallPaper;
+import utility.recipe.Recipe;
+import utility.recipe.RecipeManager;
 import utility.save.OrderSaveData;
 import utility.save.SettingsSaveData;
 import utility.save.WorldSaveData;

@@ -29,9 +29,11 @@ import net.packets.Packet04Chat;
 import utility.Achievement;
 import utility.Constants;
 import utility.ProgressManager.RewardType;
-import utility.Recipe;
-import utility.RecipeManager;
-import utility.RecipeRenderData;
+import utility.recipe.CookStep;
+import utility.recipe.Recipe;
+import utility.recipe.RecipeIngredient;
+import utility.recipe.RecipeManager;
+import utility.recipe.RecipeRenderData;
 import utility.Settings;
 import utility.Upgrade;
 import utility.UpgradeManager;
@@ -2118,11 +2120,40 @@ public class GUI {
 		        renderer.draw(data.mysteryOrderImage, x, y, 64*recipeScale, 80*recipeScale);
 		    } else {
 		        // Normal ingredient + text drawing
-		    	 for (int j = 0; j < data.ingredientImages.size(); j++) {
-		 	        renderer.draw(data.ingredientImages.get(j), x + j*(19*recipeScale) + 5*recipeScale, y + 4*recipeScale, 16*recipeScale, 16*recipeScale);
-		 	        renderer.draw(data.cookingStateIcons.get(j), x + j*(19*recipeScale) + 5*recipeScale, y + 22*recipeScale, 16*recipeScale, 16*recipeScale);
-		 	        renderer.draw(data.secondaryCookingStateIcons.get(j), x + j*(19*recipeScale) + 5*recipeScale, y + 22*recipeScale+16*recipeScale, 16*recipeScale, 16*recipeScale);
-		 	    }
+		    	for (int j = 0; j < data.ingredientImages.size(); j++) {
+
+		    	    int ingredientX = x + j * (19 * recipeScale) + 5 * recipeScale;
+		    	    int ingredientY = y + 4 * recipeScale;
+
+		    	    // Draw ingredient
+		    	    renderer.draw(
+		    	            data.ingredientImages.get(j),
+		    	            ingredientX,
+		    	            ingredientY,
+		    	            16 * recipeScale,
+		    	            16 * recipeScale
+		    	    );
+
+		    	    // Draw dynamic step icons
+		    	    List<TextureRegion> icons = data.stepIcons.get(j);
+
+		    	    int iconSize = 12 * recipeScale;
+		    	    int spacing = iconSize + 2;
+		    	    int totalWidth = icons.size() * spacing;
+
+		    	    int startX = ingredientX + (16 * recipeScale) / 2 - totalWidth / 2;
+		    	    int iconY = ingredientY + 18 * recipeScale;
+
+		    	    for (int s = 0; s < icons.size(); s++) {
+		    	        renderer.draw(
+		    	                icons.get(s),
+		    	                startX + s * spacing,
+		    	                iconY,
+		    	                iconSize,
+		    	                iconSize
+		    	        );
+		    	    }
+		    	}
 		    	 
 		    	float textScale = 0.7f;
 
@@ -2242,66 +2273,89 @@ public class GUI {
 	    RecipeRenderData data = buildRenderData(recipe, customer, font, renderer);
 	    renderCache.put(recipe, data);
 	}
-	public RecipeRenderData buildRenderData(Recipe recipe, Customer customer, BitmapFont font, Renderer renderer) {
-	    RecipeRenderData data = new RecipeRenderData();
-	    data.recipe = recipe;
-	    data.customer = customer;
-
-	    // Cache base images
-	    if(recipe.isCursed) {
-		    data.borderImage = cursedRecipeBorder;
-	    } else {
-		    data.borderImage = recipeBorder;
-	    }
-	    data.starLevel = recipe.getStarLevel();
-	    data.mysteryOrderImage = mysteryOrder;
-	    data.coinImage = coinImage;
-	    data.plateImage = recipe.finishedPlate;
-	    data.faceIcon = customer.faceIcon;
-	    
-	  	float textScale = 0.7f;
-	  	int scale = 2;
-
-	    // Cache ingredient + states
-	    List<String> ingredients = recipe.getIngredients();
-	    List<String> cookingState = recipe.getCookingStates();
-	    List<String> secondaryCookingState = recipe.getSecondaryCookingStates();
-
-	    for (int j = 0; j < ingredients.size(); j++) {
-	        String ingredientName = ingredients.get(j);
-	        Food ingredient = (Food) gp.world.itemRegistry.getItemFromName(ingredientName, 0);
-
-	        TextureRegion ingredientImage = gp.world.itemRegistry.getImageFromName(ingredientName);
-	        if (ingredient.notRawItem) {
-	            ingredientImage = gp.world.itemRegistry.getRawIngredientImage(ingredientName);
-	        }
-
-	        data.ingredientImages.add(ingredientImage);
-	        data.cookingStateIcons.add(gp.world.recipeM.getIconFromName(cookingState.get(j), recipe.isCursed));
-	        data.secondaryCookingStateIcons.add(gp.world.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed));
-	    }
-	    
-	    // Cache text layout
-	    renderer.setFont(font);
-	    for (String line : recipe.getName().split(" ")) {
-	        data.nameLines.add(line);
-	        int offset = (int)((((64*scale)/2) - gp.renderer.measureStringWidth(font, line, textScale) / 2));
-	        data.nameLineOffsets.add(offset);
-	    }
-
-	    // Cache cost
-	    if (customer instanceof SpecialCustomer specialCustomer) {
-	        if (specialCustomer.hideOrder) {
-	            data.cost = "???";
-	        } else {
-	            data.cost = Integer.toString(recipe.getCost(gp.world.gameM.isRecipeSpecial(recipe),
-	                                                        specialCustomer.getMoneyMultiplier()));
-	        }
-	    } else {
-	        data.cost = Integer.toString(recipe.getCost(gp.world.gameM.isRecipeSpecial(recipe)));
-	    }
-
-	    return data;
+	public RecipeRenderData buildRenderData(Recipe recipe,Customer customer, BitmapFont font, Renderer renderer) {
+		RecipeRenderData data = new RecipeRenderData();
+		data.recipe = recipe;
+		data.customer = customer;
+		
+		// Base images
+		data.borderImage = recipe.isCursed ? cursedRecipeBorder : recipeBorder;
+		data.starLevel = recipe.getStarLevel();
+		data.mysteryOrderImage = mysteryOrder;
+		data.coinImage = coinImage;
+		data.plateImage = recipe.finishedPlate;
+		data.faceIcon = customer.faceIcon;
+		
+		float textScale = 0.7f;
+		int scale = 2;
+		
+		// NEW STEP-BASED INGREDIENT SYSTEM
+		List<RecipeIngredient> required = recipe.getRequiredIngredients();
+		
+		for (RecipeIngredient req : required) {
+		
+		String ingredientName = req.getName();
+		
+		Food ingredient = (Food) gp.world.itemRegistry
+		.getItemFromName(ingredientName, 0);
+		
+		TextureRegion ingredientImage =
+		gp.world.itemRegistry.getImageFromName(ingredientName);
+		
+		if (ingredient.notRawItem) {
+		ingredientImage =
+		gp.world.itemRegistry.getRawIngredientImage(ingredientName);
+		}
+		
+		data.ingredientImages.add(ingredientImage);
+		
+		// Build step icon list
+		List<TextureRegion> ingredientStepIcons = new ArrayList<>();
+		
+		for (CookStep step : req.getRequiredSteps()) {
+		TextureRegion icon =
+		gp.world.recipeM.getIconFromName(
+		step.getStation(),
+		recipe.isCursed
+		);
+		ingredientStepIcons.add(icon);
+		}
+		
+		data.stepIcons.add(ingredientStepIcons);
+		}
+		
+		// Text layout
+		renderer.setFont(font);
+		for (String line : recipe.getName().split(" ")) {
+		data.nameLines.add(line);
+		
+		int offset = (int) ((((64 * scale) / 2)
+		- gp.renderer.measureStringWidth(font, line, textScale) / 2));
+		
+		data.nameLineOffsets.add(offset);
+		}
+		
+		// Cost
+		if (customer instanceof SpecialCustomer specialCustomer) {
+		
+		if (specialCustomer.hideOrder) {
+		data.cost = "???";
+		} else {
+		data.cost = Integer.toString(
+		recipe.getCost(
+		gp.world.gameM.isRecipeSpecial(recipe),
+		specialCustomer.getMoneyMultiplier()
+		)
+		);
+		}
+		
+		} else {
+		data.cost = Integer.toString(
+		recipe.getCost(gp.world.gameM.isRecipeSpecial(recipe))
+		);
+		}
+		
+		return data;
 	}
 	private void drawPatienceBar(Renderer renderer, float worldX, float worldY, int patienceCounter, int maxPatienceTime) {
 
@@ -3070,7 +3124,7 @@ public class GUI {
     private void drawRecipe(Renderer renderer, Recipe recipe, int x, int y) {
 		// BASE
 		renderer.draw(recipeBorder, x, y, 32 * 3, 48 * 3);
-
+		/*
 		// INGREDIENT IMAGES
 		List<String> ingredients = recipe.getIngredients();
 		List<String> cookingState = recipe.getCookingStates();
@@ -3089,6 +3143,7 @@ public class GUI {
 				renderer.draw(gp.world.recipeM.getIconFromName(secondaryCookingState.get(j), recipe.isCursed), x + j * (10*3) + 4, y + 4 + (16) + 24, 10*3, 10*3);
 			}
 		}
+		*/
 		
 		// NAME
 		int counter = 0;

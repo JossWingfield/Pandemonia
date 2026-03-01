@@ -80,7 +80,7 @@ public class ChoppingBoard extends Building {
 	}
 	public void addItem(Food f) {
 		currentItem = f;
-		currentItem.addCookMethod(name);
+		currentItem.addStep(name);
  		currentChopCount = f.getChopCount();
  		chopCount = 0;
 	}
@@ -107,7 +107,7 @@ public class ChoppingBoard extends Building {
 					    				} else {
 								    		currentItem = (Food)gp.player.currentItem;
 								    		gp.player.currentItem = null;
-								    		currentItem.addCookMethod(name);
+								    		currentItem.addStep(name);
 								    		clickCooldown = 0.08;
 								    		currentChopCount = f.getChopCount();
 					    				}
@@ -207,7 +207,7 @@ public class ChoppingBoard extends Building {
 		if(currentItem.cutIntoNewItem) {
 			Food newItem = (Food)gp.world.itemRegistry.getItemFromName(getChoppedResult(currentItem.getName()), 0);
 			currentItem = newItem;
-    		currentItem.addCookMethod(name);
+    		currentItem.addStep(name);
 		}
 		if(currentItem instanceof IceBlock ice) {
 			currentItem = ice.enclosedItem;

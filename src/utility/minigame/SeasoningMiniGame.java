@@ -36,7 +36,7 @@ public class SeasoningMiniGame {
     private double beatSpawnTimer = 0;
     private double burstTimer = 0;       // Time between bursts
     private int beatsInBurst = 0;     // Remaining beats in this burst
-    private float beatSpeed = 0.013f; // Movement speed
+    private float beatSpeed = 0.013f * 60; // Movement speed
 
     // Hit zone
     private final float hitZoneCenter = 0.5f;

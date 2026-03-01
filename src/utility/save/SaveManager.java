@@ -25,9 +25,9 @@ import com.google.gson.Gson;
 import main.GamePanel;
 import main.renderer.Texture;
 import map.Room;
-import utility.RecipeManager;
 import utility.Season;
 import utility.UpgradeManager;
+import utility.recipe.RecipeManager;
 
 public class SaveManager {
 	

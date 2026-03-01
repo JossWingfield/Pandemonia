@@ -138,7 +138,7 @@ public class Fryer extends Item {
 		flickerThreshold = Math.round(maxCookTime * flickerFraction);
 		maxBurnTime = Math.round(maxCookTime * burnFraction);
 		cookStyle = CookStyle.FRY;
-		cookingItem.addCookMethod("Fryer");
+		cookingItem.addStep("Fryer");
 	}
 	public boolean isCooking() {
 		return cooking;

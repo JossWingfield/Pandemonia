@@ -13,10 +13,10 @@ import main.renderer.Colour;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
-import utility.Recipe;
-import utility.RecipeManager;
 import utility.RoomHelperMethods;
 import utility.Statistics;
+import utility.recipe.Recipe;
+import utility.recipe.RecipeManager;
 
 public class Customer extends NPC {
 	

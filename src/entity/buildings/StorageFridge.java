@@ -16,6 +16,7 @@ import entity.items.Food;
 import entity.items.Garlic;
 import entity.items.Greens;
 import entity.items.Item;
+import entity.items.Lasagna;
 import entity.items.Penne;
 import entity.items.Spaghetti;
 import entity.items.Steak;
@@ -84,6 +85,7 @@ public class StorageFridge extends Building {
 		contents.add(new Steak(gp, 0, 0));
 		contents.add(new Spaghetti(gp, 0, 0));
 		contents.add(new Penne(gp, 0, 0));
+		contents.add(new Lasagna(gp, 0, 0));
 		if(starterFridge) {
 			contents.add(new Tomato(gp, 0, 0));
 			contents.add(new Greens(gp, 0, 0));

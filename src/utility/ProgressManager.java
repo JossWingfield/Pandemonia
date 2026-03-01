@@ -19,6 +19,8 @@ import main.renderer.AssetPool;
 import main.renderer.Colour;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
+import utility.recipe.Recipe;
+import utility.recipe.RecipeManager;
 import utility.save.ProgressSaveData;
 import utility.save.StatisticsSaveData;
 

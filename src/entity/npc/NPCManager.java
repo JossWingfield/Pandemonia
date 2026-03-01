@@ -11,7 +11,7 @@ import entity.buildings.EscapeHole;
 import main.GamePanel;
 import main.renderer.Renderer;
 import utility.CollisionMethods;
-import utility.Recipe;
+import utility.recipe.Recipe;
 
 public class NPCManager {
 
