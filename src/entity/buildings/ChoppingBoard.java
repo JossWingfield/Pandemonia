@@ -265,8 +265,8 @@ public class ChoppingBoard extends Building {
 	     rawIngredients.add("Carrot");
 	     choppedResults.add("Chopped Carrot");
 	     
-	     rawIngredients.add("Aubergine");
-	     choppedResults.add("Chopped Aubergine");
+	     rawIngredients.add("Asparagus");
+	     choppedResults.add("Chopped Asparagus");
 	     
 	     rawIngredients.add("Cursed Greens");
 	     choppedResults.add("Chopped Cursed Greens");

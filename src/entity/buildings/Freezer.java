@@ -106,6 +106,7 @@ public class Freezer extends Building {
 			if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCounter == 0) {
 				if (gp.player.currentItem == null) {
 				    clickCounter = 0.33;
+				    currentFood.addStep(name);
 				    gp.player.currentItem = new IceBlock(gp, currentFood);
 				    currentFood = null;
 				    gp.player.resetAnimation(4);

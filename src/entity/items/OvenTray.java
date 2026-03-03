@@ -62,6 +62,7 @@ public class OvenTray extends Item {
 	    allowInTray("Aubergine", FoodState.RAW);
 	    allowInTray("Lasagna", FoodState.RAW);
 	    allowInTray("Penne", FoodState.COOKED);
+	    allowInTray("Chopped Tomatoes", FoodState.CHOPPED);
 	    allowInTray("Chicken", FoodState.RAW);
 	}
 	public boolean isEmpty() {

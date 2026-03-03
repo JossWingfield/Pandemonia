@@ -44,7 +44,7 @@ public class GUI {
 	GamePanel gp;
 	
 	//IMAGES
-    private TextureRegion recipeBorder, timeBorder, timeHeader, timeFrame, coinImage, mysteryOrder, cursedRecipeBorder, starLevel, emptyStar;
+    private TextureRegion recipeBorder, recipeBorder2, foodStepBorder, timeBorder, timeHeader, timeFrame, coinImage, mysteryOrder, cursedRecipeBorder, starLevel, emptyStar;
     private TextureRegion[][] timeAnimations;
     private TextureRegion[][] titleBookAnimations;
     private TextureRegion titleBackground;
@@ -269,6 +269,8 @@ public class GUI {
 	private void importImages() {
 		titleBackground = importImage("/UI/titlescreen/DeskBase.png").toTextureRegion();
 		recipeBorder = importImage("/UI/recipe/orderBorder.png").toTextureRegion();
+		recipeBorder2 = importImage("/UI/recipe/OrderBorder2.png").toTextureRegion();
+		foodStepBorder = importImage("/UI/recipe/FoodStepBorder.png").toTextureRegion();
 		timeBorder = importImage("/UI/weather/TimeBorder.png").toTextureRegion();
 		timeHeader = importImage("/UI/weather/3.png").toTextureRegion();
 		timeFrame = importImage("/UI/weather/TimeFrame.png").toTextureRegion();
@@ -2097,103 +2099,200 @@ public class GUI {
 
 		
 	}
-	
+	private void drawPlayRecipe(Renderer renderer, Recipe recipe, int x, int y, int recipeScale) {
+		RecipeRenderData data = renderCache.get(recipe);
+	    if (data == null) return;
+	    
+    	float textScale = 0.7f;
+	    
+    	boolean isHovering = isHovering(x, y, 64*recipeScale, 73*recipeScale);
+    	
+	    // BASE
+	    renderer.draw(data.borderImage, x, y, 64*recipeScale, 73*recipeScale);
+	    if (data.customer.hideOrder) {
+	        // Overlay the "mystery order" image
+	        renderer.draw(data.mysteryOrderImage, x, y, 64*recipeScale, 80*recipeScale);
+	    } else {
+	        // Normal ingredient + text drawing
+	    	for (int j = 0; j < data.ingredientImages.size(); j++) {
+
+	    	    int ingredientX = x + j * (19 * recipeScale) + 5 * recipeScale;
+	    	    int ingredientY = y + 52 * recipeScale;
+	    	    
+	    	    // Draw ingredient
+	    	    renderer.draw(data.ingredientImages.get(j),
+	    	            ingredientX,
+	    	            ingredientY,
+	    	            16 * recipeScale,
+	    	            16 * recipeScale
+	    	    );
+
+	    	    // Draw dynamic step icons
+	    	    List<TextureRegion> icons = data.stepIcons.get(j);
+
+	    	    int iconSize = 16 * recipeScale;
+	    	    int spacing = 20*recipeScale;
+	    	    int borderSize = 20*recipeScale;
+
+	    	    int startX = ingredientX - 2*recipeScale;
+	    	    int iconY = ingredientY + 20 * recipeScale;
+
+	    	    if(isHovering) {
+	    	    	for (int s = 0; s < icons.size(); s++) {
+
+	    	    	    int stepY = iconY + s * spacing;
+
+	    	    	    renderer.draw(foodStepBorder,
+	    	    	            startX,
+	    	    	            stepY,
+	    	    	            borderSize,
+	    	    	            borderSize);
+
+	    	    	    renderer.draw(icons.get(s),
+	    	    	            startX+ 2*recipeScale,
+	    	    	            stepY,
+	    	    	            iconSize,
+	    	    	            iconSize);
+	    	    	}
+	    	    }
+	    	}
+	    	 
+
+	        if(!recipe.isCursed) {
+		        renderer.setColour(orderTextColour);
+	        } else {
+	        	renderer.setColour(Colour.WHITE);
+	        }
+
+	        renderer.setFont(font);
+		    for (int j = 0; j < data.nameLines.size(); j++) {
+		        renderer.drawString(font, data.nameLines.get(j), x + data.nameLineOffsets.get(j), y + recipeScale*16 -6*recipeScale + j*15, textScale);
+		    }
+	        
+		    //renderer.draw(starLevel, x +7*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        if(data.starLevel > 2) {
+	            //renderer.draw(starLevel, x +7*recipeScale + 1 * 16*recipeScale, y + recipeScale*16+ 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        } else {
+	            //renderer.draw(emptyStar, x +7*recipeScale + 1 * 16*recipeScale, y+ recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        }
+	        
+	        if(data.starLevel > 3) {
+	            //renderer.draw(starLevel, x +7*recipeScale + 2 * 16*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        } else {
+	            //renderer.draw(emptyStar, x +7*recipeScale + 2 * 16*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        }
+
+		    renderer.draw(data.plateImage, x + 24*recipeScale, y + 25*recipeScale, 16*recipeScale, 16*recipeScale);
+	    }
+
+	    // COIN + FACE
+	    renderer.draw(data.coinImage, x+5*recipeScale, y + 29*recipeScale - 2, 16*recipeScale, 16*recipeScale);
+	    renderer.draw(data.faceIcon, x + 70, y + 16*recipeScale - 2, 32*recipeScale, 32*recipeScale);
+
+	    // COST
+	    renderer.drawString(font, data.cost, x + 9*recipeScale, y + 27*recipeScale - 2 + 8, textScale, orderTextColour);
+
+	    // PATIENCE
+	    drawPatienceBar(renderer, x + 5*recipeScale, y + 43*recipeScale, (int)data.customer.getPatienceCounter(), (int)data.customer.getMaxPatienceTime());
+
+	}
+	private void drawOldPlayRecipe(Renderer renderer, Recipe recipe, int x, int y, int recipeScale) {
+		RecipeRenderData data = renderCache.get(recipe);
+	    if (data == null) return;
+	    
+	    // BASE
+	    renderer.draw(data.borderImage, x, y, 64*recipeScale, 96*recipeScale);
+	    if (data.customer.hideOrder) {
+	        // Overlay the "mystery order" image
+	        renderer.draw(data.mysteryOrderImage, x, y, 64*recipeScale, 80*recipeScale);
+	    } else {
+	        // Normal ingredient + text drawing
+	    	for (int j = 0; j < data.ingredientImages.size(); j++) {
+
+	    	    int ingredientX = x + j * (19 * recipeScale) + 5 * recipeScale;
+	    	    int ingredientY = y + 4 * recipeScale;
+
+	    	    // Draw ingredient
+	    	    renderer.draw(
+	    	            data.ingredientImages.get(j),
+	    	            ingredientX,
+	    	            ingredientY,
+	    	            16 * recipeScale,
+	    	            16 * recipeScale
+	    	    );
+
+	    	    // Draw dynamic step icons
+	    	    List<TextureRegion> icons = data.stepIcons.get(j);
+
+	    	    int iconSize = 12 * recipeScale;
+	    	    int spacing = iconSize + 2;
+	    	    int totalWidth = icons.size() * spacing;
+
+	    	    int startX = ingredientX + (16 * recipeScale) / 2 - totalWidth / 2;
+	    	    int iconY = ingredientY + 18 * recipeScale;
+
+	    	    for (int s = 0; s < icons.size(); s++) {
+	    	        renderer.draw(
+	    	                icons.get(s),
+	    	                startX + s * spacing,
+	    	                iconY,
+	    	                iconSize,
+	    	                iconSize
+	    	        );
+	    	    }
+	    	}
+	    	 
+	    	float textScale = 0.7f;
+
+	        if(!recipe.isCursed) {
+		        renderer.setColour(orderTextColour);
+	        } else {
+	        	renderer.setColour(Colour.WHITE);
+	        }
+
+	        renderer.setFont(font);
+		    for (int j = 0; j < data.nameLines.size(); j++) {
+		        renderer.drawString(font, data.nameLines.get(j), x + data.nameLineOffsets.get(j), y + recipeScale*16 + 57*recipeScale + j*15, textScale);
+		    }
+	        
+		    renderer.draw(starLevel, x +7*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        if(data.starLevel > 2) {
+	            renderer.draw(starLevel, x +7*recipeScale + 1 * 16*recipeScale, y + recipeScale*16+ 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        } else {
+	            renderer.draw(emptyStar, x +7*recipeScale + 1 * 16*recipeScale, y+ recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        }
+	        
+	        if(data.starLevel > 3) {
+	            renderer.draw(starLevel, x +7*recipeScale + 2 * 16*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        } else {
+	            renderer.draw(emptyStar, x +7*recipeScale + 2 * 16*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
+	        }
+
+		    renderer.draw(data.plateImage, x + 23*recipeScale, y + recipeScale*16 + 62*recipeScale, 16*recipeScale, 16*recipeScale);
+	    }
+
+	    // COIN + FACE
+	    renderer.draw(data.coinImage, x, y + recipeScale*16 + 82*recipeScale - 2, 16*recipeScale, 16*recipeScale);
+	    renderer.draw(data.faceIcon, x + 70, y + recipeScale*16 + 70*recipeScale - 2 - 16*recipeScale, 32*recipeScale, 32*recipeScale);
+
+	    // COST
+	    renderer.drawString(font, data.cost, x + 19*recipeScale, y + recipeScale*16 + 90*recipeScale - 2 + 8, 1.0f, Colour.WHITE);
+
+	    // PATIENCE
+	    drawPatienceBar(renderer, x, y + recipeScale*16 + 90*recipeScale - 2 + 16*recipeScale, (int)data.customer.getPatienceCounter(), (int)data.customer.getMaxPatienceTime());
+
+	}
 	private void drawPlayScreen(Renderer renderer) {
 		updateMessages();
 		List<Recipe> currentOrders = new ArrayList<>(RecipeManager.getCurrentOrders());
 
 		int i = 0;
-		
 		int recipeScale = 2;
 		
 		for (Recipe recipe : currentOrders) {
-		    RecipeRenderData data = renderCache.get(recipe);
-		    if (data == null) continue;
-
 		    int x = 8 + i * (64*recipeScale);
 		    int y = 0;
-
-		    // BASE
-		    renderer.draw(data.borderImage, x, y, 64*recipeScale, 96*recipeScale);
-		    if (data.customer.hideOrder) {
-		        // Overlay the "mystery order" image
-		        renderer.draw(data.mysteryOrderImage, x, y, 64*recipeScale, 80*recipeScale);
-		    } else {
-		        // Normal ingredient + text drawing
-		    	for (int j = 0; j < data.ingredientImages.size(); j++) {
-
-		    	    int ingredientX = x + j * (19 * recipeScale) + 5 * recipeScale;
-		    	    int ingredientY = y + 4 * recipeScale;
-
-		    	    // Draw ingredient
-		    	    renderer.draw(
-		    	            data.ingredientImages.get(j),
-		    	            ingredientX,
-		    	            ingredientY,
-		    	            16 * recipeScale,
-		    	            16 * recipeScale
-		    	    );
-
-		    	    // Draw dynamic step icons
-		    	    List<TextureRegion> icons = data.stepIcons.get(j);
-
-		    	    int iconSize = 12 * recipeScale;
-		    	    int spacing = iconSize + 2;
-		    	    int totalWidth = icons.size() * spacing;
-
-		    	    int startX = ingredientX + (16 * recipeScale) / 2 - totalWidth / 2;
-		    	    int iconY = ingredientY + 18 * recipeScale;
-
-		    	    for (int s = 0; s < icons.size(); s++) {
-		    	        renderer.draw(
-		    	                icons.get(s),
-		    	                startX + s * spacing,
-		    	                iconY,
-		    	                iconSize,
-		    	                iconSize
-		    	        );
-		    	    }
-		    	}
-		    	 
-		    	float textScale = 0.7f;
-
-		        if(!recipe.isCursed) {
-			        renderer.setColour(orderTextColour);
-		        } else {
-		        	renderer.setColour(Colour.WHITE);
-		        }
-
-		        renderer.setFont(font);
-			    for (int j = 0; j < data.nameLines.size(); j++) {
-			        renderer.drawString(font, data.nameLines.get(j), x + data.nameLineOffsets.get(j), y + recipeScale*16 + 57*recipeScale + j*15, textScale);
-			    }
-		        
-			    renderer.draw(starLevel, x +7*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
-		        if(data.starLevel > 2) {
-		            renderer.draw(starLevel, x +7*recipeScale + 1 * 16*recipeScale, y + recipeScale*16+ 36*recipeScale, 16*recipeScale, 16*recipeScale);
-		        } else {
-		            renderer.draw(emptyStar, x +7*recipeScale + 1 * 16*recipeScale, y+ recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
-		        }
-		        
-		        if(data.starLevel > 3) {
-		            renderer.draw(starLevel, x +7*recipeScale + 2 * 16*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
-		        } else {
-		            renderer.draw(emptyStar, x +7*recipeScale + 2 * 16*recipeScale, y + recipeScale*16 + 36*recipeScale, 16*recipeScale, 16*recipeScale);
-		        }
-
-			    renderer.draw(data.plateImage, x + 23*recipeScale, y + recipeScale*16 + 62*recipeScale, 16*recipeScale, 16*recipeScale);
-		    }
-
-		    // COIN + FACE
-		    renderer.draw(data.coinImage, x, y + recipeScale*16 + 82*recipeScale - 2, 16*recipeScale, 16*recipeScale);
-		    renderer.draw(data.faceIcon, x + 70, y + recipeScale*16 + 70*recipeScale - 2 - 16*recipeScale, 32*recipeScale, 32*recipeScale);
-
-		    // COST
-		    renderer.drawString(font, data.cost, x + 19*recipeScale, y + recipeScale*16 + 90*recipeScale - 2 + 8, 1.0f, Colour.WHITE);
-
-		    // PATIENCE
-		    drawPatienceBar(renderer, x, y + recipeScale*16 + 90*recipeScale - 2 + 16*recipeScale, (int)data.customer.getPatienceCounter(), (int)data.customer.getMaxPatienceTime());
-
+		    drawPlayRecipe(renderer, recipe, x, y, recipeScale);
 		    i++;
 		}
 
@@ -2279,7 +2378,7 @@ public class GUI {
 		data.customer = customer;
 		
 		// Base images
-		data.borderImage = recipe.isCursed ? cursedRecipeBorder : recipeBorder;
+		data.borderImage = recipe.isCursed ? cursedRecipeBorder : recipeBorder2;
 		data.starLevel = recipe.getStarLevel();
 		data.mysteryOrderImage = mysteryOrder;
 		data.coinImage = coinImage;
@@ -2327,13 +2426,13 @@ public class GUI {
 		// Text layout
 		renderer.setFont(font);
 		for (String line : recipe.getName().split(" ")) {
-		data.nameLines.add(line);
 		
 		int offset = (int) ((((64 * scale) / 2)
 		- gp.renderer.measureStringWidth(font, line, textScale) / 2));
 		
 		data.nameLineOffsets.add(offset);
 		}
+		data.nameLines = wrapText(recipe.getName(), font, textScale);
 		
 		// Cost
 		if (customer instanceof SpecialCustomer specialCustomer) {
@@ -2359,9 +2458,9 @@ public class GUI {
 	}
 	private void drawPatienceBar(Renderer renderer, float worldX, float worldY, int patienceCounter, int maxPatienceTime) {
 
-	    int barWidth = 32 * 3;
-	    int barHeight = 12;
-	    int yOffset = -20;
+	    int barWidth = 54 * 2;
+	    int barHeight = 6*2;
+	    int yOffset = 0;
 
 	    float progress = 1f - (patienceCounter / (float) maxPatienceTime);
 	    progress = Math.max(0, Math.min(1, progress));
@@ -3285,6 +3384,35 @@ public class GUI {
 	        String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
 
 	        float lineWidth = font.getTextWidth(testLine);
+
+	        if (lineWidth > maxWidth) {
+	            // Commit the current line
+	            if (currentLine.length() > 0) {
+	                lines.add(currentLine.toString());
+	            }
+	            // Start new line with the long word
+	            currentLine = new StringBuilder(word);
+	        } else {
+	            currentLine = new StringBuilder(testLine);
+	        }
+	    }
+
+	    // Add final line
+	    if (currentLine.length() > 0) {
+	        lines.add(currentLine.toString());
+	    }
+
+	    return lines;
+	}
+	public List<String> wrapText(String text, BitmapFont font, float maxWidth, float textScale) {
+	    List<String> lines = new ArrayList<>();
+	    String[] words = text.split(" ");
+	    StringBuilder currentLine = new StringBuilder();
+
+	    for (String word : words) {
+	        String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+
+	        float lineWidth = font.getTextWidth(testLine, textScale);
 
 	        if (lineWidth > maxWidth) {
 	            // Commit the current line

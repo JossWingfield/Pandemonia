@@ -19,7 +19,7 @@ public class RecipeManager {
     
     private static final Random random = new Random();
     
-    private TextureRegion  PanIcon, choppedIcon, PotIcon, ovenIcon;
+    private TextureRegion  PanIcon, choppedIcon, PotIcon, ovenIcon, fryerIcon, freezerIcon, seasoningIcon, ovenTrayIcon;
     private TextureRegion  PanIcon2, choppedIcon2, PotIcon2, ovenIcon2;
 
     public RecipeManager() {
@@ -479,9 +479,7 @@ public class RecipeManager {
                 10,
                 2
             );
-        registerRecipe(pastaBake);
-        //TODO make it so small pot and frying pan can put stuff in the oventray
-        
+        registerRecipe(pastaBake);        
         
         //PHASE 3 RECIPES
         Recipe chips = new Recipe(
@@ -489,6 +487,7 @@ public class RecipeManager {
                 Arrays.asList(
             	        new RecipeIngredient("Potato")
             	        	.addStep("Chopping Board")
+            	           	.addStep("Freezer")
             	        	.addStep("Fryer")
             	    ),
                 importImage("/food/potato/Fries.png").getSubimage(32, 0, 16, 16),
@@ -545,6 +544,10 @@ public class RecipeManager {
         choppedIcon = importImage("/UI/recipe/Icons.png").getSubimage(32, 0, 16, 16);
         PotIcon = importImage("/UI/recipe/Icons.png").getSubimage(16, 0, 16, 16);
         ovenIcon = importImage("/UI/recipe/Icons.png").getSubimage(48, 0, 16, 16);
+        fryerIcon = importImage("/UI/recipe/Icons.png").getSubimage(64, 0, 16, 16);
+        freezerIcon = importImage("/UI/recipe/Icons.png").getSubimage(80, 0, 16, 16);
+        seasoningIcon = importImage("/UI/recipe/Icons.png").getSubimage(96, 0, 16, 16);
+        ovenTrayIcon = importImage("/UI/recipe/Icons.png").getSubimage(112, 0, 16, 16);
         PanIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(0, 0, 16, 16);
         choppedIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(32, 0, 16, 16);
         PotIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(16, 0, 16, 16);
@@ -670,6 +673,10 @@ public class RecipeManager {
 	            case "Small Pot": return PotIcon;
 	            case "Chopping Board": return choppedIcon;
 	            case "Oven": return ovenIcon;
+	            case "Fryer": return fryerIcon;
+	            case "Freezer": return freezerIcon;
+	            case "Seasoning": return seasoningIcon;
+	            case "Oven Tray": return ovenTrayIcon;
 	        }
 	        return null;
     	} else {

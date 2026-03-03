@@ -37,6 +37,9 @@ public class BitmapFont {
 
         return width;
     }
+    public float getTextWidth(String text, float scale) {
+        return getTextWidth(text)*scale;
+    }
 
     public Texture getTexture() {
         return textureAtlas;
