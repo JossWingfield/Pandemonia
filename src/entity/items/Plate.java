@@ -198,9 +198,10 @@ public class Plate extends Item {
         ingredientImages.add(foodItem.getImage());
 
         matchedRecipe = RecipeManager.getMatchingRecipe(preparedIngredients);
-
+        
         if (matchedRecipe != null) {
-            System.out.println(matchedRecipe.getName());
+        	matchedRecipeImage = matchedRecipe.finishedPlate;
+            //System.out.println(matchedRecipe.getName());
         }
     }
     public TextureRegion getMatchingRecipeIgnoringSeasoning() {

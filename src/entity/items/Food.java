@@ -61,12 +61,12 @@ public class Food extends Item {
     // --- Cook Method Accessors (linked to last performed step) ---
     public String getCookMethod() {
         if (performedSteps.isEmpty()) return "";
-        return performedSteps.get(0).getStation(); // Primary station
+        return performedSteps.get(performedSteps.size() - 1).getStation(); 
     }
 
     public String getSecondaryCookMethod() {
         if (performedSteps.size() < 2) return "";
-        return performedSteps.get(1).getStation(); // Secondary station
+        return performedSteps.get(performedSteps.size() - 2).getStation(); 
     }
 
     // --- Draw / Image ---
@@ -87,7 +87,7 @@ public class Food extends Item {
 
         String primary = getCookMethod();
         String secondary = getSecondaryCookMethod();
-
+        
         // Prioritize primary station images
         switch (primary) {
             case "Frying Pan": return panPlated;

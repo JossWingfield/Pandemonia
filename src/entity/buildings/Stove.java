@@ -1,7 +1,5 @@
 package entity.buildings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.glfw.GLFW;
@@ -12,12 +10,12 @@ import entity.items.Food;
 import entity.items.FoodState;
 import entity.items.FryingPan;
 import entity.items.Item;
+import entity.items.OvenTray;
 import entity.items.Plate;
 import entity.items.SmallPan;
 import main.GamePanel;
 import main.renderer.Colour;
 import main.renderer.Renderer;
-import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import map.LightSource;
 
@@ -216,6 +214,14 @@ public class Stove extends Building {
 										pan.resetImages();
 									}
 								}
+							} else if(gp.player.currentItem instanceof OvenTray ovenTray) {
+								if(ovenTray.canBeAddedToTray(pan.cookingItem.getName(), pan.cookingItem.foodState)) {
+	    							ovenTray.addIngredient(pan.cookingItem);
+	    							pan.cookingItem = null;
+	    							pan.stopCooking();
+	    							pan.resetImages();
+	    							gp.player.clickCounter = 0.1;
+	    						}
 							}
 						} else if(leftSlot.getName().equals("Frying Pan")) {
 							FryingPan pan = (FryingPan)leftSlot;
@@ -252,6 +258,14 @@ public class Stove extends Building {
 										pan.resetImages();
 									}
 								}
+							} else if(gp.player.currentItem instanceof OvenTray ovenTray) {
+								if(ovenTray.canBeAddedToTray(pan.cookingItem.getName(), pan.cookingItem.foodState)) {
+	    							ovenTray.addIngredient(pan.cookingItem);
+	    							pan.cookingItem = null;
+	    							pan.stopCooking();
+	    							pan.resetImages();
+	    							gp.player.clickCounter = 0.1;
+	    						}
 							}
 						}
 					}
@@ -364,6 +378,14 @@ public class Stove extends Building {
 										pan.resetImages();
 									}
 								}
+							} else if(gp.player.currentItem instanceof OvenTray ovenTray) {
+								if(ovenTray.canBeAddedToTray(pan.cookingItem.getName(), pan.cookingItem.foodState)) {
+	    							ovenTray.addIngredient(pan.cookingItem);
+	    							pan.cookingItem = null;
+	    							pan.stopCooking();
+	    							pan.resetImages();
+	    							gp.player.clickCounter = 0.1;
+	    						}
 							}
 						} else if(rightSlot.getName().equals("Frying Pan")) {
 							FryingPan pan = (FryingPan)rightSlot;
@@ -400,6 +422,14 @@ public class Stove extends Building {
 										pan.resetImages();
 									}
 								}
+							} else if(gp.player.currentItem instanceof OvenTray ovenTray) {
+								if(ovenTray.canBeAddedToTray(pan.cookingItem.getName(), pan.cookingItem.foodState)) {
+	    							ovenTray.addIngredient(pan.cookingItem);
+	    							pan.cookingItem = null;
+	    							pan.stopCooking();
+	    							pan.resetImages();
+	    							gp.player.clickCounter = 0.1;
+	    						}
 							}
 						}
 					}

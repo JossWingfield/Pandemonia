@@ -14,7 +14,7 @@ import utility.save.RecipeSaveData;
 public class RecipeManager {
     private static final List<Recipe> allRecipes = new ArrayList<>();   // all possible recipes
     private static List<Recipe> unlockedRecipes = new ArrayList<>(); // currently unlocked recipes
-    private static final List<Recipe> currentOrders = new ArrayList<>();
+    private static final List<Order> currentOrders = new ArrayList<>();
     private static final List<Recipe> cursedRecipes = new ArrayList<>(); 
     
     private static final Random random = new Random();
@@ -636,7 +636,7 @@ public class RecipeManager {
         return new ArrayList<>(allRecipes);
     }
     public static boolean areHauntedRecipesPresent() {
-    	for (Recipe recipe : currentOrders) {
+    	for (Order recipe : currentOrders) {
             if(recipe.isCursed) {
             	return true;
             }
@@ -699,17 +699,17 @@ public class RecipeManager {
         return cursedRecipes.get(random.nextInt(cursedRecipes.size()));
     }
 
-    public static void addOrder(Recipe recipe) {
-        currentOrders.add(recipe);
+    public static void addOrder(Order order) {
+        currentOrders.add(order);
     }
 
-    public static void removeOrder(Recipe recipe) {
-        currentOrders.remove(recipe);
+    public static void removeOrder(Order order) {
+        currentOrders.remove(order);
     }
 
     public static boolean completeOrder(List<PreparedIngredient> plate) {
         for (int i = 0; i < currentOrders.size(); i++) {
-            Recipe order = currentOrders.get(i);
+            Recipe order = currentOrders.get(i).getRecipe();
             if (order.matches(plate)) {
                 order.incrementCookCount();
                 currentOrders.remove(i);
@@ -724,7 +724,7 @@ public class RecipeManager {
 	    return texture;
 	}
 
-    public static List<Recipe> getCurrentOrders() {
+    public static List<Order> getCurrentOrders() {
         return currentOrders;
     }
     public static RecipeSaveData saveRecipeData() {

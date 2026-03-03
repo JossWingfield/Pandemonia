@@ -187,9 +187,9 @@ public class Player extends Entity{
         this.soulsServed = data.soulsServed;
         this.nextLevelAmount = data.nextLevelAmount;
         this.wealth = data.wealth;
-        this.hitbox.x = data.x;
-        this.hitbox.y = data.y;
-        this.currentRoomIndex = data.currentRoomIndex;
+        //this.hitbox.x = data.x;
+        //this.hitbox.y = data.y;
+        //this.currentRoomIndex = data.currentRoomIndex;
         gp.world.mapM.setRoom(currentRoomIndex);
         
         /*
@@ -346,23 +346,29 @@ public class Player extends Entity{
     	boolean right = keyI.isKeyPressed(GLFW.GLFW_KEY_D);
     	boolean up = keyI.isKeyPressed(GLFW.GLFW_KEY_W);
     	boolean down = keyI.isKeyPressed(GLFW.GLFW_KEY_S);
+    	
+    	float baseSpeed = speed;
+    	if(gp.world.mapM.isFreezerRoom()) {
+    		baseSpeed = speed * 0.5f;
+    	}
+    	
     	if(direction == 0 || direction == 1) {
     		if(up || down) { //NORMALISING SPEED
-        		currentSpeed = (float)(speed/(Math.sqrt(2)));
+        		currentSpeed = (float)(baseSpeed/(Math.sqrt(2)));
         	} else {
-        		currentSpeed = speed;
+        		currentSpeed = baseSpeed;
         	}
     	} else if(direction == 2 || direction == 3) {
     		if(left || right) { //NORMALISING SPEED
-        		currentSpeed = (float)(speed/(Math.sqrt(2)));
+        		currentSpeed = (float)(baseSpeed/(Math.sqrt(2)));
         	} else {
-        		currentSpeed = speed;
+        		currentSpeed = baseSpeed;
         	}
     	}
     }
 
     private void handleMovement(double dt) {
-
+    	
     	boolean left = keyI.isKeyPressed(GLFW.GLFW_KEY_A);
     	boolean right = keyI.isKeyPressed(GLFW.GLFW_KEY_D);
     	boolean up = keyI.isKeyPressed(GLFW.GLFW_KEY_W);
@@ -378,7 +384,7 @@ public class Player extends Entity{
             	}
             }
     		
-
+    		
             if (left) { //Moving left
             	direction = 1;
             	facingLeft = true;
@@ -617,7 +623,15 @@ public class Player extends Entity{
 		    							table.currentItem = null;
 		    							clickCounter = 0.1;
 		    						}
-		    					}
+		    					} else if(table.currentItem instanceof OvenTray ovenTray) {
+		    						if(ovenTray.canBeAddedToTray(pan.cookingItem.getName(), pan.cookingItem.foodState)) {
+		    							ovenTray.addIngredient(pan.cookingItem);
+		    							pan.cookingItem = null;
+		    							pan.stopCooking();
+		    							pan.resetImages();
+		    							clickCounter = 0.1;
+		    						}
+			    				}
 		    				} else if (currentItem instanceof Fryer fryer) {
 		    					if (table.currentItem instanceof Plate plate) {
 		    					    if (tryPlateFromFryer(fryer, plate)) {
@@ -643,6 +657,14 @@ public class Player extends Entity{
 		    						if(ovenTray.getFoodState().equals(FoodState.COOKED)) {
 		    							ovenTray.addToPlate(plate);
 		    							table.currentItem = plate;
+		    					    	clickCounter = 0.1;
+		    						}
+		    					} else if (table.currentItem instanceof CookingItem pan) {
+		    						if(ovenTray.canBeAddedToTray(pan.cookingItem.getName(), pan.cookingItem.foodState)) {
+		    							ovenTray.addIngredient(pan.cookingItem);
+		    							pan.cookingItem = null;
+		    							pan.stopCooking();
+		    							pan.resetImages();
 		    					    	clickCounter = 0.1;
 		    						}
 		    					}

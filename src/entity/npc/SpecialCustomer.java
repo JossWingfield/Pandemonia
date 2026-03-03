@@ -105,18 +105,18 @@ public class SpecialCustomer extends Customer {
 	    if(foodOrder == null) return;
 
 	    // base payment
-	    gp.player.wealth += (foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder), moneyMultiplier));
+	    gp.player.wealth += (foodOrder.getRecipe().getCost(gp.world.gameM.isRecipeSpecial(foodOrder.getRecipe()), moneyMultiplier));
 
 	    // tip logic based on patience
 	    float progress = (float)(patienceCounter / maxPatienceTime);
 	    int tip = 0;
 
 	    if(progress <= 0.33f) { // green zone
-	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder), moneyMultiplier) * greenTipMultiplier);
+	        tip = (int)(foodOrder.getRecipe().getCost(gp.world.gameM.isRecipeSpecial(foodOrder.getRecipe()), moneyMultiplier) * greenTipMultiplier);
 	    } else if(progress <= 0.66f) { // orange zone
-	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder), moneyMultiplier) * orangeTipMultiplier);
+	        tip = (int)(foodOrder.getRecipe().getCost(gp.world.gameM.isRecipeSpecial(foodOrder.getRecipe()), moneyMultiplier) * orangeTipMultiplier);
 	    } else { // red zone
-	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder), moneyMultiplier) * redTipMultiplier);
+	        tip = (int)(foodOrder.getRecipe().getCost(gp.world.gameM.isRecipeSpecial(foodOrder.getRecipe()), moneyMultiplier) * redTipMultiplier);
 	    }
 	    gp.player.wealth += tip;
 

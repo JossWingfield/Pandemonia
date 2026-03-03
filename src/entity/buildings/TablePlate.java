@@ -146,7 +146,7 @@ public class TablePlate extends Building {
 		    		orderCompleted = false;
 		    		showDirtyPlate = true;
 		       		plate = new Plate(gp, hitbox.x, hitbox.y);
-		    		plate.setDirty(currentCustomer.foodOrder.dirtyPlate);
+		    		plate.setDirty(currentCustomer.foodOrder.getRecipe().dirtyPlate);
 		    		plate.setCurrentStackCount(1);
 		    	}
 		    }
@@ -160,7 +160,7 @@ public class TablePlate extends Building {
 				    	if(gp.player.currentItem != null) {
 				    		if(gp.player.currentItem instanceof Plate plate) {
 				    			if(currentCustomer.foodOrder != null) {
-					    			if(currentCustomer.foodOrder.matches(plate.getPreparedIngredients())) {
+					    			if(currentCustomer.foodOrder.getRecipe().matches(plate.getPreparedIngredients())) {
 					    				currentCustomer.completeOrder(plate);
 					    				orderCompleted = true;
 					    			}
@@ -208,7 +208,7 @@ public class TablePlate extends Building {
 		}
 	    if(orderCompleted) {
 	    	if(currentCustomer.isEating()) {
-	    		renderer.draw(currentCustomer.foodOrder.finishedPlate, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
+	    		renderer.draw(currentCustomer.foodOrder.getRecipe().finishedPlate, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    	}
 	    }
 	    

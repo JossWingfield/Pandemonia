@@ -15,6 +15,7 @@ import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import utility.RoomHelperMethods;
 import utility.Statistics;
+import utility.recipe.Order;
 import utility.recipe.Recipe;
 import utility.recipe.RecipeManager;
 
@@ -32,7 +33,7 @@ public class Customer extends NPC {
 	private boolean onToilet = false;
 	protected Chair currentChair = null;
 	private Toilet toilet = null;
-	public Recipe foodOrder = null;
+	public Order foodOrder = null;
 	private double eatTime = 5;
 	private double eatCounter = 0;
 	protected TextureRegion orderSign, warningOrderSign;
@@ -310,35 +311,24 @@ public class Customer extends NPC {
 		
 	}
 	private void makeOrder() {
-		if(isGhost) {
-			foodOrder = RecipeManager.getRandomCursedRecipe();
+		Recipe template;
+
+		if (isGhost) {
+		    template = RecipeManager.getRandomCursedRecipe();
 		} else {
-			foodOrder = gp.world.gameM.getRandomMenuRecipe();
+		    template = gp.world.gameM.getRandomMenuRecipe();
+		}
+
+		Order order = new Order(template, this);
+
+		// Seasoning
+		if (gp.world.progressM.seasoningUnlocked && r.nextFloat() < 0.2f) {
+		    String[] seasonings = {"Basil", "Sage", "Rosemary", "Thyme"};
+		    order.setSeasoning(seasonings[r.nextInt(seasonings.length)]);
 		}
 		
-		if (gp.world.progressM.seasoningUnlocked) {
-			if (r.nextFloat() < 0.2f) {
-				String seasoning = "Basil";
-				int num = r.nextInt(4);
-				switch(num) {
-				case 0:
-					seasoning = "Basil";
-					break;
-				case 1:
-					seasoning = "Sage";
-					break;
-				case 2:
-					seasoning = "Rosemary";
-					break;
-				case 3:
-					seasoning = "Thyme";
-					break;
-				}
-				foodOrder.setSeasoned(seasoning);
-		    }
-		}
-		
-		RecipeManager.addOrder(foodOrder);
+		foodOrder = order;
+		RecipeManager.addOrder(order);
 		ordered = true;
 		gp.gui.addOrder(foodOrder, this, renderer);
 	}
@@ -348,7 +338,7 @@ public class Customer extends NPC {
 	public void completeOrder(Plate p) {
 	    if(foodOrder == null) return;
 
-	    int baseCost = foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder));
+	    int baseCost = foodOrder.getRecipe().getCost(gp.world.gameM.isRecipeSpecial(foodOrder.getRecipe()));
 	    // base payment
 	    gp.player.wealth += baseCost;
 
@@ -358,11 +348,11 @@ public class Customer extends NPC {
 	    int tip = 0;
 
 	    if(progress <= 0.33f) { // green zone
-	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder)) * greenTipMultiplier);
+	        tip = (int)(foodOrder.getRecipe().getCost(gp.world.gameM.isRecipeSpecial(foodOrder.getRecipe())) * greenTipMultiplier);
 	    } else if(progress <= 0.66f) { // orange zone
-	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder)) * orangeTipMultiplier);
+	        tip = (int)(foodOrder.getRecipe().getCost(gp.world.gameM.isRecipeSpecial(foodOrder.getRecipe())) * orangeTipMultiplier);
 	    } else { // red zone
-	        tip = (int)(foodOrder.getCost(gp.world.gameM.isRecipeSpecial(foodOrder)) * redTipMultiplier);
+	        tip = (int)(foodOrder.getRecipe().getCost(gp.world.gameM.isRecipeSpecial(foodOrder.getRecipe())) * redTipMultiplier);
 	    }
 	    
 	    boolean addTip = true;
