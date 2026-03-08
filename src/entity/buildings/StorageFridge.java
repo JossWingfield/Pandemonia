@@ -8,6 +8,7 @@ import java.util.Random;
 import org.lwjgl.glfw.GLFW;
 
 import entity.items.Bread;
+import entity.items.BreadCrumbs;
 import entity.items.Cheese;
 import entity.items.Chicken;
 import entity.items.Egg;
@@ -86,6 +87,7 @@ public class StorageFridge extends Building {
 		contents.add(new Spaghetti(gp, 0, 0));
 		contents.add(new Penne(gp, 0, 0));
 		contents.add(new Lasagna(gp, 0, 0));
+		contents.add(new BreadCrumbs(gp, 0, 0));
 		if(starterFridge) {
 			contents.add(new Tomato(gp, 0, 0));
 			contents.add(new Greens(gp, 0, 0));

@@ -69,6 +69,7 @@ public class Fryer extends Item {
 	}
 	private void setUp() {
 		allowInFryer("Potato", FoodState.FROZEN);
+		allowInFryer("Chicken Pieces", FoodState.FROZEN);
 	}
 	private void allowInFryer(String ingredientName, FoodState... allowedStates) {
 		canBeFried.putIfAbsent(ingredientName, new HashSet<>());

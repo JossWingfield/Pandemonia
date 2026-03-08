@@ -40,6 +40,10 @@ public class MenuSign extends Building {
     private Colour specialHover = new Colour(169, 187, 102);
     
     BitmapFont font;
+    
+    private int recipePage = 0;
+    private final int RECIPES_PER_PAGE = 16;
+    private final int RECIPES_PER_COLUMN = 8;
 
     public MenuSign(GamePanel gp, float xPos, float yPos) {
         super(gp, xPos, yPos, 48, 48);
@@ -104,9 +108,9 @@ public class MenuSign extends Building {
                 || (gp.world.gameM.getCurrentPhase() == DayPhase.SERVICE && !gp.world.gameM.isMenuChosen());
         if(interactHitbox.intersects(gp.player.interactHitbox) && canInteract) {
 
-            renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , 
+            renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset, 
                     (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-
+            
             // Open UI on key press
             if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0 && !gp.world.cutsceneM.cutsceneActive) {
                 uiOpen = !uiOpen;
@@ -215,10 +219,27 @@ public class MenuSign extends Building {
 	            addOrder(r, renderer);
 	        }
 	    }
-
+	
 	    // Remove today’s specials from unlocked list
 	    List<Recipe> specials = gp.world.gameM.getTodaysSpecials();
 	    unlocked.removeAll(specials);
+	    gp.world.gameM.tryGenerateChefSpecials();
+	    
+	    if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_RIGHT)) {
+	        recipePage++;
+
+	        int maxPages = (int)Math.ceil(unlocked.size() / (float)RECIPES_PER_PAGE);
+	        if (recipePage >= maxPages) {
+	            recipePage = maxPages-1;
+	        }
+	    } else if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_LEFT)) {
+	        recipePage--;
+	        
+	        if (recipePage < 0) {
+	            recipePage = 0;
+	        }
+	    }
+	    
 	    
 	    float fontScale = 0.7f;
 
@@ -226,37 +247,47 @@ public class MenuSign extends Building {
 	    int startY = 256;
 	    int lineHeight = (int)((fontScale*32) + 4);
 
-	    for (int i = 0; i < unlocked.size(); i++) {
-	        Recipe recipe = unlocked.get(i);
-	        RecipeRenderData data = renderCache.get(recipe); // cached render data
+	    int startIndex = recipePage * RECIPES_PER_PAGE;
+	    int endIndex = Math.min(startIndex + RECIPES_PER_PAGE, unlocked.size());
 
-	        int textX = startX;
-	        int textY = startY + i * lineHeight;
-	        int maxNumInColumn = 8;
-	        if (i > maxNumInColumn) {
-	            textX = startX + 160;
-	            textY = startY + (i - maxNumInColumn - 1) * lineHeight;
-	        }
+	    for (int i = startIndex; i < endIndex; i++) {
+	        Recipe recipe = unlocked.get(i);
+	        RecipeRenderData data = renderCache.get(recipe);
+
+	        int localIndex = i - startIndex;
+
+	        int column = localIndex / RECIPES_PER_COLUMN;
+	        int row = localIndex % RECIPES_PER_COLUMN;
+
+	        int textX = startX + column * 160;
+	        int textY = startY + row * lineHeight;
 
 	        int textWidth = (int)gp.renderer.measureStringWidth(font, recipe.getName(), fontScale);
 	        int textHeight = (int)(fontScale*32);
-	        Rectangle2D.Float nameHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
+
+	        Rectangle2D.Float nameHitbox =
+	            new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
 
 	        boolean hovering = nameHitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY());
+
 	        Colour c = Colour.BLACK;
+
 	        if (hovering) {
 	            drawRecipe(renderer, data, 8 + 2 * (36*3), 581);
 	            c = Colour.WHITE;
+
 	            if (gp.mouseL.mouseButtonDown(0)) {
 	                gp.world.gameM.addRecipeToMenu(recipe);
 	            }
 	        } else {
 	            c = hoverColor;
 	        }
+
 	        String text = recipe.getName();
 	        for (int a = 0; a < recipe.getStarLevel(); a++) {
 	            text += " *";
 	        }
+
 	        renderer.drawString(font, text, textX, textY, fontScale, c);
 	    }
 
@@ -311,18 +342,11 @@ public class MenuSign extends Building {
 	                    clickCooldown = 0.1;
 	                }
 	            }
-	            case 3 -> {
-	                int x = 491, y = 398;
-	                drawRecipe(renderer, data, x, y);
-	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
-	                if (border.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY()) &&
-	                    gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-	                    gp.world.gameM.removeRecipeFromMenu(recipe);
-	                    clickCooldown = 0.1;
-	                }
-	            }
-	            case 4 -> {
-	                int x = 605, y = 398;
+	            case 3, 4, 5 -> {
+	            	int index = i-3;
+	                int x = 426 + (index)*(36*3) + index*5 + 11;
+	                
+	                int y = 398;
 	                drawRecipe(renderer, data, x, y);
 	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
 	                if (border.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY()) &&
@@ -333,11 +357,11 @@ public class MenuSign extends Building {
 	            }
 	        }
 	    }
-
+	    
 	    // Done button
 	    Colour newCol = Colour.WHITE;
 	    String text = "Done";
-	    int textX = 730, textY = 544;
+	    int textX = 730+34, textY = 544;
 	    int textWidth = (int)gp.renderer.measureStringWidth(font, text, fontScale);
         int textHeight = (int)(fontScale*32);
 	    Rectangle2D.Float doneHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
@@ -346,6 +370,7 @@ public class MenuSign extends Building {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            uiOpen = false;
 	            clickCooldown = 0.1;
+	            gp.world.gameM.checkDoneMenu();
 	        }
 	    }
 	    renderer.drawString(font, text, textX, textY, 1.0f, newCol);
@@ -381,13 +406,7 @@ public class MenuSign extends Building {
 		int iconY = ingredientY + 32; // below ingredient
 		
 		for (int s = 0; s < icons.size(); s++) {
-		renderer.draw(
-		        icons.get(s),
-		        startX + s * iconSpacing,
-		        iconY,
-		        iconSize,
-		        iconSize
-		);
+			//renderer.draw(icons.get(s),startX + s * iconSpacing,iconY,iconSize,iconSize);
 		}
 		}
 		

@@ -54,6 +54,7 @@ public class Freezer extends Building {
 	}
 	private void setUp() {
 		allowInFreezer("Potato", FoodState.CHOPPED);
+		allowInFreezer("Chicken Pieces", FoodState.COATED);
 	}
 	private void allowInFreezer(String ingredientName, FoodState... allowedStates) {
 		canBeFrozen.putIfAbsent(ingredientName, new HashSet<>());

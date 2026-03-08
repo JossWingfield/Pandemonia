@@ -4,6 +4,7 @@ import entity.items.Asparagus;
 import entity.items.Aubergine;
 import entity.items.Basil;
 import entity.items.Bread;
+import entity.items.BreadCrumbs;
 import entity.items.BreadSlice;
 import entity.items.BurntFood;
 import entity.items.Carrot;
@@ -106,6 +107,7 @@ public class ItemRegistry {
 			case "Fennel Seeds" -> i = new FennelSeeds(gp, 0, 0);
 			case "Garlic Powder" -> i = new GarlicPowder(gp, 0, 0);
 			case "Seasoning Blend" -> i = new SeasoningBlend(gp, 0, 0);
+			case "Bread Crumbs" -> i = new BreadCrumbs(gp, 0, 0);
 			case "Ice Block" -> i = new IceBlock(gp, null);
 			case "Cursed Greens" -> i = new CursedGreens(gp, 0, 0);
 			case "Burnt Food" -> i = new BurntFood(gp, 0, 0);

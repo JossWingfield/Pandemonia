@@ -349,7 +349,7 @@ public class Player extends Entity{
     	
     	float baseSpeed = speed;
     	if(gp.world.mapM.isFreezerRoom()) {
-    		baseSpeed = speed * 0.5f;
+    		baseSpeed = speed * 0.6f;
     	}
     	
     	if(direction == 0 || direction == 1) {

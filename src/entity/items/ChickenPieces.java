@@ -21,6 +21,9 @@ public class ChickenPieces extends Food {
 		choppedImage = importImage("/food/pasta/Chicken.png").getSubimage(16, 0, 16, 16);
 		panPlated = importImage("/food/pasta/Chicken.png").getSubimage(16, 0, 16, 16);
 		choppedImage = importImage("/food/pasta/Chicken.png").getSubimage(16, 0, 16, 16);
+		coatedImage = importImage("/food/coating/BreadCrumbs.png").getSubimage(16, 0, 16, 16);
+		frozenImage = importImage("/food/coating/BreadCrumbs.png").getSubimage(32, 0, 16, 16);
+		friedPlated = importImage("/food/coating/BreadCrumbs.png").getSubimage(48, 0, 16, 16);
 	}
 	
 	

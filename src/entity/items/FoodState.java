@@ -6,5 +6,6 @@ public enum FoodState {
 	COOKED,
 	PLATED,
 	BURNT,
-	FROZEN
+	FROZEN,
+	COATED
 }

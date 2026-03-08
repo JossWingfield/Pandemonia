@@ -47,9 +47,11 @@ public class GameManager {
     // === Menu system ===
     private List<Recipe> todaysMenu = new ArrayList<>();     // player-selected menu
     private List<Recipe> todaysSpecials = new ArrayList<>(); // generated specials
+    private List<Recipe> chefSpecials = new ArrayList<>(); 
     private boolean menuChosen = false;
-    private int maxMenuSize = 5;
+    private int maxMenuSize = 6;
     private int lastTimePeriod = 0;
+    private int chefSpecialNum = 3;
     
     // === Event system ===
     private boolean eventsOn = false;
@@ -125,9 +127,23 @@ public class GameManager {
             todaysSpecials.add(unlockedRecipes.get(i));
         }
     }
+    public void tryGenerateChefSpecials() {
+        if (chefSpecials.isEmpty()) {
+        	List<Recipe> unlocked = gp.world.recipeM.getUnlockedRecipes();
+	        if (!unlocked.isEmpty()) {
+	            generateChefSpecials(unlocked);
+	            // optionally also add to todaysMenu
+	            todaysMenu.addAll(chefSpecials);
+	        }
+        }
+    }
     public void removeRecipeFromMenu(Recipe recipe) {
         if (recipe == null) return;
 
+        if(chefSpecials.contains(recipe)) {
+        	return;
+        }
+        
         todaysMenu.remove(recipe);
 
         // If menu becomes empty again, mark as not chosen
@@ -142,6 +158,23 @@ public class GameManager {
     	generateDailySpecials(RecipeManager.getUnlockedRecipes());
         return Collections.unmodifiableList(todaysSpecials);
     }
+    public List<Recipe> getTodaysChefSpecials() {
+    	if(chefSpecials.size() != 0) {
+    		return chefSpecials;
+    	}
+    	generateChefSpecials(RecipeManager.getUnlockedRecipes());
+    	todaysMenu.addAll(chefSpecials);
+        return Collections.unmodifiableList(chefSpecials);
+    }
+    public void generateChefSpecials(List<Recipe> unlockedRecipes) {
+    	chefSpecials.clear();
+        Collections.shuffle(unlockedRecipes);
+
+        // Pick 3 specials
+        for (int i = 0; i < chefSpecialNum && i < unlockedRecipes.size(); i++) {
+        	chefSpecials.add(unlockedRecipes.get(i));
+        }
+    }
     public boolean isRecipeSpecial(Recipe recipe) {
         if (recipe == null) return false;
         return todaysSpecials.contains(recipe);
@@ -152,6 +185,7 @@ public class GameManager {
     // === Menu management ===
     public void setTodaysMenu(List<Recipe> menu) {
         todaysMenu.clear();
+        todaysMenu.addAll(chefSpecials);
         todaysMenu.addAll(menu);
         if(gp.world.progressM.currentPhase != 1) {
         	todaysMenu.add(gp.world.recipeM.chooseChefSpecial(menu));
@@ -171,6 +205,11 @@ public class GameManager {
 
         // Once player has added at least 1 recipe, mark menu as chosen
         if (todaysMenu.size() == maxMenuSize) {
+            //menuChosen = true;
+        }
+    }
+    public void checkDoneMenu() {
+    	if (todaysMenu.size() == maxMenuSize) {
             menuChosen = true;
         }
     }
@@ -455,6 +494,7 @@ public class GameManager {
 
         // Generate new specials at start of new day
         generateDailySpecials(gp.world.recipeM.getUnlockedRecipes());
+	    getTodaysChefSpecials();
         gp.saveM.saveGame();
     }
 

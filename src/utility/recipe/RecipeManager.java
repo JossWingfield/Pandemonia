@@ -19,7 +19,7 @@ public class RecipeManager {
     
     private static final Random random = new Random();
     
-    private TextureRegion  PanIcon, choppedIcon, PotIcon, ovenIcon, fryerIcon, freezerIcon, seasoningIcon, ovenTrayIcon;
+    private TextureRegion  PanIcon, choppedIcon, PotIcon, ovenIcon, fryerIcon, freezerIcon, seasoningIcon, ovenTrayIcon, coatedIcon;
     private TextureRegion  PanIcon2, choppedIcon2, PotIcon2, ovenIcon2;
 
     public RecipeManager() {
@@ -496,6 +496,41 @@ public class RecipeManager {
                 3
             );
         registerRecipe(chips);
+        Recipe friedChicken = new Recipe(
+                "Fried Chicken",
+                Arrays.asList(
+            	        new RecipeIngredient("Chicken Pieces")
+            	        	.addStep("Chopping Board")
+            	         	.addStep("Coated")
+            	           	.addStep("Freezer")
+            	        	.addStep("Fryer")
+            	    ),
+                importImage("/food/coating/BreadCrumbs.png").getSubimage(64, 0, 16, 16),
+                null,
+                11,
+                3
+            );
+        registerRecipe(friedChicken);
+        
+        Recipe chickenAndChips = new Recipe(
+                "Chicken and Chips",
+                Arrays.asList(
+            	        new RecipeIngredient("Chicken Pieces")
+            	        	.addStep("Chopping Board")
+            	         	.addStep("Coated")
+            	           	.addStep("Freezer")
+            	        	.addStep("Fryer"),
+            	        new RecipeIngredient("Potato")
+            	        	.addStep("Chopping Board")
+            	           	.addStep("Freezer")
+            	        	.addStep("Fryer")
+            	    ),
+                importImage("/food/coating/BreadCrumbs.png").getSubimage(80, 0, 16, 16),
+                null,
+                13,
+                3
+            );
+        registerRecipe(chickenAndChips);
         
         //ADDITIONAL RECIPES TO ADD:
         //OVEN RECIPES
@@ -552,6 +587,7 @@ public class RecipeManager {
         choppedIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(32, 0, 16, 16);
         PotIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(16, 0, 16, 16);
         ovenIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(48, 0, 16, 16);
+        coatedIcon = importImage("/food/coating/BreadCrumbs.png").getSubimage(0, 0, 16, 16);
         
         unlockAllRecipes();
     }
@@ -702,11 +738,9 @@ public class RecipeManager {
     public static void addOrder(Order order) {
         currentOrders.add(order);
     }
-
     public static void removeOrder(Order order) {
         currentOrders.remove(order);
     }
-
     public static boolean completeOrder(List<PreparedIngredient> plate) {
         for (int i = 0; i < currentOrders.size(); i++) {
             Recipe order = currentOrders.get(i).getRecipe();

@@ -1,7 +1,11 @@
 package entity.items;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import main.GamePanel;
 import main.renderer.Renderer;
@@ -12,9 +16,9 @@ public class Food extends Item {
 
     public FoodState foodState;
     protected int foodLayer = 0;
-
+    
     // Images for different states
-    public TextureRegion rawImage, choppedImage, frozenImage, burntImage;
+    public TextureRegion rawImage, choppedImage, frozenImage, burntImage, coatedImage;
     public TextureRegion panPlated, potPlated, ovenPlated, friedPlated, generalPlated;
 
     protected List<CookStep> performedSteps = new ArrayList<>();
@@ -24,14 +28,50 @@ public class Food extends Item {
 
     protected int chopCount = 12;
     protected int cookTime = 24;
+    
+	private Map<String, Set<FoodState>> canBeCoated = new HashMap<>();
 
     // Constructor
     public Food(GamePanel gp, float xPos, float yPos) {
         super(gp, xPos, yPos);
         foodState = FoodState.RAW;
         burntImage = importImage("/food/BurntFood.png").toTextureRegion();
+        setUp();
     }
+    private void setUp() {
+		allowToBeCoated("Chicken Pieces", FoodState.RAW);
+	}
+    public boolean canBeCoated() {
 
+    	// Ingredient not supported at all
+		if (!canBeCoated.containsKey(getName())) {
+		    return false;
+		}
+
+		    // Food is in the wrong state
+		Set<FoodState> allowedStates = canBeCoated.get(getName());
+		if (!allowedStates.contains(foodState)) {
+		    return false;
+		}
+		    
+		return true;
+	}
+    public void addCoating(Coating coating) {
+
+        if (!canBeCoated()) return;
+
+        foodState = FoodState.COATED;
+        
+        // Add cook step
+        performedSteps.add(new CookStep("Coated"));
+
+    }
+    private void allowToBeCoated(String ingredientName, FoodState... allowedStates) {
+    	canBeCoated.putIfAbsent(ingredientName, new HashSet<>());
+	    for (FoodState state : allowedStates) {
+	    	canBeCoated.get(ingredientName).add(state);
+	    }
+	}
     // --- Step Handling ---
     public void addStep(String station) {
         performedSteps.add(new CookStep(station));
@@ -76,6 +116,7 @@ public class Food extends Item {
             case CHOPPED: return choppedImage;
             case FROZEN: return frozenImage;
             case BURNT: return burntImage;
+            case COATED: return coatedImage;
             case COOKED:
             case PLATED: return getPlatedImage();
             default: return rawImage;
