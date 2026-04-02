@@ -10,6 +10,7 @@ void main() {
     vUV = aUV;
     gl_Position = vec4(aPos, 0.0, 1.0);
 }
+
 #type fragment
 #version 330 core
 
@@ -18,6 +19,12 @@ out vec4 FragColor;
 
 uniform sampler2D uScene;
 uniform sampler2D uEmissive;
+uniform sampler2D uOcclusion;
+uniform mat4 uInvProjection;
+uniform mat4 uInvView;
+uniform vec2 uWorldSize;
+uniform vec2 uCameraPos;
+uniform float uZoom;
 
 uniform vec2 uScreenSize;
 
@@ -26,52 +33,273 @@ uniform float uAmbientIntensity;
 
 uniform int uNumLights;
 
+#define MAX_SHADOW_CASTERS 64
+
+// Building shadows (quad method)
+uniform int uNumBuildingCasters;
+uniform vec2 uBuildingCasterLeft[MAX_SHADOW_CASTERS];
+uniform vec2 uBuildingCasterRight[MAX_SHADOW_CASTERS];
+uniform float uBuildingCasterStrength[MAX_SHADOW_CASTERS];
+uniform float uBuildingShadowLengthMultiplier;
+uniform float uTime;
+uniform mat4 u_MVP;
+
+// Player shadows (old method)
+uniform int uNumPlayerCasters;
+uniform vec2 uPlayerCasterPos[MAX_SHADOW_CASTERS];
+uniform vec2 uPlayerCasterSize[MAX_SHADOW_CASTERS];
+uniform float uPlayerCasterStrength[MAX_SHADOW_CASTERS];
+
 struct Light {
-    vec2 position;   // SCREEN SPACE (pixels)
+    vec2 position;
     vec3 color;
     float radius;
     float intensity;
 };
 
+float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+}
+
+// Dust mote intensity based on position and time
+float dustMote(vec2 fragPos, float time)
+{
+    float dust = 0.0;
+    const int PARTICLE_COUNT = 50;
+    float scale = 3.0;
+
+    for (int i = 0; i < PARTICLE_COUNT; i++)
+    {
+        // Unique time offset per particle
+        float particleOffset = hash21(vec2(i, 9.0)) * 5.0; // 0-5s
+        float localTime = time + particleOffset;
+
+        // Spawn only in visible vertical zone
+        float minY = uScreenSize.y * 0.2;
+        float maxY = uScreenSize.y * 0.8;
+        vec2 spawn = vec2(
+            hash21(vec2(i, 1.0)) * uScreenSize.x,
+            mix(minY, maxY, hash21(vec2(i, 2.0)))
+        );
+
+        // Skip if occluded
+        float occ = texture(uOcclusion, spawn / uScreenSize).r;
+        if (occ < 0.1) continue;
+
+        // Vertical movement (UPWARDS)
+        float speedY = 3.0 + hash21(vec2(i, 3.0)) * 8.0;
+        spawn.y = mod(spawn.y - localTime * speedY - minY, maxY - minY) + minY;
+
+        // Sideways drifting
+        float sideSpeed = (hash21(vec2(i, 4.0)) - 0.5) * 40.0;
+        spawn.x += sin(localTime * 0.8 + hash21(vec2(i, 5.0)) * 20.0) * sideSpeed;
+
+        // Snap to pixel grid
+        spawn = floor(spawn / scale) * scale;
+
+        // 3x3 square
+        vec2 diff = fragPos - spawn;
+        if (abs(diff.x) < scale && abs(diff.y) < scale)
+        {
+            float life = sin(localTime * (1.5 + hash21(vec2(i, 6.0))) 
+                             + hash21(vec2(i, 7.0)) * 10.0) * 0.5 + 0.5;
+            life = smoothstep(0.2, 0.8, life);
+            dust += life;
+        }
+    }
+
+    return clamp(dust, 0.0, 1.0);
+}
 uniform Light uLights[64];
 
-void main() {
+uniform bool uOcclusionEnabled;
+uniform bool uShadowsEnabled;
+uniform bool uDustEnabled;
+
+float edgeTest(vec2 a, vec2 b, vec2 p)
+{
+    vec2 edge = b - a;
+    vec2 toPoint = p - a;
+    return edge.x * toPoint.y - edge.y * toPoint.x;
+}
+
+void main()
+{
     vec4 scene = texture(uScene, vUV);
     vec3 baseColor = scene.rgb;
     float alpha = scene.a;
 
-    // Early out for fully transparent pixels (optional optimization)
-    if (alpha <= 0.001) {
+    if (alpha <= 0.001)
         discard;
-    }
 
     vec2 fragPos = vec2(
         vUV.x * uScreenSize.x,
         (1.0 - vUV.y) * uScreenSize.y
     );
 
-    // Ambient light (NO alpha here)
+    // -------- Ambient --------
     vec3 lighting = uAmbientColor * uAmbientIntensity;
 
-    // Dynamic lights
-    for (int i = 0; i < uNumLights; i++) {
+    // -------- Lights --------
+    for (int i = 0; i < uNumLights; i++)
+    {
         Light L = uLights[i];
-        vec2 diff = L.position - fragPos;
-        float dist = length(diff);
 
-        if (dist < L.radius) {
-            float falloff = 1.0 - (dist / L.radius);
-            lighting += L.color * falloff * L.intensity;
+        vec2 lightToFrag = fragPos - L.position;
+        float fragDist = length(lightToFrag);
+
+        if (fragDist >= L.radius)
+            continue;
+
+        float falloff = 1.0 - (fragDist / L.radius);
+        vec3 lightContribution = L.color * falloff * L.intensity;
+
+        lighting += lightContribution;
+
+        if (!uShadowsEnabled)
+            continue;
+
+        for (int s = 0; s < uNumBuildingCasters; s++)
+{
+    vec2 left  = uBuildingCasterLeft[s];
+    vec2 right = uBuildingCasterRight[s];
+
+    vec2 edgeMid = (left + right) * 0.5;
+
+    vec2 dirL = normalize(left - L.position);
+    vec2 dirR = normalize(right - L.position);
+
+    float projectionLength = (L.radius - length(edgeMid - L.position)) * uBuildingShadowLengthMultiplier;
+    projectionLength = max(projectionLength, 1.0);
+
+    vec2 farLeft  = left  + dirL * projectionLength;
+    vec2 farRight = right + dirR * projectionLength;
+
+    bool inside =
+        edgeTest(left, right, fragPos)     >= 0.0 &&
+        edgeTest(right, farRight, fragPos) >= 0.0 &&
+        edgeTest(farRight, farLeft, fragPos) >= 0.0 &&
+        edgeTest(farLeft, left, fragPos)   >= 0.0;
+
+    if (inside)
+    {
+        vec2 nearCenter = (left + right) * 0.5;
+        vec2 farCenter  = (farLeft + farRight) * 0.5;
+
+        vec2 shadowAxis = normalize(farCenter - nearCenter);
+        float forwardDist = dot(fragPos - nearCenter, shadowAxis);
+
+        float fade = 1.0 - (forwardDist / projectionLength);
+        fade = clamp(fade, 0.0, 1.0);
+
+        lighting -= lightContribution * fade * uBuildingCasterStrength[s];
+    }
+}
+
+// --- Player Shadows (old method) ---
+for (int s = 0; s < uNumPlayerCasters; s++)
+{
+    vec2 casterPos = uPlayerCasterPos[s];
+    vec2 casterSize = uPlayerCasterSize[s];
+    float casterStrength = uPlayerCasterStrength[s];
+
+    float casterDist = length(casterPos - L.position);
+
+    if (casterDist < L.radius * 3.0)
+    {
+        vec2 shadowDir = normalize(casterPos - L.position);
+        vec2 fragToCaster = fragPos - casterPos;
+
+        float angle = atan(shadowDir.y, shadowDir.x);
+        float cosA = cos(angle);
+        float sinA = sin(angle);
+
+        vec2 shadowSpace = vec2(
+            fragToCaster.x * cosA + fragToCaster.y * sinA,
+            -fragToCaster.x * sinA + fragToCaster.y * cosA
+        );
+
+        if (shadowSpace.x > 0.0)
+        {
+            float dynamicLength = casterSize.x * (1.0 + (L.radius - casterDist) / L.radius);
+
+            float sx = shadowSpace.x / dynamicLength;
+            float sy = shadowSpace.y / casterSize.y;
+
+            float shadowMask = 1.0 - length(vec2(sx, sy));
+            shadowMask = clamp(shadowMask, 0.0, 1.0);
+            shadowMask = smoothstep(0.0, 1.0, shadowMask);
+
+            lighting -= lightContribution * shadowMask * casterStrength;
         }
     }
+}
+    }
+    
 
-    // Apply lighting to color
-    vec3 litScene = baseColor * lighting;
+    // -------- Occlusion --------
+    float occlusion = 1.0;
+ if (uOcclusionEnabled)
+{
+    // Offset by camera (top-left origin)
+    vec2 offset = vec2(
+        uCameraPos.x / uWorldSize.x,
+        -uCameraPos.y / uWorldSize.y   // flip Y
+    );
 
-    // Emissive adds light, NOT alpha-scaled
+    // Scale UVs by zoom relative to top-left
+ 	vec2 occlusionUV;
+    occlusionUV.x = vUV.x / uZoom + offset.x;            // X from first method
+    occlusionUV.y = (vUV.y - 1.0) / uZoom + 1.0 + offset.y; // Y from second method
+
+    float occ = texture(uOcclusion, occlusionUV).r;
+    occlusion = smoothstep(0.0, 1.0, occ);
+}
+
+    vec3 litScene = baseColor * lighting * occlusion;
+    
+    if(uDustEnabled) {
+	    float brightness = max(lighting.r, max(lighting.g, lighting.b));
+		brightness = clamp(brightness - uAmbientIntensity, 0.0, 1.0);
+	    
+	    //DUST MOTES
+	    float directLight = 0.0;
+	
+		for (int i = 0; i < uNumLights; i++)
+		{
+		    Light L = uLights[i];
+		    float dist = length(fragPos - L.position);
+		
+		    if (dist < L.radius)
+		    {
+		        float falloff = 1.0 - (dist / L.radius);
+		        directLight += falloff * L.intensity;
+		    }
+		}
+		
+		directLight = clamp(directLight, 0.0, 1.0);
+	    
+	    float dust = dustMote(fragPos, uTime);
+	
+		// Strong threshold so dust only appears in bright zones
+		float lightMask = smoothstep(0.05, 0.2, brightness);
+			
+		// Kill dust in shadowed areas
+		dust *= lightMask;
+		dust *= occlusion;
+			
+		vec3 dustColor = vec3(1.0, 0.95, 0.85);
+			
+		// Softer strength
+		litScene += dustColor * dust * 0.5;
+	}
+	
+    
+    // -------- Emissive --------
     vec3 emissive = texture(uEmissive, vUV).rgb;
     litScene += emissive;
 
-    // Preserve original alpha
     FragColor = vec4(litScene, alpha);
 }

@@ -20,6 +20,11 @@ out vec4 FragColor;
 uniform sampler2D uScene;
 uniform sampler2D uEmissive;
 uniform sampler2D uOcclusion;
+uniform mat4 uInvProjection;
+uniform mat4 uInvView;
+uniform vec2 uWorldSize;
+uniform vec2 uCameraPos;
+uniform float uZoom;
 
 uniform vec2 uScreenSize;
 
@@ -37,6 +42,7 @@ uniform vec2 uBuildingCasterRight[MAX_SHADOW_CASTERS];
 uniform float uBuildingCasterStrength[MAX_SHADOW_CASTERS];
 uniform float uBuildingShadowLengthMultiplier;
 uniform float uTime;
+uniform mat4 u_MVP;
 
 // Player shadows (old method)
 uniform int uNumPlayerCasters;
@@ -231,14 +237,26 @@ for (int s = 0; s < uNumPlayerCasters; s++)
     }
 }
     }
+    
 
     // -------- Occlusion --------
     float occlusion = 1.0;
-    if (uOcclusionEnabled)
-    {
-        float occ = texture(uOcclusion, vUV).r;
-        occlusion = smoothstep(0.0, 1.0, occ);
-    }
+ if (uOcclusionEnabled)
+{
+    // Offset by camera (top-left origin)
+    vec2 offset = vec2(
+        uCameraPos.x / uWorldSize.x,
+        -uCameraPos.y / uWorldSize.y   // flip Y
+    );
+
+    // Scale UVs by zoom relative to top-left
+ 	vec2 occlusionUV;
+    occlusionUV.x = vUV.x / uZoom + offset.x;            // X from first method
+    occlusionUV.y = (vUV.y - 1.0) / uZoom + 1.0 + offset.y; // Y from second method
+
+    float occ = texture(uOcclusion, occlusionUV).r;
+    occlusion = smoothstep(0.0, 1.0, occ);
+}
 
     vec3 litScene = baseColor * lighting * occlusion;
     

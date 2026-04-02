@@ -144,6 +144,27 @@ public class CollisionMethods {
         int newYPos = (tileY) * gp.tileSize; //Sets new position
         return newYPos;
     }
+    public static float getBuildingPosX(float playerX, Building b, float moveAmount, boolean movingLeft) {
+        if (b == null) return playerX; // no building, no adjustment
+
+        if (movingLeft) {
+            // If moving left, stop at the building's right edge
+            return b.hitbox.x + b.hitbox.width;
+        } else {
+            return b.hitbox.x - 32; // player stops at building’s left edge
+        }
+    }
+    public static float getBuildingPosY(float playerY, Building b, float moveAmount, boolean movingUp) {
+        if (b == null) return playerY; // no building, no adjustment
+
+        if (movingUp) {
+            // If moving up, stop at the building's bottom edge
+            return b.hitbox.y + b.hitbox.height;
+        } else {
+            // If moving down, stop at the building's top edge
+            return b.hitbox.y - 32;
+        }
+    }
     //Checks if entity collides with an entity
     public static boolean entityCheck(Rectangle2D.Float entityHitbox, Rectangle2D.Float playerHitbox) {
         if(playerHitbox.intersects(entityHitbox)) { //Uses the intersects function to check rectangle collision

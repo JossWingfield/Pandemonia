@@ -828,7 +828,7 @@ public class CutsceneManager {
     }
     public void draw(Renderer renderer) {
     	if(drawHighlight) {
-    		renderer.fillRect((int)highlightArea.x , (int)highlightArea.y , (int)highlightArea.width, (int)highlightArea.height, Colour.RED);
+    		renderer.drawRect((int)highlightArea.x , (int)highlightArea.y , (int)highlightArea.width, (int)highlightArea.height, Colour.RED);
     	}
     }
     

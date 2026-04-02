@@ -330,7 +330,7 @@ public class Customer extends NPC {
 		foodOrder = order;
 		RecipeManager.addOrder(order);
 		ordered = true;
-		gp.gui.addOrder(foodOrder, this, renderer);
+		gp.gui.addOrder(foodOrder, this, gp.renderer);
 	}
 	private void waitForOrder() {
 		waitingToOrder = true;
@@ -423,7 +423,7 @@ public class Customer extends NPC {
 	        waitingToOrder = false;
 	    }
 	}
-	protected void leave(double dt) {
+	public void leave(double dt) {
 		super.leave(dt);
 		if(pet != null) {
 			removeOtherNPC(pet);

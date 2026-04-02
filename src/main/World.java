@@ -162,7 +162,7 @@ public class World {
 	    if(gp.currentState == gp.mapBuildState) {
 	    	mapB.inputUpdate(dt);
 	    }
-		catalogue.updateState(dt);
+		catalogue.inputUpdate(dt);
     }
     
     public void draw(Renderer renderer) {

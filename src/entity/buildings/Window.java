@@ -72,6 +72,7 @@ public class Window extends Building {
          	glowImage = importImage("/decor/WindowGlow.png").getSubimage(96, 32, 32, 32);
      		break;
      	}
+     	name = "Window";
      	
 	}
 	public void draw(Renderer renderer) {

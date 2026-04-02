@@ -222,6 +222,19 @@ public class BuildingManager {
 		}
 		return null;
 	}
+	public Building findSolidBuilding(float x, float y, float w, float h) {
+		Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, w, h);
+		for(Building b: buildings) {
+			if(b != null) {
+				if(b.isSolid) {
+					if(b.hitbox.intersects(hitbox)) {
+						return b;
+					}
+				}	
+			}
+		}
+		return null;
+	}
 	public Toilet findFreeToilet() {
 		for(Building b: buildings) {
 			if(b != null) {

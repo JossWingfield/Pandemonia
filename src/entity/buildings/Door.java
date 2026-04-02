@@ -151,6 +151,7 @@ public class Door extends Building {
 	}
 	public void inputUpdate(double dt) {
 		super.inputUpdate(dt);
+
 		
 		if(entryHitbox != null) {
 			if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
@@ -170,6 +171,7 @@ public class Door extends Building {
 		    	doorCooldown = 0;
 		    }
 		}
+		
 		if(firstUpdate) {
 			firstUpdate = false;
 			doorHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48+28-48, 48, 32);

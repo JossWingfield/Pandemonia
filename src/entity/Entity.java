@@ -45,7 +45,7 @@ public abstract class Entity implements Cloneable {
     //Draws the hitbox, so collisions can be seen
     public void drawHitbox(Renderer renderer) {
         //FOR COLLISION TESTING
-        renderer.fillRect((int)(hitbox.x), (int)(hitbox.y), (int)hitbox.width, (int)hitbox.height);
+        renderer.drawRect((int)(hitbox.x), (int)(hitbox.y), (int)hitbox.width, (int)hitbox.height);
     }
     public void drawHitbox(Graphics2D g, float xDiff, float yDiff) {
         //FOR COLLISION TESTING

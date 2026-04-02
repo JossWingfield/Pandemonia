@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.glfw.GLFW;
 
+import entity.buildings.Building;
 import entity.buildings.FloorDecor_Building;
 import entity.items.CookingItem;
 import entity.items.Food;
@@ -399,7 +400,10 @@ public class Player extends Entity{
 	                    }
                     }
                 } else if(!gp.world.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
-
+                	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height);
+                	if (b != null) {
+                	    hitbox.x = CollisionMethods.getBuildingPosX(hitbox.x, b, moveAmount, true); // true if moving left
+                	}
                 } else {
                 	hitbox.x = CollisionMethods.getWallPos(hitbox.x, gp);
                 }
@@ -417,7 +421,10 @@ public class Player extends Entity{
 	                    }
                     }
                 } else if(!gp.world.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
-                	
+                	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height);
+                	if (b != null) {
+                	    hitbox.x = CollisionMethods.getBuildingPosX(hitbox.x, b, moveAmount, false); // true if moving left
+                	}
                 } else {
                     hitbox.x = CollisionMethods.getWallPos(hitbox.x + hitbox.width - 1, gp) - (hitbox.width- gp.tileSize);
                 }
@@ -435,7 +442,10 @@ public class Player extends Entity{
 	                    }
                     }
                 } else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
-
+                	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height);
+                	if (b != null) {
+                	    hitbox.y = CollisionMethods.getBuildingPosY(hitbox.y, b, moveAmount, true); // true if moving up
+                	}
                 } else {
                     hitbox.y = CollisionMethods.getFloorPos(hitbox.y, gp);
                 }
@@ -452,7 +462,10 @@ public class Player extends Entity{
 	                    }
                     }
                 } else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height)) {
-                	
+                	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height);
+                	if (b != null) {
+                	    hitbox.y = CollisionMethods.getBuildingPosY(hitbox.y, b, moveAmount, false); // true if moving up
+                	}
                 } else {
                     hitbox.y = CollisionMethods.getFloorPos(hitbox.y + hitbox.height - 1, gp) - (hitbox.height- gp.tileSize);
                 }
@@ -927,7 +940,7 @@ public class Player extends Entity{
     	if(direction == 3) {
     		drawCurrentItem(renderer);
     	}
-
+    	
         TextureRegion hand2Frame = hand2Animations[direction][currentAnimation][animationCounter];
         TextureRegion bodyFrame = bodyAnimations[direction][currentAnimation][animationCounter];
         TextureRegion headFrame = headAnimations[direction][currentAnimation][animationCounter];
@@ -966,7 +979,7 @@ public class Player extends Entity{
         
         if(gp.keyL.showHitboxes) {
             renderer.setColour(Colour.RED);
-            renderer.fillRect((int) hitbox.x , (int) (hitbox.y) , (int) hitbox.width, (int) hitbox.height);
+            renderer.drawRect((int) hitbox.x , (int) (hitbox.y) , (int) hitbox.width, (int) hitbox.height);
             renderer.setColour(Colour.BLUE);
             gp.world.buildingM.drawHitboxes(renderer);
             renderer.setColour(Colour.YELLOW);

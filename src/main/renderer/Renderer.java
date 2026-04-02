@@ -32,7 +32,6 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -289,6 +288,35 @@ public class Renderer {
     public void fillRect(float x, float y, float width, float height) {
     	float[] fullUV = new float[] { 0f, 1f, 1f, 0f };
     	draw(rectTexture, fullUV, x, y, width, height, currentColour.toVec4());
+    }
+    public void drawRect(float x, float y, float width, float height, float thickness, Colour col) {
+        // Top edge
+        fillRect(x, y, width, thickness, col);
+        // Bottom edge
+        fillRect(x, y + height - thickness, width, thickness, col);
+        // Left edge
+        fillRect(x, y, thickness, height, col);
+        // Right edge
+        fillRect(x + width - thickness, y, thickness, height, col);
+    }
+    /** Overload using default thickness 1 */
+    public void drawRect(float x, float y, float width, float height, Colour col) {
+        drawRect(x, y, width, height, 3.0f, col);
+    }
+    public void drawRect(float x, float y, float width, float height, float thickness) {
+    	Colour col= currentColour;
+        // Top edge
+        fillRect(x, y, width, thickness, col);
+        // Bottom edge
+        fillRect(x, y + height - thickness, width, thickness, col);
+        // Left edge
+        fillRect(x, y, thickness, height, col);
+        // Right edge
+        fillRect(x + width - thickness, y, thickness, height, col);
+    }
+    /** Overload using default thickness 1 */
+    public void drawRect(float x, float y, float width, float height) {
+        drawRect(x, y, width, height, 3.0f, currentColour);
     }
     public void draw(TextureRegion region, float x, float y, float width, float height) {
         if (region == null || region.texture == null) return;
@@ -576,6 +604,13 @@ public class Renderer {
 	    	glBindTexture(GL_TEXTURE_2D, occ.getTexId());
 	        lightingShader.uploadInt("uOcclusion", 2);
 	    }
+	    lightingShader.uploadMat4f("u_MVP", camera.getProjectionMatrix().mul(camera.getViewMatrix(), new Matrix4f()));
+	    lightingShader.uploadVec2f("uWorldSize", new Vector2f(gp.frameWidth, gp.frameHeight));
+	    lightingShader.uploadVec2f("uCameraPos", gp.camera.position);
+	    lightingShader.uploadFloat("uZoom", gp.camera.getZoom());
+
+	    lightingShader.uploadMat4f("uInvProjection", camera.getInverseProjectionMatrix());
+	    lightingShader.uploadMat4f("uInvView", camera.getInverseViewMatrix());
 	    
 	    boolean particlesEnabled = Settings.particlesEnabled;
 	    if(!gp.world.mapM.isInRoom(12)) {

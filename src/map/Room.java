@@ -2297,6 +2297,9 @@ public class Room {
 		int counter = 0;
 		buildings = null;
 		for(Building b: buildList) {
+			if(b != null) {
+				b.roomNum = preset;
+			}
 			newBuilds[counter] = b;
 			counter++;
 		}
@@ -2782,7 +2785,19 @@ public class Room {
 	            }
 	        }
 	    }
+	   public void customersLeave(double dt) {
+	        for (NPC b : npcs) {
+	            if (b != null) {
+	                if (b instanceof Customer customer) {
+	                    customer.leave(dt);
+	                }
+	            }
+	        }
+	    }
     public void updateState(double dt) {
+    	if(buildings == null) {
+    		return;
+    	}
     	for(Building i: buildings) { //Loops through the items on the current map
             if(i != null) {
             	i.updateState(dt);

@@ -163,6 +163,15 @@ public class NPCManager {
 		}
 		return true;
 	}
+    public void customersLeave(double dt) {
+        for (NPC b : npcs) {
+            if (b != null) {
+                if (b instanceof Customer customer) {
+                    customer.leave(dt);
+                }
+            }
+        }
+    }
     public boolean stockerCheck(Rectangle2D.Float hitbox) {
         for (NPC b : npcs) {
             if (b != null && b.hitbox.intersects(hitbox)) {

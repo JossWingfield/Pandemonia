@@ -1,6 +1,5 @@
 package utility;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,15 +8,16 @@ import java.util.Random;
 import entity.buildings.Breaker;
 import entity.buildings.Building;
 import entity.buildings.Parcel;
+import entity.npc.Customer;
 import main.GamePanel;
 import main.renderer.Colour;
 import main.renderer.Renderer;
 import map.Beam;
 import map.ChairSkin;
+import map.CounterSkin;
 import map.FloorPaper;
 import map.LightSource;
 import map.Room;
-import map.CounterSkin;
 import map.WallPaper;
 import utility.recipe.Recipe;
 import utility.recipe.RecipeManager;
@@ -37,7 +37,9 @@ public class GameManager {
     public int day = 1;
     private static final int MAX_DAYS_PER_SEASON = 28;
     private int dayStart = 6, openingTime = 6, closingTime = 19;
-    private double timeSpeed = 30.0;
+    private int leavingTime = 20;
+    private double timeSpeed = 30.0; //30.0
+    private boolean customersLeft = false;
 
     private double spawnTimer = 0;
     private int customerSpawnTimer = 24;
@@ -226,6 +228,7 @@ public class GameManager {
     private void resetMenu() {
         todaysMenu.clear();
         todaysSpecials.clear();
+        chefSpecials.clear();
         menuChosen = false;
     }
     private void resetEventTimer() {
@@ -329,6 +332,18 @@ public class GameManager {
         if(gp.world.progressM.moreCustomers) {
         	customerSpawnTimer = 12;
         }
+        
+        if ((int)time == leavingTime && !customersLeft) {
+        	customersLeft = true;
+       		if(!gp.world.mapM.isInRoom(0)) {
+	            Room room0 = gp.world.mapM.getRoom(0);
+	            if (room0 != null) {
+	                room0.customersLeave(dt);
+	            }
+       		} else {
+       			gp.world.npcM.customersLeave(dt);
+       		}
+    	}
 
         // Customer spawning only during service, and only if menu chosen
         if (currentPhase == DayPhase.SERVICE && menuChosen) {
@@ -472,6 +487,8 @@ public class GameManager {
             currentSeason = currentSeason.next();
             gp.world.mapM.setSeason(currentSeason);
         }
+        
+        customersLeft = false;
         
         previousSoulsCollected = gp.player.soulsServed;
         

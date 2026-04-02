@@ -97,6 +97,8 @@ public class BuildingRegistry {
 						data.preset = c.type;
 					} else if(b instanceof Shelf c) {
 						data.preset = c.type;
+					} else if(b instanceof Window c) {
+						data.preset = c.getPresetNum();
 					} else if(b instanceof FloorDecor_Building c) {
 						data.preset = c.type;
 						data.decorType = 0;

@@ -1209,7 +1209,7 @@ public class GUI {
 	            selectedSkinNum--;
 	            
 	            if(selectedSkinNum < 0) {
-	            	selectedSkinNum = 0;
+	            	selectedSkinNum = Constants.MAXSKINNUM;
 	            }
 	            gp.player.setSkin(selectedSkinNum);
 	        }
@@ -1223,8 +1223,8 @@ public class GUI {
 	            clickCooldown = 0.1;
 	            selectedSkinNum++;
 	            
-	            if(selectedSkinNum > 6) {
-	            	selectedSkinNum = 6;
+	            if(selectedSkinNum > Constants.MAXSKINNUM) {
+	            	selectedSkinNum = 0;
 	            }
 	            gp.player.setSkin(selectedSkinNum);
 	        }
@@ -1250,7 +1250,7 @@ public class GUI {
 	            selectedHairStyleNum--;
 	            
 	            if(selectedHairStyleNum < 0) {
-	            	selectedHairStyleNum = 0;
+	            	selectedHairStyleNum = Constants.MAXHAIRNUM;
 	            }
 	            gp.player.setHairStyle(selectedHairStyleNum);
 	        }
@@ -1266,7 +1266,7 @@ public class GUI {
 	            selectedHairStyleNum++;
 	            
 	            if(selectedHairStyleNum > Constants.MAXHAIRNUM) {
-	            	selectedHairStyleNum = 1;
+	            	selectedHairStyleNum = 0;
 	            }
 	            gp.player.setHairStyle(selectedHairStyleNum);
 	        }
@@ -1292,7 +1292,7 @@ public class GUI {
 	            selectedHairNum--;
 	            
 	            if(selectedHairNum < 0) {
-	            	selectedHairNum = 0;
+	            	selectedHairNum = Constants.MAXHAIRCOLOURNUM;
 	            }
 	            gp.player.setHair(selectedHairNum);
 	        }
@@ -1307,8 +1307,8 @@ public class GUI {
 	            clickCooldown = 0.25;
 	            selectedHairNum++;
 	            
-	            if(selectedHairNum > 9) {
-	            	selectedHairNum = 9;
+	            if(selectedHairNum > Constants.MAXHAIRCOLOURNUM) {
+	            	selectedHairNum = 0;
 	            }
 	            gp.player.setHair(selectedHairNum);
 	        }
@@ -1482,7 +1482,7 @@ public class GUI {
 	            selectedSkinNum--;
 	            
 	            if(selectedSkinNum < 0) {
-	            	selectedSkinNum = 0;
+	            	selectedSkinNum = Constants.MAXSKINNUM;
 	            }
 	            gp.player.setSkin(selectedSkinNum);
 	        }
@@ -1496,8 +1496,8 @@ public class GUI {
 	            clickCooldown = 0.1;
 	            selectedSkinNum++;
 	            
-	            if(selectedSkinNum > 6) {
-	            	selectedSkinNum = 6;
+	            if(selectedSkinNum > Constants.MAXSKINNUM) {
+	            	selectedSkinNum = 0;
 	            }
 	            gp.player.setSkin(selectedSkinNum);
 	        }
@@ -1524,7 +1524,7 @@ public class GUI {
 	            selectedHairStyleNum--;
 	            
 	            if(selectedHairStyleNum < 0) {
-	            	selectedHairStyleNum = 0;
+	            	selectedHairStyleNum = Constants.MAXHAIRNUM;
 	            }
 	            gp.player.setHairStyle(selectedHairStyleNum);
 	        }
@@ -1540,7 +1540,7 @@ public class GUI {
 	            selectedHairStyleNum++;
 	            
 	            if(selectedHairStyleNum > Constants.MAXHAIRNUM) {
-	            	selectedHairStyleNum = 1;
+	            	selectedHairStyleNum = 0;
 	            }
 	            gp.player.setHairStyle(selectedHairStyleNum);
 	        }
@@ -1566,7 +1566,7 @@ public class GUI {
 	            selectedHairNum--;
 	            
 	            if(selectedHairNum < 0) {
-	            	selectedHairNum = 0;
+	            	selectedHairNum = Constants.MAXHAIRCOLOURNUM;
 	            }
 	            gp.player.setHair(selectedHairNum);
 	        }
@@ -1581,8 +1581,8 @@ public class GUI {
 	            clickCooldown = 0.25;
 	            selectedHairNum++;
 	            
-	            if(selectedHairNum > 9) {
-	            	selectedHairNum = 9;
+	            if(selectedHairNum > Constants.MAXHAIRCOLOURNUM) {
+	            	selectedHairNum = 0;
 	            }
 	            gp.player.setHair(selectedHairNum);
 	        }
