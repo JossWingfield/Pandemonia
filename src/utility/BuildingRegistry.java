@@ -69,6 +69,7 @@ public class BuildingRegistry {
 		presetBuildingNames.add("Trapdoor 1");
 		presetBuildingNames.add("Shelf");
 		presetBuildingNames.add("Window");
+		presetBuildingNames.add("Large Table");
 		presetBuildingNames.add("Bin 1");
 	}
 	
@@ -97,6 +98,8 @@ public class BuildingRegistry {
 						data.preset = c.type;
 					} else if(b instanceof Shelf c) {
 						data.preset = c.type;
+					} else if(b instanceof LargeTable c) {
+						data.preset = c.tableType;
 					} else if(b instanceof Window c) {
 						data.preset = c.getPresetNum();
 					} else if(b instanceof FloorDecor_Building c) {
@@ -231,7 +234,6 @@ public class BuildingRegistry {
 			case "Soul Lantern" -> i = new SoulLantern(gp, x, y);
 			case "Stove" -> i = new Stove(gp, x, y);
 			case "Frying Station" -> i = new FryingStation(gp, x, y);
-			case "Large Table" -> i = new LargeTable(gp, x, y);
 			case "Chopping Board" -> i = new ChoppingBoard(gp, x, y);
 			case "Turntable" -> i = new Turntable(gp, x, y);
 			case "Tip Jar" -> i = new TipJar(gp, x, y);
@@ -259,6 +261,7 @@ public class BuildingRegistry {
 			case "Trapdoor 1" -> i = new Trapdoor(gp, x, y, preset);
 			case "Shelf" -> i = new Shelf(gp, x, y, preset);
 			case "Window" -> i = new Window(gp, x, y, preset);
+			case "Large Table" -> i = new LargeTable(gp, x, y, preset);
 			case "Bin 1" -> i = new Bin(gp, x, y, preset);
 		}
 

@@ -30,6 +30,7 @@ import entity.buildings.Fridge;
 import entity.buildings.FryingStation;
 import entity.buildings.Gate;
 import entity.buildings.Lantern;
+import entity.buildings.LargeTable;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
@@ -91,7 +92,10 @@ public class MapBuilder {
 	}
 	
 	private void addBuildings() {
-		for(int i = 0; i < 137; i++) {
+		
+		buildings[totalBuildingCount] = new LargeTable(gp, 0, 0, 1);
+		totalBuildingCount++;
+		for(int i = 0; i < 139; i++) {
 			buildings[totalBuildingCount] = new FloorDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
@@ -103,6 +107,7 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new WallDecor_Building(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
+
 
 		buildings[totalBuildingCount] = new SpiceTable(gp, 0, 0);
 		totalBuildingCount++;

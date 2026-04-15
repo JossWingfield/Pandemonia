@@ -680,9 +680,18 @@ public class ProgressManager {
 	      	gp.world.buildingM.removeAllWithName("Gate 1");
 	    	gp.world.buildingM.removeAllWithName("Table Piece");
 	    	
-	    	gp.world.buildingM.addBuilding(new MenuSign(gp, 636, 228));
-	    	gp.world.buildingM.addBuilding(new LargeTable(gp, 516, 288));
+	    	gp.world.buildingM.addBuilding(new LargeTable(gp, 492, 252, 1));
+	     	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 576, 216, 137));
+	     	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 576, 276, 137));
 	    	gp.world.buildingM.addBuilding(new Table(gp, 348, 264, "Left", false));
+	    	
+	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 384, 9));
+	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 324, 8));
+	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 276, 8));
+	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
+	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
+	    	gp.world.buildingM.addBuilding(new MenuSign(gp, 612, 336));
+	   
 		} else {
 			gp.world.mapM.getRoom(0).removeAllWithName("Chopping Board");
 			gp.world.mapM.getRoom(0).removeAllWithName("Stove");
@@ -695,8 +704,17 @@ public class ProgressManager {
 			gp.world.mapM.getRoom(0).removeAllWithName("Table Piece");
 			
 			gp.world.mapM.getRoom(0).addBuilding(new MenuSign(gp, 636, 228));
-			gp.world.mapM.getRoom(0).addBuilding(new LargeTable(gp, 516, 288));
+			gp.world.mapM.getRoom(0).addBuilding(new LargeTable(gp, 492, 252, 1));
+			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 576, 216, 137));
+			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 576, 276, 137));
 			gp.world.mapM.getRoom(0).addBuilding(new Table(gp, 348, 264, "Left", false));
+			
+			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 384, 9));
+			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 324, 8));
+			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 276, 8));
+			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
+			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
+			gp.world.mapM.getRoom(0).addBuilding(new MenuSign(gp, 612, 336));
 		}
 		
 		//Restore old corridor

@@ -730,12 +730,12 @@ public class FloorDecor_Building extends Building {
         	break;
         case 53:
             name = "Bathroom Wall 3";
-        	animations[0][0][0] = importImage("/decor/bathroom props.png").getSubimage(224, 80, 16, 48);
+        	animations[0][0][0] = importImage("/decor/bathroom props.png").getSubimage(224, 80, 16, 64);
         	isSolid = true;
         	hitbox.width = 48;
            	hitbox.height = 48*2;
         	drawWidth = 48;
-        	drawHeight = 48*3;
+        	drawHeight = 64*3;
         	yDrawOffset = 24;
         	isBathroomBuilding = true;
         	mustBePlacedOnFloor = true;
@@ -1806,6 +1806,34 @@ public class FloorDecor_Building extends Building {
         	isSolid = false;
         	canBePlaced = false;
         	castsShadow = false;
+        	break;
+        case 137:
+            name = "Room Divider 1";
+        	animations[0][0][0] = importImage("/decor/bathroom props.png").getSubimage(224, 80, 16, 64);
+        	isSolid = true;
+        	hitbox.width = 48;
+           	hitbox.height = (48-4)*3;
+        	drawWidth = 48;
+        	drawHeight = 64*3;
+        	yDrawOffset = 24;
+        	isKitchenBuilding = true;
+        	mustBePlacedOnFloor = true;
+        	castsShadow = false;
+        	canBePlaced = true;
+        	break;
+        case 138:
+            name = "Room Divider 2";
+        	animations[0][0][0] = importImage("/decor/bathroom props.png").getSubimage(224-16, 80, 16, 64);
+        	isSolid = true;
+        	hitbox.width = 48;
+           	hitbox.height = (48)*3;
+        	drawWidth = 48;
+        	drawHeight = 48*3;
+        	yDrawOffset = 24;
+        	isKitchenBuilding = true;
+        	mustBePlacedOnFloor = true;
+        	castsShadow = false;
+        	canBePlaced = true;
         	break;
         }
 		

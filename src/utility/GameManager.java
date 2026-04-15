@@ -366,7 +366,7 @@ public class GameManager {
 	                      	}
 	                      	if (tryGroup && gp.world.mapM.getRoom(0).isGroupTable() != null) {
 		                        // Spawn a group if we got lucky AND a group table exists
-		                    	gp.world.mapM.getRoom(0).addGroup(random.nextInt(2) + 3);
+		                    	gp.world.mapM.getRoom(0).addGroup(random.nextInt(2) + 2);
 		                    } else {
 		                    	if(gp.world.mapM.getRoom(0).isFreeSingleChair() != null) {
 		                    		gp.world.mapM.getRoom(0).addCustomer();
@@ -390,7 +390,7 @@ public class GameManager {
 	                    	boolean tryGroup = random.nextInt(100) < groupChance;
 	                    	if (tryGroup && gp.world.buildingM.isGroupTable() != null) {
 			                    // Spawn a group if we got lucky AND a group table exists
-                    			gp.world.npcM.addGroup(random.nextInt(2) + 3);
+                    			gp.world.npcM.addGroup(random.nextInt(2) + 2);
 			                } else {
 			                	if(gp.world.buildingM.isFreeSingleChair() != null) {
 			                		gp.world.npcM.addCustomer();
