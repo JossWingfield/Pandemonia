@@ -874,7 +874,7 @@ public class GamePanel {
 					        	drawGodRays();
 					        	renderer.endFrame();
 					        	
-					        	renderer.renderGodRays(godrayTextureId, godrayProcessedFbo, 0.4f, 0.95f, 1.3f);
+					        	renderer.renderGodRays(godrayTextureId, godrayProcessedFbo);
 					        	
 					        	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 					        	applyGameViewport(w, h);

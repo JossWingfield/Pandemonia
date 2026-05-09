@@ -28,6 +28,7 @@ import entity.buildings.Gate;
 import entity.buildings.HerbBasket;
 import entity.buildings.Lantern;
 import entity.buildings.LargeTable;
+import entity.buildings.MenuBook;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
@@ -231,6 +232,7 @@ public class BuildingRegistry {
 			case "Menu Sign" -> i = new MenuSign(gp, x, y);
 			case "Oven" -> i = new Oven(gp, x, y);
 			case "Kitchen Sink 1" -> i = new Sink(gp, x, y);
+			case "Menu Book" -> i = new MenuBook(gp, x, y);
 			case "Soul Lantern" -> i = new SoulLantern(gp, x, y);
 			case "Stove" -> i = new Stove(gp, x, y);
 			case "Frying Station" -> i = new FryingStation(gp, x, y);

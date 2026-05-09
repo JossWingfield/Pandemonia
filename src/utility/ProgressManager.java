@@ -9,6 +9,7 @@ import entity.buildings.Building;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FryingStation;
 import entity.buildings.LargeTable;
+import entity.buildings.MenuBook;
 import entity.buildings.MenuSign;
 import entity.buildings.Rubble;
 import entity.buildings.Stove;
@@ -691,6 +692,7 @@ public class ProgressManager {
 	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
 	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
 	    	gp.world.buildingM.addBuilding(new MenuSign(gp, 612, 336));
+	    	gp.world.buildingM.addBuilding(new MenuBook(gp, 612, 288));
 	   
 		} else {
 			gp.world.mapM.getRoom(0).removeAllWithName("Chopping Board");
@@ -715,6 +717,7 @@ public class ProgressManager {
 			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
 			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
 			gp.world.mapM.getRoom(0).addBuilding(new MenuSign(gp, 612, 336));
+			gp.world.mapM.getRoom(0).addBuilding(new MenuBook(gp, 612, 288));
 		}
 		
 		//Restore old corridor

@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import entity.Player;
 import entity.items.CookingItem;
 import entity.items.Fryer;
+import entity.items.Menu;
 import entity.items.OvenTray;
 import entity.items.Plate;
 import main.GamePanel;
@@ -96,7 +97,11 @@ public class Bin extends Building {
 							pan.clearIngredients();
 						} else if(gp.player.currentItem instanceof Fryer pan) {
 							pan.bin();
-						} else {
+						} else if(gp.player.currentItem instanceof Menu menu) {
+							MenuBook menuBook = (MenuBook)gp.world.mapM.getRoom(0).findBuildingWithName("Menu Book");
+							menuBook.addBook();
+							gp.player.currentItem = null;
+						}  else {
 							gp.player.currentItem = null;
 						}
 					}

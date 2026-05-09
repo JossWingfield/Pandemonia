@@ -17,11 +17,12 @@ public class Duck extends NPC {
 
 	public Duck(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
-		animationSpeedFactor = 0.06;
+		animationSpeedFactor = 0.09;
 		drawScale = 3;
-		drawWidth = 32*drawScale;
-	    drawHeight = 16*drawScale;
+		drawWidth = 48*drawScale;
+	    drawHeight = 48*drawScale;
 	    xDrawOffset = 24;
+	    yDrawOffset = 24;
 		speed = 4*60;
 		npcType = "Duck";
 		r = new Random();
@@ -35,8 +36,8 @@ public class Duck extends NPC {
 		
 		name = "Duck";
 		
-		importFromSpriteSheet("/npcs/duck/Duck.png", 2, 1, 0, 0, 0, 32, 16, 0);
-		importFromSpriteSheet("/npcs/duck/Duck.png", 5, 1, 1, 0, 16, 32, 16, 0);
+		importFromSpriteSheet("/npcs/duck/Duck.png", 4, 1, 0, 0, 0, 48, 48, 0);
+		importFromSpriteSheet("/npcs/duck/Duck.png", 8, 1, 1, 0, 48, 48, 48, 0);
 	}    
 	public void updateState(double dt) {
 		if(!leaving) {
@@ -66,10 +67,8 @@ public class Duck extends NPC {
 		animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
         if(walking) {
         	currentAnimation = 1;
-    		animationSpeedFactor = 2;
         } else {
           	currentAnimation = 0;
-    		animationSpeedFactor = 8;
         }
         if(animationSpeed >= animationSpeedFactor) {
             animationSpeed = 0;

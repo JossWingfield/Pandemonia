@@ -34,6 +34,7 @@ import entity.items.Item;
 import entity.items.Lasagna;
 import entity.items.Leek;
 import entity.items.Meatball;
+import entity.items.Menu;
 import entity.items.Mint;
 import entity.items.Onion;
 import entity.items.OvenTray;
@@ -116,6 +117,7 @@ public class ItemRegistry {
 			case "Small Pot" -> i = new SmallPan(gp, 0, 0);
 			case "Oven Tray" -> i = new OvenTray(gp, 0, 0);
 			case "Fryer" -> i = new Fryer(gp, 0, 0);
+			case "Menu" -> i = new Menu(gp, 0, 0);
 		}
 		if(i instanceof Food food) {
 			food.setState(state);

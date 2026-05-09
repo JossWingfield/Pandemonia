@@ -128,11 +128,49 @@ public class KeyListener {
             if (isKeyPressed(GLFW.GLFW_KEY_2)) {
             	//gp.world.cutsceneM.customiseTutorial();
             }
-            if (keyBeginPress(GLFW.GLFW_KEY_1)) gp.camera.setZoom(1.0f);
-            if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
-            if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);
-            if (keyBeginPress(GLFW.GLFW_KEY_F)) gp.gui.startLevelUpScreen();
-            if (keyBeginPress(GLFW.GLFW_KEY_Q)) gp.player.soulsServed = gp.player.nextLevelAmount;
+            if (isKeyPressed(GLFW.GLFW_KEY_1)) {
+            	gp.world.customiser.addToInventory(new Window(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new Window(gp, 0, 0, 1));
+            	gp.world.customiser.addToInventory(new Window(gp, 0, 0, 2));
+            }
+            /*
+            if (isKeyPressed(GLFW.GLFW_KEY_1)) {
+            	gp.renderer.intensity+=0.01f;
+            }
+            if (isKeyPressed(GLFW.GLFW_KEY_2)) {
+            	gp.renderer.intensity-=0.01f;
+            }
+            if (isKeyPressed(GLFW.GLFW_KEY_3)) {
+            	gp.renderer.decay+=0.01f;
+            }
+            if (isKeyPressed(GLFW.GLFW_KEY_4)) {
+            	gp.renderer.decay-=0.01f;
+            }
+            if (isKeyPressed(GLFW.GLFW_KEY_5)) {
+            	gp.renderer.density+=0.01f;
+            }
+            if (isKeyPressed(GLFW.GLFW_KEY_6)) {
+            	gp.renderer.density-=0.01f;
+            }
+            if (isKeyPressed(GLFW.GLFW_KEY_7)) {
+            	gp.renderer.samples +=1;
+            }
+            if (isKeyPressed(GLFW.GLFW_KEY_8)) {
+            	gp.renderer.samples -= 1;
+            }
+            if (isKeyPressed(GLFW.GLFW_KEY_9)) {
+            	gp.renderer.verticalBias +=0.1f;
+            }
+            if (isKeyPressed(GLFW.GLFW_KEY_0)) {
+            	gp.renderer.verticalBias -= 0.1f;
+            }*/
+            
+            //if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
+            //if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);
+            //if (keyBeginPress(GLFW.GLFW_KEY_F)) gp.gui.startLevelUpScreen();
+            //if (keyBeginPress(GLFW.GLFW_KEY_Q)) gp.player.soulsServed = gp.player.nextLevelAmount;
+            
+            
             if (keyBeginPress(GLFW.GLFW_KEY_C)) gp.currentState = gp.customiseRestaurantState;
             if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) gp.currentState = gp.pauseState;
 

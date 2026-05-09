@@ -1,14 +1,11 @@
 /ai/
-/decor/
 /entity/
-/environment/
-/food/
 /main/
 /map/
-/maps/
 /net/
 /npcs/
 /player/
 /shaders/
 /tiles/
 /utility/
+/decor/

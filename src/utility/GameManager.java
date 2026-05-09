@@ -266,7 +266,7 @@ public class GameManager {
             System.err.println("World.setSeason(): Unknown season: " + season);
         }
     }
-    private void spawnDuck() {
+    public void spawnDuck() {
     	gp.world.npcM.addDuck();
     }
     private void spawnRats() {

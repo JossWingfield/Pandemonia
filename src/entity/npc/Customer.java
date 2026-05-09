@@ -6,7 +6,9 @@ import java.util.List;
 import org.lwjgl.glfw.GLFW;
 
 import entity.buildings.Chair;
+import entity.buildings.MenuBook;
 import entity.buildings.Toilet;
+import entity.items.Menu;
 import entity.items.Plate;
 import main.GamePanel;
 import main.renderer.Colour;
@@ -27,6 +29,8 @@ public class Customer extends NPC {
 	protected boolean eating = false;
 	private boolean leaving = false;
 	public boolean waitingToOrder = false;
+	private boolean waitingForMenu = false;
+	private boolean readingMenu = false;
 	private boolean goingToToilet = false;
 	private boolean finishedMeal = false;
 	private boolean inToilet = false;
@@ -36,11 +40,13 @@ public class Customer extends NPC {
 	public Order foodOrder = null;
 	private double eatTime = 5;
 	private double eatCounter = 0;
-	protected TextureRegion orderSign, warningOrderSign;
+	protected TextureRegion orderSign, warningOrderSign, menuIcon;
 	private double orderTime = 0;
 	private double maxOrderTime = 3.6;
 	private double toiletTime = 0;
 	private double maxToiletTime = 9;
+	private double menuReadTime = 4;     // tweak for feel
+	private double menuReadCounter = 0;
 	
 	protected double patienceCounter = 0;
 	protected double baseMaxPatienceTime = 120; // 2mins
@@ -193,6 +199,8 @@ public class Customer extends NPC {
 		importEatingAnimation("/npcs/Eating", 4, 1, 0, 0, 80, 80, 2);
 		importEatingAnimation("/npcs/Eating", 4, 1, 0, 160, 80, 80, 3);
 		
+		menuIcon = importImage("/UI/recipe/MenuIcon.png").getSubimage(0, 0, 16, 16);
+		
 		switch(type) {
 		case 0:
 	        importPlayerSpriteSheet("/npcs/angler/Idle", 4, 1, 0, 0, 0, 80, 80);
@@ -252,7 +260,7 @@ public class Customer extends NPC {
 		boolean addPet = r.nextInt(10) == 0;
 		//addPet = true;
 		if(addPet) {
-			int petType = r.nextInt(5);
+			int petType = r.nextInt(7);
 			pet = new Pet(gp, hitbox.x, hitbox.y, this, petType);
 			if(gp.player.currentRoomIndex == currentRoomNum) {
 				gp.world.npcM.addNPC(pet);
@@ -331,6 +339,9 @@ public class Customer extends NPC {
 		RecipeManager.addOrder(order);
 		ordered = true;
 		gp.gui.addOrder(foodOrder, this, gp.renderer);
+		
+		MenuBook menuBook = (MenuBook)gp.world.buildingM.findBuildingWithName("Menu Book");
+		menuBook.addBook();
 	}
 	private void waitForOrder() {
 		waitingToOrder = true;
@@ -470,6 +481,8 @@ public class Customer extends NPC {
 	            	if(walkToBuilding(dt, currentChair)) {
 	            		 walking = false;
 		                 atTable = true;
+		                 waitingForMenu = true;   
+		                 waitingToOrder = false; 
 		                 hitbox.x = currentChair.hitbox.x+16;
 		                 hitbox.y = currentChair.hitbox.y;
 		                 
@@ -496,26 +509,58 @@ public class Customer extends NPC {
 	        }
 	    } else {
 	        // Waiting states
-	        if(!ordered && !finishedMeal) {
-	            if(!waitingToOrder) {
-	                waitForOrder();
-	            } else {
-	            	if (hitbox.intersects(gp.player.interactHitbox)) {
-	            	    if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+	    	if(!ordered && !finishedMeal) {
 
-	            	        // Take orders for everyone at this table
-	            	        for (Customer c : getCustomersAtSameTable()) {
-	            	            if (!c.ordered) {
-	            	                c.takeOrder(dt);
-	            	            }
-	            	        }
-	            	    }
-	            	}
-	            }
-	        } 
+	    	    // --- WAITING FOR MENU ---
+	    	    if(waitingForMenu) {
 
-	        // If they have ordered but haven’t been served yet
-	        if((waitingToOrder && !ordered) || (ordered && !eating)) {
+	    	    	if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+		    	        if (hitbox.intersects(gp.player.interactHitbox)) {
+		    	            if (gp.player.currentItem != null) {
+		    	            	if(gp.player.currentItem instanceof Menu) {
+		    	            		gp.player.currentItem = null;
+			    	                for (Customer c : getCustomersAtSameTable()) {
+			    	                    c.waitingForMenu = false;
+			    	                    c.readingMenu = true;
+			    	                    c.waitingToOrder = false;
+			    	                    c.menuReadCounter = 0;
+			    	                }
+		    	            	}
+		    	            }
+		    	        }
+	    	    	}
+	    	    }
+
+	    	    // --- READING MENU ---
+	    	    else if(readingMenu) {
+
+	    	        menuReadCounter += dt;
+
+	    	        if(menuReadCounter >= menuReadTime) {
+	    	            readingMenu = false;
+	    	            waitingToOrder = true; // NOW player can take order
+	    	        }
+	    	    }
+
+	    	    // --- READY TO ORDER ---
+	    	    else if(waitingToOrder) {
+
+	    	        if (hitbox.intersects(gp.player.interactHitbox)) {
+	    	            if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
+
+	    	                for (Customer c : getCustomersAtSameTable()) {
+	    	                    if (!c.ordered) {
+	    	                        c.takeOrder(dt);
+	    	                    }
+	    	                }
+	    	            }
+	    	        }
+	    	    }
+	    	}
+
+	    	boolean isActivelyWaiting = waitingToOrder && !readingMenu;
+
+	    	if((isActivelyWaiting && !ordered) || (ordered && !eating)) {
 	            float patienceIncrement = patienceFactor;
 	            if(this instanceof GroupCustomer) {
 	            	patienceIncrement *= 0.6f;
@@ -675,7 +720,6 @@ public class Customer extends NPC {
 	    if(eating && direction.equals("Up")) {
 	    	  drawEating(renderer);
 	      }
-	    
 		
 	      if(animations != null) {
 	    	  TextureRegion img = animations[0][currentAnimation][animationCounter];
@@ -712,7 +756,7 @@ public class Customer extends NPC {
 	    	  hideOrder = false;
 	      }
 	      
-	      if (waitingToOrder) {
+	      if (waitingToOrder && !readingMenu) {
 
 	    	    boolean lowPatience = patienceRatio >= 0.5f && !ordered;
 	    	    TextureRegion currentSign = orderSign;
@@ -726,7 +770,8 @@ public class Customer extends NPC {
 	    	        }
 	    	    }
 
-	    	    renderer.draw(currentSign,(int)(hitbox.x - xOffset ),(int)(hitbox.y - yOffset  - 48), 48, 48);
+				float bob = (float)Math.sin(System.currentTimeMillis() * 0.005) * 2;
+	    	    renderer.draw(currentSign,(int)(hitbox.x - xOffset -6),(int)(hitbox.y - yOffset  - 48 + bob), 48, 48);
 	    	}
 	      if(talking) {
 	    	  //gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2, (int)hitbox.y - 48*3, dialogues[dialogueIndex], this);
@@ -737,6 +782,26 @@ public class Customer extends NPC {
 		 if(eating && !direction.equals("Up")) {
 	    	  drawEating(renderer);
 	     }
+		// --- WAITING FOR MENU ICON ---
+		 if(waitingForMenu) {
+			 float bob = (float)Math.sin(System.currentTimeMillis() * 0.005) * 2;
+
+			 renderer.draw(
+			     menuIcon,
+			     (int)(hitbox.x - xOffset - 6),
+			     (int)(hitbox.y - yOffset - 48 + bob),
+			     48,
+			     48
+			 );
+		 }
+
+		 // --- READING MENU BAR ---
+		 if(readingMenu) {
+			 
+		     drawOrderBar(renderer, hitbox.x-6, hitbox.y+8,
+		         (int)menuReadCounter,
+		         (int)menuReadTime);
+		 }
 	}
 	private void drawEating(Renderer renderer) {
 		if(animations != null) {

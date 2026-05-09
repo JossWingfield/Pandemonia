@@ -84,6 +84,21 @@ public class Pet extends NPC{
 			importFromSpriteSheet("/npcs/pet/Cat4.png", 8, 1, 1, 0, 96, 48, 48, 0);
 			isCat = true;
 			break;
+		case 5:
+			drawWidth = 48*3;
+			drawHeight = 48*3;
+			xDrawOffset = 48;
+			yDrawOffset = 48;
+			name = "Ginger";
+			importFromSpriteSheet("/npcs/pet/Cat4.png", 6, 1, 0, 0, 0, 48, 48, 0);
+			importFromSpriteSheet("/npcs/pet/Cat4.png", 8, 1, 1, 0, 96, 48, 48, 0);
+			isCat = true;
+			break;
+		case 6:
+			name = "Snoop";
+			importFromSpriteSheet("/npcs/pet/Dog2.png", 5, 1, 0, 0, 0, 48, 48, 0);
+			importFromSpriteSheet("/npcs/pet/Dog2.png", 8, 1, 1, 0, 48, 48, 48, 0);
+			break;
 		}
 		int catNum;
 		if(gp.player.currentRoomIndex == RoomHelperMethods.MAIN) {

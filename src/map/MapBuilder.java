@@ -31,6 +31,7 @@ import entity.buildings.FryingStation;
 import entity.buildings.Gate;
 import entity.buildings.Lantern;
 import entity.buildings.LargeTable;
+import entity.buildings.MenuBook;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
@@ -108,7 +109,8 @@ public class MapBuilder {
 			totalBuildingCount++;
 		}
 
-
+		buildings[totalBuildingCount] = new MenuBook(gp, 0, 0);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new SpiceTable(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Stairs(gp, 0, 0);

@@ -108,6 +108,13 @@ public class Renderer {
     private Shader bloomCombineShader;
     private int BLOOM_BLUR_PASSES = 5;
     
+    //GODRAYS
+    public float intensity = 0.03f;
+    public float decay = 1.06f;
+    public float density = 2.68f;
+    public int samples = 140;
+    public float verticalBias = 0.9f;
+    
     private Shader godRay = null;
     
     public Renderer(GamePanel gp, GLSLCamera camera) {
@@ -768,12 +775,17 @@ public class Renderer {
         glBindVertexArray(0);
         bloomCombineShader.detach();
     }
-    public void renderGodRays(int godrayTexture, int targetFbo, float intensity, float decay, float density) {
+    public void renderGodRays(int godrayTexture, int targetFbo) {
         glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);
         glViewport(0, 0, gp.sizeX, gp.sizeY);
         glClear(GL_COLOR_BUFFER_BIT);
 
         godRay.use();
+        
+        System.out.println("Intensity: " + intensity);
+        System.out.println("Decay: " + decay);
+        System.out.println("Density:" + density);
+        System.out.println("Samples:" + samples);
 
         // Bind input texture (the window shapes)
         glActiveTexture(GL_TEXTURE0);
@@ -784,11 +796,12 @@ public class Renderer {
         godRay.uploadFloat("uIntensity", intensity);
         godRay.uploadFloat("uDecay", decay);
         godRay.uploadFloat("uDensity", density);
-        godRay.uploadFloat("uVerticalBias", 0.9f);
-        godRay.uploadInt("uSamples", 60);
+        godRay.uploadFloat("uVerticalBias", verticalBias);
+        godRay.uploadInt("uSamples", samples);
         godRay.uploadFloat("uTexelSizeX", 1.0f / gp.sizeY); 
         godRay.uploadFloat("uTexelSizeY", 1.0f / gp.sizeY); // top-left origin: texture height
         godRay.uploadFloat("uTime", (float)glfwGetTime());
+        godRay.uploadFloat("uYOffset", 350f / gp.sizeY);
         
         glBindVertexArray(fsQuadVao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

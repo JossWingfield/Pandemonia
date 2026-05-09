@@ -16,41 +16,100 @@ in vec2 vTexCoord;
 out vec4 fragColor;
 
 uniform sampler2D uTexture;
-uniform float uIntensity;     // overall brightness
-uniform float uDecay;         // decay per sample
-uniform float uDensity;       // step size
-uniform int uSamples;         // number of samples
-uniform float uVerticalBias;  // 0 = normal, 1 = fully vertical
-uniform float uTime;          // for flicker
-uniform float uTexelSizeY;    // 1.0 / texture height
+
+uniform float uIntensity;
+uniform float uDecay;
+uniform float uDensity;
+uniform int uSamples;
+uniform float uVerticalBias;
+uniform float uTime;
+uniform float uTexelSizeY;
+
+// Distance below the window
+uniform float uYOffset;
 
 void main() {
-    vec2 uv = vTexCoord;
-    vec4 color = vec4(0.0);
-    float weight = 1.0;
 
-    // Direction for rays (vertical bias pushes downward)
-    vec2 delta = vec2(0.0, 1.0); // straight down
-    delta.x = delta.x * (1.0 - uVerticalBias);
+    // ---------------------------------------------------
+    // PROJECTED LIGHT TEXTURE
+    // ---------------------------------------------------
 
-    // Step per sample
-    vec2 step = delta * uDensity;
+    vec2 projectedUV = vTexCoord;
 
-    // Flicker effect
-    float flicker = 0.9 + 0.1 * sin(uTime * 5.0 + uv.y * 10.0); // subtle per-row flicker
+    // Flip vertically
+    projectedUV.y = 1.0 - projectedUV.y;
 
-    for(int i = 0; i < uSamples; i++) {
-        uv += step * uTexelSizeY; // move one pixel down each step
-        vec4 sample = texture(uTexture, uv);
-        color += sample * weight;
-        weight *= uDecay; // decay
+    // Move projection downward
+    projectedUV.y += uYOffset;
+
+    // Prevent texture wrapping artifacts
+    vec4 projectedLight = vec4(0.0);
+
+    if(projectedUV.x >= 0.0 && projectedUV.x <= 1.0 &&
+       projectedUV.y >= 0.0 && projectedUV.y <= 1.0)
+    {
+        projectedLight = texture(uTexture, projectedUV);
     }
 
-    // Multiply by intensity and flicker
-    fragColor = color * uIntensity * flicker;
+    // ---------------------------------------------------
+    // GOD RAYS
+    // ---------------------------------------------------
 
-    // Optional: fade out at bottom
-    // Slower fade
-	float fade = 1.0 - pow(vTexCoord.y, 0.5); // square root curve, slower fade
-	fragColor.a *= fade;
+    vec2 rayUV = vTexCoord;
+    rayUV.y += uYOffset;
+
+    vec4 rayColor = vec4(0.0);
+
+    float weight = 1.0;
+
+    // Rays travel downward
+    vec2 delta = vec2(0.0, -1.0);
+
+    // Optional horizontal suppression
+    delta.x *= (1.0 - uVerticalBias);
+
+    vec2 step = delta * uDensity;
+
+    // Subtle flicker
+    float flicker =
+        0.97 +
+        0.03 * sin(uTime * 4.0 + vTexCoord.y * 8.0);
+
+    for(int i = 0; i < uSamples; i++) {
+
+    rayUV += step * uTexelSizeY;
+
+    vec4 sampleColor = texture(uTexture, rayUV);
+
+    // Distance from source
+    float t = float(i) / float(uSamples);
+
+    // Brightest near window
+    float sourceStrength = pow(1.0 - t, 2.5);
+
+    // Beam persistence
+    float decayStrength = pow(uDecay, float(i));
+
+    rayColor += sampleColor
+              * sourceStrength
+              * decayStrength;
+}
+
+    // ---------------------------------------------------
+// COMBINE
+// ---------------------------------------------------
+
+// Visible projected texture
+vec4 finalColor = projectedLight * 0.45;
+
+// Soft downward fade
+float fade = 1.0 - pow(vTexCoord.y, 0.7);
+
+
+// Add rays ONCE
+finalColor += rayColor * uIntensity * 0.12 * flicker;
+
+finalColor.a *= fade;
+
+fragColor = finalColor;
 }
