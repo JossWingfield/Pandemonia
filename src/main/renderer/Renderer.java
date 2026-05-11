@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE2;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE3;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
@@ -96,8 +97,6 @@ public class Renderer {
     // Per-frame command list (painter's algorithm)
     private final List<DrawCommand> frameCommands = new ArrayList<>();
     private final List<Vector2f> lightScreenPositions = new ArrayList<>();
-    private final List<Vector2f> buildingLeftScreenPositions = new ArrayList<>();
-    private final List<Vector2f> buildingRightScreenPositions = new ArrayList<>();
     
     private int fsQuadVao;
     private int fsQuadVbo;
@@ -106,6 +105,8 @@ public class Renderer {
     private Shader brightnessShader;
     private Shader blurShaderH, blurShaderV;
     private Shader bloomCombineShader;
+    private Shader particleShader;
+    private Shader shadowShader;
     private int BLOOM_BLUR_PASSES = 5;
     
     //GODRAYS
@@ -217,7 +218,7 @@ public class Renderer {
 
         	glBindVertexArray(0);
 
-        	lightingShader = AssetPool.getShader("/shaders/fullscreen.glsl");
+        	lightingShader = AssetPool.getShader("/shaders/lightingPass.glsl");
         	
             brightnessShader = AssetPool.getShader("/shaders/bloom_brightness.glsl");
             blurShaderH = AssetPool.getShader("/shaders/bloom_blur_h.glsl");
@@ -226,6 +227,8 @@ public class Renderer {
             
             fullScreen = AssetPool.getShader("/shaders/fullscreenPlain.glsl");
             godRay = AssetPool.getShader("/shaders/godrays.glsl");
+            particleShader = AssetPool.getShader("/shaders/dustPass.glsl");
+            shadowShader = AssetPool.getShader("/shaders/shadow.glsl");
     }
 
     // -------------------------
@@ -248,6 +251,9 @@ public class Renderer {
     }
     public void setGUI() {
     	currentShader = guiShader;
+    }
+    public void setShadowShader() {
+    	currentShader = shadowShader;
     }
     public void drawSubImage(Texture texture,int srcX, int srcY, int srcWidth, int srcHeight,float destX, float destY, float destWidth, float destHeight) {
 
@@ -514,44 +520,6 @@ public class Renderer {
             );
             lightScreenPositions.add(screenPos);
         }
-        
-        buildingLeftScreenPositions.clear();
-        buildingRightScreenPositions.clear();
-	    Building[] bottomLayer = gp.world.buildingM.getBuildingsToDraw();
-        for(int i = 0; i < bottomLayer.length-1; i++) {
-        	if(bottomLayer[i] != null) {
-        		if(bottomLayer[i].castsShadow) {
-        	        Building b = bottomLayer[i];
-        	        float bottomY = b.buildHitbox.y + b.buildHitbox.height;
-        	        Vector2f bottomLeftWorld = new Vector2f(
-        	                b.buildHitbox.x,
-        	                bottomY
-        	        );
-
-        	        Vector2f bottomRightWorld = new Vector2f(
-        	        		b.buildHitbox.x + b.buildHitbox.width,
-        	                bottomY
-        	        );
-
-        	        Vector2f screenLeft = gp.camera.worldToScreen(
-        	        		bottomLeftWorld,
-        	                camera.getViewMatrix(),
-        	                camera.getProjectionMatrix(),
-        	                gp.sizeX,
-        	                gp.sizeY
-        	        );
-        	        Vector2f screenRight = gp.camera.worldToScreen(
-        	        		bottomRightWorld,
-        	                camera.getViewMatrix(),
-        	                camera.getProjectionMatrix(),
-        	                gp.sizeX,
-        	                gp.sizeY
-        	        );
-        	        buildingRightScreenPositions.add(screenRight);
-        	        buildingLeftScreenPositions.add(screenLeft);
-        		}
-        	}
-        }
     }
     
     // helper to write a vertex into the host vertexArray
@@ -587,8 +555,21 @@ public class Renderer {
 
         fullScreen.detach();
     }
+    public void renderParticles(int tex, int w, int h) {
+	    particleShader.use();
+	    glActiveTexture(GL_TEXTURE0);
+	    particleShader.uploadInt("uScene", 0);
+	    glBindTexture(GL_TEXTURE_2D, tex);
+
+	    particleShader.uploadVec2f("uScreenSize", new Vector2f(w, h));
+	    particleShader.uploadFloat("uTime", (float)glfwGetTime());
+
+	    drawFullscreenTexture(tex);
+
+	    particleShader.detach();
+    }
     public void renderLightingPass() {
-        glBindFramebuffer(GL_FRAMEBUFFER, gp.litFbo);   // <--- render into litFbo
+        glBindFramebuffer(GL_FRAMEBUFFER, gp.litFbo);
         glViewport(0, 0, gp.sizeX, gp.sizeY);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -604,6 +585,7 @@ public class Renderer {
         glBindTexture(GL_TEXTURE_2D, gp.emissiveTextureId);
         lightingShader.uploadInt("uEmissive", 1);
         
+        
 	    glActiveTexture(GL_TEXTURE2);
 	    Texture occ = gp.world.lightingM.getCurrentOcclusionTexture();
 	    lightingShader.uploadBool("uOcclusionEnabled", Settings.occlusionEnabled); 
@@ -611,6 +593,11 @@ public class Renderer {
 	    	glBindTexture(GL_TEXTURE_2D, occ.getTexId());
 	        lightingShader.uploadInt("uOcclusion", 2);
 	    }
+	    
+	    glActiveTexture(GL_TEXTURE3);
+	    glBindTexture(GL_TEXTURE_2D, gp.shadowCasterTexture);
+	    lightingShader.uploadInt("uShadowCaster", 3);
+	    
 	    lightingShader.uploadMat4f("u_MVP", camera.getProjectionMatrix().mul(camera.getViewMatrix(), new Matrix4f()));
 	    lightingShader.uploadVec2f("uWorldSize", new Vector2f(gp.frameWidth, gp.frameHeight));
 	    lightingShader.uploadVec2f("uCameraPos", gp.camera.position);
@@ -619,6 +606,7 @@ public class Renderer {
 	    lightingShader.uploadMat4f("uInvProjection", camera.getInverseProjectionMatrix());
 	    lightingShader.uploadMat4f("uInvView", camera.getInverseViewMatrix());
 	    
+	    /*
 	    boolean particlesEnabled = Settings.particlesEnabled;
 	    if(!gp.world.mapM.isInRoom(12)) {
 	    	particlesEnabled = false;
@@ -626,60 +614,9 @@ public class Renderer {
 	    lightingShader.uploadBool("uDustEnabled", particlesEnabled); 
 	    
 	    lightingShader.uploadFloat("uTime", (float)GLFW.glfwGetTime());
+	    	    */
 	    
 	    lightingShader.uploadBool("uShadowsEnabled", Settings.shadowsEnabled); 
-        lightingShader.uploadFloat("uBuildingShadowLengthMultiplier", 0.5f);
-
-        int listSize = buildingLeftScreenPositions.size();
-	    lightingShader.uploadInt("uNumBuildingCasters", listSize);
-	    lightingShader.uploadFloat("uBuildingShadowLengthMultiplier", 0.5f);
-	    for (int i = 0; i < listSize; i++) {
-	        Vector2f leftPos = buildingLeftScreenPositions.get(i);
-	        Vector2f rightPos = buildingRightScreenPositions.get(i);
-	        lightingShader.uploadVec2f("uBuildingCasterLeft[" + i + "]", leftPos);
-	        lightingShader.uploadVec2f("uBuildingCasterRight[" + i + "]", rightPos);
-	        lightingShader.uploadFloat("uBuildingCasterStrength[" + i + "]", 1.0f);
-	    }
-	    
-	    List<Entity> playerCasters = new ArrayList<Entity>();
-	    // --- PLAYER SHADOW UNIFORMS ---
-	    if(gp.multiplayer) {
-	    	for(PlayerMP p: gp.playerList) {
-	    	 	if(p.currentRoomIndex == gp.player.currentRoomIndex) {
-	    	 		playerCasters.add(p);
-	    	 	}
-	    	}
-	    } else {
-	    	playerCasters.add(gp.player);
-	    }
-	    
-	    for(NPC npc: gp.world.npcM.npcs) {
-	      	playerCasters.add(npc);
-	    }
-
-	    // --- Players ---
-	    lightingShader.uploadInt("uNumPlayerCasters", playerCasters.size());
-	    for (int i = 0; i < playerCasters.size(); i++) {
-	        Entity p = playerCasters.get(i);
-	        Vector2f centre = new Vector2f(
-	                p.hitbox.x + p.hitbox.width/2,
-	                p.hitbox.y + p.hitbox.width
-	        );
-
-	        Vector2f screenCentre = gp.camera.worldToScreen(
-	        		centre,
-	                camera.getViewMatrix(),
-	                camera.getProjectionMatrix(),
-	                gp.sizeX,
-	                gp.sizeY
-	        );
-	        Vector2f size = new Vector2f(180f, 55f);
-	        lightingShader.uploadVec2f("uPlayerCasterPos[" + i + "]", screenCentre);
-	        lightingShader.uploadVec2f("uPlayerCasterSize[" + i + "]", size);
-	        lightingShader.uploadFloat("uPlayerCasterStrength[" + i + "]", 1.0f);
-	    }
-        
-	    
 
         // Upload lighting uniforms ONCE
         lightingShader.uploadVec2f("uScreenSize", new Vector2f(gp.sizeX, gp.sizeY));
@@ -706,75 +643,113 @@ public class Renderer {
         lightingShader.detach();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
-    public void applyAndDrawBloom(int sceneFboTexture, int bloomFbo1, int bloomFbo2, int bloomTex1, int bloomTex2) {
-        // 1. Extract bright areas
-        glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo1);
-        glViewport(0, 0, gp.sizeX, gp.sizeY);
-        glClear(GL_COLOR_BUFFER_BIT);
-        brightnessShader.use();
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, sceneFboTexture);
-        brightnessShader.uploadInt("uScene", 0);
-        brightnessShader.uploadFloat("uThreshold", gp.world.lightingM.bloomThreshold);
-        glBindVertexArray(fsQuadVao);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-        glBindVertexArray(0);
-        brightnessShader.detach();
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        // 2. Blur ping-pong
-        for (int i = 0; i < BLOOM_BLUR_PASSES; i++) {
-            // Horizontal pass
-            glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo2);
-            glClear(GL_COLOR_BUFFER_BIT);
-            blurShaderH.use();
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, bloomTex1);
-            blurShaderH.uploadInt("uTexture", 0);
-            blurShaderH.uploadFloat("uTexelWidth", 1f / gp.sizeX);
-            glBindVertexArray(fsQuadVao);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-            glBindVertexArray(0);
-            blurShaderH.detach();
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-            // Vertical pass
-            glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo1);
-            glClear(GL_COLOR_BUFFER_BIT);
-            blurShaderV.use();
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, bloomTex2);
-            blurShaderV.uploadInt("uTexture", 0);
-            blurShaderV.uploadFloat("uTexelHeight", 1f / gp.sizeY);
-            glBindVertexArray(fsQuadVao);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-            glBindVertexArray(0);
-            blurShaderV.detach();
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        }
-
-        // 3. Combine scene + bloom in one pass to default framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    public void applyAndDrawBloom(int sceneFboTexture,int bloomFbo1,int bloomFbo2,int bloomTex1,int bloomTex2) {
+		
+		// =========================================================
+		// BLOOM RESOLUTION (DOWNSAMPLED)
+		// =========================================================
+		
+		int bw = gp.sizeX / 4;
+		int bh = gp.sizeY / 4;
+		
+		float texelW = 1.0f / bw;
+		float texelH = 1.0f / bh;
+		
+		// =========================================================
+		// 1. BRIGHT PASS (DOWNSAMPLED)
+		// =========================================================
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo1);
+		glViewport(0, 0, bw, bh);
+		glClear(GL_COLOR_BUFFER_BIT);
+		
+		brightnessShader.use();
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, sceneFboTexture);
+		brightnessShader.uploadInt("uScene", 0);
+		brightnessShader.uploadFloat("uThreshold", gp.world.lightingM.bloomThreshold);
+		
+		glBindVertexArray(fsQuadVao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+		
+		brightnessShader.detach();
+		
+		// =========================================================
+		// 2. BLUR (PING-PONG DOWNSAMPLED)
+		// =========================================================
+		
+		for (int i = 0; i < BLOOM_BLUR_PASSES; i++) {
+		
+		// -----------------------------------------------------
+		// HORIZONTAL
+		// -----------------------------------------------------
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo2);
+		//glClear(GL_COLOR_BUFFER_BIT);
+		
+		blurShaderH.use();
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, bloomTex1);
+		blurShaderH.uploadInt("uTexture", 0);
+		
+		blurShaderH.uploadFloat("uTexelWidth", texelW);
+		
+		glBindVertexArray(fsQuadVao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+		
+		blurShaderH.detach();
+		
+		// -----------------------------------------------------
+		// VERTICAL
+		// -----------------------------------------------------
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo1);
+		//glClear(GL_COLOR_BUFFER_BIT);
+		
+		blurShaderV.use();
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, bloomTex2);
+		blurShaderV.uploadInt("uTexture", 0);
+		
+		blurShaderV.uploadFloat("uTexelHeight", texelH);
+		
+		glBindVertexArray(fsQuadVao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+		
+		blurShaderV.detach();
+		}
+		
+		// =========================================================
+		// 3. COMBINE (FULL RES OUTPUT)
+		// =========================================================
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		gp.applyGameViewport(gp.sizeX, gp.sizeY);
-        bloomCombineShader.use();
-
-        // Scene
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, sceneFboTexture);
-        bloomCombineShader.uploadInt("uScene", 0);
-
-        // Bloom
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, bloomTex1);
-        bloomCombineShader.uploadInt("uBloom", 1);
-        bloomCombineShader.uploadFloat("uBloomIntensity", gp.world.lightingM.bloomIntensity);
-
-        // Draw fullscreen quad
-        glBindVertexArray(fsQuadVao);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-        glBindVertexArray(0);
-        bloomCombineShader.detach();
-    }
+		
+		bloomCombineShader.use();
+		
+		// Scene
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, sceneFboTexture);
+		bloomCombineShader.uploadInt("uScene", 0);
+		
+		// Bloom (downsampled texture upscaled automatically)
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, bloomTex1);
+		bloomCombineShader.uploadInt("uBloom", 1);
+		bloomCombineShader.uploadFloat(
+		"uBloomIntensity",
+		gp.world.lightingM.bloomIntensity
+		);
+		
+		glBindVertexArray(fsQuadVao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+		
+		bloomCombineShader.detach();
+	}
     public void renderGodRays(int godrayTexture, int targetFbo) {
         glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);
         glViewport(0, 0, gp.sizeX, gp.sizeY);
@@ -782,10 +757,12 @@ public class Renderer {
 
         godRay.use();
         
+        /*
         System.out.println("Intensity: " + intensity);
         System.out.println("Decay: " + decay);
         System.out.println("Density:" + density);
         System.out.println("Samples:" + samples);
+        */
 
         // Bind input texture (the window shapes)
         glActiveTexture(GL_TEXTURE0);
@@ -801,7 +778,7 @@ public class Renderer {
         godRay.uploadFloat("uTexelSizeX", 1.0f / gp.sizeY); 
         godRay.uploadFloat("uTexelSizeY", 1.0f / gp.sizeY); // top-left origin: texture height
         godRay.uploadFloat("uTime", (float)glfwGetTime());
-        godRay.uploadFloat("uYOffset", 350f / gp.sizeY);
+        godRay.uploadFloat("uYOffset", 351f / gp.sizeY);
         
         glBindVertexArray(fsQuadVao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

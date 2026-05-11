@@ -222,6 +222,8 @@ public class GamePanel {
     public int bloomTex1, bloomTex2;
     public int godrayFbo, godrayTextureId;
     public int godrayProcessedFbo, godrayProcessedTextureId;
+    public int particleFbo, particleTextureId;
+    public int shadowCasterFbo, shadowCasterTexture;
     
     private float shakeDuration = 0f;   // Remaining time for shake
     private float shakeIntensity = 0f; 
@@ -491,23 +493,59 @@ public class GamePanel {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
     public void createBloomBuffers(int width, int height) {
+
+        int bw = width / 4;
+        int bh = height / 4;
+
+        // =========================================================
+        // BLOOM BUFFER 1
+        // =========================================================
+
         bloomFbo1 = glGenFramebuffers();
         bloomTex1 = glGenTextures();
+
         glBindTexture(GL_TEXTURE_2D, bloomTex1);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+            bw, bh, 0,
+            GL_RGBA, GL_UNSIGNED_BYTE,
+            (ByteBuffer) null
+        );
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
         glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo1);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bloomTex1, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_TEXTURE_2D,
+            bloomTex1,
+            0
+        );
+
+        // =========================================================
+        // BLOOM BUFFER 2
+        // =========================================================
 
         bloomFbo2 = glGenFramebuffers();
         bloomTex2 = glGenTextures();
+
         glBindTexture(GL_TEXTURE_2D, bloomTex2);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+            bw, bh, 0,
+            GL_RGBA, GL_UNSIGNED_BYTE,
+            (ByteBuffer) null
+        );
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
         glBindFramebuffer(GL_FRAMEBUFFER, bloomFbo2);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bloomTex2, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_TEXTURE_2D,
+            bloomTex2,
+            0
+        );
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
@@ -553,6 +591,52 @@ public class GamePanel {
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             System.err.println("ERROR: Godray FBO incomplete!");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    public void createCompositeBuffer(int width, int height) {
+    	particleFbo = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, particleFbo);
+
+        particleTextureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, particleTextureId);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, particleTextureId, 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            System.err.println("ERROR: Composite FBO incomplete!");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    public void createShadowBuffer(int width, int height) {
+    	shadowCasterFbo = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, shadowCasterFbo);
+
+        shadowCasterTexture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, shadowCasterTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, shadowCasterTexture, 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            System.err.println("ERROR: Shadow FBO incomplete!");
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -748,6 +832,8 @@ public class GamePanel {
         createLitBuffer(px[0], py[0]);
         createGodrayBuffer(px[0], py[0]);
         createGodrayProcessedBuffer(px[0], py[0]);
+        createCompositeBuffer(px[0], py[0]);
+        createShadowBuffer(px[0], py[0]);
     }
     public void applyGameViewport(int fbWidth, int fbHeight) {
         float gameAspect = frameWidth / (float) frameHeight;
@@ -842,6 +928,17 @@ public class GamePanel {
 			        	drawEmissiveBuffers();
 			        	renderer.endFrame();
 			        	
+			        	if(Settings.shadowsEnabled) {
+				        	//SHADOWS
+				        	glBindFramebuffer(GL_FRAMEBUFFER, shadowCasterFbo);
+				        	applyGameViewport(w, h);
+				        	glClearColor(0, 0, 0, 0);
+				        	glClear(GL_COLOR_BUFFER_BIT);
+				        	renderer.beginFrame();
+				        	drawShadows();
+				        	renderer.endFrame();
+			        	}
+			        	
 			        	int finalTexture = sceneTextureId;
 			        	
 			        	if (Settings.fancyLighting && (currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState || currentState == chatState)) {
@@ -884,13 +981,34 @@ public class GamePanel {
 					        	renderer.drawFullscreenTexture(godrayProcessedTextureId); // add god rays
 					        	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 							}
+							/*
+							if(Settings.particlesEnabled) {
+								glBindFramebuffer(GL_FRAMEBUFFER, particleFbo);
+							    applyGameViewport(w, h);
+							    glClear(GL_COLOR_BUFFER_BIT);
+							    
+							    renderer.renderParticles(finalTexture, w, h);
+
+
+							    // 2. output becomes new finalTexture
+							    finalTexture = particleTextureId;
+							    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+							    applyGameViewport(w, h);
+							    glClear(GL_COLOR_BUFFER_BIT);
+
+							    renderer.drawFullscreenTexture(finalTexture);
+							}
+							*/
+							
+							
+							
 			        	} else {
 			        		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			        		applyGameViewport(w, h);
 			        		glClear(GL_COLOR_BUFFER_BIT);
 			        		renderer.drawFullscreenTexture(sceneTextureId);
 			        	}
-
+			        	
 			        	//GUI
 			        	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			        	applyGameViewport(w, h);
@@ -954,6 +1072,8 @@ public class GamePanel {
         createBloomBuffers(width, height);
         createGodrayBuffer(width, height);
         createGodrayProcessedBuffer(width, height);
+        createCompositeBuffer(width, height);
+        createShadowBuffer(width, height);
     }
     public void resize(int width, int height) {
         // Update OpenGL viewport
@@ -990,7 +1110,6 @@ public class GamePanel {
 	    	
 	    world.serverUpdate(dt);
     	world.clientUpdate(dt);
-
     }
 
     // --------------------------
@@ -1001,6 +1120,9 @@ public class GamePanel {
     }
     private void drawEmissiveBuffers() {
         world.drawEmissiveBuffers(renderer);
+    }
+    private void drawShadows() {
+        world.drawShadows(renderer);
     }
     private void drawGUI() {
     	renderer.setGUI();

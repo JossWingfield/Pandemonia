@@ -104,6 +104,11 @@ public class Window extends Building {
 		 }
 	        
 	}
+	public void drawEmissive(Renderer renderer) {
+		if(gp.world.gameM.getTimeOfDay() != 5) {
+		     renderer.draw(glowImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
+		}
+	}
 	public void drawGodRay(Renderer renderer) {
 		if(gp.world.gameM.getTimeOfDay() != 5) {
 		     renderer.draw(glowImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);

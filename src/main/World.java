@@ -47,7 +47,7 @@ public class World {
     public ProgressManager progressM;
     public MiniGameManager minigameM;
     public ArrayList<Entity> updateEntityList;
-    public ArrayList<Entity> entityList;
+    public ArrayList<Entity> entityList, shadowList;
     public Catalogue catalogue;
     public GameManager gameM;
     public Customiser customiser;
@@ -75,6 +75,7 @@ public class World {
         mapM = new MapManager(gp);
         updateEntityList = new ArrayList<>();
         entityList = new ArrayList<>();
+        shadowList = new ArrayList<>();
         itemRegistry = new ItemRegistry(gp);
         buildingRegistry = new BuildingRegistry(gp);
         catalogue = new Catalogue(gp);
@@ -98,6 +99,7 @@ public class World {
           mapM = new MapManager(gp);
           updateEntityList = new ArrayList<>();
           entityList = new ArrayList<>();
+          shadowList = new ArrayList<>();
           gameM = new GameManager(gp);
           lightingM = new LightingManager(gp, gp.camera);
           customiser = new Customiser(gp);
@@ -462,6 +464,70 @@ public class World {
 	    		main[i].drawGodRay(renderer);
 	    	}
 	    }
+    }
+    public void drawShadows(Renderer renderer) {
+    	if(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState) {
+    	
+    		renderer.setShadowShader();
+    		if(gp.multiplayer) {
+        		for (int i = 0; i < gp.getPlayerList().size(); i++) {
+    	            if (gp.getPlayerList().get(i) != null) {
+    	            	Player p = gp.getPlayerList().get(i);
+    	            	if(!p.getUsername().equals(gp.player.getUsername())) {
+	    	            	if(p.currentRoomIndex == gp.player.currentRoomIndex) {
+	    	            		shadowList.add(p);
+	    	            	}
+    	            	}
+    	            }
+    	        }
+        		shadowList.add(gp.player);
+        	} else {
+        		shadowList.add(gp.player);
+        	}
+    		
+    		List<NPC> copy = new ArrayList<NPC>(npcM.getNPCs());
+   	        
+   	        for(NPC npc: copy) {
+   	        	if(npc != null) {
+   	        		shadowList.add(npc);
+   	        	}
+   	        }
+    		
+    		
+	    	Building[] main = buildingM.getBuildingsToDraw();
+		    for(int i = 0; i < main.length-1; i++) {
+		    	if(main[i] != null) {
+		    		if(main[i].castsShadow) {
+		    			shadowList.add(main[i]);
+		    		}
+		    	}
+		    }
+    	}
+    	
+    	 ArrayList<Entity> listCopy = new ArrayList<Entity>(shadowList);
+
+         Collections.sort(listCopy, new Comparator<Entity>() {
+             //@Override
+             public int compare(Entity e1, Entity e2) {
+
+                 int result = Integer.compare((int)e1.hitbox.y, (int)e2.hitbox.y);
+                 return result;
+             }
+         });
+         
+         shadowList = listCopy;
+         //DRAW ENTITIES
+         for(int i = 0; i < shadowList.size(); i++) {
+         	Entity a = shadowList.get(i);
+         	if(a != null) {
+	            if(a.isOnScreen(gp.camera, gp.frameWidth, gp.frameHeight)) {
+	            	a.draw(renderer);
+	            }
+         	}
+         }
+             	
+        shadowList.clear();
+    	
     }
 	
 }
