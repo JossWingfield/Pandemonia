@@ -8,7 +8,7 @@ public class IceBlock extends Food {
 	public Food enclosedItem = null;
 	
 	public IceBlock(GamePanel gp, Food enclosedItem) {
-		super(gp, 0, 0);
+		super(gp);
 		this.enclosedItem = enclosedItem;
 		name = "Ice Block";
 		importImages();

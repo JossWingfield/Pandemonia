@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class BreadSlice extends Food {
 	
-	public BreadSlice(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public BreadSlice(GamePanel gp) {
+		super(gp);
 		name = "Bread Slice";
 		importImages();
 		foodLayer = 2;

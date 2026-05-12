@@ -6,8 +6,8 @@ import main.renderer.TextureRegion;
 
 public class FennelSeeds extends Seasoning {
 		
-	public FennelSeeds(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public FennelSeeds(GamePanel gp) {
+		super(gp);
 		name = "Fennel Seeds";
 		importImages();
 		isAromaticSpice = true;

@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Penne extends Food {
 	
-	public Penne(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Penne(GamePanel gp) {
+		super(gp);
 		name = "Penne";
 		importImages();
 		foodLayer = 0;

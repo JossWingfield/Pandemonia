@@ -21,7 +21,6 @@ public class LightingManager {
 
     public Colour ambientColor; // Default sunlight
     public float ambientIntensity = 1f; // Adjust from 0 (dark) to 1 (full daylight)
-    private boolean firstUpdate = true;
     private boolean powerOff = false;
 
     //Bloom Settings
@@ -29,24 +28,18 @@ public class LightingManager {
     public int bloomStrength = 6;        // Softer blur radius
     public float bloomIntensity = 0.12f; //0.15f
     
-    
     //Light Occlusion Settings
-    
     private Texture currentOcclusionTexture;
     private Map<Integer, Texture> roomOcclusionCache = new HashMap<>();
     private int lastRoomId = -1;
 
     final float minBrightness = 0.55f;
     int minBrightness255 = (int)(minBrightness * 255); // 0.55 * 255 ≈ 140
-    private int[] occlusionLUT = new int[256];
-    private int[][] occlusionARGBTable = new int[256][256];
-    private byte[][] lightPassable;
-    private byte[][] visibleMask;
 
     private Colour morning = Colour.from255(255, 200, 150); // 6h
     private Colour noon    = Colour.from255(255, 255, 255); // 12h
     private Colour evening = Colour.from255(255, 180, 120); // 18h
-    private Colour night   = Colour.from255(20, 20, 40);    // 0h / 24h
+    private Colour night   = Colour.from255(80, 80, 60);    // 0h / 24h
     
 
     public LightingManager(GamePanel gp, GLSLCamera camera) {
@@ -58,13 +51,6 @@ public class LightingManager {
         //computeOcclusionLUT();
         //computeOcclusionARGBTable();
         //getRoomOcclusion();
-    }
-
-    private void startLights() {
-        // Example lights:
-        //lights.add(new LightSource(13*48, 4*48, Color.BLUE, 100*4, LightSource.Type.BLOOM_ONLY));
-        // lights.add(new LightSource(9*48, 6*48, Color.RED, 100*3));
-        // lights.add(new LightSource(9*48, 9*48, Color.YELLOW, 100*4));
     }
     private Colour lerpColor(Colour a, Colour b, float t) {
         float r = a.r + (b.r - a.r) * t;
@@ -158,10 +144,6 @@ public class LightingManager {
         this.ambientIntensity = Math.max(0, Math.min(1, intensity));
     }
     public void update(double dt) {
-        if (firstUpdate) {
-            firstUpdate = false;
-            startLights();
-        }
         
         if (!(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.chatState)) {
             return;
@@ -189,12 +171,26 @@ public class LightingManager {
                 intensity = 1f;
             } else if (time >= 12 && time < 18) {
                 float t = (time - 12f) / 6f;
-                ambient = lerpColor(noon, evening, t);
+
+                // soften approach into evening (prevents hard handoff at 18)
+                float smoothT = t * t * (3f - 2f * t); // smoothstep
+
+                ambient = lerpColor(noon, evening, smoothT);
                 intensity = 1f;
-            } else if (time >= 18 && time < 24) {
+            }
+            else if (time >= 18 && time < 24) {
                 float t = (time - 18f) / 6f;
-                ambient = lerpColor(evening, night, t);
-                intensity = 0.6f;
+
+                // pull slightly from noon to avoid hard drop-in
+                float smoothT = t * t * (3f - 2f * t);
+
+                Colour base = lerpColor(evening, night, smoothT);
+
+                // IMPORTANT FIX: remove sudden intensity step
+                float preFade = 1f - (smoothT * 0.4f); // instead of 1 → 0.6 jump
+
+                ambient = base;
+                intensity = preFade;
             } else {
                 float t = time / 6f;
                 ambient = lerpColor(night, morning, t);

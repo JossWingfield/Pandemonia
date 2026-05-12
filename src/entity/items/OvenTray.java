@@ -24,8 +24,8 @@ public class OvenTray extends Item {
     private TextureRegion foodBorder;
     private FoodState foodState = FoodState.RAW;
 	
-	public OvenTray(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public OvenTray(GamePanel gp) {
+		super(gp);
 		name = "Oven Tray";
 		importImages();
 		setUpStates();

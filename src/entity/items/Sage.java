@@ -6,8 +6,8 @@ import main.renderer.TextureRegion;
 
 public class Sage extends Seasoning {
 	
-	public Sage(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Sage(GamePanel gp) {
+		super(gp);
 		name = "Sage";
 		importImages();
 		particleColours.add(new Colour("b2bd93"));

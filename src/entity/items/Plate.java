@@ -33,8 +33,8 @@ public class Plate extends Item {
     public float seasoningQuality = -1;
     private int baseX, baseY;
 
-    public Plate(GamePanel gp, float xPos, float yPos) {
-        super(gp, xPos, yPos);
+    public Plate(GamePanel gp) {
+        super(gp);
         name = "Plate";
         importImages();
         setupPlates();

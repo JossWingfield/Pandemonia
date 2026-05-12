@@ -145,7 +145,7 @@ public class TablePlate extends Building {
 		    	} else {
 		    		orderCompleted = false;
 		    		showDirtyPlate = true;
-		       		plate = new Plate(gp, hitbox.x, hitbox.y);
+		       		plate = new Plate(gp);
 		    		plate.setDirty(currentCustomer.foodOrder.getRecipe().dirtyPlate);
 		    		plate.setCurrentStackCount(1);
 		    	}

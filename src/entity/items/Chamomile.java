@@ -6,8 +6,8 @@ import main.renderer.TextureRegion;
 
 public class Chamomile extends Seasoning {
 		
-	public Chamomile(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Chamomile(GamePanel gp) {
+		super(gp);
 		name = "Chamomile";
 		importImages();
 		isHerb = true;

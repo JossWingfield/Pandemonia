@@ -20,18 +20,13 @@ public abstract class Item extends Entity {
     protected String description = "";
     public boolean inRecipe;
 
-    public Item(GamePanel gp, float xPos, float yPos) {
-        super(gp, xPos, yPos, 48, 48);
+    public Item(GamePanel gp) {
+        super(gp, 0, 0, 48, 48);
         this.gp = gp;
         this.drawWidth = (int)hitbox.width;
         this.drawHeight = (int)hitbox.height;
         yDrawOffset = 0;
         xDrawOffset = 0;
-    }
-    
-    public Item(GamePanel gp) {
-        super();
-        this.gp = gp;
     }
     
     //@Override

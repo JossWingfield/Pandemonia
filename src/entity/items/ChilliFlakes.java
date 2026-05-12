@@ -6,8 +6,8 @@ import main.renderer.TextureRegion;
 
 public class ChilliFlakes extends Seasoning {
 		
-	public ChilliFlakes(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public ChilliFlakes(GamePanel gp) {
+		super(gp);
 		name = "Chilli Flakes";
 		importImages();
 		isSpice = true;

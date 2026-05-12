@@ -179,7 +179,7 @@ public class Sink extends Building {
 				if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && gp.player.clickCounter == 0) {
 					if(cleanedPlateCount > 0 && gp.player.currentItem == null) {
 						cleanedPlateCount--;
-						Plate plate = new Plate(gp, 0, 0);
+						Plate plate = new Plate(gp);
 						plate.setClean();
 						plate.setCurrentStackCount(1);
 						gp.player.currentItem = plate;

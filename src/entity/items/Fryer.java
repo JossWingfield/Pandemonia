@@ -42,8 +42,8 @@ public class Fryer extends Item {
     
 	private Map<String, Set<FoodState>> canBeFried = new HashMap<>();
 	
-    public Fryer(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+    public Fryer(GamePanel gp) {
+		super(gp);
 		name = "Fryer";
 		orderSign = importImage("/UI/Warning.png").getSubimage(16, 0, 16, 16);
 		warningOrderSign = importImage("/UI/Warning.png").getSubimage(0, 0, 16, 16);

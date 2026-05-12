@@ -8,8 +8,8 @@ import main.renderer.TextureRegion;
 
 public class Thyme extends Seasoning {
 		
-	public Thyme(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Thyme(GamePanel gp) {
+		super(gp);
 		name = "Thyme";
 		importImages();
 		isHerb = true;

@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Greens extends Food {
 	
-	public Greens(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Greens(GamePanel gp) {
+		super(gp);
 		name = "Greens";
 		importImages();
 		foodLayer = 2;

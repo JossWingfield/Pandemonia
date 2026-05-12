@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Leek extends Food {
 	
-	public Leek(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Leek(GamePanel gp) {
+		super(gp);
 		name = "Leek";
 		importImages();
 		foodLayer = 1;

@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Fish extends Food {
 	
-	public Fish(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Fish(GamePanel gp) {
+		super(gp);
 		name = "Fish";
 		importImages();
 		foodLayer = 0;

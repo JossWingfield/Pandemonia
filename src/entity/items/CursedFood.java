@@ -4,8 +4,8 @@ import main.GamePanel;
 
 public class CursedFood extends Food {
 
-	public CursedFood(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public CursedFood(GamePanel gp) {
+		super(gp);
 	}
 	
 }

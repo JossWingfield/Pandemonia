@@ -52,8 +52,8 @@ public class CookingItem extends Item {
  	private double safeZoneMax = 0.68;
  	private double burnProgress = 0;
 	
-    public CookingItem(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+    public CookingItem(GamePanel gp) {
+		super(gp);
 		setupRecipes();
 		orderSign = importImage("/UI/Warning.png").getSubimage(16, 0, 16, 16);
 		warningOrderSign = importImage("/UI/Warning.png").getSubimage(0, 0, 16, 16);

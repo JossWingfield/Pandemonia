@@ -20,8 +20,8 @@ public class SeasoningBlend extends Food {
 	
 	  private TextureRegion foodBorder;
 	
-	public SeasoningBlend(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public SeasoningBlend(GamePanel gp) {
+		super(gp);
 		name = "Seasoning Blend";
 		importImages();
 		foodLayer = 5;

@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Tomato extends Food {
 	
-	public Tomato(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Tomato(GamePanel gp) {
+		super(gp);
 		name = "Tomato";
 		importImages();
 		foodLayer = 1;

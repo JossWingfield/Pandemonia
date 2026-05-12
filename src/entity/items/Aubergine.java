@@ -6,8 +6,8 @@ import main.renderer.TextureRegion;
 
 public class Aubergine extends Food {
 	
-	public Aubergine(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Aubergine(GamePanel gp) {
+		super(gp);
 		name = "Aubergine";
 		importImages();
 		foodLayer = 1;

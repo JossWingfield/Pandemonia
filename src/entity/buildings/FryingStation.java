@@ -51,8 +51,8 @@ public class FryingStation extends Building {
 		npcHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y+48, 48, 32);
 		
 		
-		leftSlot = new Fryer(gp, hitbox.x, hitbox.y);
-		rightSlot = new Fryer(gp, hitbox.x, hitbox.y);
+		leftSlot = new Fryer(gp);
+		rightSlot = new Fryer(gp);
 	}
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*6);

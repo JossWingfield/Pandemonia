@@ -7,8 +7,8 @@ import main.renderer.TextureRegion;
 
 public class SmallPan extends CookingItem {
 	
-	public SmallPan(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public SmallPan(GamePanel gp) {
+		super(gp);
 		name = "Small Pot";
 		importImages();
 		setupRecipes();

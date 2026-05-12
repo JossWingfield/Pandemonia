@@ -78,21 +78,21 @@ public class StorageFridge extends Building {
 	    }
 	}
 	private void addItems() {
-		contents.add(new Chicken(gp, 0, 0));
-		contents.add(new Cheese(gp, 0, 0));
-		contents.add(new Egg(gp, 0, 0));
-		contents.add(new Fish(gp, 0, 0));
-		contents.add(new Bread(gp, 0, 0));
-		contents.add(new Steak(gp, 0, 0));
-		contents.add(new Spaghetti(gp, 0, 0));
-		contents.add(new Penne(gp, 0, 0));
-		contents.add(new Lasagna(gp, 0, 0));
-		contents.add(new BreadCrumbs(gp, 0, 0));
+		contents.add(new Chicken(gp));
+		contents.add(new Cheese(gp));
+		contents.add(new Egg(gp));
+		contents.add(new Fish(gp));
+		contents.add(new Bread(gp));
+		contents.add(new Steak(gp));
+		contents.add(new Spaghetti(gp));
+		contents.add(new Penne(gp));
+		contents.add(new Lasagna(gp));
+		contents.add(new BreadCrumbs(gp));
 		if(starterFridge) {
-			contents.add(new Tomato(gp, 0, 0));
-			contents.add(new Greens(gp, 0, 0));
+			contents.add(new Tomato(gp));
+			contents.add(new Greens(gp));
 		} else {
-			contents.add(new Garlic(gp, 0, 0));
+			contents.add(new Garlic(gp));
 		}
 
 	}

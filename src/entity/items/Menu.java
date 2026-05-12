@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Menu extends Item {
 	
-	public Menu(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Menu(GamePanel gp) {
+		super(gp);
 		name = "Menu";
 		importImages();
 	}

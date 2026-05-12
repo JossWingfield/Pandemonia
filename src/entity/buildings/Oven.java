@@ -48,7 +48,7 @@ public class Oven extends Building {
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
 		completeSign = importImage("/UI/Tick.png").getSubimage(0, 0, 16, 16);
-		OvenTray ot = new OvenTray(gp, 0, 0);
+		OvenTray ot = new OvenTray(gp);
 		currentItem = ot;
 	}
 	public void onPlaced() {

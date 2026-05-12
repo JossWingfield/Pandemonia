@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Corn extends Food {
 	
-	public Corn(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Corn(GamePanel gp) {
+		super(gp);
 		name = "Corn";
 		importImages();
 		foodLayer = 1;

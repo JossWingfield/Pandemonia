@@ -6,8 +6,8 @@ import main.renderer.TextureRegion;
 
 public class Cumin extends Seasoning {
 		
-	public Cumin(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Cumin(GamePanel gp) {
+		super(gp);
 		name = "Cumin";
 		isSpice = true;
 		importImages();

@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Asparagus extends Food {
 	
-	public Asparagus(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Asparagus(GamePanel gp) {
+		super(gp);
 		name = "Asparagus";
 		importImages();
 		foodLayer = 1;

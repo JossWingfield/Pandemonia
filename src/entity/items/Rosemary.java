@@ -6,8 +6,8 @@ import main.renderer.TextureRegion;
 
 public class Rosemary extends Seasoning {
 	
-	public Rosemary(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Rosemary(GamePanel gp) {
+		super(gp);
 		name = "Rosemary";
 		importImages();
 		particleColours.add(new Colour("64a693"));

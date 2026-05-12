@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class BurntFood extends Food {
 	
-	public BurntFood(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public BurntFood(GamePanel gp) {
+		super(gp);
 		name = "Burnt Food";
 		importImages();
 		foodLayer = 4;

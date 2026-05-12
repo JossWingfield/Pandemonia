@@ -6,8 +6,8 @@ import main.renderer.TextureRegion;
 
 public class GarlicPowder extends Seasoning {
 		
-	public GarlicPowder(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public GarlicPowder(GamePanel gp) {
+		super(gp);
 		name = "Garlic Powder";
 		importImages();
 		isAromaticSpice = true;

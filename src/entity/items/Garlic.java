@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Garlic extends Food {
 	
-	public Garlic(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Garlic(GamePanel gp) {
+		super(gp);
 		name = "Garlic";
 		importImages();
 		foodLayer = 3;

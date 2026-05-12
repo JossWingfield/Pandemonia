@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Lasagna extends Food {
 	
-	public Lasagna(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Lasagna(GamePanel gp) {
+		super(gp);
 		name = "Lasagna";
 		importImages();
 		foodLayer = 0;

@@ -779,6 +779,9 @@ public class Renderer {
         godRay.uploadFloat("uTexelSizeY", 1.0f / gp.sizeY); // top-left origin: texture height
         godRay.uploadFloat("uTime", (float)glfwGetTime());
         godRay.uploadFloat("uYOffset", 351f / gp.sizeY);
+        godRay.uploadVec2f("uScreenSize", new Vector2f(gp.sizeX, gp.sizeY));
+        godRay.uploadVec3f("uAmbientColor", gp.world.lightingM.ambientColor.toVec3());
+        godRay.uploadFloat("uAmbientIntensity", gp.world.lightingM.ambientIntensity);
         
         glBindVertexArray(fsQuadVao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

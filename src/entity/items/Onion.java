@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Onion extends Food {
 	
-	public Onion(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Onion(GamePanel gp) {
+		super(gp);
 		name = "Onion";
 		importImages();
 		foodLayer = 1;

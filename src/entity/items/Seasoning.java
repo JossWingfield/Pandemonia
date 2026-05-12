@@ -15,8 +15,8 @@ public class Seasoning extends Food {
 	
 	protected ArrayList<Colour> particleColours;
 	
-	public Seasoning(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Seasoning(GamePanel gp) {
+		super(gp);
 		foodLayer = 5;
 		particleColours = new ArrayList<Colour>();
 	}

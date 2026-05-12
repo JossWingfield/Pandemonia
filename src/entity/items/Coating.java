@@ -11,8 +11,8 @@ import main.renderer.TextureRegion;
 
 public abstract class Coating extends Food {
 	
-	public Coating(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Coating(GamePanel gp) {
+		super(gp);
 		foodLayer = 5;
 		drawWidth = 48;
 		drawHeight = 48;

@@ -147,7 +147,7 @@ public class SpiceTable extends Building {
 		
 	}
 	private void pickUpFinishedSeasoning() {
-		SeasoningBlend blend = new SeasoningBlend(gp, 0, 0);
+		SeasoningBlend blend = new SeasoningBlend(gp);
 		blend.setIngredients(new ArrayList<String>(ingredients));
 		blend.setIngredientImages(new ArrayList<TextureRegion>(blendIngredientImages));
 		

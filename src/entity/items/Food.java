@@ -32,8 +32,8 @@ public class Food extends Item {
 	private Map<String, Set<FoodState>> canBeCoated = new HashMap<>();
 
     // Constructor
-    public Food(GamePanel gp, float xPos, float yPos) {
-        super(gp, xPos, yPos);
+    public Food(GamePanel gp) {
+        super(gp);
         foodState = FoodState.RAW;
         burntImage = importImage("/food/BurntFood.png").toTextureRegion();
         setUp();

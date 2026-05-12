@@ -9,8 +9,8 @@ public class FryingPan extends CookingItem {
 	
 	private int index = 4, animationCounter = 0;
 		
-	public FryingPan(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public FryingPan(GamePanel gp) {
+		super(gp);
 		name = "Frying Pan";
 		importImages();
 		setupRecipes();

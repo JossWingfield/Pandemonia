@@ -5,8 +5,8 @@ import main.renderer.TextureRegion;
 
 public class Meatball extends Food{
 	
-	public Meatball(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Meatball(GamePanel gp) {
+		super(gp);
 		name = "Meatball";
 		importImages();
 		foodLayer = 2;

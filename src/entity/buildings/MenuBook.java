@@ -59,7 +59,7 @@ public class MenuBook extends Building {
 	}
 	public void takeBook() {
 		menuCount--;
-		gp.player.currentItem = new Menu(gp, 0, 0);
+		gp.player.currentItem = new Menu(gp);
 		gp.player.clickCounter = 0.1;
 		gp.player.resetAnimation(4);
 	}

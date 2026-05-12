@@ -6,8 +6,8 @@ import main.renderer.TextureRegion;
 
 public class Mint extends Seasoning {
 		
-	public Mint(GamePanel gp, float xPos, float yPos) {
-		super(gp, xPos, yPos);
+	public Mint(GamePanel gp) {
+		super(gp);
 		name = "Mint";
 		importImages();
 		isHerb = true;
