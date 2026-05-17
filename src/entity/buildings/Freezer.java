@@ -174,12 +174,10 @@ public class Freezer extends Building {
 		     renderer.draw(animations[0][currentAni][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 		
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	        
 	}
 	public void drawOverlayUI(Renderer renderer) {
+		super.drawOverlayUI(renderer);
 		//drawContents(renderer);
 		if(currentFood != null && freezing) {
 			drawFreezingBar(renderer, hitbox.x+24, hitbox.y+32);

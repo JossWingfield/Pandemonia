@@ -17,6 +17,7 @@ import entity.buildings.Cauldron;
 import entity.buildings.Chair;
 import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
+import entity.buildings.ClothesRail;
 import entity.buildings.Computer;
 import entity.buildings.CornerTable;
 import entity.buildings.CursedDecor;
@@ -109,6 +110,8 @@ public class MapBuilder {
 			totalBuildingCount++;
 		}
 
+		buildings[totalBuildingCount] = new ClothesRail(gp, 0, 0);
+		totalBuildingCount++;
 		buildings[totalBuildingCount] = new MenuBook(gp, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new SpiceTable(gp, 0, 0);

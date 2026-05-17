@@ -207,6 +207,7 @@ public class MenuSign extends Building {
 	}
     // Draw the menu UI
 	public void drawOverlayUI(Renderer renderer) {
+		super.drawOverlayUI(renderer);
 	    if (!uiOpen) return;
 
 	    // Background

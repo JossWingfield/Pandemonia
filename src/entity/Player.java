@@ -45,7 +45,6 @@ public class Player extends Entity{
     private Colour usernameColor;
     
     //GENERAL VARIABLES
-    private boolean firstUpdate = true;
     private float speed; //How many pixels per update the player moves at
     private final float initialSpeed;
     private float currentSpeed; //How many pixels per update the player moves at
@@ -86,7 +85,6 @@ public class Player extends Entity{
     //MULTIPLAYER
     private float prevX, prevY;
     private boolean moved = false;
-    private double timeSinceLastSend = 0;
     public boolean isChangingRoom = false;
 
     public Player(GamePanel gp, int xPos, int yPos, KeyListener keyL, MouseListener mouseL, String username) { //Setting default variables
@@ -112,12 +110,16 @@ public class Player extends Entity{
         appearance = new PlayerAppearance(
         	    new SkinPalette(0),
         	    new HairPalette(0),
-        	    new HairStyle(0)
+        	    new HairStyle(0),
+        	    new Hat(0),
+        	    new Costume(0)
         	);
         if(!gp.multiplayer) {
         	setPlayerSkin(appearance.skin);
         	setPlayerHair(appearance.hair);
         	setPlayerHairStyle(appearance.hairStyle);
+        	setPlayerHat(appearance.hat);
+         	setPlayerCostume(appearance.costume);
         }
         
         setUp();
@@ -157,12 +159,22 @@ public class Player extends Entity{
         appearance.setHairStyle(hairNum);
         setPlayerHairStyle(appearance.hairStyle);
     }
+    public void setHat(int hatNum) {
+        appearance.setHat(hatNum);
+        setPlayerHat(appearance.hat);
+    }
+    public void setCostume(int costumeNum) {
+        appearance.setCostume(costumeNum);
+        setPlayerCostume(appearance.costume);
+    }
     public PlayerSaveData toSaveData() {
         PlayerSaveData data = new PlayerSaveData();
         data.username = username;
         data.skinNum = appearance.skin.getIndex();
         data.hairNum = appearance.hair.getIndex();
         data.hairStyleNum = appearance.hairStyle.getIndex();
+        data.hatNum = appearance.hat.getIndex();
+        data.costumeNum = appearance.costume.getIndex();
         data.level = level;
         data.soulsServed = soulsServed;
         data.nextLevelAmount = nextLevelAmount;
@@ -184,6 +196,8 @@ public class Player extends Entity{
         setSkin(data.skinNum);
         setHair(data.hairNum);
         setHairStyle(data.hairStyleNum);
+        setHat(data.hatNum);
+        setCostume(data.costumeNum);
         this.level = data.level;
         this.soulsServed = data.soulsServed;
         this.nextLevelAmount = data.nextLevelAmount;
@@ -211,6 +225,12 @@ public class Player extends Entity{
     }
     public int getHairStyle() {
     	return appearance.hairStyle.getIndex();
+    }
+    public int getHat() {
+    	return appearance.hat.getIndex();
+    }
+    public int getCostume() {
+    	return appearance.costume.getIndex();
     }
     public void setSpawnPoint(int xPos, int yPos) {
     	hitbox.x = xPos;
@@ -259,29 +279,29 @@ public class Player extends Entity{
         skinShadowAnimations = new TextureRegion[4][20][15];
         
         //Hand 1
-        hand1Animations = importPlayerSpriteSheet("/player/hand1", 80, 80);
-        hand1Animations = importUniversalAnimation("/player/hand1/Washing.png", hand1Animations, 0, 0, 80, 80, 5, 4);
+        hand1Animations = importPlayerSpriteSheet("/player/body/body0/hand1", 80, 80);
+        hand1Animations = importUniversalAnimation("/player/body/body0/hand1/Washing.png", hand1Animations, 0, 0, 80, 80, 5, 4);
         //Hand 2
-        hand2Animations = importPlayerSpriteSheet("/player/hand2", 80, 80);
-        hand2Animations = importUniversalAnimation("/player/hand2/Washing.png", hand2Animations, 0, 0, 80, 80, 5, 4);
+        hand2Animations = importPlayerSpriteSheet("/player/body/body0/hand2", 80, 80);
+        hand2Animations = importUniversalAnimation("/player/body/body0/hand2/Washing.png", hand2Animations, 0, 0, 80, 80, 5, 4);
         //Head
         headAnimations = importPlayerSpriteSheet("/player/head", 80, 80);
         headAnimations = importUniversalAnimation("/player/head/Washing.png", headAnimations, 0, 0, 80, 80, 5, 4);
         
-        skinShadowAnimations = importPlayerSpriteSheet("/player/acc/skinShadow/chefHat", 80, 80);
-        skinShadowAnimations = importUniversalAnimation("/player/acc/skinShadow/chefHat/Washing.png", skinShadowAnimations, 0, 0, 80, 80, 5, 4);
+        skinShadowAnimations = importPlayerSpriteSheet("/player/acc/acc0/skinShadow", 80, 80);
+        skinShadowAnimations = importUniversalAnimation("/player/acc/acc0/skinShadow/Washing.png", skinShadowAnimations, 0, 0, 80, 80, 5, 4);
         
         //Body
-        bodyAnimations = importPlayerSpriteSheet("/player/body", 80, 80);
-        bodyAnimations = importUniversalAnimation("/player/body/Washing.png", bodyAnimations, 0, 0, 80, 80, 5, 4);
+        bodyAnimations = importPlayerSpriteSheet("/player/body/body0", 80, 80);
+        bodyAnimations = importUniversalAnimation("/player/body/body0/Washing.png", bodyAnimations, 0, 0, 80, 80, 5, 4);
         
         //Hair
         hairAnimations = importPlayerSpriteSheet("/player/hair/hair0", 80, 80);
         hairAnimations = importUniversalAnimation("/player/hair/hair0/Washing.png", hairAnimations, 0, 0, 80, 80, 5, 4);
         
         //Accessory
-        accessoryAnimations = importPlayerSpriteSheet("/player/acc", 80, 80);
-        accessoryAnimations = importUniversalAnimation("/player/acc/Washing.png", accessoryAnimations, 0, 0, 80, 80, 5, 4);
+        accessoryAnimations = importPlayerSpriteSheet("/player/acc/acc0", 80, 80);
+        accessoryAnimations = importUniversalAnimation("/player/acc/acc0/Washing.png", accessoryAnimations, 0, 0, 80, 80, 5, 4);
         
         vfxAnimations = importUniversalAnimation("/player/Washing.png", vfxAnimations, 0, 0, 80, 80, 5, 4);
         currentAnimation = 0;
@@ -485,9 +505,7 @@ public class Player extends Entity{
 	            	prevX = hitbox.x;
 	             	prevY = hitbox.x;
 	             		             	
-	             	timeSinceLastSend+=dt;
 	         	    if (moved) {
-	         	        timeSinceLastSend = 0;
 	         	        gp.socketClient.send(
 	         	            new Packet02Move(
 	         	                username,
@@ -931,6 +949,27 @@ public class Player extends Entity{
         hairAnimations = importPlayerSpriteSheet("/player/hair/hair" + appearance.hairStyle.getIndex(), 80, 80);
         hairAnimations = importUniversalAnimation("/player/hair/hair" + appearance.hairStyle.getIndex() + "/Washing.png", hairAnimations, 0, 0, 80, 80, 5, 4);
     }
+    public void setPlayerHat(Hat hat) {
+        this.appearance.hat = hat;
+        
+        accessoryAnimations = importPlayerSpriteSheet("/player/acc/acc" + appearance.hat.getIndex(), 80, 80);
+        accessoryAnimations = importUniversalAnimation("/player/acc/acc" + appearance.hat.getIndex() + "/Washing.png", accessoryAnimations, 0, 0, 80, 80, 5, 4);
+        
+        skinShadowAnimations = importPlayerSpriteSheet("/player/acc/acc" + appearance.hat.getIndex() + "/skinShadow", 80, 80);
+        skinShadowAnimations = importUniversalAnimation("/player/acc/acc" + appearance.hat.getIndex() + "/skinShadow/Washing.png", skinShadowAnimations, 0, 0, 80, 80, 5, 4);
+    }
+    public void setPlayerCostume(Costume costume) {
+        this.appearance.costume = costume;
+        
+        bodyAnimations = importPlayerSpriteSheet("/player/body/body" + appearance.costume.getIndex(), 80, 80);
+        bodyAnimations = importUniversalAnimation("/player/body/body" + appearance.costume.getIndex() + "/Washing.png", bodyAnimations, 0, 0, 80, 80, 5, 4);
+        
+        hand1Animations = importPlayerSpriteSheet("/player/body/body" + appearance.costume.getIndex() + "/hand1", 80, 80);
+        hand1Animations = importUniversalAnimation("/player/body/body" + appearance.costume.getIndex() + "/hand1/Washing.png", hand1Animations, 0, 0, 80, 80, 5, 4);
+       
+        hand2Animations = importPlayerSpriteSheet("/player/body/body" + appearance.costume.getIndex() + "/hand2", 80, 80);
+        hand2Animations = importUniversalAnimation("/player/body/body" + appearance.costume.getIndex() + "/hand2/Washing.png", hand2Animations, 0, 0, 80, 80, 5, 4);
+    }
     public void draw(Renderer renderer) {
     	if(isInvisible) {
     		return;
@@ -964,9 +1003,15 @@ public class Player extends Entity{
 			applySkinIfNeeded();
 		    renderer.draw(hand2Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
 		    renderer.draw(bodyFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
-		    renderer.draw(headFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
-		    renderer.draw(skinShadowFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
-		    renderer.draw(hairFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
+		    if(!appearance.hat.doesHideHead()) {
+		    	renderer.draw(headFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
+		    }
+		    if(!appearance.hat.doesHideHead()) {
+		    	renderer.draw(skinShadowFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
+		    }
+		    if(!appearance.hat.doesHideHair()) {
+		    	renderer.draw(hairFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
+		    }
 		    renderer.draw(accessoryFrame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight);
 		    renderer.draw(hand1Frame, hitbox.x - xDrawOffset,hitbox.y - yDrawOffset,drawWidth, drawHeight, playerShader);
 		}     
@@ -1086,11 +1131,17 @@ public class Player extends Entity{
    		if (hand2Frame != null) {
    		    renderer.draw(hand2Frame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
    		    renderer.draw(bodyFrame, x,y,drawWidth*scale, drawHeight*scale);
-   		    renderer.draw(headFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
-   		    if(previewHat) {
-   			    renderer.draw(skinShadowFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    if(!appearance.hat.doesHideHead()) {
+   		    	renderer.draw(headFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
    		    }
-   		    renderer.draw(hairFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    if(previewHat) {
+   		    	if(!appearance.hat.doesHideHead()) {
+   		    		renderer.draw(skinShadowFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    	}
+   		    }
+   		    if(!appearance.hat.doesHideHair()) {
+   		    	renderer.draw(hairFrame, x,y,drawWidth*scale, drawHeight*scale, playerShader);
+   		    }
    		    if(previewHat) {
    		    	renderer.draw(accessoryFrame, x,y,drawWidth*scale, drawHeight*scale);
    		    }

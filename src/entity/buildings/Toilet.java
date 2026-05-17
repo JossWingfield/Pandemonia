@@ -75,10 +75,6 @@ public class Toilet extends Building {
 	    } else {
 		    renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    }
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 		
 		//g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)npcHitbox.x, (int)npcHitbox.y, (int)npcHitbox.width, (int)npcHitbox.height);

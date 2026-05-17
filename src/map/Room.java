@@ -16,6 +16,7 @@ import entity.buildings.Cauldron;
 import entity.buildings.Chair;
 import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
+import entity.buildings.ClothesRail;
 import entity.buildings.Computer;
 import entity.buildings.CornerTable;
 import entity.buildings.CursedDecor;
@@ -1826,7 +1827,7 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 408, 408, 61);
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 696, 372, 63);
+			buildings[arrayCounter] = new ClothesRail(gp, 696, 372);
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 384, 240, 62);
 			arrayCounter++;

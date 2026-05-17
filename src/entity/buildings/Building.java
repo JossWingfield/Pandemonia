@@ -158,15 +158,15 @@ public class Building extends Entity {
 	}
 	public void interact() {}
 
-	public void drawOverlayUI(Renderer renderer) {}
+	public void drawOverlayUI(Renderer renderer) {
+		 if(destructionUIOpen) {
+			renderer.draw(destructionImage, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, 48, 48);
+		 }
+	}
 	
 	public void draw(Renderer renderer) {
 		
 		renderer.draw(animations[0][0][0], (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, drawWidth, drawHeight);
-		 
-		 if(destructionUIOpen) {
-			renderer.draw(destructionImage, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, 48, 48);
-		 }
 	        
 	}
 	public void drawEmissive(Renderer renderer) {

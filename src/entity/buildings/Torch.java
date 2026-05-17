@@ -131,9 +131,6 @@ public class Torch extends Building{
 		
 	     renderer.draw(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	    
 	}
 	public void drawEmissive(Renderer renderer) {

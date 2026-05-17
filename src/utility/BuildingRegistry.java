@@ -14,6 +14,7 @@ import entity.buildings.ChefPortrait;
 import entity.buildings.ChoppingBoard;
 import entity.buildings.Computer;
 import entity.buildings.CornerTable;
+import entity.buildings.ClothesRail;
 import entity.buildings.CursedDecor;
 import entity.buildings.Door;
 import entity.buildings.EscapeHole;
@@ -226,6 +227,7 @@ public class BuildingRegistry {
 			case "Candle 1" -> i = new Candle(gp, x, y, 0);
 			case "Candle 2" -> i = new Candle(gp, x, y, 1);
 			case "Cauldron" -> i = new Cauldron(gp, x, y);
+			case "Clothes Rail" -> i = new ClothesRail(gp, x, y);
 			case "Escape Hole" -> i = new EscapeHole(gp, x, y);
 			case "Gate 1" -> i = new Gate(gp, x, y);
 			case "Lantern" -> i = new Lantern(gp, x, y);

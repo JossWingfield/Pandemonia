@@ -186,10 +186,6 @@ public class Oven extends Building {
 	    if(cooking) {
 		    renderer.draw(ovenOn, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    }
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 		if (currentItem != null) {
 
 		    // Skip empty oven trays entirely

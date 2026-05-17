@@ -2,6 +2,8 @@ package map;
 
 import java.util.List;
 
+import org.joml.Vector2f;
+
 import entity.PlayerMP;
 import entity.buildings.Building;
 import entity.buildings.Door;
@@ -16,6 +18,7 @@ import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import net.packets.Packet02Move;
 import utility.Season;
+import utility.Weather;
 
 public class MapManager {
 
@@ -529,50 +532,10 @@ public class MapManager {
 	                    img = tiles[tileIndex].image;
 	                }
 
-	                // 🔑 DRAW IN WORLD COORDINATES
-	                renderer.draw(
-	                    img,
-	                    i * tileSize,
-	                    j * tileSize,
-	                    tileSize,
-	                    tileSize
-	                );
+	                renderer.draw(img,i * tileSize,j * tileSize,tileSize,tileSize);
 	            }
 	        }
 	    }
-	    //Draws the selected level
-	    /*private void drawLayer(Renderer renderer, int layer) {
-	        int tileSize = gp.tileSize;
-
-	        // Convert camera offset to tile indices
-	        int startCol = Math.max(0, (int)(gp.camera.position.x / tileSize));
-	        int startRow = Math.max(0, (int)(gp.camera.position.y / tileSize));
-
-	        int endCol = Math.min(currentMapWidth, (int)((gp.camera.position.x + gp.frameWidth) / tileSize) + 1);
-	        int endRow = Math.min(currentMapHeight, (int)((gp.camera.position.y + gp.frameHeight) / tileSize) + 1);
-
-	        for (int i = startCol; i < endCol; i++) {
-	            for (int j = startRow; j < endRow; j++) {
-	                int tileIndex = currentRoom.mapGrid[layer][i][j];
-	                if(tileIndex == 0) {
-	                	renderer.draw(tiles[tileIndex].image,i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
-	                } else {
-		                if (tileIndex < 0 || tileIndex >= tiles.length) continue; // safety check
-		                
-		                if(!tiles[tileIndex].isWall && !tiles[tileIndex].isFloor && !tiles[tileIndex].isBeam) {
-		                	renderer.draw(tiles[tileIndex].image, i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
-		                } else if(tiles[tileIndex].isWall){
-		                	renderer.draw(currentRoom.getWallpaper().getImage(tileIndex), i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
-		                } else if(tiles[tileIndex].isFloor){
-		                	renderer.draw(currentRoom.getFloorpaper().getImage(tileIndex), i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
-		                } else {
-		                	renderer.draw(currentRoom.getBeam().getImage(tileIndex), i * tileSize - (int)gp.camera.position.x,j * tileSize - (int)gp.camera.position.y,tileSize,tileSize);
-		                }
-	                }
-	            }
-	        }
-	    }
-	    */
 	    public void drawBackground(Renderer renderer) {
 	        drawLayer(renderer, 0);
 	    }

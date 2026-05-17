@@ -41,10 +41,7 @@ public class EscapeHole extends Building {
     	animations[0][0][0] = importImage("/decor/EscapeHole.png").toTextureRegion();
 	}
 	public void draw(Renderer renderer) {
-		
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
+
 	        
 	}
 }

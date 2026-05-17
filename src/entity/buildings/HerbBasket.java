@@ -135,15 +135,11 @@ public class HerbBasket extends Building {
 		
 		//g2.setColor(Color.YELLOW);
       	//g2.drawRect((int)interactHitbox.x, (int)interactHitbox.y, (int)interactHitbox.width, (int)interactHitbox.height);
-      		
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	        
 	}
 	
 	public void drawOverlayUI(Renderer renderer) {
+		super.drawOverlayUI(renderer);
 	    if (!openUI) return;
 
 	    // Determine base position for UI (above the basket)

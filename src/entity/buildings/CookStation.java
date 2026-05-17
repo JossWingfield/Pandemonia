@@ -128,10 +128,6 @@ public class CookStation extends Building {
         //int goalRow = (int)((npcHitbox.y + npcHitbox.height/2 - 1)/gp.tileSize); 
         
         //renderer.fillRect(goalCol*48, goalRow*48, 48, 48);
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x , (int) (hitbox.y ), gp.tileSize, gp.tileSize);
-		}
 	        
 	}
 }

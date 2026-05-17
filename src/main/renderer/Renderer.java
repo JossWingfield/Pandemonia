@@ -107,6 +107,7 @@ public class Renderer {
     private Shader bloomCombineShader;
     private Shader particleShader;
     private Shader shadowShader;
+    public Shader rainShader;
     private int BLOOM_BLUR_PASSES = 5;
     
     //GODRAYS
@@ -229,6 +230,7 @@ public class Renderer {
             godRay = AssetPool.getShader("/shaders/godrays.glsl");
             particleShader = AssetPool.getShader("/shaders/dustPass.glsl");
             shadowShader = AssetPool.getShader("/shaders/shadow.glsl");
+            rainShader = AssetPool.getShader("/shaders/wetFloor.glsl");
     }
 
     // -------------------------
@@ -414,6 +416,9 @@ public class Renderer {
 
             gx = Math.round(gx);
             gy = Math.round(gy);
+
+            gw = Math.round(gw);
+            gh = Math.round(gh);
             draw(reg, gx, gy, gw, gh, textShader, c.toVec4());
 
             sx += g.xAdvance * scale;
@@ -813,6 +818,7 @@ public class Renderer {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, currentTexture.getTexId());
         currentShader.uploadInt("uTextures[0]", 0); // tell shader it is on unit 0
+        currentShader.uploadFloat("uTime", (float)glfwGetTime());
         
         // Upload vertex data
         glBindVertexArray(vaoId);

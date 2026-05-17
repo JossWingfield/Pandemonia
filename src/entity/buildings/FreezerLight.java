@@ -115,10 +115,6 @@ public class FreezerLight extends Building{
 		
 	     renderer.draw(animations[0][0][i], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
-	    
 	}
 	public void drawEmissive(Renderer renderer) {
 		if(animations[0][0][1] != null) {

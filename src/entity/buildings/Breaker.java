@@ -105,10 +105,6 @@ public class Breaker extends Building{
 		    }
 		}
 	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
-	    
 	}
 	
 	

@@ -856,7 +856,6 @@ public class FloorDecor_Building extends Building {
         	xDrawOffset = 12;
         	yDrawOffset = 24;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width+3*8, hitbox.height-3*8);
-
         	break;
         case 63:
         	name = "Clothes Rail 1";
@@ -1940,9 +1939,6 @@ public class FloorDecor_Building extends Building {
 			}
 		}
 	     
-		 if(destructionUIOpen) {
-		     renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		 }
 	        
 	}
 	

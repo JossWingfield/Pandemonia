@@ -203,14 +203,10 @@ public class SpiceTable extends Building {
         }
 	    //renderer.setColour(Colour.YELLOW);
 	    //renderer.fillRect((int)interactHitbox.x, (int)interactHitbox.y, (int)interactHitbox.width, (int)interactHitbox.height);
-		 
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	    
 	}
     public void drawOverlayUI(Renderer renderer) {
+    	super.drawOverlayUI(renderer);
     	if(interactHitbox == null) {
     		return;
     	}

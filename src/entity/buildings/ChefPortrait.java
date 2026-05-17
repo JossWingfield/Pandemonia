@@ -43,9 +43,6 @@ public class ChefPortrait extends Building{
 	     renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 
 	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	    
 	}
 	

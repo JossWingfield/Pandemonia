@@ -448,9 +448,6 @@ public class CursedDecor extends Building {
         
 	    renderer.draw(animations[direction][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
         
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x , (int) (hitbox.y ), gp.tileSize, gp.tileSize);
-		}
 	        
 	}
 }

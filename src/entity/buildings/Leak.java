@@ -78,14 +78,12 @@ public class Leak extends Building {
 		    renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    }
 	    
+	}
+	public void drawOverlayUI(Renderer renderer) {
+		super.drawOverlayUI(renderer);
 	    if(spillCount > 0) {
 	    	drawChoppingBar(renderer, hitbox.x+24 + 48, hitbox.y+24 + 48+32, (int)spillCount, (int)maxSpillTime);
 	    }
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
-	    
 	}
 	private void drawChoppingBar(Renderer renderer, float worldX, float worldY, int cookTime, int maxCookTime) {
 	    float screenX = worldX - xDrawOffset ;

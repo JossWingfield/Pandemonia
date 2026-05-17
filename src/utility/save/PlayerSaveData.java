@@ -8,6 +8,8 @@ public class PlayerSaveData extends SaveData {
     public int skinNum;
     public int hairNum;
     public int hairStyleNum;
+    public int hatNum;
+    public int costumeNum;
     public int level;
     public int soulsServed;
     public int nextLevelAmount;

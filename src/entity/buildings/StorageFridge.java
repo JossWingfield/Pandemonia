@@ -206,14 +206,11 @@ public class StorageFridge extends Building {
 		if(fridgeHitbox.intersects(gp.player.hitbox)) {
 		    renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
-		
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	        
 	}
 	
 	public void drawOverlayUI(Renderer renderer) {
+		super.drawOverlayUI(renderer);
 	    if (uiOpen) {
 	        int baseX = (int)(hitbox.x - (112 * 1.5));
 	        int baseY = (int)hitbox.y;

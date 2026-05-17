@@ -216,10 +216,6 @@ public class Door extends Building {
 		if(drawLight && animations[0][0][2] != null) {
 			renderer.draw(animations[0][0][2], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);		
 		}
-		
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	}
 	public void drawEmissive(Renderer renderer) {
 		if(drawLight && animations[0][0][2] != null) {

@@ -1,9 +1,12 @@
 package utility.GUI;
 
 import main.GamePanel;
+import main.renderer.AssetPool;
 import main.renderer.BitmapFont;
 import main.renderer.Colour;
 import main.renderer.Renderer;
+import main.renderer.Texture;
+import main.renderer.TextureRegion;
 
 public class TextBox {
 
@@ -12,19 +15,34 @@ public class TextBox {
 
     private double caretBlinkCounter = 0;
     private double caretBlinkSpeed = 0.5; // seconds
+    
+    private TextureRegion typeSpace, typeSpaceHover;
+    private TextureRegion leftBorder, leftBorderHover;
+    private TextureRegion rightBorder, rightBorderHover;
 
     private BitmapFont font;
     private GamePanel gp;
+    private Colour colour;
 
-    public TextBox(GamePanel gp, int x, int y, int width, int height, BitmapFont font) {
+    public TextBox(GamePanel gp, int x, int y, int width, int height, BitmapFont font, Colour textColour) {
         this.gp = gp;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.font = font;
+        this.colour = textColour;
+        typeSpace = importImage("/UI/TextSpace.png").getSubimage(1, 0, 44, 10);
+        typeSpaceHover = importImage("/UI/TextSpace.png").getSubimage(47, 0, 44, 10);
+        leftBorder = importImage("/UI/TextSpace.png").getSubimage(0, 0, 1, 10);
+        leftBorderHover = importImage("/UI/TextSpace.png").getSubimage(46, 0, 1, 10);
+        rightBorder = importImage("/UI/TextSpace.png").getSubimage(45, 0, 1, 10);
+        rightBorderHover = importImage("/UI/TextSpace.png").getSubimage(91, 0, 1, 10);
     }
-
+    protected Texture importImage(String filePath) {
+		Texture texture = AssetPool.getTexture(filePath);
+	    return texture;
+	}
     // ---------------- UPDATE ----------------
     public void update(double delta) {
     	
@@ -43,17 +61,34 @@ public class TextBox {
     // ---------------- DRAW ----------------
     public void draw(Renderer renderer) {
 
-        // Box background
-        renderer.setColour(new Colour(0, 0, 0, 180));
-        renderer.fillRect(x, y, width, height);
+    	// Box background
+    	TextureRegion center;
+    	TextureRegion left;
+    	TextureRegion right;
 
-        renderer.setColour(Colour.BLACK);
-        renderer.fillRect(x, y, width, height);
+    	if (isMouseInside() || active) {
+    	    center = typeSpaceHover;
+    	    left = leftBorderHover;
+    	    right = rightBorderHover;
+    	} else {
+    	    center = typeSpace;
+    	    left = leftBorder;
+    	    right = rightBorder;
+    	}
+
+    	// Draw left border
+    	renderer.draw(left, x, y, 1*5, height);
+
+    	// Draw stretched center
+    	renderer.draw(center, x + 5, y, width - 10, height);
+
+    	// Draw right border
+    	renderer.draw(right, x + width - 5, y, 1*5, height);
 
         // Text
         renderer.setFont(font);
-        renderer.setColour(Colour.WHITE);
-        renderer.drawString(text, x + 10, y + height - 15);
+        renderer.setColour(colour);
+        renderer.drawString(text, x + 10, y + height - 11);
 
         // Caret
         if (active && caretBlinkCounter < caretBlinkSpeed) {

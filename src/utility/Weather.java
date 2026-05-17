@@ -5,13 +5,16 @@ import java.util.Random;
 public enum Weather {
     SUNNY,
     RAIN,
-    THUNDERSTORM;
+    THUNDERSTORM,
+    CLOUDY;
 
     public static Weather getRandom(Random random) {
         int roll = random.nextInt(100); // 0–99
 
-        if (roll < 70) {       // 70% chance
+        if (roll < 60) {       // 60% chance
             return SUNNY;
+        }  else if (roll < 85) { // 25% chance
+            return CLOUDY;
         } else if (roll < 95) { // 25% chance
             return RAIN;
         } else {               // 5% chance

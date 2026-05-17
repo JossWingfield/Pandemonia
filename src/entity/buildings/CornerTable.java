@@ -209,10 +209,6 @@ public class CornerTable extends Building {
 	    //g2.setColor(Color.YELLOW);
 	    //g2.drawRect((int)interactHitbox1.x, (int)interactHitbox1.y, (int)interactHitbox1.width, (int)interactHitbox1.height);
 	    //g2.drawRect((int)interactHitbox2.x, (int)interactHitbox2.y, (int)interactHitbox2.width, (int)interactHitbox2.height);
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	        
 	}
 }

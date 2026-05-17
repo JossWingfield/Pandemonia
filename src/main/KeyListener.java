@@ -160,6 +160,9 @@ public class KeyListener {
             	gp.renderer.verticalBias -= 0.1f;
             }*/
             
+            if (keyBeginPress(GLFW.GLFW_KEY_3)) {
+            	gp.world.catalogue.obtainAllItemsWithinCatalogue(0);
+            }
             if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
             if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);
             if (keyBeginPress(GLFW.GLFW_KEY_F)) gp.gui.startLevelUpScreen();

@@ -96,9 +96,5 @@ public class MenuBook extends Building {
 			}
 		    renderer.draw(animations[0][0][drawCount], (int) hitbox.x - xDrawOffset, (int) (hitbox.y )-yDrawOffset, 48, 48);
 		}
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	}
 }

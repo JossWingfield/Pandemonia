@@ -58,10 +58,6 @@ public class Calendar extends Building {
 			break;
 		}
 	     renderer.draw(animations[0][0][season], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-	     
-		 if(destructionUIOpen) {
-		     renderer.draw(destructionImage, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		 }
 	        
 	}
 	

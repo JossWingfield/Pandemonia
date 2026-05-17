@@ -198,16 +198,10 @@ public class Fridge extends Building {
             uiOpen = false;
         }
 
-
-        if(destructionUIOpen) {
-            renderer.draw(destructionImage, 
-                (int) hitbox.x - xDrawOffset , 
-                (int) (hitbox.y ) - yDrawOffset, 
-                gp.tileSize, gp.tileSize);
-        }
     }
 
     public void drawOverlayUI(Renderer renderer) {
+    	super.drawOverlayUI(renderer);
         if (uiOpen) {
             int baseX = (int)(hitbox.x - (112 * 1.5));
             int baseY = (int)hitbox.y;

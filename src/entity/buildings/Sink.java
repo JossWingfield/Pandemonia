@@ -204,7 +204,7 @@ public class Sink extends Building {
 		     renderer.draw(animations[0][0][7+cleanedPlateCount], (int) hitbox.x - xDrawOffset +18, (int) (hitbox.y )-yDrawOffset, 48, 48);
 		}
 		
-	     renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
+	    renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		 
 		if(sinkHitbox != null) {
 			if(gp.player.currentItem != null) {
@@ -243,12 +243,9 @@ public class Sink extends Building {
 		    }
 		}
 		
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 	}
 	public void drawOverlayUI(Renderer renderer) {
+		super.drawOverlayUI(renderer);
 		if(currentPlate != null) {
 			drawWashingBar(renderer, hitbox.x+30, hitbox.y+32, (int)chopCount, (int)maxWashCount);
 		}

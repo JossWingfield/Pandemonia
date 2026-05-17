@@ -35,11 +35,15 @@ public class RoomSpawn extends Building {
 		
 		if(gp.currentState == gp.mapBuildState) {
 			renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-			if(destructionUIOpen) {
-			    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-			}
 		}
-
-	        
 	}
+	
+	public void drawOverlayUI(Renderer renderer) {
+		if(gp.currentState == gp.mapBuildState) {
+			 if(destructionUIOpen) {
+				renderer.draw(destructionImage, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, 48, 48);
+			 }
+		}
+	}
+	
 }

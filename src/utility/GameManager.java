@@ -326,7 +326,6 @@ public class GameManager {
         int currentPeriod = getTimeOfDay();
         if (currentPeriod != lastTimePeriod) {
             lastTimePeriod = currentPeriod;
-            gp.gui.changeTimeState(currentPeriod);
         }
         
         if(gp.world.progressM.moreCustomers) {

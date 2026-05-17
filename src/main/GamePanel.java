@@ -204,6 +204,7 @@ public class GamePanel {
     public final int chatState = 19;
     public final int createWorldScreen = 20;
     public final int createJoinPlayerScreen = 21;
+    public final int customiseOutfitScreen = 22;
     
     Queue<String> textureQueue = new LinkedList<>();
     Queue<String> fontQueue = new LinkedList<>();
@@ -941,7 +942,7 @@ public class GamePanel {
 			        	
 			        	int finalTexture = sceneTextureId;
 			        	
-			        	if (Settings.fancyLighting && (currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState || currentState == chatState)) {
+			        	if (Settings.fancyLighting && (currentState == playState || currentState == pauseState || currentState == achievementState || currentState == settingsState || currentState == customiseRestaurantState || currentState == xpState || currentState == dialogueState || currentState == chatState || currentState == customiseOutfitScreen)) {
 			        		glBindFramebuffer(GL_FRAMEBUFFER, litFbo);
 			        		applyGameViewport(w, h);
 			        		glClearColor(0, 0, 0, 0);

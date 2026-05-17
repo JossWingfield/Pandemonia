@@ -176,10 +176,6 @@ public class ChoppingBoard extends Building {
 	    	renderer.draw(currentItem.getImage(), (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    }
 	    
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
 		if(currentItem != null) {
 			if(currentItem.foodState == FoodState.RAW && canChop(currentItem.getName())) {
 				drawChoppingBar(renderer, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, chopCount, currentChopCount);

@@ -39,7 +39,14 @@ public class BitmapFontGenerator {
 
         // 4. Bake font into bitmap
         stbtt_BakeFontBitmap(ttfBuffer, pixelHeight, bitmap, atlasWidth, atlasHeight, FIRST_CHAR, bakedChars);
+        
+        for (int i = 0; i < bitmap.capacity(); i++) {
+            int value = bitmap.get(i) & 0xFF;
 
+            // Threshold
+            bitmap.put(i, (byte)(value > 100 ? 255 : 0));
+        }
+        
         // 5. Upload atlas to OpenGL
         Texture atlasTexture = new Texture();
         atlasTexture.init(bitmap, atlasWidth, atlasHeight, 1, false);

@@ -121,7 +121,7 @@ public class Catalogue {
 		contents.add(new PanSkin(gp, 2));
 		contents.add(new TableSkin(gp, 2));
 		contents.add(new CounterSkin(gp, 5));
-		contents.add(new WallDecor_Building(gp, 0, 0, 22));
+		//contents.add(new WallDecor_Building(gp, 0, 0, 22));
 		contents.add(new WallDecor_Building(gp, 0, 0, 36));
 		contents.add(new WallDecor_Building(gp, 0, 0, 37));
 		contents.add(new FloorDecor_Building(gp, 0, 0, 107));
@@ -192,6 +192,10 @@ public class Catalogue {
     public ShopCatalogue getCatalogueByID(int id) {
         if (id < 0 || id >= allCatalogues.size()) return null;
         return allCatalogues.get(id);
+    }
+    public void obtainAllItemsWithinCatalogue(int id) {
+    	ShopCatalogue catalogue = getCatalogueByID(id);
+		gp.world.customiser.addOrderToInventory(catalogue.getContents());
     }
     public void addCatalogue(ShopCatalogue catalogue) {
         allCatalogues.add(catalogue);

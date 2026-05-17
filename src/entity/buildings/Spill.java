@@ -69,15 +69,14 @@ public class Spill extends Building {
 		    renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	    }
 	    
-	    if(spillCount > 0) {
-	    	drawChoppingBar(renderer, hitbox.x+24, hitbox.y+24, (int)spillCount, (int)maxSpillTime);
-	    }
-	    
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);
-		}
-	    
 	}
+	public void drawOverlayUI(Renderer renderer) {
+		 super.drawOverlayUI(renderer);
+		 if(spillCount > 0) {
+			 drawChoppingBar(renderer, hitbox.x+24, hitbox.y+24, (int)spillCount, (int)maxSpillTime);
+		 }  
+	}
+	
 	private void drawChoppingBar(Renderer renderer, float worldX, float worldY, int cookTime, int maxCookTime) {
 	    float screenX = worldX - xDrawOffset ;
 	    float screenY = worldY - yDrawOffset ;

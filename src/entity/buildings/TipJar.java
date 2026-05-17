@@ -67,10 +67,6 @@ public class TipJar extends Building {
 		}
         
 	    renderer.draw(animations[0][0][a], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-        
-		if(destructionUIOpen) {
-		    renderer.draw(destructionImage, (int) hitbox.x , (int) (hitbox.y ), gp.tileSize, gp.tileSize);
-		}
 	        
 	}
 }
