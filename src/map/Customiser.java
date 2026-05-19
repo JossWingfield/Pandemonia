@@ -23,7 +23,7 @@ public class Customiser {
 	
 	GamePanel gp;
 	
-	Colour c = new Colour(51, 60, 58);
+	Colour c = new Colour(29, 36, 39);
 	BitmapFont font;
 	
 	private TextureRegion frame, buildFrame, buildFrameHighlight, buildFrameHighlight2, border;

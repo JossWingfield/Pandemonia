@@ -49,16 +49,16 @@ public class GUI {
     private TextureRegion morning, day, evening, night, rain, thunder, cloudy;
     private TextureRegion[][] titleBookAnimations;
     private TextureRegion titleBackground;
-    private TextureRegion highlight1, highlight2, highlight3, highlight4, underline, uncheckedBox, checkedBox;
+    private TextureRegion highlight1, highlight2, highlight3, highlight4, underline, uncheckedBox, checkedBox, uncheckedBox2, checkedBox2;
     private TextureRegion settingsFrame, generalSettingsFrame, videoSettingsFrame, audioSettingsFrame, multiplayerSettingsFrame;
     private TextureRegion[] computerAnimations;
     private TextureRegion shoppingUI, shoppingButtonUI, leftArrow, rightArrow, basketUI, basketButtons;
     private TextureRegion leftProgress1, leftProgress2, middleProgress1, middleProgress2, rightProgress1, rightProgress2;
-    private TextureRegion saveBorder, deleteSave, leftTitleArrow1, leftTitleArrow2, rightTitleArrow1, rightTitleArrow2;
+    private TextureRegion saveBorder, deleteSave, leftTitleArrow1, leftTitleArrow2, rightTitleArrow1, rightTitleArrow2, leftArrow3, rightArrow3, leftArrow3Pressed, rightArrow3Pressed;
     private TextureRegion dialogueFrame;
-    private TextureRegion bookLine1, bookLine2, previewFrame;
+    private TextureRegion bookLine1, bookLine1Start, bookLine1End, bookLine2, previewFrame, createCharacterFrame, previewCharacterFrame;
 	private TextureRegion bookIcons[], bookOpen, bookClosed, recipeBookBorder, lockedRecipeBorder;
-	private TextureRegion achievementBorder, achievement, lockedAchievement, mysteryIcon, mysteryCrateUI, catalogueButton, catalogueMenu;
+	private TextureRegion achievementBorder, achievement, lockedAchievement, achievementPopup, mysteryIcon, mysteryCrateUI, catalogueButton, catalogueMenu;
     
 	//COLOURS
 	private Colour darkened;
@@ -113,10 +113,9 @@ public class GUI {
 	private final int multiplayerState = 4;
 	//VIDEO SETTINGS
 	private List<CheckBox> videoCheckBoxes;
-	private int selectedIndex = 0;        // which checkbox is selected
-	private int firstVisibleIndex = 0;    // first visible checkbox
-	private final int maxVisible = 4;  
-	private final int spacing = 40; 
+	private int videoScrollIndex = 0;
+	private final int VIDEO_PAGE_SIZE = 4;
+	private final int spacing = 32; 
 	
 	//DIALOGUE
 	private NPC currentTalkingNPC;
@@ -134,12 +133,15 @@ public class GUI {
 	private int destroySaveNum;
 	private int saveChosen;
 	
+	//ACHIEVEMENT
 	private int currentPage = 0;  
 	private int achievementStartIndex = 0; // which achievement is currently at the top
 	private Achievement notificationAchievement = null;
 	private float notificationTimer = 0f; // seconds
-	private final float notificationDuration = 7f; // how long to show (3 seconds)
+	private final float notificationDuration = 3f; // how long to show (3 seconds)
 	private int notificationX, notificationY; // position to draw
+	private int achievementPage = 0;
+	private final int achievementsPerPage = 12;
 	
 	public boolean chatActive = true;
 	
@@ -155,6 +157,7 @@ public class GUI {
 	private int selectedCostumeNum = 0;
 	
 	private int titleUIScale = 5;
+	
 
 	public GUI(GamePanel gp) {
 		this.gp = gp;
@@ -320,6 +323,8 @@ public class GUI {
 		highlight4 = importImage("/UI/settings/Highlight4.png").toTextureRegion();
 		uncheckedBox = importImage("/UI/settings/CheckBox.png").getSubimage(0, 0, 9, 9);
 		checkedBox = importImage("/UI/settings/CheckBox.png").getSubimage(9, 0, 9, 9);
+		uncheckedBox2 = importImage("/UI/settings/CheckBox2.png").getSubimage(0, 0, 9, 9);
+		checkedBox2 = importImage("/UI/settings/CheckBox2.png").getSubimage(9, 0, 9, 9);
 		underline = importImage("/UI/settings/Underline.png").toTextureRegion();
 		
 		leftProgress1 = importImage("/UI/levels/LeftProgress.png").getSubimage(0, 0, 46/2, 20);	
@@ -337,26 +342,37 @@ public class GUI {
 		
 		dialogueFrame = importImage("/UI/customise/CustomiseFrame.png").toTextureRegion();
 		bookIcons = new TextureRegion[4];
-		bookIcons[0] = importImage("/UI/BookIcons.png").getSubimage(0, 0, 16, 16);
-		bookIcons[1] = importImage("/UI/BookIcons.png").getSubimage(16, 0, 16, 16);
-		bookIcons[2] = importImage("/UI/BookIcons.png").getSubimage(0, 16, 16, 16);
-		bookIcons[3] = importImage("/UI/BookIcons.png").getSubimage(16, 16, 16, 16);
+		bookIcons[0] = importImage("/UI/menu/Icons.png").getSubimage(0, 48, 16, 16);
+		bookIcons[1] = importImage("/UI/menu/Icons.png").getSubimage(16, 48, 16, 16);
+		bookIcons[2] = importImage("/UI/menu/Icons.png").getSubimage(32, 48, 16, 16);
+		bookIcons[3] = importImage("/UI/menu/Icons.png").getSubimage(48, 48, 16, 16);
 		bookOpen = importImage("/UI/titlescreen/Opening.png").getSubimage(240*6, 0, 240, 160);
 		bookClosed = importImage("/UI/Book_Closed.png").toTextureRegion();
-		recipeBookBorder = importImage("/UI/recipe/RecipeBookBorder.png").getSubimage(0, 0, 16, 16);
-		lockedRecipeBorder = importImage("/UI/recipe/RecipeBookBorder.png").getSubimage(16, 0, 16, 16);
+		recipeBookBorder = importImage("/UI/recipe/RecipeBookBorder.png").getSubimage(0, 0, 20, 20);
+		lockedRecipeBorder = importImage("/UI/recipe/RecipeBookBorder.png").getSubimage(20, 0, 20, 20);
 		
-		achievementBorder = importImage("/UI/achievement/AchievementBorder.png").toTextureRegion();
+		achievementBorder = importImage("/UI/achievement/Achievements.png").toTextureRegion();
 		achievement = importImage("/UI/achievement/AchievementUI.png").toTextureRegion();
 		lockedAchievement = importImage("/UI/achievement/LockedAchievement.png").toTextureRegion();
+		achievementPopup = importImage("/UI/achievement/AchievementPopup.png").toTextureRegion();
 		mysteryIcon = importImage("/UI/catalogue/MysteryCrate.png").toTextureRegion();
 		mysteryCrateUI = importImage("/UI/catalogue/MysteryCrateUI.png").toTextureRegion();
 		catalogueButton = importImage("/UI/catalogue/CatalogueButton.png").toTextureRegion();
 		catalogueMenu = importImage("/UI/catalogue/CatalogueMenu.png").toTextureRegion();
 		
-		bookLine1 = importImage("/UI/titlescreen/Lines.png").getSubimage(0, 16, 48, 16);
+		bookLine1 = importImage("/UI/titlescreen/Lines.png").getSubimage(16, 16, 16, 16);
+		bookLine1Start = importImage("/UI/titlescreen/Lines.png").getSubimage(0, 16, 16, 16);
+		bookLine1End = importImage("/UI/titlescreen/Lines.png").getSubimage(32, 16, 16, 16);
+		
 		bookLine2 = importImage("/UI/titlescreen/Lines.png").getSubimage(0, 0, 48, 16);
-		previewFrame  = importImage("/UI/PreviewFrame.png").toTextureRegion();
+		previewFrame = importImage("/UI/PreviewFrame.png").toTextureRegion();
+		createCharacterFrame= importImage("/UI/saves/CharacterCreateFrame.png").toTextureRegion();
+		leftArrow3 = importImage("/UI/saves/ArrowButton1.png").getSubimage(0, 16, 16, 16);
+		rightArrow3 = importImage("/UI/saves/ArrowButton1.png").getSubimage(32, 16, 16, 16);
+		leftArrow3Pressed = importImage("/UI/saves/ArrowButton1.png").getSubimage(0+48, 16, 16, 16);
+		rightArrow3Pressed = importImage("/UI/saves/ArrowButton1.png").getSubimage(32+48, 16, 16, 16);
+		
+		previewCharacterFrame = importImage("/UI/saves/PreviewCharacterFrame.png").toTextureRegion();
 	}
 	private TextureRegion createHorizontalFlipped(TextureRegion original) {
 	        // Swap U coordinates (flip horizontally)
@@ -453,43 +469,63 @@ public class GUI {
 		if(titlePageNum == 0 || titleAnimationCounter >= 6) {
 			
 			String text = "Pandemonia";
-			
-			int x = 250;
+			int x = 180;
 			int y = 140;
-			renderer.drawString(font, text, x, y, 2.0f, titleColour1);
+			drawUnderlinedText(renderer, text, x, y, 2.0f);
 			
-			renderer.draw(bookLine1, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
-			
-			//PLAY
-
-			text = "Play";
-			
-			
+			renderer.setFont(font);
+			renderer.setColour(titleColour1);
+			text = "Singleplayer";
+				
 			x = 180;
-		    y = 360;
-			Colour c = titleColour1;
-			if(isHovering(text, x, y-24, font)) {
-				c = titleColour2;
+			y = 360;
+				
+			if(isHovering(text,x, y-24, font)) {
+				renderer.setColour(titleColour2);
 				if(gp.mouseL.mouseButtonDown(0)) {
 					if(clickCooldown == 0) {
-						gp.currentState = gp.startGameSettingsState;
-						clickCooldown = 0.5;
+						clickCooldown = 0.33;
+						currentTitleAnimation = 1;
+						titleAnimationCounter = 0;
+						titleAnimationSpeed = 0;
+						singleplayerSelected = true;
+						gp.currentState = gp.chooseSaveState;
+					}
+				}
+			}
+				
+				renderer.drawString(text, x, y);
+				renderer.draw(bookLine2, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
+				
+				//MULTIPLAYER
+				renderer.setColour(titleColour1);
+				text = "Multiplayer";
+
+				x = 180;
+				y = 450;
+				
+				if(isHovering(text,x, y-24, font)) {
+					renderer.setColour(titleColour2);
+					if(gp.mouseL.mouseButtonDown(0)) {
+						//ENTER MULTIPLAYER
+						gp.currentState = gp.multiplayerSettingsState;
+						clickCooldown = 0.33;
 						currentTitleAnimation = 1;
 						titleAnimationCounter = 0;
 						titleAnimationSpeed = 0;
 					}
 				}
-			}
-			
-			renderer.drawString(font, text, x, y, 1.0f, c);
-			renderer.draw(bookLine2, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
+				
+				renderer.drawString(text, x, y);
+				renderer.draw(bookLine2, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
 
-		
+			
+			
 			//SETTINGS
 			text = "Settings";
 	
-			y = 450;
-			c = titleColour1;
+			y = 450+90;
+			Colour c = titleColour1;
 			if(isHovering(text,x, y-24, font)) {
 				c = titleColour1;
 				if(gp.mouseL.mouseButtonDown(0)) {
@@ -507,7 +543,7 @@ public class GUI {
 			//QUIT
 			text = "Quit";
 			
-			y = 450+90;
+			y = 450+90+90;
 			c = titleColour1;
 			if(isHovering(text,x, y-24, font)) {
 				c  = (titleColour2);
@@ -560,18 +596,18 @@ public class GUI {
 		
 		renderer.draw(bookIcons[i], x, y, 64, 64);
 		
-		int recipesPerSide = 16;  // 4 rows * 4 columns
-		int recipesPerPage = 32;  // left + right page
+		int recipesPerSide = 12;  // 4 rows * 4 columns
+		int recipesPerPage = 24;  // left + right page
 
 		int startIndex = currentPage * recipesPerPage;
 		int endIndex = startIndex + recipesPerPage;
 
-		int leftX = 180;
-		int rightX = 665;
-		int startY = 180;
+		int leftX = 140;
+		int rightX = 630;
+		int startY = 120;
 
 		int spacing = 32;
-		int borderSize = 48;
+		int borderSize = 20*titleUIScale;
 		int starSpacing = 16;
 		int rowHeight = borderSize + 60;
 
@@ -644,7 +680,7 @@ public class GUI {
 		        TextureRegion plate = recipe.finishedPlate;
 		        int plateX = x + (borderSize - plate.getPixelWidth()) / 2;
 		        int plateY = y + (borderSize - plate.getPixelHeight()) / 2;
-		        renderer.draw(plate, plateX - 16, plateY - 14, 48, 48);
+		        renderer.draw(plate, plateX - 6*titleUIScale, plateY - 6*titleUIScale, 16*titleUIScale, 16*titleUIScale);
 		    }
 
 		    // ------------------------------------
@@ -656,7 +692,7 @@ public class GUI {
 
 		        for (int k = 0; k < stars; k++) {
 		            int starX = x + k * starSpacing;
-		            renderer.draw(starLevel, starX, starsY, 16, 16);
+		            //renderer.draw(starLevel, starX, starsY, 16, 16);
 		        }
 		    }
 
@@ -667,7 +703,7 @@ public class GUI {
 		    x += borderSize + spacing;
 
 		    // After 4 columns → new row
-		    if (printed % 4 == 0) {
+		    if (printed % 3 == 0) {
 		        y += rowHeight;
 
 		        // After 4 rows → switch to right page
@@ -703,11 +739,9 @@ public class GUI {
 		if(titleAnimationCounter >= 6) {
 			String text = "Multiplayer";
 			
-			int x = 250;
+			int x = 170;
 			int y = 120;
-			renderer.drawString(font, text, x, y, 1.0f, titleColour1);
-			renderer.draw(bookLine1, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
-		
+			drawUnderlinedText(renderer, text, x, y, 2.0f);
 		//HOST
 		Colour c = (titleColour1);
 		text = "Host";
@@ -765,7 +799,7 @@ public class GUI {
 				if(gp.mouseL.mouseButtonDown(0)) {
 					//QUIT GAME
 					if(clickCooldown == 0) {
-						gp.currentState = gp.startGameSettingsState;
+						gp.currentState = gp.titleState;
 						clickCooldown = 0.33;
 						currentTitleAnimation = 2;
 						titleAnimationCounter = 0;
@@ -804,9 +838,8 @@ public class GUI {
 	        String text = "Available LAN Worlds";
 	        int x = 190;
 	        int y = 140;
-	        renderer.drawString(font, text, x, y, 1.0f, titleColour1);
-			renderer.draw(bookLine1, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
-	        
+			drawUnderlinedText(renderer, text, x, y, 2.0f);
+
 	        // Server list
 	        int startY = 320;
 	        int index = 0;
@@ -886,11 +919,10 @@ public class GUI {
 		renderer.setColour(titleColour1);
 		String text = "Play";
 		
-		int x = 250;
+		int x = 270;
 		int y = 140;
-		renderer.drawString(text, x, y);
-		renderer.draw(bookLine1, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
-		
+		drawUnderlinedText(renderer, text, x, y, 2.0f);
+
 		//SinglePlayer
 			renderer.setFont(font);
 			renderer.setColour(titleColour1);
@@ -984,23 +1016,20 @@ public class GUI {
 		
 		if(titleAnimationCounter >= 6) {
 			
-			int x = 250;
+			int x = 170;
 			int y = 140;
 			String text = "Choose Save";
 			
 			saveChosen = -1;
 			
-			renderer.setFont(font);
-			renderer.setColour(titleColour1);
-			renderer.drawString(text, x, y);
-			renderer.draw(bookLine1, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
-
+			drawUnderlinedText(renderer, text, x, y, 2.0f);
 			
 			text = "Save 1";
 			
 			x = 135;
 			y = 260 - 60;
 			
+			renderer.setColour(titleColour1);
 			int result = drawSave(renderer, 1, x, y, text);
 			if (result != -1) saveChosen = result;
 			
@@ -1031,7 +1060,7 @@ public class GUI {
 				if(gp.mouseL.mouseButtonDown(0)) {
 					//QUIT GAME
 					if(clickCooldown == 0) {
-						gp.currentState = gp.startGameSettingsState;
+						gp.currentState = gp.titleState;
 						clickCooldown = 0.33;
 						currentTitleAnimation = 2;
 						titleAnimationCounter = 0;
@@ -1251,14 +1280,17 @@ public class GUI {
 	    if (titleAnimationCounter <= 5) return;
 	    
 	    //TITLE
-		String text = "Create Player";
+		String text = "Create Save";
 		
-		int x = 250;
+		int x = 170;
 		int y = 140;
-		renderer.drawString(font, text, x, y, 1.0f, titleColour1);
+		drawUnderlinedText(renderer, text, x, y, 2.0f);
 		
-		renderer.draw(bookLine1, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
+		text = "Preview";
 		
+		x = 700;
+		y = 140;
+		drawUnderlinedText(renderer, text, x, y, 2.0f);
 	    
 	    // ---- Labels ----
 	    renderer.setFont(font);
@@ -1273,10 +1305,12 @@ public class GUI {
 	    worldNameBox.draw(renderer);
 	    
 	    //DRAW PLAYER PREVIEW
-	    renderer.draw(previewFrame, 660, 200, 300, 240);
-	    gp.player.drawPreview(renderer, 450, -20);
+    	renderer.draw(previewCharacterFrame, 660-30, 190, 365,  360);
+
+	    renderer.draw(previewFrame, 660+5, 200, 300, 240);
+	    gp.player.drawPreview(renderer, 450+10, -20);
 	    
-	    x = 540+200+24;
+	    x = 540+200+24+10;
 	    y = 300;
 	    //DIRECTION ARROWS 
 	    int imageSize = 16*titleUIScale;
@@ -1300,141 +1334,222 @@ public class GUI {
 		    renderer.draw(rightTitleArrow1, x + imageSize, y, imageSize, imageSize);
 	    }
 	    
-	    //Skin
+	    //CUSTOMISATION
+	    // Shared layout
+	    
+	    
+	    int selectorCenterX = centerX + 140+20;
+	    int leftArrowX = selectorCenterX - 200;
+	    int rightArrowX = selectorCenterX + 120;
+
+	    float fontScale = 1.0f;
+	    
+    	renderer.draw(createCharacterFrame, leftArrowX + 8, 390, (rightArrowX-leftArrowX-10)+imageSize, 250);
+
+	    // ======================================================
+	    // SKIN
+	    // ======================================================
+
 	    text = "Skin " + (selectedSkinNum + 1);
-	    x = centerX + 50;
-	    y = 400;
-	    
+
+	    y = 445;
+
+	    // Center text
+	    float textWidth = font.getTextWidth(text, fontScale);
+	    float textX = selectorCenterX - (textWidth / 2);
+
 	    renderer.setColour(titleColour1);
-	    renderer.drawString(text, x, y);
-	    
-	    y-= 50;
-	    
-	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
-	    	renderer.draw(leftTitleArrow2, x - imageSize, y, imageSize, imageSize);
+	    renderer.drawString(font, text, textX, y, fontScale, titleColour1);
+
+	    // Arrow Y
+	    int arrowY = y - 50;
+
+	    // Left Arrow
+	    if (isHovering(leftArrowX, arrowY, imageSize, imageSize)) {
+
+	        renderer.draw(leftArrow3Pressed, leftArrowX, arrowY, imageSize, imageSize);
+
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+
 	            clickCooldown = 0.1;
+
 	            selectedSkinNum--;
-	            
-	            if(selectedSkinNum < 0) {
-	            	selectedSkinNum = Constants.MAXSKINNUM;
+
+	            if (selectedSkinNum < 0) {
+	                selectedSkinNum = Constants.MAXSKINNUM;
 	            }
+
 	            gp.player.setSkin(selectedSkinNum);
 	        }
+
 	    } else {
-	    	renderer.draw(leftTitleArrow1, x - imageSize, y, imageSize, imageSize);
+	        renderer.draw(leftArrow3, leftArrowX, arrowY, imageSize, imageSize);
 	    }
-	    
-	    if (isHovering(x + imageSize, y, imageSize, imageSize)) {
-	    	renderer.draw(rightTitleArrow2, x + imageSize, y, imageSize, imageSize);
+
+	    // Right Arrow
+	    if (isHovering(rightArrowX, arrowY, imageSize, imageSize)) {
+
+	        renderer.draw(rightArrow3Pressed, rightArrowX, arrowY, imageSize, imageSize);
+
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+
 	            clickCooldown = 0.1;
+
 	            selectedSkinNum++;
-	            
-	            if(selectedSkinNum > Constants.MAXSKINNUM) {
-	            	selectedSkinNum = 0;
+
+	            if (selectedSkinNum > Constants.MAXSKINNUM) {
+	                selectedSkinNum = 0;
 	            }
+
 	            gp.player.setSkin(selectedSkinNum);
 	        }
+
 	    } else {
-		    renderer.draw(rightTitleArrow1, x + imageSize, y, imageSize, imageSize);
+
+	        renderer.draw(rightArrow3, rightArrowX, arrowY, imageSize, imageSize);
 	    }
-	    
-	    //Hair Style
+
+
+	    // ======================================================
+	    // HAIR STYLE
+	    // ======================================================
+
 	    text = "Hair Style " + (selectedHairStyleNum + 1);
-	    x = centerX + 50;
-	    y = 480;
-	    
+
+	    y = 525;
+
+	    // Center text
+	    textWidth = font.getTextWidth(text, fontScale);
+	    textX = selectorCenterX - (textWidth / 2);
+
 	    renderer.setColour(titleColour1);
-	    renderer.drawString(text, x, y);
-	    
-	    y-= 50;
-	    
-	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
-	    	renderer.draw(leftTitleArrow2, x - imageSize, y, imageSize, imageSize);
+	    renderer.drawString(font, text, textX, y, fontScale, titleColour1);
+
+	    // Arrow Y
+	    arrowY = y - 50;
+
+	    // Left Arrow
+	    if (isHovering(leftArrowX, arrowY, imageSize, imageSize)) {
+
+	        renderer.draw(leftArrow3Pressed, leftArrowX, arrowY, imageSize, imageSize);
+
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+
 	            clickCooldown = 0.25;
+
 	            selectedHairStyleNum--;
-	            
-	            if(selectedHairStyleNum < 0) {
-	            	selectedHairStyleNum = Constants.MAXHAIRNUM;
+
+	            if (selectedHairStyleNum < 0) {
+	                selectedHairStyleNum = Constants.MAXHAIRNUM;
 	            }
+
 	            gp.player.setHairStyle(selectedHairStyleNum);
 	        }
+
 	    } else {
-	    	renderer.draw(leftTitleArrow1, x - imageSize, y, imageSize, imageSize);
+	        renderer.draw(leftArrow3, leftArrowX, arrowY, imageSize, imageSize);
 	    }
-	    
-	    int rightArrowOffset = 80;
-	    if (isHovering(x + imageSize+rightArrowOffset, y, imageSize, imageSize)) {
-	    	renderer.draw(rightTitleArrow2, x + imageSize+rightArrowOffset, y, imageSize, imageSize);
+
+	    // Right Arrow
+	    if (isHovering(rightArrowX, arrowY, imageSize, imageSize)) {
+
+	        renderer.draw(rightArrow3Pressed, rightArrowX, arrowY, imageSize, imageSize);
+
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+
 	            clickCooldown = 0.25;
+
 	            selectedHairStyleNum++;
-	            
-	            if(selectedHairStyleNum > Constants.MAXHAIRNUM) {
-	            	selectedHairStyleNum = 0;
+
+	            if (selectedHairStyleNum > Constants.MAXHAIRNUM) {
+	                selectedHairStyleNum = 0;
 	            }
+
 	            gp.player.setHairStyle(selectedHairStyleNum);
 	        }
+
 	    } else {
-		    renderer.draw(rightTitleArrow1, x + imageSize+rightArrowOffset, y, imageSize, imageSize);
+
+	        renderer.draw(rightArrow3, rightArrowX, arrowY, imageSize, imageSize);
 	    }
-	    
-	    //Hair Colour
+
+
+	    // ======================================================
+	    // HAIR COLOUR
+	    // ======================================================
+
 	    text = "Hair Colour " + (selectedHairNum + 1);
-	    x = centerX + 50;
-	    y = 560;
-	    
+
+	    y = 605;
+
+	    // Center text
+	    textWidth = font.getTextWidth(text, fontScale);
+	    textX = selectorCenterX - (textWidth / 2);
+
 	    renderer.setColour(titleColour1);
-	    renderer.drawString(text, x, y);
-	    
-	    y-= 50;
-	    
-	    if (isHovering(x-imageSize, y, imageSize, imageSize)) {
-	    	renderer.draw(leftTitleArrow2, x - imageSize, y, imageSize, imageSize);
+	    renderer.drawString(font, text, textX, y, fontScale, titleColour1);
+
+	    // Arrow Y
+	    arrowY = y - 50;
+
+	    // Left Arrow
+	    if (isHovering(leftArrowX, arrowY, imageSize, imageSize)) {
+
+	        renderer.draw(leftArrow3Pressed, leftArrowX, arrowY, imageSize, imageSize);
+
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+
 	            clickCooldown = 0.25;
+
 	            selectedHairNum--;
-	            
-	            if(selectedHairNum < 0) {
-	            	selectedHairNum = Constants.MAXHAIRCOLOURNUM;
+
+	            if (selectedHairNum < 0) {
+	                selectedHairNum = Constants.MAXHAIRCOLOURNUM;
 	            }
+
 	            gp.player.setHair(selectedHairNum);
 	        }
+
 	    } else {
-	    	renderer.draw(leftTitleArrow1, x - imageSize, y, imageSize, imageSize);
+	        renderer.draw(leftArrow3, leftArrowX, arrowY, imageSize, imageSize);
 	    }
-	    
-	    rightArrowOffset = 80;
-	    if (isHovering(x + imageSize+rightArrowOffset, y, imageSize, imageSize)) {
-	    	renderer.draw(rightTitleArrow2, x + imageSize+rightArrowOffset, y, imageSize, imageSize);
+
+	    // Right Arrow
+	    if (isHovering(rightArrowX, arrowY, imageSize, imageSize)) {
+
+	        renderer.draw(rightArrow3Pressed, rightArrowX, arrowY, imageSize, imageSize);
+
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+
 	            clickCooldown = 0.25;
+
 	            selectedHairNum++;
-	            
-	            if(selectedHairNum > Constants.MAXHAIRCOLOURNUM) {
-	            	selectedHairNum = 0;
+
+	            if (selectedHairNum > Constants.MAXHAIRCOLOURNUM) {
+	                selectedHairNum = 0;
 	            }
+
 	            gp.player.setHair(selectedHairNum);
 	        }
+
 	    } else {
-		    renderer.draw(rightTitleArrow1, x + imageSize+rightArrowOffset, y, imageSize, imageSize);
+	        renderer.draw(rightArrow3, rightArrowX, arrowY, imageSize, imageSize);
 	    }
 	    
 
 	    //RIGHT SIDE
 	    x = 120+gp.frameWidth / 2;
+	    y-=100;
 	    //PREVIEW HAT
 		renderer.setColour(titleColour1);
 		text = "Show Hat";
 		int boxOffset = 170;
 		renderer.drawString(text, x, y);
-		y-= 20;
+		y-= 22;
 		if(gp.player.previewHat) {
-			renderer.draw(checkedBox, x+boxOffset, y, 9*3, 9*3);
+			renderer.draw(checkedBox2, x+boxOffset, y, 9*3, 9*3);
 		} else {
-			renderer.draw(uncheckedBox, x+boxOffset, y, 9*3, 9*3);
+			renderer.draw(uncheckedBox2, x+boxOffset, y, 9*3, 9*3);
 		}
 		if (isHovering(x+boxOffset, y, 9*3, 9*3)) {
 			drawCheckBoxHover(renderer, x+boxOffset, y, 9*3, 9*3);
@@ -1529,10 +1644,8 @@ public class GUI {
 		
 		int x = 250;
 		int y = 140;
-		renderer.drawString(font, text, x, y, 1.0f, titleColour1);
-		
-		renderer.draw(bookLine1, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
-		
+		drawUnderlinedText(renderer, text, x, y, 2.0f);
+
 	    
 	    // ---- Labels ----
 	    renderer.setFont(font);
@@ -2001,89 +2114,314 @@ public class GUI {
 	    }
 	}
 	private void drawAchievementsScreen(Renderer renderer) {
+
 		renderer.setColour(darkened);
 		renderer.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
-		
+
+		int scale = 3;
 		TextureRegion img = achievementBorder;
-		int x = gp.frameWidth/2-img.getPixelWidth()/2*6;
-		int y = gp.frameHeight/2-img.getPixelHeight()/2*6;
-		renderer.draw(img, x, y, img.getPixelWidth()*6, img.getPixelHeight()*6);
-		
-		renderer.setColour(titleColour1);
+
+		int bgX = gp.frameWidth / 2 - img.getPixelWidth() / 2 * scale;
+		int bgY = gp.frameHeight / 2 - img.getPixelHeight() / 2 * scale;
+
+		renderer.draw(img, bgX, bgY,
+				img.getPixelWidth() * scale,
+				img.getPixelHeight() * scale);
+
+		// =========================
+		// BACK BUTTON
+		// =========================
+
 		renderer.setFont(font);
-		renderer.drawString("Achievements", x+36, y+68);
-		
-		renderer.setFont(font);
-		String text = "BACK";
-		x =getXforCenteredText(text, font);
-		if(isHovering(text, x, 650, font)) {
-			renderer.setColour(craftColour1);
-			if(gp.mouseL.mouseButtonDown(0)) {
-				if(clickCooldown == 0) {
-					//QUIT
+
+		String text = "Back";
+		int textX = getXforCenteredText(text, font);
+
+		if (isHovering(text, textX, 720 - 24, font)) {
+
+			renderer.setColour(titleColour1);
+
+			if (gp.mouseL.mouseButtonDown(0)) {
+				if (clickCooldown == 0) {
 					gp.currentState = gp.pauseState;
 					clickCooldown = 0.16;
 				}
 			}
-		}else {
+
+		} else {
 			renderer.setColour(Colour.WHITE);
 		}
-		renderer.drawString(text, getXforCenteredText(text, font), 700);
+
+		renderer.drawString(text, textX, 720);
+		
+		// =========================
+		// PAGE BUTTONS
+		// =========================
 		
 		List<Achievement> achievementList =
-		        new ArrayList<>(gp.world.progressM.achievements.values());
+				new ArrayList<>(gp.world.progressM.achievements.values());
 
-		// Sort so unlocked ones appear first, locked ones after
+		// unlocked first
 		achievementList.sort((a, b) -> {
-		    if (a.isUnlocked() == b.isUnlocked()) return 0;
-		    return a.isUnlocked() ? -1 : 1;  // unlocked = top
-		});	    
-		int startX = x-86;
-		int startY = y+90;
-	    int ySpacing = 27*6+20; // vertical space per achievement
-	    int iconOffsetX = 92; // distance from left border to icon
-	    int textOffsetX = 50; // distance from left border to text
-	    
-	    int maxVisibleAchievements = 2;
-	   
-	    for (int i = 0; i < maxVisibleAchievements; i++) {
-	        int index = achievementStartIndex + i;
-	        if (index >= achievementList.size()) break; // no more achievements
+			if (a.isUnlocked() == b.isUnlocked()) return 0;
+			return a.isUnlocked() ? -1 : 1;
+		});
 
-	        Achievement a = achievementList.get(index);
+		int totalPages = (int) Math.ceil(
+				achievementList.size() / (float) achievementsPerPage);
 
-	        int yPos = startY + i * ySpacing;
+		String left = "<";
+		String right = ">";
 
-	        // Draw border first
-	        renderer.draw(achievement, startX, yPos, 44*6, 27*6);
-	        // Optional: gray out if not unlocked
-	        if (!a.isUnlocked()) {
-		        renderer.draw(lockedAchievement, startX, yPos, 44*6, 27*6);
-	        }
+		int arrowY = bgY + 530;//610;
 
-	        // Draw achievement icon
-	        if (a.getIcon() != null) {
-	        	TextureRegion icon = a.getIcon();
-	        	if(!a.isUnlocked()) {
-	        		//icon = CollisionMethods.getMaskedImage(Colour.BLACK, icon);
-	        	}
-	            renderer.draw(icon, startX + iconOffsetX+ 80, yPos + 80, icon.getPixelWidth()*3, icon.getPixelHeight()*3, Colour.BLACK.toVec4());
-	        }
+		// LEFT
+		int leftX = bgX + 80;
 
-	        // Draw text: name (bold) and description
-	        renderer.setColour(titleColour1);
-	        renderer.setFont(font);
-	        renderer.drawString(a.getName(), startX + textOffsetX-28, yPos + 45);
+		boolean hoverLeft =
+				isHovering(left, leftX, arrowY - 24, font);
 
-	        renderer.setFont(font);
-	        
-	    	text = a.getDescription();
-			for(String line: gp.gui.wrapText(text, font, 49*5)) {
-				renderer.drawString(line, startX + textOffsetX-28, yPos + 70);
-				yPos += 30;
-			}
-	    }
+		renderer.setColour(
+				hoverLeft ? titleColour1 : Colour.WHITE);
+
+		renderer.drawString(left, leftX, arrowY);
+
+		if (hoverLeft &&
+				gp.mouseL.mouseButtonDown(0) &&
+				clickCooldown == 0) {
+
+			achievementPage--;
+
+			if (achievementPage < 0)
+				achievementPage = 0;
+
+			clickCooldown = 0.16;
+		}
+
+		// RIGHT
+		int rightX = bgX + img.getPixelWidth() * scale - 100;
+
+		boolean hoverRight =
+				isHovering(right, rightX, arrowY - 24, font);
+
+		renderer.setColour(
+				hoverRight ? titleColour1 : Colour.WHITE);
+
+		renderer.drawString(right, rightX, arrowY);
+
+		if (hoverRight &&
+				gp.mouseL.mouseButtonDown(0) &&
+				clickCooldown == 0) {
+
+			achievementPage++;
+
+			if (achievementPage >= totalPages)
+				achievementPage = totalPages - 1;
+
+			clickCooldown = 0.16;
+		}
+
+		// Page text
+		renderer.setColour(Colour.WHITE);
+
+		String pageText =
+				(achievementPage + 1) + " / " + Math.max(1, totalPages);
+
+		renderer.drawString(
+				pageText,
+				getXforCenteredText(pageText, font),
+				arrowY);
 		
+
+		// =========================
+		// ACHIEVEMENT LIST
+		// =========================
+
+		if (achievementPage < 0) achievementPage = 0;
+		if (achievementPage >= totalPages)
+			achievementPage = Math.max(0, totalPages - 1);
+
+		// =========================
+		// GRID SETTINGS
+		// =========================
+
+		int columns = 3;
+
+		int iconScale = 3;
+
+		int slotSize = 24 * 3;
+		int spacingX = 100;
+		int spacingY = 86;
+
+		int gridWidth = spacingX * (columns - 1);
+		int startX = gp.frameWidth / 2 - gridWidth / 2 - slotSize/2;
+
+		int startY = bgY + 100;
+
+		int pageStartIndex = achievementPage * achievementsPerPage;
+
+		Achievement hoveredAchievement = null;
+
+		// =========================
+		// DRAW ICON GRID
+		// =========================
+
+		for (int i = 0; i < achievementsPerPage; i++) {
+
+			int achievementIndex = pageStartIndex + i;
+
+			if (achievementIndex >= achievementList.size())
+				break;
+
+			Achievement a = achievementList.get(achievementIndex);
+
+			int row = i / columns;
+			int col = i % columns;
+
+			int iconX = startX + col * spacingX;
+			int iconY = startY + row * spacingY;
+
+			boolean hovering =
+					gp.mouseL.getWorldX() >= iconX &&
+					gp.mouseL.getWorldX() <= iconX + slotSize &&
+					gp.mouseL.getWorldY() >= iconY &&
+					gp.mouseL.getWorldY() <= iconY + slotSize;
+
+			// Draw slot
+			renderer.draw(achievement, iconX, iconY, slotSize, slotSize);
+
+			// Locked overlay
+			if (!a.isUnlocked()) {
+				renderer.draw(lockedAchievement,
+						iconX,
+						iconY,
+						slotSize,
+						slotSize);
+			}
+
+			// Draw icon
+			if (a.getIcon() != null) {
+
+				TextureRegion icon = a.getIcon();
+
+				int drawW = icon.getPixelWidth() * iconScale;
+				int drawH = icon.getPixelHeight() * iconScale;
+
+				int drawX = iconX + slotSize / 2 - drawW / 2;
+				int drawY = iconY + slotSize / 2 - drawH / 2;
+
+				if(a.isUnlocked()) {
+					renderer.draw(icon,
+							drawX,
+							drawY,
+							drawW,
+							drawH);
+				} else {
+					renderer.draw(icon,
+							drawX,
+							drawY,
+							drawW,
+							drawH,
+							titleColour1.toVec4());
+				}
+			}
+
+			// Hover highlight
+			if (hovering) {
+
+				hoveredAchievement = a;
+
+				renderer.drawRect(
+						iconX - 2,
+						iconY - 2,
+						slotSize + 4,
+						slotSize + 4,
+						Colour.WHITE);
+			}
+		}
+
+		// =========================
+		// TOOLTIP
+		// =========================
+
+		if (hoveredAchievement != null) {
+
+			int tooltipW = 420;
+			int tooltipH = 180;
+
+			int tooltipX = (int)(gp.mouseL.getWorldX() + 24);
+			int tooltipY = (int)(gp.mouseL.getWorldY()+ 24);
+
+			// Keep onscreen
+			if (tooltipX + tooltipW > gp.frameWidth)
+				tooltipX = gp.frameWidth - tooltipW - 20;
+
+			if (tooltipY + tooltipH > gp.frameHeight)
+				tooltipY = gp.frameHeight - tooltipH - 20;
+
+			renderer.setColour(new Colour(titleColour1.r, titleColour1.g, titleColour1.b, 240));
+			renderer.fillRect(tooltipX, tooltipY, tooltipW, tooltipH);
+
+			renderer.drawRect(
+					tooltipX,
+					tooltipY,
+					tooltipW,
+					tooltipH,
+					titleColour1);
+
+			// Icon
+			if (hoveredAchievement.getIcon() != null) {
+
+				TextureRegion icon = hoveredAchievement.getIcon();
+
+				renderer.draw(icon,
+						tooltipX + 20,
+						tooltipY + 20,
+						icon.getPixelWidth() * 4,
+						icon.getPixelHeight() * 4);
+			}
+
+			// Name
+			renderer.setFont(font);
+			renderer.setColour(Colour.WHITE);
+
+			renderer.drawString(
+					hoveredAchievement.getName(),
+					tooltipX + 120,
+					tooltipY + 40);
+
+			// Description
+			renderer.setColour(Colour.WHITE);
+
+			int descY = tooltipY + 75;
+
+			for (String line : gp.gui.wrapText(
+					hoveredAchievement.getDescription(),
+					font,
+					240)) {
+
+				renderer.drawString(line,
+						tooltipX + 120,
+						descY);
+
+				descY += 28;
+			}
+
+			// Status
+			String status = hoveredAchievement.isUnlocked()
+					? "Unlocked"
+					: "Locked";
+
+			renderer.setColour(
+					hoveredAchievement.isUnlocked()
+							? Colour.WHITE
+							: Colour.WHITE);
+
+			renderer.drawString(
+					status,
+					tooltipX + 120,
+					tooltipY + 140);
+		}
 	}
 	public void showAchievementNotification(Achievement a) {
 	    notificationAchievement = a;
@@ -2094,32 +2432,85 @@ public class GUI {
 	    notificationY = 50;
 	}
 	public void drawAchievementNotification(Renderer renderer) {
-	    if (notificationAchievement == null) return;
 
-	    int popupScale = 6;
-	    TextureRegion img = achievement; // same as menu
-	    int x = gp.frameWidth - img.getPixelWidth() * popupScale - 20;
-	    int y = gp.frameHeight - img.getPixelHeight() * popupScale - 20; // top of screen (or wherever you like)
-	    
-	    // Draw border
-	    renderer.draw(img, x, y, img.getPixelWidth() * popupScale, img.getPixelHeight() * popupScale);
-	    
-	    // Draw icon
-	    TextureRegion icon = notificationAchievement.getIcon();
-	    if (icon != null) {
-	        int iconX = x + 92;
-	        int iconY = y + 80;
-	        renderer.draw(icon, iconX+80, iconY, icon.getPixelWidth() * 3, icon.getPixelHeight() * 3);
-	    }
-	    
-	    // Draw name
-	    renderer.setColour(titleColour1);
-	    renderer.setFont(font);
-	    renderer.drawString(notificationAchievement.getName(), x + 50-15, y + 45);
+		if (notificationAchievement == null)
+			return;
 
-	    // Draw description
-	    renderer.setFont(font);
-	    renderer.drawString(notificationAchievement.getDescription(), x + 22, y + 70);
+		// =========================
+		// SETTINGS
+		// =========================
+
+		int popupW = 420;
+		int popupH = 180;
+
+		int x = gp.frameWidth - popupW - 20;
+		int y = gp.frameHeight - popupH - 20;
+
+		// =========================
+		// BACKGROUND
+		// =========================
+		renderer.draw(achievementPopup, x, y, popupW, popupH);
+
+
+		// =========================
+		// ICON
+		// =========================
+
+		TextureRegion icon = notificationAchievement.getIcon();
+
+		if (icon != null) {
+
+			int iconScale = 3;
+
+			int drawW = icon.getPixelWidth() * iconScale;
+			int drawH = icon.getPixelHeight() * iconScale;
+
+			renderer.draw(
+					icon,
+					x + 20,
+					y + 20,
+					drawW,
+					drawH);
+		}
+
+		// =========================
+		// TITLE
+		// =========================
+
+		renderer.setFont(font);
+
+		renderer.setColour(Colour.WHITE);
+
+		renderer.drawString(
+				"Achievement Unlocked",
+				x + 100,
+				y + 28);
+
+		// Achievement name
+		renderer.drawString(
+				notificationAchievement.getName(),
+				x + 120,
+				y + 58);
+
+		// =========================
+		// DESCRIPTION
+		// =========================
+
+		int descY = y + 95;
+
+		renderer.setColour(titleColour1);
+		for (String line : gp.gui.wrapText(
+				notificationAchievement.getDescription(),
+				font,
+				240)) {
+
+			renderer.drawString(
+					line,
+					x + 120,
+					descY);
+
+			descY += 26;
+		}
 	}
 	public void draw(Renderer renderer) {
 		
@@ -2525,7 +2916,7 @@ public class GUI {
 		String text = "PAUSED";
 		renderer.drawString(text, getXforCenteredText(text, font), 200);
 		
-		text = "RESUME";
+		text = "Resume";
 		int x =getXforCenteredText(text, font);
 		if(isHovering(text, x, 400-24, font)) {
 			renderer.setColour(craftColour1);
@@ -2537,7 +2928,7 @@ public class GUI {
 		renderer.setFont(font);
 		renderer.drawString(text, getXforCenteredText(text, font), 400);
 		
-		text = "SETTINGS";
+		text = "Settings";
 		x =getXforCenteredText(text, font);
 		if(isHovering(text, x, 500-24, font)) {
 			renderer.setColour(craftColour1);
@@ -2570,7 +2961,7 @@ public class GUI {
 		}
 			renderer.drawString(text, getXforCenteredText(text, font), 600);
 			
-			text = "QUIT";
+			text = "Quit";
 			x =getXforCenteredText(text, font);
 			if(isHovering(text, x, 700-24, font)) {
 				renderer.setColour(craftColour1);
@@ -2740,8 +3131,6 @@ public class GUI {
 		x += 40;
 		y += 140;
 		
-		
-		
 		renderer.setColour(titleColour1);
 		text = "Back";
 		x = 542;
@@ -2760,42 +3149,49 @@ public class GUI {
 	private void drawVideoSettings(Renderer renderer) {
 	    renderer.setColour(darkened);
 	    renderer.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
-	    renderer.draw(videoSettingsFrame, gp.frameWidth/2 - ((112*3)/2), gp.frameHeight/2 - ((112*3)/2), 112*3, 112*3);
+
+	    renderer.draw(videoSettingsFrame,
+	            gp.frameWidth / 2 - ((112 * 3) / 2),
+	            gp.frameHeight / 2 - ((112 * 3) / 2),
+	            112 * 3,
+	            112 * 3);
 
 	    renderer.setFont(font);
 
-	    // Adjust firstVisibleIndex to keep selection in view
-	    if (selectedIndex < firstVisibleIndex) firstVisibleIndex = selectedIndex;
-	    if (selectedIndex >= firstVisibleIndex + maxVisible) firstVisibleIndex = selectedIndex - maxVisible + 1;
+	    renderer.setColour(titleColour1);
 
-	    // Draw only visible checkboxes
-	    for (int i = firstVisibleIndex; i < Math.min(firstVisibleIndex + maxVisible, videoCheckBoxes.size()); i++) {
+	    // Draw up to 4 checkboxes per page
+	    int start = videoScrollIndex;
+	    int end = Math.min(start + VIDEO_PAGE_SIZE, videoCheckBoxes.size());
+
+	    int y = 320;
+
+	    for (int i = start; i < end; i++) {
 	        CheckBox cb = videoCheckBoxes.get(i);
 
-	        // Move y position according to scrolling
-	        int yPos = 340 + (i - firstVisibleIndex) * spacing;
-	        cb.move(yPos - cb.y); // adjust to correct position for this frame
-
-	        // Highlight the selected checkbox
-	        if (i == selectedIndex) renderer.setColour(titleColour2);
-	        else renderer.setColour(titleColour1);
-
+	        cb.y = y+spacing;
 	        cb.draw(renderer);
+
+	        y += 40; // spacing between options
 	    }
 
-	    // Back button
 	    String backText = "Back";
 	    int backX = 542;
 	    int backY = 510;
+
 	    renderer.setColour(titleColour1);
-	    if (isHovering(backText, backX, backY-24, font)) {
-            renderer.setColour(titleColour2);
-            if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
-                settingsState = baseSettings;
-                clickCooldown = 0.33;
-            }
-    		renderer.draw(underline, 512-60, backY-16, 80*3, 16*3);
-        }
+
+	    if (isHovering(backText, backX, backY - 24, font)) {
+	        renderer.setColour(titleColour2);
+
+	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
+	            settingsState = baseSettings;
+	            clickCooldown = 0.33;
+	        }
+
+	        renderer.draw(underline, 512 - 60, backY - 16, 80 * 3, 16 * 3);
+	    }
+
 	    renderer.drawString(backText, backX, backY);
 	}
 	private void drawAudioSettings(Renderer renderer) {
@@ -3320,15 +3716,26 @@ public class GUI {
 		if(gp.currentState == gp.createJoinPlayerScreen) {
 			playerNameBox.update(dt);
 		}
-		if(settingsState == videoState) {
-		    if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_W) && clickCooldown == 0) {
-		        if (selectedIndex > 0) selectedIndex--;
-		        clickCooldown = 0.05;
+		if (gp.currentState == gp.settingsState && settingsState == videoState) {
+
+		    if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_S)) {
+
+		        videoScrollIndex += VIDEO_PAGE_SIZE;
+
+		        int maxIndex = Math.max(0, videoCheckBoxes.size() - VIDEO_PAGE_SIZE);
+
+		        if (videoScrollIndex > maxIndex) {
+		            videoScrollIndex = maxIndex;
+		        }
 		    }
 
-		    if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_S) && clickCooldown == 0) {
-		        if (selectedIndex < videoCheckBoxes.size()) selectedIndex++;
-		        clickCooldown = 0.05;
+		    if (gp.keyL.keyBeginPress(GLFW.GLFW_KEY_W)) {
+
+		        videoScrollIndex -= VIDEO_PAGE_SIZE;
+
+		        if (videoScrollIndex < 0) {
+		            videoScrollIndex = 0;
+		        }
 		    }
 		}
 		
@@ -3515,5 +3922,45 @@ public class GUI {
 
 	    // Bottom-right
 	    renderer.draw(highlight1, x + w - size, y + h - size, size, size);
+	}
+	public void drawUnderlinedText(Renderer renderer, String text,int x,int y,float fontScale) {
+	
+	// Draw text
+	renderer.drawString(font, text, x, y, fontScale, titleColour1);
+	
+	// Get text width
+	float textWidth = font.getTextWidth(text, fontScale);
+	
+	// Padding around text
+	float paddingLeft = titleUIScale * 16;
+	float paddingRight = titleUIScale * 16;
+	
+	// Total underline width
+	float totalWidth = textWidth + paddingLeft + paddingRight;
+	
+	// Underline position
+	float lineX = x - paddingLeft;
+	float lineY = y - titleUIScale * 9;
+	
+	// Draw left cap
+	renderer.draw(bookLine1Start,
+	lineX,
+	lineY,
+	titleUIScale * 16,
+	titleUIScale * 16);
+	
+	// Draw stretched middle
+	renderer.draw(bookLine1,
+	lineX + titleUIScale * 16,
+	lineY,
+	totalWidth - (titleUIScale * 32),
+	titleUIScale * 16);
+	
+	// Draw right cap
+	renderer.draw(bookLine1End,
+	lineX + totalWidth - titleUIScale * 16,
+	lineY,
+	titleUIScale * 16,
+	titleUIScale * 16);
 	}
 }

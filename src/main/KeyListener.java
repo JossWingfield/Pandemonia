@@ -160,6 +160,9 @@ public class KeyListener {
             	gp.renderer.verticalBias -= 0.1f;
             }*/
             
+            if (keyBeginPress(GLFW.GLFW_KEY_2)) {
+            	gp.world.progressM.achievements.get("cat_lover").unlock();
+            }
             if (keyBeginPress(GLFW.GLFW_KEY_3)) {
             	gp.world.catalogue.obtainAllItemsWithinCatalogue(0);
             }
@@ -240,19 +243,6 @@ public class KeyListener {
                 } else {
                     gp.currentState = gp.playState;
                 }
-            }
-            if(keyBeginPress(GLFW.GLFW_KEY_L)) {
-         		gp.world.customiser.addToInventory(new Beam(gp, 6));
-         		gp.world.customiser.addToInventory(new WallPaper(gp, 33));
-         		gp.world.customiser.addToInventory(new FloorPaper(gp, 7));
-         		gp.world.customiser.addToInventory(new DoorSkin(gp, 3));
-         		gp.world.customiser.addToInventory(new ChairSkin(gp, 6));
-         		gp.world.customiser.addToInventory(new TableSkin(gp, 3));
-        		gp.world.customiser.addToInventory(new Window(gp, 0, 0, 2));
-        		gp.world.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 108));
-        		gp.world.customiser.addToInventory(new FloorDecor_Building(gp, 0, 0, 109));
-        		gp.world.customiser.addToInventory(new WallDecor_Building(gp, 0, 0, 38));
-         		
             }
         }
         // ----- CATALOGUE STATE -----
