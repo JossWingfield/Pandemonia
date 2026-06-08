@@ -414,6 +414,8 @@ public class Customer extends NPC {
 	    } else if(Statistics.servedCustomers == 1000) {
     		gp.world.progressM.achievements.get("1000_served").unlock();
 	    }
+	    
+	    gp.gui.addRecipeGrading(p);
 
 	    // clean up
 	    RecipeManager.removeOrder(foodOrder);

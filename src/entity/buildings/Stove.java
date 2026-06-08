@@ -152,7 +152,6 @@ public class Stove extends Building {
 							    return;
 							}
 						} else if(leftSlot.getCookStyle().equals(CookStyle.SAUTE) && leftSlot.isCooking() && leftSlot.cookingItem.foodState.equals(FoodState.RAW)) {
-							
 							if (leftSlot.isCooking()) {
 								leftSlot.addHeat();
 							    gp.player.clickCounter = 0.1;
@@ -195,6 +194,7 @@ public class Stove extends Building {
 									if(pan.cookingItem.foodState == FoodState.COOKED) {
 										pan.cookingItem.foodState = FoodState.PLATED;
 										Plate p = (Plate)gp.player.currentItem;
+										pan.checkPassiveGrade();
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
@@ -239,6 +239,7 @@ public class Stove extends Building {
 									if(pan.cookingItem.foodState == FoodState.COOKED) {
 										pan.cookingItem.foodState = FoodState.PLATED;
 										Plate p = (Plate)gp.player.currentItem;
+										pan.checkPassiveGrade();
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										pan.stopCooking();
@@ -359,6 +360,7 @@ public class Stove extends Building {
 									if(pan.cookingItem.foodState == FoodState.COOKED) {
 										pan.cookingItem.foodState = FoodState.PLATED;
 										Plate p = (Plate)gp.player.currentItem;
+										pan.checkPassiveGrade();
 										p.addIngredient(pan.cookingItem);
 										pan.cookingItem = null;
 										gp.world.lightingM.removeLight(rightLight);

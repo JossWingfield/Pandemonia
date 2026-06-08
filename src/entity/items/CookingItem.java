@@ -33,24 +33,39 @@ public class CookingItem extends Item {
 	//COOKSTYLES
     protected CookStyle cookStyle = CookStyle.PASSIVE;
     public boolean flipped = false;
-
+    
+    //PASSIVE
+    private double perfectWindow = 0.4;
+    
     //FLIP
     protected int flipWindowStart; // time (ticks)
     protected int flipWindowEnd;
+    protected int flipWindowCenter = maxCookTime / 2;
+    protected double flipWindowTolerance = maxCookTime * 0.15; // tighter window
+    private double flipAccuracy = 0;
+    private boolean flipEvaluated = false;
     
     //STIR
     protected float stirLevel;       // 0 → 1
     protected float stirDecayRate;   // per second / tick
     protected float stirAddAmount;   // per stir
+    private double stirScoreTotal = 0;
+    private double stirSamples = 0;
     
     // Saute-specific
     private double heatValue = 0.5;
-    private double heatDecayRate = 0.9;   // passive cooling per second
     private double heatMax = 1.0;
+    private double heatDecayRate = 0.9; 
     private double heatMin = 0.0;  
  	private double safeZoneMin = 0.32;
  	private double safeZoneMax = 0.68;
- 	private double burnProgress = 0;
+	private double burnProgress = 0;
+	private double stabilitySum = 0;
+	private double stabilitySamples = 0;
+ 	
+ 	//GRADING
+ 	private double finalScore = 0.0;
+ 	private String finalGrade = "";
 	
     public CookingItem(GamePanel gp) {
 		super(gp);
@@ -115,6 +130,8 @@ public class CookingItem extends Item {
 		    stirLevel = 1.0f;
 		    stirDecayRate = 0.154f;   // tune this
 		    stirAddAmount = 0.35f;
+		    stirScoreTotal = 0;
+		    stirSamples = 0;
 		}
 		
 		boolean requiresSaute = cookStyle == CookStyle.SAUTE;
@@ -170,14 +187,22 @@ public class CookingItem extends Item {
 		}
 
 		if (cookTime >= maxCookTime) {
-			cookingItem.foodState = FoodState.COOKED;
-		    //stopCooking();
-			if(cookTime >= maxBurnTime) {
-				cookTime = maxBurnTime;
-		        setBurntImage();
-		        cookingItem.foodState = FoodState.BURNT;
-		        cooking = false;
-	        }
+
+		    cookingItem.foodState = FoodState.COOKED;
+
+		    // If flip was part of cooking, apply scoring
+		    if (flipEvaluated) {
+
+		        // convert accuracy → score
+		        finalScore = flipAccuracy * 100.0;
+
+
+		        // apply gameplay impact (important part)
+		        double quality = 100* (0.4 + flipAccuracy * 0.6);
+		        finalGrade = cookingItem.getGrade(quality);
+		        System.out.println("Flip: " + quality + "  " + finalGrade);
+		        cookingItem.addActionScore(name, quality, finalGrade);
+		    }
 		}
 	}
 	private void updateStir(double dt) {
@@ -188,6 +213,16 @@ public class CookingItem extends Item {
 
 	    // --- Stir decay ---
 	    stirLevel -= stirDecayRate * dt;
+	    
+	    double ideal = 0.75;
+	    
+	    double distance = Math.abs(stirLevel - ideal);
+
+	    // 0 = awful, 1 = perfect
+	    double accuracy = Math.max(0, 1.0 - (distance / ideal));
+
+	    stirScoreTotal += accuracy;
+	    stirSamples++;
 
 	    // --- Failed to stir = instant burn ---
 	    if (stirLevel <= 0f) {
@@ -198,9 +233,20 @@ public class CookingItem extends Item {
 	        return;
 	    }
 
+	    
 	    // --- Finished cooking ---
 	    if (cookTime >= maxCookTime) {
+
 	        cookingItem.foodState = FoodState.COOKED;
+
+	        double averageAccuracy = stirScoreTotal / stirSamples;
+
+	        finalScore = averageAccuracy * 100.0;
+
+	        double quality = 100*(0.4 + averageAccuracy * 0.6);
+	        finalGrade = cookingItem.getGrade(quality);
+	        cookingItem.addActionScore(name, quality, finalGrade);
+	        System.out.println("Stir: " + quality + "  " + finalGrade);
 
 	        // --- Overcooking still possible ---
 	        if (cookTime >= maxBurnTime) {
@@ -225,7 +271,15 @@ public class CookingItem extends Item {
 	    if (inSafeZone) {
 	        cookTime += dt;
 	        burnProgress -= dt * 0.6; // recover from mistakes
+	        stabilitySum += 1.0;
+	    } else {
+	    	double dist = (heatValue < safeZoneMin)
+	    	        ? (safeZoneMin - heatValue)
+	    	        : (heatValue - safeZoneMax);
+
+	    	stabilitySum += Math.max(0, 1.0 - dist * 2.0);
 	    }
+	    stabilitySamples++;
 
 	    // --- Too hot ---
 	    if (heatValue > safeZoneMax) {
@@ -242,9 +296,26 @@ public class CookingItem extends Item {
 
 	    // --- Finish cooking ---
 	    if (cookTime >= maxCookTime) {
-	        cookingItem.foodState = FoodState.COOKED;
-	    }
 
+	        cookingItem.foodState = FoodState.COOKED;
+
+	        // --- PERFORMANCE CALCULATION ---
+
+	        double timeAccuracy = Math.min(1.0, cookTime / maxCookTime);
+	        double stability = stabilitySum / Math.max(1, stabilitySamples);
+	        // reward staying in safe zone indirectly via low burnProgress
+	        double burnPenalty = Math.exp(-burnProgress * 2.0);
+	        
+	        finalScore = (timeAccuracy * 0.3 +stability * 0.5 + burnPenalty * 0.2) * 100.0;
+
+
+	        double quality = (100*(0.4 + finalScore / 250.0));
+	        finalGrade = cookingItem.getGrade(quality);
+	        cookingItem.addActionScore(name, quality, finalGrade);
+	        System.out.println("Saute: " + quality + "  " + finalGrade);
+
+	        cooking = false;
+	    }
 	    // --- Burn ---
 	    if (burnProgress >= 1.0) {
 	        cookingItem.foodState = FoodState.BURNT;
@@ -253,17 +324,25 @@ public class CookingItem extends Item {
 	    }
 	}
 	public void tryFlip() {
+
 	    if (flipped) return;
 
-	    if (cookTime >= flipWindowStart && cookTime <= flipWindowEnd) {
-	        flipped = true;
-	        // Optional: reward
-	        //cookTime -= 5; // skill bonus
-	    } else {
-	        // Bad flip timing
+	    double center = (flipWindowStart + flipWindowEnd) / 2.0;
+	    double offset = Math.abs(cookTime - center);
+	    double maxOffset = (flipWindowEnd - flipWindowStart) / 2.0;
+
+	    flipAccuracy = 1.0 - (offset / maxOffset);
+	    flipAccuracy = Math.max(0, Math.min(1, flipAccuracy));
+
+	    flipped = true;
+	    flipEvaluated = true;
+
+	    // HARD FAILURE threshold (makes it more skill based)
+	    if (flipAccuracy < 0.15) {
 	        cookingItem.foodState = FoodState.BURNT;
 	        setBurntImage();
 	        stopCooking();
+	        return;
 	    }
 	}
 	public void stir() {
@@ -273,6 +352,42 @@ public class CookingItem extends Item {
 	    heatValue += 0.12;
 	    heatValue = Math.max(heatMin, Math.min(heatMax, heatValue));
 	}
+	public void evaluatePassiveScore() {
+
+	    double offset = Math.abs(cookTime - maxCookTime);
+	    double maxOffset = maxCookTime * 0.5;
+	    double accuracy = 1.0 - (offset / maxOffset);
+
+	    if(offset <= perfectWindow) {
+	        accuracy = 1.0;
+	    } else {
+	        double adjustedOffset = offset - perfectWindow;
+	        maxOffset = (maxBurnTime - maxCookTime);
+
+	        accuracy = 1.0 - (adjustedOffset / maxOffset);
+	        accuracy = Math.max(0, accuracy);
+	    }
+
+
+	    accuracy = Math.max(0, Math.min(1, accuracy));
+
+	    finalScore = accuracy * 100.0;
+
+	    double quality = 100*(0.4 + accuracy * 0.6);
+	    finalGrade = getPassiveCookGrade(quality);
+        cookingItem.addActionScore(name, quality, finalGrade);
+        System.out.println("Passive: " + quality + "  " + finalGrade);
+	}
+	public String getPassiveCookGrade(double score) {
+		
+        if(score >= 99) return "S";
+        if(score >= 75) return "A";
+        if(score >= 60) return "B";
+        if(score >= 40) return "C";
+        if(score >= 25) return "D";
+
+        return "F";
+    }
 	protected void setBurntImage() {
 		
 	}
@@ -284,6 +399,13 @@ public class CookingItem extends Item {
 	}
 	public void stopCooking() {
 		cooking = false;
+	}
+	public void checkPassiveGrade() {
+		if(cookStyle == CookStyle.PASSIVE) {
+			if(cookingItem.foodState == FoodState.PLATED) {
+		        evaluatePassiveScore();
+		    }
+		}
 	}
 	public void setCookTime(int time) {
 	    cookTime = time;

@@ -10,6 +10,7 @@ import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import utility.recipe.CookStep;
+import utility.recipe.IngredientScore;
 import utility.recipe.PreparedIngredient;
 import utility.recipe.Recipe;
 import utility.recipe.RecipeManager;
@@ -24,6 +25,7 @@ public class Plate extends Item {
     public TextureRegion dirtyImage;
 
     private List<PreparedIngredient> preparedIngredients = new ArrayList<>();
+    private List<IngredientScore> ingredientScores = new ArrayList<>();
     private List<TextureRegion> ingredientImages = new ArrayList<>();
     private Set<String> platableFoods = new HashSet<>();
     private Set<String> bypassPlateFoods = new HashSet<>();
@@ -180,6 +182,9 @@ public class Plate extends Item {
 
         return true;
     }
+    public List<IngredientScore> getIngredientScores() {
+		return ingredientScores;
+	}
     public void addIngredient(Food foodItem) {
 
         if (preparedIngredients.size() >= MAX_LAYERS)
@@ -196,6 +201,24 @@ public class Plate extends Item {
 
         preparedIngredients.add(prepared);
         ingredientImages.add(foodItem.getImage());
+        
+        // Store grading data
+        IngredientScore score = new IngredientScore(foodItem.name);
+
+        for (CookStep step : foodItem.getPerformedSteps()) {
+            score.getCookMethods().add(step.getStation());
+        }
+        
+        for (IngredientScore.ActionScore action : foodItem.getActionScores()) {
+
+            score.addAction(
+                action.action,
+                action.quality,
+                action.grade
+            );
+        }
+
+        ingredientScores.add(score);
 
         matchedRecipe = RecipeManager.getMatchingRecipe(preparedIngredients);
         
@@ -203,6 +226,30 @@ public class Plate extends Item {
         	matchedRecipeImage = matchedRecipe.finishedPlate;
             //System.out.println(matchedRecipe.getName());
         }
+    }
+    public double getFinalScore() {
+
+        double totalScore = 0;
+        int scoreCount = 0;
+
+        for (IngredientScore ingredient : ingredientScores) {
+
+            for (IngredientScore.ActionScore action : ingredient.getActions()) {
+
+                totalScore += action.quality;
+                scoreCount++;
+            }
+        }
+
+        if (seasoningQuality >= 0) {
+            totalScore += seasoningQuality;
+            scoreCount++;
+        }
+
+        if (scoreCount == 0)
+            return 0;
+
+        return totalScore / scoreCount;
     }
     public TextureRegion getMatchingRecipeIgnoringSeasoning() {
 
@@ -284,6 +331,7 @@ public class Plate extends Item {
     
     public void clearIngredients() {
         preparedIngredients.clear();
+        ingredientScores.clear();
         ingredientImages.clear();
         matchedRecipe = null;
         matchedRecipeImage = null;

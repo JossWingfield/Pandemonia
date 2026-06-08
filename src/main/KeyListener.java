@@ -4,15 +4,10 @@ import java.util.Arrays;
 
 import org.lwjgl.glfw.GLFW;
 
-import entity.buildings.FloorDecor_Building;
-import entity.buildings.WallDecor_Building;
-import entity.buildings.Window;
-import map.Beam;
-import map.ChairSkin;
-import map.DoorSkin;
-import map.FloorPaper;
-import map.TableSkin;
-import map.WallPaper;
+import entity.items.FoodState;
+import entity.items.Greens;
+import entity.items.Plate;
+import entity.items.Tomato;
 
 public class KeyListener {
 
@@ -160,9 +155,18 @@ public class KeyListener {
             	gp.renderer.verticalBias -= 0.1f;
             }*/
             
-            if (keyBeginPress(GLFW.GLFW_KEY_2)) {
-            	gp.world.progressM.achievements.get("cat_lover").unlock();
-            }
+            /*if (keyBeginPress(GLFW.GLFW_KEY_2)) {
+            	Plate plate = new Plate(gp);
+            	Greens g = new Greens(gp);
+            	g.setState(FoodState.PLATED);
+            	g.addStep("Chopping Board");
+            	plate.addIngredient(g);
+            	Tomato t = new Tomato(gp);
+              	t.setState(FoodState.PLATED);
+        		t.addStep("Chopping Board");
+            	plate.addIngredient(t);
+            	gp.gui.addRecipeGrading(plate);
+            }*/
             if (keyBeginPress(GLFW.GLFW_KEY_3)) {
             	gp.world.catalogue.obtainAllItemsWithinCatalogue(0);
             }

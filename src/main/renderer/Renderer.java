@@ -548,6 +548,14 @@ public class Renderer {
         spriteCount = 0;
         // currentTexture and currentShader are set in beginFrame/process loop
     }
+    public void drawCircle(int x, int y, int r, Colour c) {
+        for (int i = 0; i < 360; i += 10) {
+            double angle = Math.toRadians(i);
+            int px = x + (int)(Math.cos(angle) * r);
+            int py = y + (int)(Math.sin(angle) * r);
+            fillRect(px, py, 2, 2, c);
+        }
+    }
     public void drawFullscreenTexture(int textureId) {
         fullScreen.use();
         glActiveTexture(GL_TEXTURE0);

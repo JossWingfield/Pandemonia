@@ -30,6 +30,7 @@ import entity.buildings.Fridge;
 import entity.buildings.Gate;
 import entity.buildings.Lantern;
 import entity.buildings.Leak;
+import entity.buildings.MenuBook;
 import entity.buildings.MenuSign;
 import entity.buildings.Oven;
 import entity.buildings.RoomSpawn;
@@ -481,6 +482,8 @@ public class Room {
 			buildings[arrayCounter] = new CornerTable(gp, 348, 384, 2);
 			arrayCounter++;
 			buildings[arrayCounter] = new Table(gp, 612, 468, "Down", false);
+			arrayCounter++;
+			buildings[arrayCounter] = new MenuBook(gp, 636, 324);
 			arrayCounter++;
 			break;
 		case 1:

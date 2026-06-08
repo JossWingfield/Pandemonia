@@ -733,6 +733,7 @@ public class Player extends Entity{
             return false;
 
         food.foodState = FoodState.PLATED;
+        pan.checkPassiveGrade();
         plate.addIngredient(food);
 
         pan.cookingItem = null;

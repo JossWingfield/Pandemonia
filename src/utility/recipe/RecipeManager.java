@@ -572,6 +572,7 @@ public class RecipeManager {
         unlockRecipe(friedEgg);
         unlockRecipe(bruschetta);
         unlockRecipe(salad);
+        unlockRecipe(steak);
         
         
         // Icons
@@ -589,7 +590,7 @@ public class RecipeManager {
         ovenIcon2 = importImage("/UI/recipe/CursedIcons.png").getSubimage(48, 0, 16, 16);
         coatedIcon = importImage("/food/coating/BreadCrumbs.png").getSubimage(0, 0, 16, 16);
         
-        unlockAllRecipes();
+        //unlockAllRecipes();
     }
 
     public void unlockAllRecipes() {

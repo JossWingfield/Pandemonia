@@ -29,6 +29,13 @@ public class ChoppingBoard extends Building {
 	private boolean chopping = false;
     private int chopCount = 0;
     private int currentChopCount = 12;
+    
+    private List<Double> chopTimings = new ArrayList<>();
+    private double lastChopTime = -1;
+    private double choppingTimer = 0;
+    private static final double IDEAL_CHOP_INTERVAL = 0.25;
+    private double pulseFlashTimer = 0;
+    private boolean lastChopPerfect = false;
 	
 	public ChoppingBoard(GamePanel gp, float xPos, float yPos) {
 		super(gp, xPos, yPos, 48, 48);
@@ -43,8 +50,6 @@ public class ChoppingBoard extends Building {
 		canBePlaced = false;
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;
-		//isSecondLayer = true;
-		//isThirdLayer = true;
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*7);
 	}
 	public void onPlaced() {
@@ -69,20 +74,62 @@ public class ChoppingBoard extends Building {
 	public void setCurrentItem(Food item) {
 	    this.currentItem = item;
 	    this.chopCount = 0;
+
+	    chopTimings.clear();
+	    lastChopTime = -1;
+	    choppingTimer = 0;
 	}
 	public void removeItem() {
-		currentItem = null;
-		chopping = false;
-		chopCount = 0;
+	    currentItem = null;
+	    chopping = false;
+	    resetChopData();
+	}
+	private void recordChop() {
+		
+	    if(lastChopTime != -1) {
+	        chopTimings.add(choppingTimer - lastChopTime);
+	    }
+
+	    lastChopTime = choppingTimer;
+	    
+	    double offset = Math.abs((choppingTimer - lastChopTime) - IDEAL_CHOP_INTERVAL);
+
+	    // threshold tuning
+	    lastChopPerfect = offset < 0.07;
+
+	    pulseFlashTimer = 0.15;
+
+	    chopCount++;
+
+	    if(chopCount >= currentChopCount) {
+	        finishChopItem();
+	    }
 	}
 	public void updateState(double dt) {
-		super.updateState(dt);
+	    super.updateState(dt);
+
+	    if(currentItem != null &&
+	       currentItem.foodState == FoodState.RAW &&
+	       canChop(currentItem.getName())) {
+
+	        choppingTimer += dt;
+	        
+	        if (pulseFlashTimer > 0) {
+	            pulseFlashTimer -= dt;
+	            if (pulseFlashTimer < 0) pulseFlashTimer = 0;
+	        }
+	    }
 	}
 	public void addItem(Food f) {
-		currentItem = f;
-		currentItem.addStep(name);
- 		currentChopCount = f.getChopCount();
- 		chopCount = 0;
+	    currentItem = f;
+	    currentItem.addStep(name);
+
+	    currentChopCount = f.getChopCount();
+	    chopCount = 0;
+
+	    chopTimings.clear();
+	    lastChopTime = -1;
+	    choppingTimer = 0;
 	}
 	public void inputUpdate(double dt) {
 		
@@ -132,10 +179,7 @@ public class ChoppingBoard extends Building {
 				    					gp.socketClient.send(new Packet14Chop(gp.player.getUsername(), getArrayCounter(), chopCount));
 					    			} else {
 							    		clickCooldown = 0.08;
-							    		chopCount++;
-							    		if(chopCount == currentChopCount) {
-							    			finishChopItem();
-							    		}
+							    		recordChop();
 					    			}
 					    		} else {
 					    			pickUpItem();
@@ -148,8 +192,46 @@ public class ChoppingBoard extends Building {
 			    }
 		    }
 	}
+	private double getChopQuality() {
+		
+	    if(chopTimings.size() < 2) {
+	        return 0;
+	    }
+
+	    double avgInterval = chopTimings.stream()
+	            .mapToDouble(Double::doubleValue)
+	            .average()
+	            .orElse(0);
+
+	    double rhythmError =
+	            Math.abs(avgInterval - IDEAL_CHOP_INTERVAL);
+
+	    double rhythmScore =
+	            Math.max(0, 100 - rhythmError * 400);
+
+	    double variance = 0;
+
+	    for(double interval : chopTimings) {
+	        variance += Math.pow(interval - avgInterval, 2);
+	    }
+
+	    variance /= chopTimings.size();
+
+	    double consistencyScore =
+	            Math.max(0,
+	            100 - Math.sqrt(variance) * 600);
+
+	    return (rhythmScore * 0.6)
+	         + (consistencyScore * 0.4);
+	}
 	public boolean canContinueChopping() {
         return currentItem.foodState == FoodState.RAW && canChop(currentItem.getName());
+	}
+	private void resetChopData() {
+	    chopCount = 0;
+	    chopTimings.clear();
+	    lastChopTime = -1;
+	    choppingTimer = 0;
 	}
 	private void pickUpItem() {
 		if(gp.multiplayer) {
@@ -182,10 +264,48 @@ public class ChoppingBoard extends Building {
 			}
 		}
 	}
+	public void drawOverlayUI(Renderer renderer) {
+		
+	    if (currentItem == null) return;
+	    if (!currentItem.foodState.equals(FoodState.RAW)) return;
+	    if (!canChop(currentItem.getName())) return;
+
+	    float worldX = hitbox.x - xDrawOffset;
+	    float worldY = hitbox.y - yDrawOffset;
+
+	    float cx = worldX + drawWidth / 2f;
+	    float cy = worldY - 34; // above board
+
+	    // progress through current beat cycle
+	    double cycle = choppingTimer % IDEAL_CHOP_INTERVAL;
+	    float t = (float)(cycle / IDEAL_CHOP_INTERVAL);
+
+	    // pulse radius (expands then resets)
+	    float maxRadius = 18f;
+	    float radius = t * maxRadius;
+
+	    // base ring colour
+	    Colour base = new Colour(180, 180, 180);
+
+	    // flash feedback
+	    if (pulseFlashTimer > 0) {
+	        if (lastChopPerfect) {
+	            base = new Colour(80, 255, 120); // green
+	        } else {
+	            base = new Colour(255, 80, 80); // red
+	        }
+	    }
+
+	    // outer pulse ring
+	    renderer.drawCircle((int)cx, (int)cy, (int)radius, base);
+
+	    // inner stable beat marker
+	    renderer.drawCircle((int)cx, (int)cy, 4, new Colour(255, 255, 255));
+	}
 	public void clearCurrentItem() {
-	    this.currentItem = null;
-	    this.chopCount = 0;
-	    this.chopping = false;
+	    currentItem = null;
+	    chopping = false;
+	    resetChopData();
 	}
 	public void setChopCount(int chopCount) {
 	    this.chopCount = chopCount;
@@ -194,7 +314,20 @@ public class ChoppingBoard extends Building {
 		}
 	}
 	public void finishChopItem() {
+		double quality = getChopQuality();
+		String grade = currentItem.getGrade(quality);
+
+		System.out.println("Chopped: "+
+		    currentItem.getName()
+		    + " | Grade: "
+		    + grade
+		    + " | "
+		    + String.format("%.0f", quality)
+		    + "%"
+		);
+		currentItem.addActionScore(name, quality, grade);
 		chopCount = 0;
+		resetChopData();
 		Statistics.ingredientsChopped++;
 		if(Statistics.ingredientsChopped == 100) {
     		gp.world.progressM.achievements.get("100_chopped").unlock();

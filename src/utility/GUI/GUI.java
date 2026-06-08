@@ -4,8 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import javax.imageio.ImageIO;
 
@@ -13,6 +15,7 @@ import org.lwjgl.glfw.GLFW;
 
 import entity.Player;
 import entity.items.Food;
+import entity.items.Plate;
 import entity.npc.Customer;
 import entity.npc.NPC;
 import entity.npc.SpecialCustomer;
@@ -27,14 +30,15 @@ import net.DiscoveryManager.DiscoveredServer;
 import net.packets.Packet04Chat;
 import utility.Achievement;
 import utility.Constants;
-import utility.DayPhase;
 import utility.ProgressManager.RewardType;
 import utility.Settings;
 import utility.Upgrade;
 import utility.UpgradeManager;
 import utility.Weather;
 import utility.recipe.CookStep;
+import utility.recipe.IngredientScore;
 import utility.recipe.Order;
+import utility.recipe.PreparedIngredient;
 import utility.recipe.Recipe;
 import utility.recipe.RecipeIngredient;
 import utility.recipe.RecipeManager;
@@ -59,7 +63,9 @@ public class GUI {
     private TextureRegion bookLine1, bookLine1Start, bookLine1End, bookLine2, previewFrame, createCharacterFrame, previewCharacterFrame;
 	private TextureRegion bookIcons[], bookOpen, bookClosed, recipeBookBorder, lockedRecipeBorder;
 	private TextureRegion achievementBorder, achievement, lockedAchievement, achievementPopup, mysteryIcon, mysteryCrateUI, catalogueButton, catalogueMenu;
-    
+    private TextureRegion  PanIcon, choppedIcon, PotIcon, ovenIcon, fryerIcon, freezerIcon, seasoningIcon, ovenTrayIcon, coatedIcon;
+    private TextureRegion  sFrame, aFrame, bFrame, cFrame, dFrame, fFrame, gradingFrameOverlay;
+	
 	//COLOURS
 	private Colour darkened;
 	private Colour craftColour1;
@@ -88,6 +94,9 @@ public class GUI {
 	private boolean singleplayerSelected = false;
 	private boolean hostSelected = false;
 	private boolean joinSelected = false;
+	
+	//RECIPE GRADING
+	private Queue<RecipeGrading> gradingQueue = new LinkedList<>();
 	
 	//XP
 	public int displayedSouls;     // what we currently draw
@@ -158,7 +167,27 @@ public class GUI {
 	
 	private int titleUIScale = 5;
 	
-
+	//Recipe Grading
+	private List<ActionAnim> animQueue = new ArrayList<>();
+	private int animIndex = 0;
+	private double animSpeed = 3.2; // tweak feel
+	private boolean animating = true;
+	private double finalGradeDisplay = 0;
+	private boolean finalGradeShown = false;
+	private RecipeGrading currentRecipe;
+	private double duration = 2.25;
+	private static final double[] SCORE_THRESHOLDS = {
+		    0, 65, 75, 83, 90, 95, 100
+		};
+		private static final Colour[] SCORE_COLOURS = {
+		    new Colour("#891956"), // F
+		    new Colour("#d34461"), // D
+		    new Colour("#ed7b6a"), // C
+		    new Colour("#fbc17e"), // B
+		    new Colour("#61ab6a"), // A
+		    new Colour("#c960d4")  // S
+		};
+	
 	public GUI(GamePanel gp) {
 		this.gp = gp;
 		
@@ -270,7 +299,6 @@ public class GUI {
 		        () -> Settings.particlesEnabled,
 		        () -> Settings.particlesEnabled = !Settings.particlesEnabled));
 	}
-	
 	protected Texture importImage(String filePath) {
 		Texture texture = AssetPool.getTexture(filePath);
 	    return texture;
@@ -373,6 +401,23 @@ public class GUI {
 		rightArrow3Pressed = importImage("/UI/saves/ArrowButton1.png").getSubimage(32+48, 16, 16, 16);
 		
 		previewCharacterFrame = importImage("/UI/saves/PreviewCharacterFrame.png").toTextureRegion();
+		
+	    PanIcon = importImage("/UI/recipe/Icons.png").getSubimage(0, 0, 16, 16);
+	    choppedIcon = importImage("/UI/recipe/Icons.png").getSubimage(32, 0, 16, 16);
+	        PotIcon = importImage("/UI/recipe/Icons.png").getSubimage(16, 0, 16, 16);
+	        ovenIcon = importImage("/UI/recipe/Icons.png").getSubimage(48, 0, 16, 16);
+	        fryerIcon = importImage("/UI/recipe/Icons.png").getSubimage(64, 0, 16, 16);
+	        freezerIcon = importImage("/UI/recipe/Icons.png").getSubimage(80, 0, 16, 16);
+	        seasoningIcon = importImage("/UI/recipe/Icons.png").getSubimage(96, 0, 16, 16);
+	        ovenTrayIcon = importImage("/UI/recipe/Icons.png").getSubimage(112, 0, 16, 16);
+	        coatedIcon = importImage("/food/coating/BreadCrumbs.png").getSubimage(0, 0, 16, 16);
+	    sFrame = importImage("/UI/recipe/grading/Frame.png").getSubimage(64*5, 0, 64, 16);
+	    aFrame = importImage("/UI/recipe/grading/Frame.png").getSubimage(64*4, 0, 64, 16);
+	    bFrame = importImage("/UI/recipe/grading/Frame.png").getSubimage(64*3, 0, 64, 16);
+	    cFrame = importImage("/UI/recipe/grading/Frame.png").getSubimage(64*2, 0, 64, 16);
+	    dFrame = importImage("/UI/recipe/grading/Frame.png").getSubimage(64, 0, 64, 16);
+	    fFrame = importImage("/UI/recipe/grading/Frame.png").getSubimage(0, 0, 64, 16);
+	    gradingFrameOverlay = importImage("/UI/recipe/grading/Frame.png").getSubimage(64*6, 0, 64, 16);
 	}
 	private TextureRegion createHorizontalFlipped(TextureRegion original) {
 	        // Swap U coordinates (flip horizontally)
@@ -525,9 +570,9 @@ public class GUI {
 			text = "Settings";
 	
 			y = 450+90;
-			Colour c = titleColour1;
+			renderer.setColour(titleColour1);
 			if(isHovering(text,x, y-24, font)) {
-				c = titleColour1;
+				renderer.setColour(titleColour2);
 				if(gp.mouseL.mouseButtonDown(0)) {
 					if(clickCooldown == 0) {
 						//ENTER SETTINGS
@@ -537,14 +582,14 @@ public class GUI {
 				}
 			}
 			
-			renderer.drawString(font, text, x, y, 1.0f, c);
+			renderer.drawString(font, text, x, y);
 			renderer.draw(bookLine2, x-titleUIScale*10, y-titleUIScale*4, titleUIScale*48, titleUIScale*16);
 	
 			//QUIT
 			text = "Quit";
 			
 			y = 450+90+90;
-			c = titleColour1;
+			Colour c = titleColour1;
 			if(isHovering(text,x, y-24, font)) {
 				c  = (titleColour2);
 				if(gp.mouseL.mouseButtonDown(0)) {
@@ -1203,7 +1248,6 @@ public class GUI {
 	            if(selectedHatNum > Constants.MAXHATNUM) {
 	            	selectedHatNum = 0;
 	            }
-	            System.out.println(selectedHatNum);
 	            gp.player.setHat(selectedHatNum);
 	        }
 	    } else {
@@ -2783,6 +2827,13 @@ public class GUI {
 		    renderer.drawString(text, msgX, msgY - k * lineHeight);
 		}
 		
+		if(!gradingQueue.isEmpty()) {
+
+		    RecipeGrading currentGrading = gradingQueue.peek();
+
+		    drawRecipeGrading(renderer, currentGrading);
+		}
+		
 	}
 	public void addOrder(Order order, Customer customer, Renderer renderer) {
 	    RecipeRenderData data = buildRenderData(order, customer, font, renderer);
@@ -3703,6 +3754,20 @@ public class GUI {
 		    }
 		}
 		
+		if(gp.currentState == gp.playState) {
+			if(!gradingQueue.isEmpty()) {
+
+			    RecipeGrading grading = gradingQueue.peek();
+
+			    grading.displayTimer += dt;
+
+			    if(grading.displayTimer >= 15.0f) {
+			        gradingQueue.poll();
+			    }
+			}
+			updateGradingAnimation(dt);
+		}
+		
 		if(gp.currentState == gp.writeUsernameState) {
 		    usernameBox.update(dt);
 		} 
@@ -3842,6 +3907,295 @@ public class GUI {
 
 	    return lines;
 	}
+	public void addRecipeGrading(Plate plate) {
+		
+	    Recipe recipe =
+	            RecipeManager.getMatchingRecipe(
+	                    plate.getPreparedIngredients());
+
+	    if (recipe == null)
+	        return;
+	    
+	    double finalScore = plate.getFinalScore();
+
+	    String finalGrade = getFinalGrade(finalScore);
+
+	    RecipeGrading grading =
+	            new RecipeGrading(recipe,
+	                    recipe.getName(),
+	                    recipe.finishedPlate,
+	                    finalScore,
+	                    finalGrade,
+	                    plate.getIngredientScores());
+
+	    gradingQueue.add(grading);
+	    
+	    animQueue.clear();
+	    animIndex = 0;
+
+	    for (IngredientScore ingredient : grading.getIngredientScores()) {
+	        for (IngredientScore.ActionScore action : ingredient.getActions()) {
+	            animQueue.add(new ActionAnim(action));
+	        }
+	    }
+
+	    animating = true;
+	}
+	public void updateGradingAnimation(double dt) {
+		if(currentRecipe == null) {
+			return;
+		}
+		
+	    if (!animating && !finalGradeShown) {
+	        double target = currentRecipe.getFinalScore();
+	        double diff = target - finalGradeDisplay;
+
+	        finalGradeDisplay += diff * Math.min(1.0, dt * 3.5);
+	        
+	        if (Math.abs(diff) < 0.5) {
+	            finalGradeDisplay = target;
+	            finalGradeShown = true;
+	        }
+	    }
+
+	    if (!animating) return;
+	    
+
+	    if (animIndex >= animQueue.size()) {
+	        animating = false;
+	        return;
+	    }
+
+	    ActionAnim current = animQueue.get(animIndex);
+
+	    double target = current.action.quality;
+
+	    double t = current.animationTime / duration;
+	    t = Math.min(1.0, t);
+
+	    double eased = 1.0 - Math.pow(1.0 - t, 5);
+
+	    current.displayedQuality = target * eased;
+
+	    current.animationTime += dt;
+
+	    // completion threshold
+	    if(t >= 1.0) {
+	    	current.displayedQuality = target;
+	    	current.finished = true;
+	    	animIndex++;
+	    }
+	}
+	public Colour getScoreColourSmooth(double score) {
+
+	    for (int i = 0; i < SCORE_THRESHOLDS.length - 1; i++) {
+
+	        double a = SCORE_THRESHOLDS[i];
+	        double b = SCORE_THRESHOLDS[i + 1];
+
+	        if (score <= b) {
+
+	            double t = (score - a) / (b - a);
+
+	            return lerpColour(
+	                SCORE_COLOURS[i],
+	                SCORE_COLOURS[Math.min(i + 1, SCORE_COLOURS.length - 1)],
+	                t
+	            );
+	        }
+	    }
+
+	    return SCORE_COLOURS[SCORE_COLOURS.length - 1];
+	}
+	public Colour lerpColour(Colour c1, Colour c2, double t) {
+
+	    t = Math.max(0.0, Math.min(1.0, t));
+
+	    return new Colour(
+	        (float)(c1.r + (c2.r - c1.r) * t),
+	        (float)(c1.g + (c2.g - c1.g) * t),
+	        (float)(c1.b + (c2.b - c1.b) * t),
+	        (float)(c1.a + (c2.a - c1.a) * t)
+	    );
+	}
+	public void drawRecipeGrading(Renderer renderer, RecipeGrading recipeGrading) {
+
+	    if (recipeGrading == null)
+	        return;
+	    
+	    currentRecipe = recipeGrading;
+
+	    int panelX = 0;
+	    int panelY = 100;
+	    int scale = 3;
+
+	    int panelWidth = 340;
+
+	    int panelHeight = 100 + (recipeGrading.getIngredientScores().size() * 44);
+
+	    //renderer.setColour(new Colour(0, 0, 0, 180));
+	    //renderer.fillRect(panelX, panelY, panelWidth, panelHeight);
+
+	    renderer.setColour(Colour.WHITE);
+
+	    // Recipe image
+	    renderer.draw(
+	        recipeGrading.getRecipe().finishedPlate,
+	        panelX + 8,
+	        panelY + 8,
+	        16 * scale,
+	        16 * scale
+	    );
+
+	    // Recipe name
+	    renderer.drawString(
+	        recipeGrading.getRecipe().getName(),
+	        panelX + 64,
+	        panelY + 18 + 8 * scale
+	    );
+
+
+	    int rowY = panelY + 70;
+
+	    for (IngredientScore ingredient : recipeGrading.getIngredientScores()) {
+
+	        int x = panelX + 10;
+
+	        // Ingredient name
+	        renderer.drawString(
+	            ingredient.getIngredientName(),
+	            x,
+	            rowY + 12
+	        );
+
+	        x += 110;
+
+	        // =========================
+	        // ACTIONS (FULLY GENERIC)
+	        // =========================
+	        for (IngredientScore.ActionScore action : ingredient.getActions()) {
+
+	            // icon per action type (future-proof)
+	            renderer.draw(
+	                getCookMethodIcon(action.action),
+	                x,
+	                rowY - 8 * scale,
+	                16 * scale,
+	                16 * scale
+	            );
+
+	            // grade per action
+	            renderer.draw(
+	                getGradeFrame(action.grade),
+	                x+24*scale,
+	                rowY -8*scale,
+	                64 * scale,
+	                16 * scale
+	            );
+		        
+		        int barX = x+24*scale + 3;
+		        int barY = rowY-8*scale + 15;
+		        int barWidth = 40*scale;
+		        int barHeight = 6*scale;
+		        ActionAnim anim = getAnim(action);
+
+		        double visual = toVisualScore(anim.displayedQuality);
+		        double percent = visual / 100.0;
+		        
+		        renderer.setColour(getScoreColourSmooth(visual));
+		        renderer.fillRect(barX, barY, (int)(barWidth * percent), barHeight);
+		        
+		        renderer.draw(
+		                gradingFrameOverlay,
+		                x+24*scale,
+		                rowY -8*scale,
+		                64 * scale,
+		                16 * scale
+		            );
+		        
+
+		        if (anim.finished) {
+		        	renderer.setColour(Colour.WHITE);
+		            renderer.drawString(action.grade,
+		            		x+24*scale + 41*scale,
+			                rowY -8*scale + 10*scale
+		            );
+		        }
+
+	            x += 40;
+	        }
+
+	        rowY += 42;
+	    }
+	    if (finalGradeShown) {
+	        renderer.drawString(
+	            getFinalGrade(finalGradeDisplay),
+	            panelX + panelWidth - 48,
+	            panelY + 18 +scale*40
+	        );
+	    }
+	    
+	}
+	private ActionAnim getAnim(IngredientScore.ActionScore action) {
+	    for (ActionAnim a : animQueue) {
+	        if (a.action == action) return a;
+	    }
+	    return null;
+	}
+	public TextureRegion getCookMethodIcon(String method) {
+
+	    switch(method) {
+
+	        case "Chopping Board":
+	            return choppedIcon;
+
+	        case "Frying Pan":
+	            return PanIcon;
+
+	        case "Fryer":
+	            return fryerIcon;
+
+	        case "Oven":
+	            return ovenIcon;
+
+	        case "Small Pot":
+	            return PotIcon;
+	    }
+	    
+	    return choppedIcon;
+	}
+	public TextureRegion getGradeFrame(String grade) {
+		
+	    switch(grade) {
+	        case "S": return sFrame;
+	        case "A": return aFrame;
+	        case "B": return bFrame;
+	        case "C": return cFrame;
+	        case "D": return dFrame;
+	        default: return fFrame;
+	    }
+	}
+	public String getFinalGrade(double score) {
+		System.out.println("Final Score: " + score);
+
+	    if (score >= 98) return "S+";
+	    if (score >= 95) return "S";
+	    if (score >= 93) return "S-";
+	    if (score >= 92) return "A+";
+	    if (score >= 90) return "A";
+	    if (score >= 88) return "A-";
+	    if (score >= 86) return "B+";
+	    if (score >= 83) return "B";
+	    if (score >= 80) return "B-";
+	    if (score >= 78) return "C+";
+	    if (score >= 75) return "C";
+	    if (score >= 70) return "C-";
+	    if (score >= 68) return "D+";
+	    if (score >= 65) return "D";
+	    if (score >= 62) return "D-";
+
+	    return "F";
+	}
 	public void setDialogue(String message, NPC npc) {
 		this.currentDialogue = message;
 		this.currentTalkingNPC = npc;
@@ -3907,6 +4261,27 @@ public class GUI {
 	            gp.currentState = gp.playState;
 	        }
 	    }
+	}
+	public double toVisualScore(double score) {
+
+	    for (int i = 0; i < SCORE_THRESHOLDS.length - 1; i++) {
+
+	        double a = SCORE_THRESHOLDS[i];
+	        double b = SCORE_THRESHOLDS[i + 1];
+
+	        if (score <= b) {
+
+	            double t = (score - a) / (b - a);
+
+	            double segmentSize = 100.0 / (SCORE_THRESHOLDS.length - 1);
+
+	            double base = i * segmentSize;
+
+	            return base + t * segmentSize;
+	        }
+	    }
+
+	    return 100.0;
 	}
 	public void drawCheckBoxHover(Renderer renderer, int x, int y, int w, int h) {
 	    int size = 16 * 3;

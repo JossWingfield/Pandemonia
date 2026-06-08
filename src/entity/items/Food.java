@@ -11,6 +11,8 @@ import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.TextureRegion;
 import utility.recipe.CookStep;
+import utility.recipe.IngredientScore;
+import utility.recipe.IngredientScore.ActionScore;
 
 public class Food extends Item {
 
@@ -29,6 +31,8 @@ public class Food extends Item {
     protected int chopCount = 12;
     protected int cookTime = 24;
     
+    protected List<IngredientScore.ActionScore> actionScores = new ArrayList<>();
+    
 	private Map<String, Set<FoodState>> canBeCoated = new HashMap<>();
 
     // Constructor
@@ -41,6 +45,16 @@ public class Food extends Item {
     private void setUp() {
 		allowToBeCoated("Chicken Pieces", FoodState.RAW);
 	}
+    public String getGrade(double score) {
+
+        if(score >= 95) return "S";
+        if(score >= 90) return "A";
+        if(score >= 83) return "B";
+        if(score >= 75) return "C";
+        if(score >= 65) return "D";
+
+        return "F";
+    }
     public boolean canBeCoated() {
 
     	// Ingredient not supported at all
@@ -76,11 +90,21 @@ public class Food extends Item {
     public void addStep(String station) {
         performedSteps.add(new CookStep(station));
     }
-
     public List<CookStep> getPerformedSteps() {
         return performedSteps;
     }
+    public List<IngredientScore.ActionScore> getActionScores() {
+		return actionScores;
+	}
+    public void addActionScore(String action, double quality, String grade) {
+        for (ActionScore a : actionScores) {
+            if (a.action.equals(action)) {
+                return; // already stored, ignore duplicate
+            }
+        }
 
+        actionScores.add(new ActionScore(action, quality, grade));
+    }
     // --- State Handling ---
     public void setState(FoodState state) {
         this.foodState = state;
