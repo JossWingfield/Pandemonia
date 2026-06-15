@@ -138,8 +138,8 @@ public class Shelf extends Building {
         }
                 
     	int size = 16*3;
-		int xPos = (int)((gp.mouseL.getWorldX())/size) * size;
-		int yPos = (int)((gp.mouseL.getWorldY())/size) * size;
+		int xPos = (int)((gp.mouseL.getScreenX())/size) * size;
+		int yPos = (int)((gp.mouseL.getScreenY())/size) * size;
 		if (gp.world.customiser.selectedBuilding != null && gp.world.customiser.selectedBuilding.getName().equals("Shelf")) {
 
 		    // Horizontal / vertical neighbors

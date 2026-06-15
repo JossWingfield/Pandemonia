@@ -135,7 +135,7 @@ public class World {
     }
     public void clientUpdate(double dt) {
     	particleM.update(dt);
-        if(gp.currentState == gp.playState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.catalogueState || gp.currentState == gp.xpState || gp.currentState == gp.chatState) {
+        if(gp.currentState == gp.playState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.chatState) {
         	gp.player.update(dt);
         	lightingM.update(dt);
 			cutsceneM.update(dt);
@@ -168,7 +168,7 @@ public class World {
     }
     
     public void draw(Renderer renderer) {
-        if(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.chatState || gp.currentState == gp.customiseOutfitScreen) {
+        if(gp.currentState == gp.playState || gp.currentState == gp.pauseState ||  gp.currentState == gp.mapBuildState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.chatState || gp.currentState == gp.customiseOutfitScreen) {
     		mapM.draw(renderer);
     		
     		Building[] bottomLayer = buildingM.getBottomLayer();
@@ -182,6 +182,13 @@ public class World {
 	        for(int i = 0; i < secondLayer.length-1; i++) {
 	        	if(secondLayer[i] != null) {
 	        		secondLayer[i].draw(renderer);
+	        	}
+	        }
+	        
+	        Building[] middleLayer = buildingM.getMiddleLayer();
+	        for(int i = 0; i < middleLayer.length-1; i++) {
+	        	if(middleLayer[i] != null) {
+	        		middleLayer[i].draw(renderer);
 	        	}
 	        }
     		
@@ -405,51 +412,9 @@ public class World {
 	        gameM.drawFilters(renderer);
 	        gameM.drawWeather(renderer); 
 	        cutsceneM.draw(renderer);
-	}
-    	 
+    	 }
 			if(gp.currentState == gp.mapBuildState) {
-				mapM.draw(renderer);
-				mapM.drawForeground(renderer);
-				
-				Building[] bottomLayer = buildingM.getBottomLayer();
-			    for(int i = 0; i < bottomLayer.length-1; i++) {
-			    	if(bottomLayer[i] != null) {
-			    		bottomLayer[i].draw(renderer);
-			    	}
-			    }
-			    Building[] middleLayer = buildingM.getSecondLayer();
-			    for(int i = 0; i < middleLayer.length-1; i++) {
-			    	if(middleLayer[i] != null) {
-			    		middleLayer[i].draw(renderer);
-			    	}
-			    }
-				
-				Building[] main = buildingM.getBuildingsToDraw();
-			    for(int i = 0; i < main.length-1; i++) {
-			    	if(main[i] != null) {
-			    		main[i].draw(renderer);
-			    	}
-			    }
-				
-				Building[] secondLayer = buildingM.getThirdLayer();
-			    for(int i = 0; i < secondLayer.length-1; i++) {
-			    	if(secondLayer[i] != null) {
-			    		secondLayer[i].draw(renderer);
-			    	}
-			    }
-			    Building[] thirdLayer = buildingM.getFourthLayer();
-			    for(int i = 0; i < thirdLayer.length-1; i++) {
-			    	if(thirdLayer[i] != null) {
-			    		thirdLayer[i].draw(renderer);
-			    	}
-			    }
-			    Building[] fourthLayer = buildingM.getFifthLayer();
-			    for(int i = 0; i < fourthLayer.length-1; i++) {
-			    	if(fourthLayer[i] != null) {
-			    		fourthLayer[i].draw(renderer);
-			    	}
-			    }
-				mapB.draw(renderer);
+				mapB.drawGUI(renderer);
 			} 
 			if(gp.currentState == gp.customiseRestaurantState) {
 				customiser.draw(renderer);

@@ -133,8 +133,8 @@ public class Fridge extends Building {
 
             itemHitboxes.clear();
 
-            float mouseX = gp.mouseL.getWorldX();
-            float mouseY = gp.mouseL.getWorldY();
+            float mouseX = gp.mouseL.getScreenX();
+            float mouseY = gp.mouseL.getScreenY();
 
             int slotSize = 16 * 3;
             int padding = 1 * 3;
@@ -210,8 +210,8 @@ public class Fridge extends Building {
 
             itemHitboxes.clear();
 
-            float mouseX = gp.mouseL.getWorldX();
-            float mouseY = gp.mouseL.getWorldY();
+            float mouseX = gp.mouseL.getScreenX();
+            float mouseY = gp.mouseL.getScreenY();
 
             int slotSize = 16 * 3;
             int padding = 1 * 3;

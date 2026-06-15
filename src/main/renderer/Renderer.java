@@ -254,6 +254,9 @@ public class Renderer {
     public void setGUI() {
     	currentShader = guiShader;
     }
+    public void stopGUI() {
+    	currentShader = defaultShader;
+    }
     public void setShadowShader() {
     	currentShader = shadowShader;
     }

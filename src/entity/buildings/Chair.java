@@ -62,6 +62,13 @@ public class Chair extends Building {
 	public void refreshImages() {
 		animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getChairSkin().getImage();
 	}
+	public void destroy() {
+		super.destroy();
+		if(tablePlate != null) {
+			tablePlate.destroy();
+			gp.world.buildingM.removeBuilding(tablePlate);
+		}
+	}
 	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			tablePlate = new TablePlate(gp, hitbox.x, hitbox.y, facing, this);

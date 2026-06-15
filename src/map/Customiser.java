@@ -214,8 +214,8 @@ public class Customiser {
 	}
 	private boolean containsMouse(int x, int y, int w, int h) {
 		
-		int mouseX = (int)gp.mouseL.getWorldX();
-		int mouseY = (int)gp.mouseL.getWorldY();
+		int mouseX = (int)gp.mouseL.getScreenX();
+		int mouseY = (int)gp.mouseL.getScreenY();
 		
 		if(mouseX > x && mouseX < x+w && mouseY>y && mouseY <y+h) {
 			return true;
@@ -308,8 +308,8 @@ public class Customiser {
 	}
 	public void draw(Renderer renderer) {
 		
-		int mouseX = (int)gp.mouseL.getWorldX();
-		int mouseY = (int)gp.mouseL.getWorldY();
+		int mouseX = (int)gp.mouseL.getScreenX();
+		int mouseY = (int)gp.mouseL.getScreenY();
 		int yOffset = 32;
 
 		if(showBuildings) {
@@ -1058,6 +1058,9 @@ public class Customiser {
 				}
 				TextureRegion img = selectedBuilding.animations[0][0][0];
 				Colour c;
+				if(gp.player.currentRoomIndex == 2) {
+					canPlace = false;
+				}
 				if(canPlace) {
 					c = yesBuild;
 				} else {
@@ -1104,6 +1107,7 @@ public class Customiser {
 					            //placed.isFifthLayer = false;
 					        }
 						
+					    placed.roomNum = gp.player.currentRoomIndex;
 						gp.world.buildingM.addBuilding(placed, xPos, yPos);
 						
 						Statistics.decorationsPlaced++;

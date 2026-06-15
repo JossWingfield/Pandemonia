@@ -15,6 +15,7 @@ public class Window extends Building {
 	private boolean firstDraw = true;
 	private boolean lightsOn = true;
 	private LightSource light;
+	private boolean outdoorWindow = false;
 	
 	public Window(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);

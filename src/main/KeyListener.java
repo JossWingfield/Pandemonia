@@ -52,6 +52,7 @@ public class KeyListener {
                 // Chat input (if you haven't converted it yet)
                 if (gp.currentState == gp.chatState) {
                     String msg = gp.gui.chatBox.getText();
+                    gp.gui.chatBox.onCharTyped('\b');
 
                     if (!msg.isBlank()) {
                         //gp.gui.sendChatMessage(msg);
@@ -167,8 +168,20 @@ public class KeyListener {
             	plate.addIngredient(t);
             	gp.gui.addRecipeGrading(plate);
             }*/
+            if (keyBeginPress(GLFW.GLFW_KEY_6)) {
+            	gp.world.gameM.setSeason("Spring");
+            }
+            if (keyBeginPress(GLFW.GLFW_KEY_7)) {
+            	gp.world.gameM.setSeason("Summer");
+            }
+            if (keyBeginPress(GLFW.GLFW_KEY_8)) {
+            	gp.world.gameM.setSeason("Autumn");
+            }
+            if (keyBeginPress(GLFW.GLFW_KEY_9)) {
+            	gp.world.gameM.setSeason("Winter");
+            }
             if (keyBeginPress(GLFW.GLFW_KEY_3)) {
-            	gp.world.catalogue.obtainAllItemsWithinCatalogue(0);
+            	//gp.world.catalogue.obtainAllItemsWithinCatalogue(0);
             }
             if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
             if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);
@@ -176,7 +189,10 @@ public class KeyListener {
             if (keyBeginPress(GLFW.GLFW_KEY_Q)) gp.player.soulsServed = gp.player.nextLevelAmount;
             
             
-            if (keyBeginPress(GLFW.GLFW_KEY_C)) gp.currentState = gp.customiseRestaurantState;
+            if (keyBeginPress(GLFW.GLFW_KEY_C)) 
+            	if(gp.world.mapM.getRoom(gp.player.currentRoomIndex).canBeEdited) {
+            		gp.currentState = gp.customiseRestaurantState;
+            	}
             if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) gp.currentState = gp.pauseState;
 
             // Movement

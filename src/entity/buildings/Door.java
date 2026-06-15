@@ -58,8 +58,8 @@ public class Door extends Building {
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new Door(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + facing + ", " + preset + ");");
-		System.out.println("arrayCounter++;");
+		//System.out.println("buildings[arrayCounter] = new Door(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + facing + ", " + preset + ");");
+		//System.out.println("arrayCounter++;");
 	}
 	public void setDoorNum(int num) {
 		doorRoomNum = num;
@@ -137,6 +137,20 @@ public class Door extends Building {
          	locked = true;
         	locked = false;
 			break;
+		case 5:
+			animations[0][0][0] = importImage("/itch/buildings/door.png").getSubimage(0, 0, 32, 32);
+        	animations[0][0][1] = importImage("/buildings/House.png").getSubimage(32, 160, 32, 32);
+        	drawHeight = 32*3;
+        	drawWidth = 32*3;
+			break;
+		case 6:
+			animations[0][0][0] = importImage("/buildings/ButcherDoor.png").getSubimage(0, 0, 16, 32);
+			animations[0][0][1] = importImage("/buildings/ButcherDoor.png").getSubimage(0, 0, 16, 32);
+        	drawHeight = 32*3;
+        	drawWidth = 16*3;
+        	xDrawOffset = 5*3;
+        	yDrawOffset = 3*3;
+			break;
 		}
 	}
 	public void refreshImages() {
@@ -156,9 +170,7 @@ public class Door extends Building {
 		if(entryHitbox != null) {
 			if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
 				if(doorCooldown == 0) {
-					if(doorRoomNum != 2) {
-						gp.world.mapM.changeRoom(doorRoomNum, this);
-					}
+					gp.world.mapM.changeRoom(doorRoomNum, this);
 				}
 			}
 		}
@@ -188,11 +200,15 @@ public class Door extends Building {
 				entryHitbox.y -= 20;
 				doorHitbox.y -= 20;
 			}
+			if(preset == 6) {
+				entryHitbox.y -= 48;
+				entryHitbox.x -= 16;
+			}
 			importImages();
 		}  
 		
-        //g2.setColor(Color.YELLOW);
-      	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
+        //renderer.setColour(Colour.YELLOW);
+        //renderer.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);
 		 
 		if((!gp.player.interactHitbox.intersects(doorHitbox) && !gp.world.npcM.stockerCheck(npcVisualHitbox)) || locked) {
 			if(!open) {

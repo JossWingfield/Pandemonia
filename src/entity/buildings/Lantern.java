@@ -90,6 +90,7 @@ public class Lantern extends Building{
 			}
 		}
 		
+		
 		if (flickerEnabled && turnedOn) {
 			flickerTimer += 0.02f;
 			

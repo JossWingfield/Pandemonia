@@ -70,15 +70,19 @@ public class FreezerMistParticle extends Particle {
         x += vx;
         y += vy;
         
+        
 
         lifetime--;
     }
 
-    @Override
-    public void draw(Renderer renderer) {
-        renderer.draw(image, x, y, size, size);
+    private float snap(float v) {
+        return Math.round(v / 3f) * 3f;
     }
 
+    @Override
+    public void draw(Renderer renderer) {
+        renderer.draw(image, snap(x), snap(y), size, size);
+    }
     @Override
     public void drawEmissive(Renderer renderer) {
         // none

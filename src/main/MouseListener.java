@@ -70,8 +70,8 @@ public class MouseListener {
         lastWorldY = worldY;
         xPos = xpos;
         yPos = ypos;
-        worldX = getWorldX();
-        worldY = getWorldY();
+        worldX = getScreenX();
+        worldY = getScreenY();
     }
 
     public  void mouseButtonCallback(long window, int button, int action, int mods) {
@@ -127,34 +127,32 @@ public class MouseListener {
         } else {
             return false;
         }
+    } 
+    public float getScreenX() {
+        return getMouseScreenPosition().x;
+    }
+    public float getScreenY() {
+        return getMouseScreenPosition().y;
+    }
+    public Vector2f getWorldPosition() {
+        GLSLCamera camera = gp.camera;
+
+        float zoom = camera.getZoom();
+
+        float worldX = camera.position.x + (float) xPos / zoom;
+        float worldY = camera.position.y + (float) yPos / zoom;
+
+        return new Vector2f(worldX, worldY);
     }
 
     public float getWorldX() {
-        return getMouseScreenPosition().x;
+        return getWorldPosition().x;
     }
 
     public float getWorldY() {
-        return getMouseScreenPosition().y;
+        return getWorldPosition().y;
     }
 
-    public  Vector2f getWorld() {
-        float currentX = getX() - gameViewportPos.x;
-        currentX = (2.0f * (currentX / gameViewportSize.x)) - 1.0f;
-        float currentY = (getY() - gameViewportPos.y);
-        currentY = (2.0f * (1.0f - (currentY / gameViewportSize.y))) - 1.0f;
-        GLSLCamera camera = gp.camera;
-        Vector4f tmp = new Vector4f(currentX, currentY, 0, 1);
-        Matrix4f inverseView = new Matrix4f(camera.getInverseViewMatrix());
-        Matrix4f inverseProjection = new Matrix4f(camera.getInverseProjectionMatrix());
-        tmp.mul(inverseView.mul(inverseProjection));
-        return new Vector2f(tmp.x, tmp.y);
-    }
-    public  float getScreenX() {
-        return getScreen().x;
-    }
-    public  float getScreenY() {
-        return getScreen().y;
-    }
     public  float getDx() {
     	return (float)(-xPos + lastX);
     }
@@ -162,16 +160,9 @@ public class MouseListener {
     	return (float)(-yPos + lastY);
     }
     public Vector2f getMouseScreenPosition() {
-        float sx = (float) (xPos - gameViewportPos.x);
-        float sy = (float) (yPos - gameViewportPos.y);
+        float sx = (float) (xPos);
+        float sy = (float) (yPos);
         return new Vector2f(sx, sy);
-    }
-    public  Vector2f getScreen() {
-        float currentX = getX() - gameViewportPos.x;
-        currentX = (currentX / gameViewportSize.x) * gp.frameWidth;
-        float currentY = getY() - gameViewportPos.y;
-        currentY = gp.frameHeight - ((currentY / gameViewportSize.y) * gp.frameHeight);
-        return new Vector2f(currentX, currentY);
     }
 
     public void setGameViewportPos(Vector2f gameViewportPos) { this.gameViewportPos.set(gameViewportPos); }

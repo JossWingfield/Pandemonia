@@ -42,247 +42,165 @@ public class SeasonalDecoration extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new TextureRegion[1][1][10];
+		animations = new TextureRegion[4][10][10];
 		
         switch(type) {
         case 0:
         	name = "Small Bush";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Bush.png").getSubimage(variant*16, 0, 16, 16);
-         	animations[0][0][1] = importImage("/environment/Bush.png").getSubimage(64 + variant*16, 0, 16, 16);
-         	animations[0][0][2] = importImage("/environment/Bush.png").getSubimage(variant*16, 32, 16, 16);
-         	animations[0][0][3] = importImage("/environment/Bush.png").getSubimage(64 + variant*16, 32, 16, 16);
-         	hitbox.width = 16*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 16*3;
-         	drawHeight=  16*3;
-         	isSolid = true;
+        	importSeasonalImages("Bush", 0, 0, 32, 32);
+         	hitbox.width = 23*3;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 4*3;
+          	yDrawOffset = 16*3;
+          	isSolid = false;
         	break;
         case 1:
-        	name = "Large Bush";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Bush.png").getSubimage(variant*16, 16, 16, 16);
-         	animations[0][0][1] = importImage("/environment/Bush.png").getSubimage(64 + variant*16, 16, 16, 16);
-         	animations[0][0][2] = importImage("/environment/Bush.png").getSubimage(variant*16, 48, 16, 16);
-         	animations[0][0][3] = importImage("/environment/Bush.png").getSubimage(64 + variant*16, 48, 16, 16);
+        	name = "Small Bush";
+        	importSeasonalImages("PineTree", 0, 0, 48, 48);
          	hitbox.width = 16*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 16*3;
-         	drawHeight=  16*3;
-         	isSolid = true;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
         	break;
         case 2:
-            name = "Grass";
-            variant = r.nextInt(24);
-
-            int cols = 4;
-            int tileSize = 16;
-            int col = variant % cols;
-            int row = variant / cols;
-            int sx = col * tileSize;
-            int sy = row * tileSize;
-            Texture sheet = importImage("/environment/Grass.png");
-            animations[0][0][0] = sheet.getSubimage(sx, sy, tileSize, tileSize);
-            animations[0][0][1] = sheet.getSubimage(sx + 64, sy, tileSize, tileSize);
-            animations[0][0][2] = sheet.getSubimage(sx+128, sy, tileSize, tileSize);
-            animations[0][0][3] = sheet.getSubimage(sx, sy, tileSize, tileSize);
-            hitbox.width = tileSize * 3;
-            hitbox.height = tileSize * 3;
-            drawWidth = tileSize * 3;
-            drawHeight = tileSize * 3;
-            isSolid = false;
-            break;
+        	name = "Small Bush";
+        	importSeasonalImages("BirchTree", 0, 0, 48, 48);
+         	hitbox.width = 16*3;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
+        	break;
         case 3:
-        	name = "Big Tree";
-        	variant = r.nextInt(4);
-        	switch(variant) {
-        	case 0, 2, 3:
-        	 	animations[0][0][0] = importImage("/environment/Tree.png").getSubimage(0, variant*48, 32, 48);
-         		animations[0][0][1] = importImage("/environment/Tree.png").getSubimage(64, variant*48, 32, 48);
-         		animations[0][0][2] = importImage("/environment/Tree.png").getSubimage(160, variant*48, 32, 48);
-         		animations[0][0][3] = importImage("/environment/Tree.png").getSubimage(192, variant*48, 32, 48);
-         		animations[0][0][4] = importImage("/environment/Tree.png").getSubimage(32, variant*48, 32, 48);
-         		animations[0][0][5] = importImage("/environment/Tree.png").getSubimage(128, variant*48, 32, 48);
-         		break;
-        	case 1:
-        	 	animations[0][0][0] = importImage("/environment/Tree.png").getSubimage(0, 1*48, 32, 48);
-           	 	animations[0][0][1] = importImage("/environment/Tree.png").getSubimage(32, 1*48, 32, 48);
-           	 	animations[0][0][2] = importImage("/environment/Tree.png").getSubimage(32, 1*48, 32, 48);
-           	 	animations[0][0][3] = importImage("/environment/Tree.png").getSubimage(48, 1*48, 32, 48);
-        		break;
-        	}
-        	
-         	hitbox.width = 12*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 16*3*2;
-         	drawHeight=  16*3*3;
-         	xDrawOffset = 32;
-        	yDrawOffset = 44*2;
-         	isSolid = true;
+        	name = "Small Bush";
+        	importSeasonalImages("OakTree", 0, 0, 48, 48);
+         	hitbox.width = 16*3;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
         	break;
         case 4:
-        	name = "Small Tree";
-        	variant = r.nextInt(4);
-        	switch(variant) {
-        	case 0, 2, 3:
-        	 	animations[0][0][0] = importImage("/environment/Tree.png").getSubimage(256, variant*48, 32, 48);
-         		animations[0][0][1] = importImage("/environment/Tree.png").getSubimage(64 + 256, variant*48, 32, 48);
-         		animations[0][0][2] = importImage("/environment/Tree.png").getSubimage(160 + 256, variant*48, 32, 48);
-         		animations[0][0][3] = importImage("/environment/Tree.png").getSubimage(192 + 256, variant*48, 32, 48);
-         		animations[0][0][4] = importImage("/environment/Tree.png").getSubimage(32 + 256, variant*48, 32, 48);
-         		animations[0][0][5] = importImage("/environment/Tree.png").getSubimage(128 + 256, variant*48, 32, 48);
-         		break;
-        	case 1:
-        	 	animations[0][0][0] = importImage("/environment/Tree.png").getSubimage(0 + 256, 1*48, 32, 48);
-           	 	animations[0][0][1] = importImage("/environment/Tree.png").getSubimage(32 + 256, 1*48, 32, 48);
-           	 	animations[0][0][2] = importImage("/environment/Tree.png").getSubimage(32 + 256, 1*48, 32, 48);
-           	 	animations[0][0][3] = importImage("/environment/Tree.png").getSubimage(48 + 256, 1*48, 32, 48);
-        		break;
-        	}
-        	hitbox.width = 12*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 16*3*2;
-         	drawHeight=  16*3*3;
-         	xDrawOffset = 32;
-        	yDrawOffset = 44*2;
-         	isSolid = true;
+        	name = "Small Bush";
+        	importSeasonalImages("PineTree", 48, 0, 48, 48);
+          	hitbox.width = 16*3;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
         	break;
         case 5:
-        	name = "Grass Tuft 1";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Tufts and Lumps.png").getSubimage(variant*16, 0, 16, 16);
-         	animations[0][0][1] = importImage("/environment/Tufts and Lumps.png").getSubimage(variant*16, 32, 16, 16);
-         	animations[0][0][2] = importImage("/environment/Tufts and Lumps.png").getSubimage(64+variant*16, 0, 16, 16);
-         	animations[0][0][3] = importImage("/environment/Tufts and Lumps.png").getSubimage(64+variant*16, 32, 16, 16);
+        	name = "Small Bush";
+        	importSeasonalImages("BirchTree", 48, 0, 48, 48);
          	hitbox.width = 16*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 16*3;
-         	drawHeight=  16*3;
-         	isSolid = false;
-        	isBottomLayer = true;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
         	break;
         case 6:
-        	name = "Grass Tuft 2";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Tufts and Lumps.png").getSubimage(variant*16, 16, 16, 16);
-         	animations[0][0][1] = importImage("/environment/Tufts and Lumps.png").getSubimage(variant*16, 48, 16, 16);
-         	animations[0][0][2] = importImage("/environment/Tufts and Lumps.png").getSubimage(64+variant*16, 16, 16, 16);
-         	animations[0][0][3] = importImage("/environment/Tufts and Lumps.png").getSubimage(64+variant*16, 48, 16, 16);
+        	name = "Small Bush";
+        	importSeasonalImages("OakTree", 48, 0, 48, 48);
          	hitbox.width = 16*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 16*3;
-         	drawHeight=  16*3;
-         	isSolid = false;
-         	isBottomLayer = true;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
         	break;
         case 7:
-        	name = "Small Ground Stone";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Stone and Rock.png").getSubimage(variant*16, 0, 16, 16);
-           	animations[0][0][1] = importImage("/environment/Stone and Rock.png").getSubimage(variant*16, 0, 16, 16);
-           	animations[0][0][2] = importImage("/environment/Stone and Rock.png").getSubimage(variant*16, 0, 16, 16);
-         	animations[0][0][3] = importImage("/environment/Stone and Rock.png").getSubimage(128+variant*16, 0, 16, 16);
+        	name = "Small Bush";
+        	importSeasonalImages("PineTree", 48*2, 0, 48, 48);
          	hitbox.width = 16*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 16*3;
-         	drawHeight=  16*3;
-         	isSolid = false;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
         	break;
         case 8:
-        	name = "Medium Ground Stone";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Stone and Rock.png").getSubimage(64 + variant*16, 0, 16, 16);
-           	animations[0][0][1] = importImage("/environment/Stone and Rock.png").getSubimage(64 + variant*16, 0, 16, 16);
-           	animations[0][0][2] = importImage("/environment/Stone and Rock.png").getSubimage(64 + variant*16, 0, 16, 16);
-         	animations[0][0][3] = importImage("/environment/Stone and Rock.png").getSubimage(64+128+variant*16, 0, 16, 16);
-         	hitbox.width = 12*3;
-         	hitbox.height = 12*3;
-         	drawWidth = 16*3;
-         	drawHeight=  16*3;
-         	xDrawOffset = 2*3;
-        	yDrawOffset = 2*3;
-         	isSolid = true;
+        	name = "Small Bush";
+        	importSeasonalImages("BirchTree", 48*2, 0, 48, 48);
+         	hitbox.width = 16*3;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
         	break;
         case 9:
-        	name = "Big Ground Stone";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Stone and Rock.png").getSubimage(variant*32, 16, 32, 32);
-           	animations[0][0][1] = importImage("/environment/Stone and Rock.png").getSubimage(variant*32, 16, 32, 32);
-           	animations[0][0][2] = importImage("/environment/Stone and Rock.png").getSubimage(variant*32, 16, 32, 32);
-         	animations[0][0][3] = importImage("/environment/Stone and Rock.png").getSubimage(128+variant*32, 16, 32, 32);
-         	hitbox.width = 24*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 32*3;
-         	drawHeight=  32*3;
-         	xDrawOffset = 4*3;
-        	yDrawOffset = 8*3;
-         	isSolid = true;
+        	name = "Small Bush";
+        	importSeasonalImages("OakTree", 48*2, 0, 48, 48);
+         	hitbox.width = 16*3;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
         	break;
         case 10:
-        	name = "Small Water Stone";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Stone and Rock.png").getSubimage(variant*16, 48, 16, 16);
-           	animations[0][0][1] = importImage("/environment/Stone and Rock.png").getSubimage(variant*16, 96, 16, 16);
-           	animations[0][0][2] = importImage("/environment/Stone and Rock.png").getSubimage(variant*16, 144, 16, 16);
-         	animations[0][0][3] = importImage("/environment/Stone and Rock.png").getSubimage(128+variant*16, 48, 16, 16);
-         	hitbox.width = 16*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 16*3;
-         	drawHeight=  16*3;
-         	isSolid = false;
+        	importSeasonalAnimation("WaterRocks", 5, 1, 0, 0, 32, 32);
+         	hitbox.width = 11*3;
+           	hitbox.height = 9*3;
+           	xDrawOffset = 9*3;
+          	yDrawOffset = 11*3;
         	break;
         case 11:
-        	name = "Medium Water Stone";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Stone and Rock.png").getSubimage(64 + variant*16, 48, 16, 16);
-           	animations[0][0][1] = importImage("/environment/Stone and Rock.png").getSubimage(64 + variant*16, 96, 16, 16);
-           	animations[0][0][2] = importImage("/environment/Stone and Rock.png").getSubimage(64 + variant*16, 144, 16, 16);
-         	animations[0][0][3] = importImage("/environment/Stone and Rock.png").getSubimage(64+128+variant*16, 48, 16, 16);
-         	hitbox.width = 12*3;
-         	hitbox.height = 12*3;
-         	drawWidth = 16*3;
-         	drawHeight=  16*3;
-         	xDrawOffset = 2*3;
-        	yDrawOffset = 2*3;
-         	isSolid = true;
+        	importSeasonalAnimation("WaterRocks", 5, 1, 0, 32, 32, 32);
+         	hitbox.width = 11*3;
+           	hitbox.height = 9*3;
+           	xDrawOffset = 9*3;
+          	yDrawOffset = 11*3;
         	break;
         case 12:
-        	name = "Big Ground Stone";
-        	variant = r.nextInt(4);
-         	animations[0][0][0] = importImage("/environment/Stone and Rock.png").getSubimage(variant*32, 64, 32, 32);
-           	animations[0][0][1] = importImage("/environment/Stone and Rock.png").getSubimage(variant*32, 112, 32, 32);
-           	animations[0][0][2] = importImage("/environment/Stone and Rock.png").getSubimage(variant*32, 160, 32, 32);
-         	animations[0][0][3] = importImage("/environment/Stone and Rock.png").getSubimage(128+variant*32, 64, 32, 32);
-         	hitbox.width = 24*3;
-         	hitbox.height = 16*3;
-         	drawWidth = 32*3;
-         	drawHeight=  32*3;
-         	xDrawOffset = 4*3;
-        	yDrawOffset = 8*3;
-         	isSolid = true;
+        	importSeasonalAnimation("WaterRocks", 5, 1, 0, 64, 32, 32);
+         	hitbox.width = 11*3;
+           	hitbox.height = 9*3;
+           	xDrawOffset = 9*3;
+          	yDrawOffset = 11*3;
         	break;
         case 13:
-         	name = "Water Plants";
-        	variant = r.nextInt(16);
-        	cols = 8;
-            col = variant % cols;
-            row = variant / cols;
-            tileSize = 16;
-            sx = col * tileSize;
-            sy = row * tileSize;
-            sheet = importImage("/environment/Water Plants.png");
-            animations[0][0][0] = sheet.getSubimage(sx, sy, tileSize, tileSize);
-            animations[0][0][1] = sheet.getSubimage(sx, sy+32, tileSize, tileSize);
-            animations[0][0][2] = sheet.getSubimage(sx, sy+64, tileSize, tileSize);
-            animations[0][0][3] = sheet.getSubimage(sx, sy, tileSize, tileSize);
-            hitbox.width = tileSize * 3;
-            hitbox.height = tileSize * 3;
-            drawWidth = tileSize * 3;
-            drawHeight = tileSize * 3;
-            isSolid = false;
-            break;
+        	importSeasonalAnimation("Lilypad", 5, 1, 0, 64, 32, 32);
+         	hitbox.width = 11*3;
+           	hitbox.height = 9*3;
+           	xDrawOffset = 9*3;
+          	yDrawOffset = 11*3;
+        	break;
         }
-		
+        
+       	name = "Small Bush";
+	}
+	private void importSeasonalImages(String imagePath, int x, int y, int w, int h) {
+     	drawWidth = w*3;
+       	drawHeight = h*3;
+       	
+    	animations[0][0][0] = importImage("/itch/environment/spring/" + imagePath + ".png").getSubimage(x, y, w, h);
+    	animations[1][0][0] = importImage("/itch/environment/summer/" + imagePath + ".png").getSubimage(x, y, w, h);
+    	animations[2][0][0] = importImage("/itch/environment/autumn/" + imagePath + ".png").getSubimage(x, y, w, h);
+    	animations[3][0][0] = importImage("/itch/environment/winter/" + imagePath + ".png").getSubimage(x, y, w, h);
+	}
+	private void importSeasonalAnimation(String imagePath, int columnNumber,int rowNumber, int startX, int startY, int width, int height) {
+     	isSolid = false;
+     	drawWidth = width*3;
+       	drawHeight = height*3;
+       	
+		importFromSpriteSheet("/itch/environment/spring/" + imagePath + ".png", columnNumber, rowNumber, 0, startX, startY, width, height, 0);
+		importFromSpriteSheet("/itch/environment/summer/" + imagePath + ".png", columnNumber, rowNumber, 0, startX, startY, width, height, 1);
+		importFromSpriteSheet("/itch/environment/autumn/" + imagePath + ".png", columnNumber, rowNumber, 0, startX, startY, width, height, 2);
+    	animations[3][0][0] = importImage("/itch/environment/winter/" + imagePath + ".png").getSubimage(startX, startY, width, height);
+	}
+	public void updateState(double dt) {
+		animationSpeed+=dt; //Updating animation frame
+        if (animationSpeed >= animationSpeedFactor) {
+        	animationSpeed = 0;
+            animationCounter++;
+        }
+        int season = -1;
+		switch(gp.world.gameM.getCurrentSeason()) {
+		case SPRING:
+			season = 0;
+			break;
+		case SUMMER:
+			season = 1;
+			break;
+		case AUTUMN:
+			season = 2;
+			break;
+		case WINTER:
+			season = 3;
+			break;
+		}
+        if (animations[season][currentAnimation][animationCounter] == null) { //If the next frame is empty
+        	animationCounter = 0;
+        }
 	}
 	public void draw(Renderer renderer) {
 		if(firstUpdate) {
@@ -304,17 +222,8 @@ public class SeasonalDecoration extends Building {
 			season = 3;
 			break;
 		}
-		if(invisHitbox == null) {
-		     renderer.draw(animations[0][0][season], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-		} else {
-			if(gp.player.hitbox.intersects(invisHitbox)) {
-				TextureRegion img = animations[0][0][season];
-				//img = CollisionMethods.reduceImageAlpha(img, 0.25f);
-				renderer.draw(img, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-			} else {
-			    renderer.draw(animations[0][0][season], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-			}
-		}
+		
+	    renderer.draw(animations[season][currentAnimation][animationCounter], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 	     
 		 if(destructionUIOpen) {
 		     renderer.draw(destructionImage, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, gp.tileSize, gp.tileSize);

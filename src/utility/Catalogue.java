@@ -410,8 +410,8 @@ public class Catalogue {
 		}
 	private boolean containsMouse(int x, int y, int w, int h) {
 		
-		int mouseX = (int)gp.mouseL.getWorldX();
-		int mouseY = (int)gp.mouseL.getWorldY();
+		int mouseX = (int)gp.mouseL.getScreenX();
+		int mouseY = (int)gp.mouseL.getScreenY();
 		
 		if(mouseX > x && mouseX < x+w && mouseY>y && mouseY <y+h) {
 			return true;

@@ -36,7 +36,7 @@ public class GameManager {
     public Season currentSeason = Season.SPRING;
     public int day = 1;
     private static final int MAX_DAYS_PER_SEASON = 28;
-    private int dayStart = 6, openingTime = 6, closingTime = 19;
+    private int dayStart = 6, openingTime = 7, closingTime = 20;
     private int leavingTime = 20;
     private double timeSpeed = 30.0; //30.0
     private boolean customersLeft = false;

@@ -40,7 +40,6 @@ public class Computer extends Building {
 		
 		name = "Computer";
     	animations[0][0][0] = importImage("/decor/Computer.png").toTextureRegion();
-
 	}
 	public void updateState(double dt) {
 		super.updateState(dt);

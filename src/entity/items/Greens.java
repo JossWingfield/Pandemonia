@@ -11,6 +11,7 @@ public class Greens extends Food {
 		importImages();
 		foodLayer = 2;
 		chopCount = 12;
+		xDrawOffset =-6;
 	}
 	
 	private void importImages() {

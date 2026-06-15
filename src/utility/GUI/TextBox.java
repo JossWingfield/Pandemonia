@@ -112,8 +112,8 @@ public class TextBox {
 
     // ---------------- HELPERS ----------------
     private boolean isMouseInside() {
-        int mx = (int)gp.mouseL.getWorldX();
-        int my = (int)gp.mouseL.getWorldY();
+        int mx = (int)gp.mouseL.getScreenX();
+        int my = (int)gp.mouseL.getScreenY();
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
     private boolean active = false;public void setActive(boolean active) {

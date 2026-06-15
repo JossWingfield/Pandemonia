@@ -384,7 +384,7 @@ public class Plate extends Item {
         if (!gp.player.interactHitbox.intersects(hitbox))
             return;
 
-        int spacing = 32;
+        int spacing = 18*3;
 
         // Count ingredients
         int count = preparedIngredients.size();
@@ -402,7 +402,7 @@ public class Plate extends Item {
 
             float x = startX + index * spacing;
 
-            renderer.draw(foodBorder, x - 4, baseY - 24, 32, 32);
+            renderer.draw(foodBorder, x - 4, baseY - 24, 18*3, 18*3);
 
             // Get image using ingredient name
             TextureRegion img =
@@ -411,7 +411,7 @@ public class Plate extends Item {
             Food f = (Food) gp.world.itemRegistry
                     .getItemFromName(prepared.getName(), 0);
 
-            renderer.draw(img, x - f.xDrawOffset, baseY - 24, 32, 32);
+            renderer.draw(img, x - f.xDrawOffset - 3, baseY - 24, 16*3, 16*3);
 
             index++;
         }

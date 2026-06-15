@@ -50,7 +50,7 @@ import entity.buildings.Trapdoor;
 import entity.buildings.WallDecor_Building;
 import entity.buildings.Window;
 import entity.buildings.outdoor.OutdoorDecor;
-import entity.buildings.outdoor.OutdoorWallDecor;
+import entity.buildings.outdoor.OutdoorWindow;
 import entity.buildings.outdoor.SeasonalDecoration;
 import main.GamePanel;
 import main.renderer.AssetPool;
@@ -213,20 +213,23 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new FoodStore(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
-		for(int i = 0; i < 38; i++) {
+		for(int i = 0; i < 180; i++) {
 			outdoorBuildings[totalBuildingCount] = new OutdoorDecor(gp, 0, 0, i);
-			totalBuildingCount++;
-		}
-		for(int i = 0; i < 7; i++) {
-			outdoorBuildings[totalBuildingCount] = new OutdoorWallDecor(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
 		for(int i = 0; i < 14; i++) {
 			outdoorBuildings[totalBuildingCount] = new SeasonalDecoration(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
-		outdoorBuildings[totalBuildingCount] = new Door(gp, 0, 0, 0, 1);
+		outdoorBuildings[totalBuildingCount] = new Door(gp, 0, 0, 0, 5);
 		totalBuildingCount++;
+		outdoorBuildings[totalBuildingCount] = new Door(gp, 0, 0, 3, 6);
+		totalBuildingCount++;
+		
+		for(int i = 0; i < 10; i++) {
+			outdoorBuildings[totalBuildingCount] = new OutdoorWindow(gp, 0, 0, i);
+			totalBuildingCount++;
+		}
 	}
 	
 	public Texture importImage(String filePath) {
@@ -236,8 +239,8 @@ public class MapBuilder {
 	
 	private boolean containsMouse(int x, int y, int w, int h) {
 		
-		int mouseX = (int)gp.mouseL.getWorldX();
-		int mouseY = (int)gp.mouseL.getWorldY();
+		int mouseX = (int)gp.mouseL.getScreenX();
+		int mouseY = (int)gp.mouseL.getScreenY();
 		
 		if(mouseX > x && mouseX < x+w && mouseY>y && mouseY <y+h) {
 			return true;
@@ -354,12 +357,14 @@ public class MapBuilder {
 	}
 	public void inputUpdate(double dt) {
 		
-		int mouseX = (int)gp.mouseL.getWorldX();
-		int mouseY = (int)gp.mouseL.getWorldY();
+		int mouseX = (int)gp.mouseL.getScreenX();
+		int mouseY = (int)gp.mouseL.getScreenY();
+		int mouseWorldX = (int)gp.mouseL.getWorldX();
+		int mouseWorldY = (int)gp.mouseL.getWorldY();
 		
 		if(gp.mouseL.mouseButtonDown(0) && (mouseY < gp.frameHeight-ySize || !showTiles)) {
-			int xTile = (int)((mouseX)/gp.tileSize);
-			int yTile = (int)((mouseY)/gp.tileSize);
+			int xTile = (int)((mouseWorldX)/gp.tileSize);
+			int yTile = (int)((mouseWorldY)/gp.tileSize);
 			
 			writeToMap(xTile, yTile);
 		}
@@ -373,14 +378,16 @@ public class MapBuilder {
 		
 	}
 	
-	public void draw(Renderer renderer) {
+	public void drawGUI(Renderer renderer) {
 		
-		int mouseX = (int)gp.mouseL.getWorldX();
-		int mouseY = (int)gp.mouseL.getWorldY();
+		int mouseScreenX = (int)gp.mouseL.getScreenX();
+		int mouseScreenY = (int)gp.mouseL.getScreenY();
+		int mouseWorldX = (int)gp.mouseL.getWorldX();
+		int mouseWorldY = (int)gp.mouseL.getWorldY();
 		int yOffset = 32;
 		
 		if(showTiles) {
-			renderer.fillRect(0, yStart, gp.frameWidth, ySize, c);
+			renderer.drawRect(0, yStart, gp.frameWidth, ySize, c);
 			int xStart = 20;
 			yStart = gp.frameHeight-ySize+4 - 20 + yOffset;
 
@@ -394,7 +401,7 @@ public class MapBuilder {
 			    	for(int j = 0; j < 7; j++) {
 			    			
 			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			renderer.fillRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
 			    			if(gp.mouseL.mouseButtonDown(0)) {
 			    				selectedTile = counter+1;
 			    			}
@@ -653,7 +660,7 @@ public class MapBuilder {
 			                    img = b.animations[0][0][0];
 			                    renderer.draw(b.animations[0][0][0], xStart, yPos, img.getPixelWidth()/2 * 3, img.getPixelHeight()/2 * 3);
 			                    if (containsMouse(xStart, yPos, 32 * 2, 32 * 2)) {
-			                        renderer.fillRect(xStart, yPos, 32 * 2, 32 * 2, Colour.YELLOW);
+			                        renderer.drawRect(xStart, yPos, 32 * 2, 32 * 2, Colour.YELLOW);
 			                        if (gp.mouseL.mouseButtonDown(0)) {
 			                            selectedBuilding = b;
 			                        }
@@ -674,316 +681,535 @@ public class MapBuilder {
 			        index++;
 			    }
 			} else if(pageNum == 4) {
-				img = importImage("/tiles/spring/Grass1.png").toTextureRegion();
+				img = importImage("/itch/tiles/spring/WaterTiles.png").getSubimage(0, 0, 80, 48);
+				
+				int startCounter = 1111;
 				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				int counter = 281;
-				for(int i = 0; i < 5; i++) {
-			    	for(int j = 0; j < 11; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				
-				xStart = 400;
-				img = importImage("/tiles/spring/Grass2.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 5; i++) {
-			    	for(int j = 0; j < 11; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				
-				xStart = 800;
-				img = importImage("/tiles/dirt/Dirt1.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 5; i++) {
-			    	for(int j = 0; j < 11; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				xStart = 0;
-				yStart = gp.frameHeight-ySize+4 - 40 + yOffset + 250;
-				img = importImage("/tiles/dirt/Dirt2.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 5; i++) {
-			    	for(int j = 0; j < 11; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				
-				xStart = 400;
-				img = importImage("/tiles/spring/oldwater1.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 10; i++) {
-			    	for(int j = 0; j < 11; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				xStart = 770;
-				img = importImage("/tiles/spring/Water.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 1; i++) {
-			    	for(int j = 0; j < 1; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				
-				xStart = 806;
-				img = importImage("/tiles/spring/altwater1.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 5; i++) {
-			    	for(int j = 0; j < 11; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				
-				yStart = gp.frameHeight-ySize+4 - 40 + yOffset;
-			}  else if(pageNum == 5) {
 				int counter = 0;
-				xStart = 0;
-				int originalXStart = xStart;
-				int yPos = yStart+32;
-				
-				int startDraw = 0;
-				
-				int index = 0;
-				for(Building b: outdoorBuildings) {
-					if(index >= startDraw) {
-						if(b != null) {
-							renderer.draw(b.animations[0][0][0], xStart, yPos, img.getPixelWidth()/2, img.getPixelHeight()/2);
-			    			if(containsMouse(xStart, yPos, 32*2, 32*2)) {
-			    				
-			    				
-			    				renderer.fillRect(xStart, yPos, 32*2, 32*2, Colour.YELLOW);
-			    				if(gp.mouseL.mouseButtonDown(0)) {
-			    					selectedBuilding = b;
-			    				}
+				for(int i = 0; i < 3; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
 			    			}
-			    			xStart+= 32*2;
-			    			if(counter >= 14) {
-			    				xStart = originalXStart;
-			    				yPos += 32*2;
-			    				counter = 0;
-			    			}
-						}
-					} else {
-						counter = 0;
-					}
-	    			counter++;
-	    			index++;
+			    		}
+			    		counter++;
+			    	}
 				}
-			} else if(pageNum == 6) {
-				xStart = 0;
-				yStart = gp.frameHeight-ySize+4 - 40 + yOffset;
-				int counter = 667;
-				img = importImage("/tiles/dirt/Dirt Wall.png").toTextureRegion();
+				
+				int num = 5*32;
+				
+				img = importImage("/itch/tiles/spring/GrassPath.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 4; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				//xStart -= num;
+				
+				num = 5*32;
+				
+				img = importImage("/itch/tiles/spring/BeachTiles.png").getSubimage(0, 0, 80, 80);
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 5; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				//xStart -= num;
+				
+				num = 5*32;
+				img = importImage("/itch/buildings/Fences.png").toTextureRegion();
+				xStart+=num;
 				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
 				
 				for(int i = 0; i < 4; i++) {
 			    	for(int j = 0; j < 4; j++) {
 			    			
 			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				xStart = 200;
-				img = importImage("/tiles/spring/Grass3.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 5; i++) {
-			    	for(int j = 0; j < 11; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				xStart = 600;
-				img = importImage("/tiles/spring/Grass4.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 5; i++) {
-			    	for(int j = 0; j < 11; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				xStart = 0;
-				yStart = gp.frameHeight-ySize+4 - 40 + yOffset + 200;
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
 
-				img = importImage("/environment/Pavement.png").toTextureRegion();
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				//xStart -= num;
+				
+				num = 4*32;
+				img = importImage("/itch/tiles/TilledDirt.png").toTextureRegion();
+				xStart+=num;
 				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
 				
 				for(int i = 0; i < 7; i++) {
-			    	for(int j = 0; j < 9; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				xStart = 300;
-
-				img = importImage("/tiles/summer/water1.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 3; i++) {
 			    	for(int j = 0; j < 5; j++) {
 			    			
 			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
-			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
-			    			}
-			    		}
-			    		counter++;
-			    	}
-			   }
-				xStart = 500;
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
 
-				img = importImage("/tiles/dirt/DirtWall2.png").toTextureRegion();
-				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
-				
-				for(int i = 0; i < 6; i++) {
-			    	for(int j = 0; j < 8; j++) {
-			    			
-			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
 			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
+			    				selectedTile = counter+startCounter;
 			    			}
 			    		}
 			    		counter++;
 			    	}
-			   }
+			    }
+				//xStart -= num;
 				
-				xStart = 750;
-				img = importImage("/buildings/Stairs.png").toTextureRegion();
+				num = 5*32;
+				img = importImage("/itch/tiles/spring/Cliff.png").toTextureRegion();
+				xStart+=num;
 				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
 				
-				for(int i = 0; i < 5; i++) {
-			    	for(int j = 0; j < 12; j++) {
+				for(int i = 0; i < 7; i++) {
+			    	for(int j = 0; j < 5; j++) {
 			    			
 			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
 			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
+			    				selectedTile = counter+startCounter;
 			    			}
 			    		}
 			    		counter++;
 			    	}
-			   }
+			    }
 				
-				xStart = 0;
-				yStart = gp.frameHeight-ySize+4 - 40 + yOffset + 450;
-				img = importImage("/tiles/dirt/SimpleDirt1.png").toTextureRegion();
+				num = 5*32;
+				img = importImage("/itch/tiles/spring/Dirt.png").toTextureRegion();
+				xStart+=num;
 				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
 				
 				for(int i = 0; i < 4; i++) {
 			    	for(int j = 0; j < 5; j++) {
 			    			
 			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
-			    			
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
 			    			if(gp.mouseL.mouseButtonDown(0)) {
-			    				selectedTile = counter;
+			    				selectedTile = counter+startCounter;
 			    			}
 			    		}
 			    		counter++;
 			    	}
-			   }
+			    }
 				
-				xStart = 250;
-				img = importImage("/tiles/dirt/SimpleDirt3.png").toTextureRegion();
+				num = 5*32;
+				img = importImage("/itch/tiles/spring/RiverTiles.png").getSubimage(0, 0, 80, 48);
+				xStart=0;
+				yStart+=7*32;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 3; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				num = 5*32;
+				img = importImage("/itch/tiles/PavedPath.png").getSubimage(0, 0, 80, 48);
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 3; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				num = 5*32;
+				img = importImage("/itch/tiles/PavedPath2.png").getSubimage(0, 0, 80, 48);
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 3; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 5*32;
+				img = importImage("/itch/tiles/spring/Waterfall.png").getSubimage(0, 0, 48, 48);
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 3; i++) {
+			    	for(int j = 0; j < 3; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 3*32;
+				img = importImage("/itch/tiles/spring/DirtWaterfall.png").getSubimage(0, 0, 48, 48);
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 3; i++) {
+			    	for(int j = 0; j < 3; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 3*32;
+				img = importImage("/itch/buildings/StoneWall.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 4; i++) {
+			    	for(int j = 0; j < 4; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				counter+=12;
+				num = 4*32;
+				img = importImage("/itch/tiles/cave/CaveWater.png").getSubimage(0, 0, 16*5, 16*5);
+				xStart+=num;
 				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
 				
 				for(int i = 0; i < 5; i++) {
-			    	for(int j = 0; j < 11; j++) {
+			    	for(int j = 0; j < 5; j++) {
 			    			
 			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 5*32;
+				img = importImage("/itch/tiles/cave/CaveGrass.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 4; i++) {
+			    	for(int j = 0; j < 5; j++) {
 			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 5*32;
+				img = importImage("/itch/tiles/cave/Cave.png").toTextureRegion();
+				xStart=0;
+				yStart+=4*32;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 7; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 5*32;
+				img = importImage("/itch/buildings/cave/Rail.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 2; i++) {
+			    	for(int j = 0; j < 3; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+
+				num = 5*32;
+				img = importImage("/itch/crops/wheatblock.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 4; i++) {
+			    	for(int j = 0; j < 6; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 6*32;
+				img = importImage("/itch//tiles/CityPath1.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 3; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				num = 6*32;
+				img = importImage("/itch//tiles/pavedPath3.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 3; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 5*32;
+				img = importImage("/itch/buildings/city/version1/railing.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 4; i++) {
+			    	for(int j = 0; j < 4; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter+startCounter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+
+			}  else if(pageNum == 5) {
+				 if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_P)) scrollOffset -= 40;
+				    if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_O)) scrollOffset += 40;	    
+
+				    // Clamp scroll
+				    int totalBuildings = buildings.length;
+				    int columns = 17; // since you reset xStart after 16 columns (0..16)
+				    int rows = (int) Math.ceil(totalBuildings / (float) columns);
+				    int visibleRows = 5; // how many rows fit in panel
+				    int rowHeight = 32 * 2;
+				    float maxScroll = Math.max(0, (rows - visibleRows) * rowHeight);
+				    scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
+				    
+				    // --- Draw buildings with scroll offset ---
+				    int counter = 0;
+				    int originalXStart = xStart;
+				    int yPos = yStart + 32 - (int) scrollOffset; // apply scroll here
+				    int startDraw = 0;
+				    
+				    int index = 0;
+				    for (Building b : outdoorBuildings) {
+				        if (index >= startDraw) {
+				            if (b != null) {
+				                // only draw if visible (for performance)
+				                if (yPos + rowHeight > yStart && yPos < gp.frameHeight) {
+				                    img = b.animations[0][0][0];
+				                    renderer.draw(b.animations[0][0][0], xStart, yPos, 32*2, 32*2);
+				                    if (containsMouse(xStart, yPos, 32 * 2, 32 * 2)) {
+				                        renderer.drawRect(xStart, yPos, 32 * 2, 32 * 2, Colour.YELLOW);
+				                        if (gp.mouseL.mouseButtonDown(0)) {
+				                            selectedBuilding = b;
+				                        }
+				                    }
+				                }
+
+				                xStart += 32 * 2;
+				                if (counter >= 16) {
+				                    xStart = originalXStart;
+				                    yPos += 32 * 2;
+				                    counter = 0;
+				                }
+				            }
+				        } else {
+				            counter = 0;
+				        }
+				        counter++;
+				        index++;
+				    }
+			} else if(pageNum == 6) {
+				xStart = 0;
+				yStart = gp.frameHeight-ySize+4 - 40 + yOffset;
+				int counter = 1524;
+				
+				img = importImage("/itch/buildings/city/version1/platform.png").toTextureRegion();
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 5; i++) {
+			    	for(int j = 0; j < 3; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
 			    			if(gp.mouseL.mouseButtonDown(0)) {
 			    				selectedTile = counter;
 			    			}
 			    		}
 			    		counter++;
 			    	}
-			   }
+			    }
 				
-				yStart = gp.frameHeight-ySize+4 - 40 + yOffset;
+				int num = 3*32;
+				img = importImage("/itch/buildings/city/version1/stairs.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				for(int i = 0; i < 8; i++) {
+			    	for(int j = 0; j < 9; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 9*32;
+				img = importImage("/itch/tiles/spring/citywater.png").getSubimage(0, 0, 48, 80);
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				for(int i = 0; i < 5; i++) {
+			    	for(int j = 0; j < 3; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 3*32;
+				img = importImage("/buildings/Docks.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				for(int i = 0; i < 4; i++) {
+			    	for(int j = 0; j < 8; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
 			}
 			
 			String s = Integer.toString(currentLayer);
@@ -995,23 +1221,27 @@ public class MapBuilder {
 		
 		if(selectedTile != -1) {
 			
-			if(mouseY < gp.frameHeight-ySize || !showTiles) {
-				int xPos = (int)((mouseX)/gp.tileSize) * gp.tileSize;
-				int yPos = (int)((mouseY)/gp.tileSize) * gp.tileSize;
+			if(mouseScreenY < gp.frameHeight-ySize || !showTiles) {
+				int xPos = (int)((mouseScreenX)/gp.tileSize) * gp.tileSize;
+				int yPos = (int)((mouseScreenY)/gp.tileSize) * gp.tileSize;
 				renderer.draw(gp.world.mapM.tiles[selectedTile].image, xPos, yPos, 48, 48);
 			}
 		} 
+		renderer.fillRect(48*75, 48*75, 48, 48, Colour.YELLOW);
+
 		
 		if(selectedBuilding != null) {
 			selectedTile = -1;
-			if(mouseY < gp.frameHeight-ySize || !showTiles) {
-				int size = 4*3;
-				int xPos = (int)((mouseX)/size) * size;
-				int yPos = (int)((mouseY)/size) * size;
-				renderer.draw(selectedBuilding.animations[0][0][0], xPos - selectedBuilding.xDrawOffset, yPos - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getPixelWidth()*3, selectedBuilding.animations[0][0][0].getPixelHeight()*3);
+			if(mouseScreenY < gp.frameHeight-ySize || !showTiles) {
+				int size = 3;
+				int xDrawPos = (int)((mouseScreenX)/size) * size;
+				int yDrawPos = (int)((mouseScreenY)/size) * size;
+				renderer.draw(selectedBuilding.animations[0][0][0], xDrawPos - selectedBuilding.xDrawOffset, yDrawPos - selectedBuilding.yDrawOffset, selectedBuilding.animations[0][0][0].getPixelWidth()*3, selectedBuilding.animations[0][0][0].getPixelHeight()*3);
 				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
 					Building b = (Building)selectedBuilding.clone();
 					b.roomNum = gp.player.currentRoomIndex;
+					int xPos = (int)((mouseWorldX)/size) * size;
+					int yPos = (int)((mouseWorldY)/size) * size;
 					gp.world.buildingM.addBuilding(b, xPos, yPos);
 					clickCounter = 0.1;
 					
@@ -1021,7 +1251,7 @@ public class MapBuilder {
 		
 		for(Building b: gp.world.buildingM.getBuildings()) {
 			if(b != null) {
-				if(b.hitbox.contains(mouseX, mouseY)) {
+				if(b.hitbox.contains(mouseWorldX, mouseWorldY)) {
 					if(gp.mouseL.mouseButtonDown(1)) {
 						b.destroy();
 						gp.world.buildingM.removeBuilding(b);

@@ -387,7 +387,71 @@ public class Player extends Entity{
         	}
     	}
     }
+    private boolean tryHorizontalCorrection(float moveX) {
 
+        float correctionDistance = 4*3f;
+
+        for (float offset = 1; offset <= correctionDistance; offset++) {
+
+            // Try moving up
+            if (canMove(hitbox.x + moveX, hitbox.y - offset)) {
+                hitbox.y -= offset;
+                hitbox.x += moveX;
+                return true;
+            }
+
+            // Try moving down
+            if (canMove(hitbox.x + moveX, hitbox.y + offset)) {
+                hitbox.y += offset;
+                hitbox.x += moveX;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean tryVerticalCorrection(float moveY) {
+
+        float correctionDistance = 4*3f;
+
+        for (float offset = 1; offset <= correctionDistance; offset++) {
+
+            // Try left
+            if (canMove(hitbox.x - offset, hitbox.y + moveY)) {
+                hitbox.x -= offset;
+                hitbox.y += moveY;
+                return true;
+            }
+
+            // Try right
+            if (canMove(hitbox.x + offset, hitbox.y + moveY)) {
+                hitbox.x += offset;
+                hitbox.y += moveY;
+                return true;
+            }
+        }
+
+        return false;
+    }
+    private boolean canMove(float x, float y) {
+        return CollisionMethods.tileCheck(
+                x,
+                y,
+                hitbox.width,
+                hitbox.height,
+                gp)
+            && gp.world.buildingM.entityCheck(
+                x,
+                y,
+                hitbox.width,
+                hitbox.height);
+    }
+    private void moveCamera(double dt) {
+    	if(currentRoomIndex == 2) {
+    		
+    	}
+    }
     private void handleMovement(double dt) {
     	
     	boolean left = keyI.isKeyPressed(GLFW.GLFW_KEY_A);
@@ -411,36 +475,62 @@ public class Player extends Entity{
             	facingLeft = true;
             	normaliseSpeed();
             	float moveAmount = (float) (currentSpeed * dt);
-                if(CollisionMethods.tileCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.world.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
-                    hitbox.x -= moveAmount;
-                    if(currentAnimation != 2) {
-	                    currentAnimation = 1;
-	                    if(currentItem != null) {
-	                    	currentAnimation = 4;
-	                    }
-                    }
-                } else if(!gp.world.buildingM.entityCheck(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
-                	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x-moveAmount, hitbox.y, hitbox.width, hitbox.height);
-                	if (b != null) {
-                	    hitbox.x = CollisionMethods.getBuildingPosX(hitbox.x, b, moveAmount, true); // true if moving left
-                	}
-                } else {
-                	hitbox.x = CollisionMethods.getWallPos(hitbox.x, gp);
-                }
+            	if(canMove(hitbox.x - moveAmount, hitbox.y)) {
+            	    hitbox.x -= moveAmount;
+            	    if(currentAnimation != 2) {
+            	        currentAnimation = 1;
+            	        if(currentItem != null) {
+            	            currentAnimation = 4;
+            	        }
+            	    }
+            	} else if(tryHorizontalCorrection(-moveAmount)) {
+            	    if(currentAnimation != 2) {
+            	        currentAnimation = 1;
+            	        if(currentItem != null) {
+            	            currentAnimation = 4;
+            	        }
+            	    }
+            	} else if(!gp.world.buildingM.entityCheck(
+            	        hitbox.x-moveAmount,
+            	        hitbox.y,
+            	        hitbox.width,
+            	        hitbox.height)) {
+            	    Building b = gp.world.buildingM.findSolidBuilding(
+            	            hitbox.x-moveAmount,
+            	            hitbox.y,
+            	            hitbox.width,
+            	            hitbox.height);
+            	    if (b != null) {
+            	        hitbox.x = CollisionMethods.getBuildingPosX(
+            	                hitbox.x,
+            	                b,
+            	                moveAmount,
+            	                true);
+            	    }
+            	} else {
+            	    hitbox.x = CollisionMethods.getWallPos(hitbox.x, gp);
+            	}
             } else if (right) { //Moving right
                 direction = 0;
                 facingLeft = false;
                 normaliseSpeed();
              	float moveAmount = (float) (currentSpeed * dt);
-                if(CollisionMethods.tileCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height, gp) && gp.world.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
-                    hitbox.x += moveAmount;
-                    if(currentAnimation != 2) {
-	                    currentAnimation = 1;
-	                    if(currentItem != null) {
-	                    	currentAnimation = 4;
-	                    }
-                    }
-                } else if(!gp.world.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
+             	if(canMove(hitbox.x + moveAmount, hitbox.y)) {
+             	    hitbox.x += moveAmount;
+             	    if(currentAnimation != 2) {
+             	        currentAnimation = 1;
+             	        if(currentItem != null) {
+             	            currentAnimation = 4;
+             	        }
+             	    }
+             	} else if(tryHorizontalCorrection(moveAmount)) {
+             	    if(currentAnimation != 2) {
+             	        currentAnimation = 1;
+             	        if(currentItem != null) {
+             	            currentAnimation = 4;
+             	        }
+             	    }
+             	}else if(!gp.world.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
                 	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height);
                 	if (b != null) {
                 	    hitbox.x = CollisionMethods.getBuildingPosX(hitbox.x, b, moveAmount, false); // true if moving left
@@ -453,15 +543,22 @@ public class Player extends Entity{
             	direction = 3;
             	normaliseSpeed();
              	float moveAmount = (float) (currentSpeed * dt);
-                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height, gp) && gp.world.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
-                    hitbox.y -= moveAmount;
-                    if(currentAnimation != 2) {
-	                    currentAnimation = 1;
-	                    if(currentItem != null) {
-	                    	currentAnimation = 4;
-	                    }
-                    }
-                } else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
+             	if(canMove(hitbox.x, hitbox.y - moveAmount)) {
+             	    hitbox.y -= moveAmount;
+             	    if(currentAnimation != 2) {
+             	        currentAnimation = 1;
+             	        if(currentItem != null) {
+             	            currentAnimation = 4;
+             	        }
+             	    }
+             	} else if(tryVerticalCorrection(-moveAmount)) {
+             	    if(currentAnimation != 2) {
+             	        currentAnimation = 1;
+             	        if(currentItem != null) {
+             	            currentAnimation = 4;
+             	        }
+             	    }
+             	} else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
                 	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height);
                 	if (b != null) {
                 	    hitbox.y = CollisionMethods.getBuildingPosY(hitbox.y, b, moveAmount, true); // true if moving up
@@ -473,15 +570,22 @@ public class Player extends Entity{
             	direction = 2;
             	normaliseSpeed();
             	float moveAmount = (float) (currentSpeed * dt);
-                if(CollisionMethods.tileCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height, gp) && gp.world.buildingM.entityCheck(hitbox.x, hitbox.y + moveAmount, hitbox.width, hitbox.height)) {
-                    hitbox.y += moveAmount;
-                    if(currentAnimation != 2) {
-	                    currentAnimation = 1;
-	                    if(currentItem != null) {
-	                    	currentAnimation = 4;
-	                    }
-                    }
-                } else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height)) {
+            	if(canMove(hitbox.x, hitbox.y + moveAmount)) {
+            	    hitbox.y += moveAmount;
+            	    if(currentAnimation != 2) {
+            	        currentAnimation = 1;
+            	        if(currentItem != null) {
+            	            currentAnimation = 4;
+            	        }
+            	    }
+            	} else if(tryVerticalCorrection(moveAmount)) {
+            	    if(currentAnimation != 2) {
+            	        currentAnimation = 1;
+            	        if(currentItem != null) {
+            	            currentAnimation = 4;
+            	        }
+            	    }
+            	} else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height)) {
                 	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height);
                 	if (b != null) {
                 	    hitbox.y = CollisionMethods.getBuildingPosY(hitbox.y, b, moveAmount, false); // true if moving up
@@ -494,6 +598,8 @@ public class Player extends Entity{
             if(!gp.world.gameM.isPowerOn()) {
             	gp.world.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
             }
+            
+            moveCamera(dt);
             
          	if (gp.multiplayer) { 
          		if(gp.socketClient != null && gp.socketClient.state == ConnectionState.IN_GAME && !isChangingRoom) {

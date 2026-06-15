@@ -21,6 +21,8 @@ public class GLSLCamera {
     private float shakeDuration = 0f;   // remaining shake time
     private float shakeIntensity = 0f;  // max displacement in pixels
     private Vector2f shakeOffset = new Vector2f(); // current shake offset
+    private float worldWidth = 24*48;
+    private float worldHeight = 16*48;
     
     public GLSLCamera(Vector2f position, float width, float height) {
         this.position = position;
@@ -67,6 +69,22 @@ public class GLSLCamera {
         this.width = width;
         this.height = height;
         adjustProjection();
+    }
+    public void setWorldBounds(float worldWidth, float worldHeight) {
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+    }
+    private void clampToWorld() {
+        float viewW = width / zoom;
+        float viewH = height / zoom;
+
+        // Don't allow camera outside left/top
+        position.x = Math.max(position.x, 0);
+        position.y = Math.max(position.y, 0);
+
+        // Don't allow camera outside right/bottom
+        position.x = Math.min(position.x, worldWidth - viewW);
+        position.y = Math.min(position.y, worldHeight - viewH);
     }
     public void lerpTo(Vector2f target, float factor) {
         this.position.lerp(target, factor);
@@ -128,11 +146,26 @@ public class GLSLCamera {
     public float getZoom() {
 		return zoom;
 	}
+    public void snapCameraToTarget() {
+    	 float targetX = target.hitbox.x + target.hitbox.width * 0.5f;
+         float targetY = target.hitbox.y + target.hitbox.height * 0.5f;
+         float viewW = width / zoom;
+         float viewH = height / zoom;
+
+         Vector2f desired = new Vector2f(
+             targetX - viewW / 2f,
+             targetY - viewH / 2f
+         );
+    	 position.x = desired.x;
+    	 position.y = desired.y;
+    	 adjustProjection();
+    }
     public void update(double dt) {
         if(target != null) {
             targetCenterX = target.hitbox.x + target.hitbox.width * 0.5f;
             targetCenterY = target.hitbox.y + target.hitbox.height * 0.5f;
             followEntityLerp(targetCenterX, targetCenterY, 0.12f);
+            clampToWorld();
         }
 
         // --- Update screen shake ---

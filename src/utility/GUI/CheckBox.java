@@ -102,7 +102,7 @@ public class CheckBox {
         this.y += dy;
     }
     private boolean isHovering(int x, int y, int width, int height) {
-        return gp.mouseL.getWorldX() >= x && gp.mouseL.getWorldX() <= x + width &&
-        	gp.mouseL.getWorldY() >= y && gp.mouseL.getWorldY() <= y + height;
+        return gp.mouseL.getScreenX() >= x && gp.mouseL.getScreenX() <= x + width &&
+        	gp.mouseL.getScreenY() >= y && gp.mouseL.getScreenY() <= y + height;
     }
 }

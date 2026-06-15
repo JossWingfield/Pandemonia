@@ -86,11 +86,13 @@ public abstract class Entity implements Cloneable {
     public boolean isOnScreen(GLSLCamera camera, float screenWidth, float screenHeight) {
         float camX = camera.position.x;
         float camY = camera.position.y;
+        
+        float buffer = 400;
 
-        return hitbox.x + hitbox.width  >= camX &&
-               hitbox.x             <= camX + screenWidth &&
-               hitbox.y + hitbox.height >= camY &&
-               hitbox.y             <= camY + screenHeight;
+        return hitbox.x + hitbox.width  >= camX - buffer &&
+               hitbox.x             <= camX + screenWidth + buffer &&
+               hitbox.y + hitbox.height >= camY - buffer &&
+               hitbox.y             <= camY + screenHeight + buffer;
     }
     public Texture importImage(String filePath) {
 		Texture texture = AssetPool.getTexture(filePath);

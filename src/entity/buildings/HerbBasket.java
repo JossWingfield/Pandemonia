@@ -96,8 +96,8 @@ public class HerbBasket extends Building {
 
 
 		    // Mouse position (screen space)
-		    int mouseX = (int)gp.mouseL.getWorldX();
-		    int mouseY = (int)gp.mouseL.getWorldY();
+		    int mouseX = (int)gp.mouseL.getScreenX();
+		    int mouseY = (int)gp.mouseL.getScreenY();
 
 		    // Draw 4 borders horizontally with items inside
 		    for (int i = 0; i < numSlots; i++) {
@@ -163,8 +163,8 @@ public class HerbBasket extends Building {
 
 
 	    // Mouse position (screen space)
-	    int mouseX = (int)gp.mouseL.getWorldX();
-	    int mouseY = (int)gp.mouseL.getWorldY();
+	    int mouseX = (int)gp.mouseL.getScreenX();
+	    int mouseY = (int)gp.mouseL.getScreenY();
 
 	    // Draw 4 borders horizontally with items inside
 	    for (int i = 0; i < numSlots; i++) {

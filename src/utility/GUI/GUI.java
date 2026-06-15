@@ -470,8 +470,8 @@ public class GUI {
     }
 	private boolean isHovering(String text, int x1, int y1, BitmapFont font) {
 		
-		int x = (int)gp.mouseL.getWorldX();
-		int y = (int)gp.mouseL.getWorldY();
+		int x = (int)gp.mouseL.getScreenX();
+		int y = (int)gp.mouseL.getScreenY();
 		
 		if(x > x1 && x < x1 + getTextWidth(text, font) && y > y1 && y < y1 + getTextHeight(font)) {
 			return true;
@@ -480,8 +480,8 @@ public class GUI {
 	}
 	private boolean isHovering(int x1, int y1, int w, int h) {
 		
-		int x = (int)gp.mouseL.getWorldX();
-		int y = (int)gp.mouseL.getWorldY();
+		int x = (int)gp.mouseL.getScreenX();
+		int y = (int)gp.mouseL.getScreenY();
 		
 		if(x > x1 && x < x1 + w && y > y1 && y < y1 + h) {
 			return true;
@@ -613,8 +613,8 @@ public class GUI {
 		renderer.draw(img, (gp.frameWidth/2) - (int)((240*titleUIScale) / 2), (gp.frameHeight/2) - (int)((160*titleUIScale)/2), (int)(240*titleUIScale), (int)(160*titleUIScale));
 		
 		
-		int mouseX = (int)gp.mouseL.getWorldX();
-		int mouseY = (int)gp.mouseL.getWorldY();
+		int mouseX = (int)gp.mouseL.getScreenX();
+		int mouseY = (int)gp.mouseL.getScreenY();
 		
 		int x = gp.frameWidth - 74;
 		int y = 20;
@@ -2326,10 +2326,10 @@ public class GUI {
 			int iconY = startY + row * spacingY;
 
 			boolean hovering =
-					gp.mouseL.getWorldX() >= iconX &&
-					gp.mouseL.getWorldX() <= iconX + slotSize &&
-					gp.mouseL.getWorldY() >= iconY &&
-					gp.mouseL.getWorldY() <= iconY + slotSize;
+					gp.mouseL.getScreenX() >= iconX &&
+					gp.mouseL.getScreenX() <= iconX + slotSize &&
+					gp.mouseL.getScreenY() >= iconY &&
+					gp.mouseL.getScreenY() <= iconY + slotSize;
 
 			// Draw slot
 			renderer.draw(achievement, iconX, iconY, slotSize, slotSize);
@@ -2393,8 +2393,8 @@ public class GUI {
 			int tooltipW = 420;
 			int tooltipH = 180;
 
-			int tooltipX = (int)(gp.mouseL.getWorldX() + 24);
-			int tooltipY = (int)(gp.mouseL.getWorldY()+ 24);
+			int tooltipX = (int)(gp.mouseL.getScreenX() + 24);
+			int tooltipY = (int)(gp.mouseL.getScreenY()+ 24);
 
 			// Keep onscreen
 			if (tooltipX + tooltipW > gp.frameWidth)
@@ -3054,8 +3054,8 @@ public class GUI {
 		renderer.drawString(text, getXforCenteredText(text, font), 700);
 		
 		
-		int mouseX = (int)gp.mouseL.getWorldX();
-		int mouseY = (int)gp.mouseL.getWorldY();
+		int mouseX = (int)gp.mouseL.getScreenX();
+		int mouseY = (int)gp.mouseL.getScreenY();
 		
 		x = gp.frameWidth - 74;
 		int y = 20;

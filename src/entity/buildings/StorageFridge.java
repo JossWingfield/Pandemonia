@@ -144,8 +144,8 @@ public class StorageFridge extends Building {
 	        itemHitboxes.clear();
 
 	        // Mouse position relative to screen
-	        float mouseX = gp.mouseL.getWorldX();
-	        float mouseY = gp.mouseL.getWorldY();
+	        float mouseX = gp.mouseL.getScreenX();
+	        float mouseY = gp.mouseL.getScreenY();
 
 	        // Draw each item slot (ui2) and item icon
 	        int slotSize = 16 * 3;      // Tripled size
@@ -222,8 +222,8 @@ public class StorageFridge extends Building {
 	        itemHitboxes.clear();
 
 	        // Mouse position relative to screen
-	        float mouseX = gp.mouseL.getWorldX();
-	        float mouseY = gp.mouseL.getWorldY();
+	        float mouseX = gp.mouseL.getScreenX();
+	        float mouseY = gp.mouseL.getScreenY();
 
 	        // Draw each item slot (ui2) and item icon
 	        int slotSize = 16 * 3;      // Tripled size

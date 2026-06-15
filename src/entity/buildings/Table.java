@@ -127,6 +127,54 @@ public class Table extends Building {
     	}
     	
 	}
+	public void destroy() {
+
+	    // Only tables clean up table-placed buildings
+	    	
+	        BuildingManager bm = gp.world.buildingM;
+	        
+	        
+	        Building[] buildings = bm.getBuildings();
+	        
+	        if(!gp.world.mapM.isInRoom(roomNum)) {
+	        	buildings = gp.world.mapM.getRoom(roomNum).getBuildings();
+	        }
+	        
+	        for (int i = 0; i < buildings.length; i++) {
+	            Building b = buildings[i];
+
+	            if (b == null || b == this) continue;
+
+	            // If it was placed on a table
+	            if (b.mustBePlacedOnTable || b.canBePlacedOnTable) {
+
+	                // Optional: ensure it's actually on THIS table
+	                if (this.hitbox.intersects(b.hitbox)) {
+
+	                    // Return to customiser inventory
+	                	if(b.canBePlaced) {
+	                		gp.world.customiser.addToInventory(b);
+	                	}
+	                    
+	                    // Destroy & remove it
+	                    b.destroy();
+	                    if(gp.world.mapM.isInRoom(roomNum)) {
+		                    bm.getBuildings()[i] = null;
+	                    } else {
+	                    	gp.world.mapM.getRoom(roomNum).getBuildings()[i] = null;
+	                    }
+	                }
+	            }
+	        }
+	    if(chair1 != null) {
+		    chair1.destroy();
+		    gp.world.buildingM.removeBuilding(chair1);
+	    }
+	    if(chair2 != null) {
+		    chair2.destroy();
+		    gp.world.buildingM.removeBuilding(chair2);
+	    }
+	}
 	public void inputUpdate(double dt) {
 		super.inputUpdate(dt);
 		if(firstUpdate) {

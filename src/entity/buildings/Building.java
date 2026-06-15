@@ -2,6 +2,7 @@ package entity.buildings;
 
 import java.awt.geom.Rectangle2D;
 
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
 import entity.Entity;
@@ -23,6 +24,7 @@ public class Building extends Entity {
 	public boolean castsShadow = true;
 	
 	public boolean isSecondLayer = false;
+	public boolean isMiddleLayer = false;
 	public boolean isThirdLayer = false;
 	public boolean isFourthLayer = false;
 	public boolean isFifthLayer = false;
@@ -52,6 +54,7 @@ public class Building extends Entity {
 	
 	public Rectangle2D.Float npcHitbox;
 	public Rectangle2D.Float buildHitbox;
+	private Vector4f deleteColour = new Vector4f(206f/255f, 63f/255f, 111f/255f, 80f/255f);
 
 	public Building(GamePanel gp, float xPos, float yPos, float width, float height) {
 		super(gp, xPos, yPos, width, height);
@@ -119,13 +122,13 @@ public class Building extends Entity {
 	}
 	public void inputUpdate(double dt) {
 		if(canBePlaced) {
-			if(hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
+			if(hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
 				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 					openDestructionUI();
 				}
 			}
 			
-			if(!hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
+			if(!hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
 				closeDestructionUI();
 			}
 			if(destructionUIOpen) {
@@ -160,7 +163,8 @@ public class Building extends Entity {
 
 	public void drawOverlayUI(Renderer renderer) {
 		 if(destructionUIOpen) {
-			renderer.draw(destructionImage, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, 48, 48);
+			//renderer.draw(destructionImage, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, 48, 48);
+			renderer.draw(animations[0][0][0], (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, drawWidth, drawHeight, deleteColour);
 		 }
 	}
 	

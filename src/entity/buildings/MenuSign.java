@@ -269,7 +269,7 @@ public class MenuSign extends Building {
 	        Rectangle2D.Float nameHitbox =
 	            new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
 
-	        boolean hovering = nameHitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY());
+	        boolean hovering = nameHitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY());
 
 	        Colour c = Colour.BLACK;
 
@@ -305,7 +305,7 @@ public class MenuSign extends Building {
 	        int textHeight = (int)(fontScale*32);
 	        Rectangle2D.Float nameHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
 
-	        boolean hovering = nameHitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY());
+	        boolean hovering = nameHitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY());
 	        
 	        Colour c2 = Colour.BLACK;
 	        if (hovering) {
@@ -337,7 +337,7 @@ public class MenuSign extends Building {
 	                int y = 209;
 	                drawRecipe(renderer, data, x, y);
 	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
-	                if (border.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY()) &&
+	                if (border.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY()) &&
 	                    gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	                    gp.world.gameM.removeRecipeFromMenu(recipe);
 	                    clickCooldown = 0.1;
@@ -350,7 +350,7 @@ public class MenuSign extends Building {
 	                int y = 398;
 	                drawRecipe(renderer, data, x, y);
 	                Rectangle2D.Float border = new Rectangle2D.Float(x, y, 32*3, 48*3);
-	                if (border.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY()) &&
+	                if (border.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY()) &&
 	                    gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	                    gp.world.gameM.removeRecipeFromMenu(recipe);
 	                    clickCooldown = 0.1;
@@ -366,7 +366,7 @@ public class MenuSign extends Building {
 	    int textWidth = (int)gp.renderer.measureStringWidth(font, text, fontScale);
         int textHeight = (int)(fontScale*32);
 	    Rectangle2D.Float doneHitbox = new Rectangle2D.Float(textX, (textY - textHeight), textWidth, textHeight);
-	    if (doneHitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
+	    if (doneHitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
 	        newCol = specialColour;
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            uiOpen = false;

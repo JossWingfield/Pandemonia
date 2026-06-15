@@ -114,7 +114,7 @@ public class BuildingManager {
     	Building[] b = new Building[buildings.length];
     	for(int i = 0; i < buildings.length; i++) {
     		if(buildings[i] != null) {
-    			if(!buildings[i].isSecondLayer && !buildings[i].isThirdLayer && !buildings[i].isFourthLayer && !buildings[i].isBottomLayer && !buildings[i].isFifthLayer){
+    			if(!buildings[i].isSecondLayer && !buildings[i].isMiddleLayer && !buildings[i].isThirdLayer && !buildings[i].isFourthLayer && !buildings[i].isBottomLayer && !buildings[i].isFifthLayer){
     				b[i] = buildings[i];
     			}
     		}
@@ -139,6 +139,17 @@ public class BuildingManager {
     	for(int i = 0; i < buildings.length; i++) {
     		if(buildings[i] != null) {
     			if(buildings[i].isSecondLayer){
+    				b[i] = buildings[i];
+    			}
+    		}
+    	}
+    	return b;
+    }
+    public Building[] getMiddleLayer() {
+    	Building[] b = new Building[buildings.length];
+    	for(int i = 0; i < buildings.length; i++) {
+    		if(buildings[i] != null) {
+    			if(buildings[i].isMiddleLayer){
     				b[i] = buildings[i];
     			}
     		}

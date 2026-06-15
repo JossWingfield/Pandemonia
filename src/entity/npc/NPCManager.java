@@ -100,7 +100,7 @@ public class NPCManager {
     public void checkInteractions(int simulationDistance, float xDiff, float yDiff) {
    	 for (NPC i: npcs) { //Loops through the items on the current map
             if (i != null) {
-            	if(i.hitbox.contains(gp.mouseL.getWorldX(), gp.mouseL.getWorldY())) {
+            	if(i.hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
             		if(CollisionMethods.getDistance(i.hitbox.x+i.hitbox.width/2, i.hitbox.y+i.hitbox.height/2, gp.player.hitbox.x + gp.player.hitbox.width/2, gp.player.hitbox.y + gp.player.hitbox.height/2) < gp.player.reachDistance) {
             			i.interact();
 		            }

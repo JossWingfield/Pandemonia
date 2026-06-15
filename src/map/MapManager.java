@@ -59,7 +59,7 @@ public class MapManager {
 	        rooms = new Room[20];
 	        rooms[0] = currentRoom; //Main
 	        rooms[1] = new Room(gp, 1); //Stores
-	        //rooms[2] = new Room(gp, 2); //Outdoors
+	        rooms[2] = new Room(gp, 2); //Outdoors
 	        rooms[3] = new Room(gp, 3); //Electrics
 	        rooms[4] = new Room(gp, 4); //Toilet
 	        rooms[5] = new Room(gp, 5); //Bedroom
@@ -70,6 +70,7 @@ public class MapManager {
 	        rooms[10] = new Room(gp, 10); //Freezer
 	        rooms[11] = new Room(gp, 11); //Wine Cellar
 	        rooms[12] = new Room(gp, 12); //Spice Cellar
+	        rooms[13] = new Room(gp, 13); //Butchers
 	        
 	        currentMapHeight = currentRoom.mapHeight;
 	        currentMapWidth = currentRoom.mapWidth;
@@ -108,7 +109,37 @@ public class MapManager {
 	        
 	    	tiles[arrayIndex] = new Tile(gp, "/tiles/Air.png", importImage("/tiles/Air.png"));
 	        arrayIndex++;
+	        
+	        importAnimatedSeasonalTiles("WaterTiles", 3, 5, 5);
+	        importSeasonalTiles("GrassPath", 4, 5);
+	        importAnimatedSeasonalTiles("BeachTiles", 5, 5, 6);
+	        importTilesFromSpriteSheet("/itch/buildings/Fences", 4, 4, false);
+	        importTilesFromSpriteSheet("/itch/tiles/TilledDirt", 7, 5, false);
+	        importSeasonalTiles("Cliff", 7, 5); 
+	        importSeasonalTiles("Dirt", 4, 5); 
+	        importAnimatedSeasonalTiles("RiverTiles", 3, 5, 5); 
+	        importTilesFromSpriteSheet("/itch/tiles/PavedPath", 3, 5, false);
+	        importTilesFromSpriteSheet("/itch/tiles/PavedPath2", 3, 5, false);
+	        importAnimatedSeasonalTiles("Waterfall", 3, 3, 4);
+	        importAnimatedSeasonalTiles("DirtWaterfall", 3, 3, 4);
+	        importTilesFromSpriteSheet("/itch/buildings/StoneWall", 7, 4, false);
+	        importAnimatedSeasonalTiles("CaveWater", 5, 5, 6);
+	        importTilesFromSpriteSheet("/itch/tiles/Cave/CaveGrass", 4, 5, false);
+	        importTilesFromSpriteSheet("/itch/tiles/Cave/Cave", 7, 5, false);
+	        importTilesFromSpriteSheet("/itch/buildings/Cave/Rail", 2, 3, false);
+	        importTilesFromSpriteSheet("/itch/crops/wheatblock", 4, 6, false);
+	        importTilesFromSpriteSheet("/itch/tiles/CityPath1", 3, 5, false);
+	        importTilesFromSpriteSheet("/itch/tiles/PavedPath3", 3, 5, false);
+	        importTilesFromSpriteSheet("/itch/buildings/city/version1/Railing", 4, 4, false);
+	        importTilesFromSpriteSheet("/itch/buildings/city/version1/Platform", 5, 3, false);
+	        importTilesFromSpriteSheet("/itch/buildings/city/version1/stairs", 8, 9, false);
+	        importAnimatedSeasonalTiles("CityWater", 5, 3, 6);
+	        importTilesFromSpriteSheet("/buildings/Docks", 4, 8, false);
 
+	        
+	    	tiles[1161].solid = true;
+	    	tiles[1124].solid = true;
+	    	tiles[1290].solid = true;
 	    }
 	    public Room[] getRooms() {
 	    	return rooms;
@@ -172,11 +203,35 @@ public class MapManager {
 	            }
 	        }
 	    }
+	    private void importSeasonalTiles(String filePath, int rows, int columns) {
+	    	for(int j = 0; j < rows; j++) {
+	            for(int i = 0; i < columns; i++) {
+	                tiles[arrayIndex] =  new Tile(gp, filePath, i, j, true, true);
+	                tiles[arrayIndex].solid = false;
+	                arrayIndex++;
+	            }
+	        }
+	    }
+	    private void importAnimatedSeasonalTiles(String filePath, int rows, int cols, int frameCount) {
+	        for (int j = 0; j < rows; j++) {
+	            for (int i = 0; i < cols; i++) {
+	                tiles[arrayIndex] = new Tile(gp, filePath, j, i, frameCount, true, true, cols);
+	                tiles[arrayIndex].solid = false;
+	                arrayIndex++;
+	            }
+	        }
+	    }
 	    public Texture importImage(String filePath) {
 			Texture texture = AssetPool.getTexture(filePath);
 		    return texture;
 		}
 	    public void updateState(double dt) {
+	    	
+	    	for (Tile tile : tiles) {
+	            if (tile != null) {
+	                tile.update((float) dt);
+	            }
+	        }
 	    	
 	    	for(Room room: rooms) {
 	    		if(room != null) {
@@ -279,6 +334,13 @@ public class MapManager {
 	    	currentRoom.editBuildings(gp.world.buildingM.getBuildings(), gp.world.buildingM.getArrayIndex());
 	    }
 	    public void changeRoom(int roomNum, Door previousDoor) {
+	    	if(roomNum == 2) {
+	    		gp.camera.setTarget(gp.player);
+	    		gp.camera.snapCameraToTarget();
+	    	} else {
+	    		gp.camera.setTarget(null);
+	    		gp.camera.reset();
+	    	}
 	        gp.player.isChangingRoom = true;
 	    	gp.world.buildingM.setDoorCooldowns();
 	    	switchRoom(roomNum);
@@ -361,6 +423,13 @@ public class MapManager {
 	    	gp.player.currentRoomIndex = roomNum;
 	    	gp.world.lightingM.getRoomOcclusion();
 	    	gp.world.cutsceneM.checkCutsceneTrigger();
+	    	
+	    	if(!currentRoom.canBeEdited) {
+	    		if(gp.currentState == gp.customiseRestaurantState) {
+	    			gp.currentState = gp.playState;
+	    		}
+	    	}
+	    	gp.camera.setWorldBounds(currentMapWidth*gp.tileSize, currentMapHeight*gp.tileSize);
 	    }
 	    public Room getCurrentRoom(NPC npc) {
 	    	for(Room room: rooms) {
@@ -454,26 +523,53 @@ public class MapManager {
 			}
 			return null;
 		}
-	    public void setSeason(Season season) {
-	        for (Tile tile : tiles) {
-	            if (tile != null && tile.seasonal) {
-	                switch (season) {
-	                    case SPRING:
-	                        tile.image = tile.springImage;
-	                        break;
-	                    case SUMMER:
-	                        tile.image = tile.summerImage;
-	                        break;
-	                    case AUTUMN:
-	                        tile.image = tile.autumnImage;
-	                        break;
-	                    case WINTER:
-	                        tile.image = tile.winterImage;
-	                        break;
-	                }
-	            }
-	        }
-	    }
+		public void setSeason(Season season) {
+		    for (Tile tile : tiles) {
+		        if (tile != null && tile.seasonal) {
+
+		            // --- ANIMATED ---
+		            if (tile.animated) {
+		                switch (season) {
+		                    case SPRING:
+		                        tile.activeFrames = tile.springFrames;
+		                        break;
+		                    case SUMMER:
+		                        tile.activeFrames = tile.summerFrames;
+		                        break;
+		                    case AUTUMN:
+		                        tile.activeFrames = tile.autumnFrames;
+		                        break;
+		                    case WINTER:
+		                        tile.activeFrames = tile.winterFrames;
+		                        break;
+		                }
+
+		                if (tile.activeFrames != null) {
+		                    tile.currentFrame = 0;
+		                    tile.image = tile.activeFrames[0];
+		                }
+		            }
+
+		            // --- NON-ANIMATED ---
+		            else {
+		                switch (season) {
+		                    case SPRING:
+		                        tile.image = tile.springImage;
+		                        break;
+		                    case SUMMER:
+		                        tile.image = tile.summerImage;
+		                        break;
+		                    case AUTUMN:
+		                        tile.image = tile.autumnImage;
+		                        break;
+		                    case WINTER:
+		                        tile.image = tile.winterImage;
+		                        break;
+		                }
+		            }
+		        }
+		    }
+		}
 	    public void draw(Renderer renderer) {
 	    	if(firstUpdate) {
         		for(Room r: rooms) {
