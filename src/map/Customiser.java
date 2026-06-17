@@ -7,6 +7,7 @@ import java.util.List;
 import org.lwjgl.glfw.GLFW;
 
 import entity.buildings.Building;
+import entity.buildings.KitchenCounter;
 import entity.buildings.Shelf;
 import main.GamePanel;
 import main.renderer.AssetPool;
@@ -1028,7 +1029,7 @@ public class Customiser {
 		
 		if(selectedBuilding != null) {
 			if(mouseY < gp.frameHeight-ySize || !showBuildings) {
-				int size = 4*3;
+				int size = 1*3;
 				if(selectedBuilding.tileGrid) {
 					size = 16*3;
 				}
@@ -1055,7 +1056,19 @@ public class Customiser {
 			    	    	t.updateConnections();
 			    	    }
 		    	    }
+				} else if(selectedBuilding.getName().equals("Kitchen Counter")) {
+			        selectedBuilding.hitbox.x = xPos;
+			        selectedBuilding.hitbox.y = yPos;
+			        selectedBuilding.onPlaced();
+		    	    if(prevX != xPos || prevY != yPos) {
+				        List<Building> counters = gp.world.buildingM.findBuildingsWithName("Kitchen Counter");
+			    	    for (Building b: counters) {
+			    	    	KitchenCounter t = (KitchenCounter)b;
+			    	    	t.updateConnections();
+			    	    }
+		    	    }
 				}
+				
 				TextureRegion img = selectedBuilding.animations[0][0][0];
 				Colour c;
 				if(gp.player.currentRoomIndex == 2) {
@@ -1083,7 +1096,7 @@ public class Customiser {
 						    if ("Shelf".equals(name) && b.buildHitbox.intersects(buildHitbox)) {
 						        onShelf = true;
 						    } else if (
-						        ("Table Piece".equals(name) ||
+						        ("Kitchen Counter".equals(name) ||
 						        "Table Corner 1".equals(name) ||
 						        "Table 1".equals(name)) ||
 						        "Large Table".equals(name) &&

@@ -109,6 +109,12 @@ public class BuildingManager {
 	    	Shelf t = (Shelf)b;
 	    	t.updateConnections();
 	    }
+	    
+	    List<Building> kitchenCounters = gp.world.buildingM.findBuildingsWithName("Kitchen Counter");
+	    for (Building b: kitchenCounters) {
+	    	KitchenCounter t = (KitchenCounter)b;
+	    	t.updateConnections();
+	    }
     }
     public Building[] getBuildingsToDraw() {
     	Building[] b = new Building[buildings.length];
@@ -125,7 +131,7 @@ public class BuildingManager {
     	Item[] b = new Item[buildings.length];
     	for(int i = 0; i < buildings.length; i++) {
     		if(buildings[i] != null) {
-    			if(buildings[i] instanceof FloorDecor_Building build){
+    			if(buildings[i] instanceof KitchenCounter build){
     				if(build.currentItem != null) {
     					b[i] = build.currentItem;
     				}
@@ -292,8 +298,8 @@ public class BuildingManager {
 					if(table.rightSlot != null) {
 						table.rightSlot.refreshImages();
 					}
-				} else if(b.getName().equals("Table Piece")) {
-					FloorDecor_Building t = (FloorDecor_Building)b;
+				} else if(b.getName().equals("Kitchen Counter")) {
+					KitchenCounter t = (KitchenCounter)b;
 					if(t.currentItem instanceof FryingPan f) {
 						f.refreshImages();
 					} else if(t.currentItem instanceof SmallPan f) {
@@ -413,12 +419,12 @@ public class BuildingManager {
 		}
 		return null;
 	}
-	public FloorDecor_Building findTable(float x, float y, float w, float h) {
+	public KitchenCounter findTable(float x, float y, float w, float h) {
 		Rectangle2D.Float hitbox = new Rectangle2D.Float(x, y, w, h);
 		for(Building b: buildings) {
 			if(b != null) {
-				if(b.getName().equals("Table Piece")) {
-					FloorDecor_Building table = (FloorDecor_Building)b;
+				if(b.getName().equals("Kitchen Counter")) {
+					KitchenCounter table = (KitchenCounter)b;
 					if(table.interactHitbox != null) {
 						if(table.interactHitbox.intersects(hitbox)) {
 							return table;
@@ -507,8 +513,7 @@ public class BuildingManager {
 	    for (Building b : buildings) {
 	        if (b == null || b == build) continue;
 
-	        // Skip benign types like "Table Piece"
-	        if (b.getName().equals("Table Piece")) continue;
+	        if (b.getName().equals("Kitchen Counter")) continue;
 
 	        // If it intersects and it's a restricted interaction
 	        if (b.hitbox.intersects(interactHitbox)) {
@@ -528,8 +533,8 @@ public class BuildingManager {
 	    return true;
 	}
 	public void setBuildingItem(int arrayCounter, Item i) {
-		if(buildings[arrayCounter].getName().equals("Table Piece")) {
-			FloorDecor_Building building = (FloorDecor_Building)buildings[arrayCounter];
+		if(buildings[arrayCounter].getName().equals("Kitchen Counter")) {
+			KitchenCounter building = (KitchenCounter)buildings[arrayCounter];
 			building.currentItem = i; 
 		} else if(buildings[arrayCounter].getName().equals("Table Corner")){
 			CornerTable building = (CornerTable)buildings[arrayCounter];
@@ -541,8 +546,8 @@ public class BuildingManager {
 		}
 	}
 	public Item getBuildingItem(int arrayCounter) {
-		if(buildings[arrayCounter].getName().equals("Table Piece")) {
-			FloorDecor_Building building = (FloorDecor_Building)buildings[arrayCounter];
+		if(buildings[arrayCounter].getName().equals("Kitchen Counter")) {
+			KitchenCounter building = (KitchenCounter)buildings[arrayCounter];
 			return building.currentItem; 
 		}
 		return null;

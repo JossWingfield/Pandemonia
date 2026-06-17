@@ -4,10 +4,8 @@ import java.util.Arrays;
 
 import org.lwjgl.glfw.GLFW;
 
-import entity.items.FoodState;
-import entity.items.Greens;
-import entity.items.Plate;
-import entity.items.Tomato;
+import entity.buildings.KitchenCounter;
+import entity.buildings.Shelf;
 
 public class KeyListener {
 
@@ -122,7 +120,29 @@ public class KeyListener {
         if (gp.currentState == gp.playState) {
         	
             if (isKeyPressed(GLFW.GLFW_KEY_2)) {
-            	//gp.world.cutsceneM.customiseTutorial();
+            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+              	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+              	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+              	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+              	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
+            	
+              	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
+            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
             }
             /*
             if (isKeyPressed(GLFW.GLFW_KEY_1)) {

@@ -50,8 +50,26 @@ public class ParticleSystem {
             this.active = true;
         }
     }
+    private static class StoveSteamSource {
+        int slot;
+        float x, y;
+        int room;
+        boolean active;
+        boolean isSmoke;
+
+        StoveSteamSource(int slot, float x, float y, int room, boolean isSmoke) {
+            this.slot = slot;
+            this.x = x;
+            this.y = y;
+            this.room = room;
+            this.active = true;
+            this.isSmoke = isSmoke;
+        }
+    }
 
     private final List<PanEmber> panEmbers = new ArrayList<>();
+    private List<StoveSteamSource> stoveSteam = new ArrayList<>();
+
     
     private static final int ROOM_EMBER_TARGET = 7000;
     private static final int ROOM_EMBER_SPAWN_RATE = 1; // frames
@@ -272,6 +290,24 @@ public class ParticleSystem {
                 }
             }
         }
+        for(StoveSteamSource stove : stoveSteam){
+
+            if(!stove.active)
+                continue;
+
+            if(Math.random() < 0.03f){
+
+                addParticle(
+                    new CookingVapourParticle(
+                        gp,
+                        stove.room,
+                        stove.x + (float)(Math.random()-0.5f)*12,
+                        stove.y,
+                        stove.isSmoke
+                    )
+                );
+            }
+        }
         if (randomShaking) {
             if (shakeCooldown <= 0) {
                 // Small random chance each frame to trigger a shake
@@ -336,6 +372,42 @@ public class ParticleSystem {
        	    	}
     	    }
     	}
+    }
+    public void addStoveSteam(int slot, float x, float y, int room) {
+
+        // update existing stove if already registered
+        for (StoveSteamSource stove : stoveSteam) {
+            if (stove.slot == slot) {
+                stove.x = x;
+                stove.y = y;
+                stove.active = true;
+                return;
+            }
+        }
+
+        stoveSteam.add(
+            new StoveSteamSource(slot, x, y, room, false)
+        );
+    }
+    public void removeStoveSteam(int slot) {
+
+        for (StoveSteamSource stove : stoveSteam) {
+            if (stove.slot == slot) {
+                stove.active = false;
+                return;
+            }
+        }
+    }
+    public void setSmokeParticle(int slot) {
+
+        for (StoveSteamSource stove : stoveSteam) {
+
+            if (stove.slot == slot) {
+                stove.isSmoke = true;
+                stove.active = true;
+                return;
+            }
+        }
     }
     // Start ember for a pan slot
     public void addPanEmber(int slot, float x, float y, float width, float height, int roomNum) {

@@ -135,6 +135,7 @@ public class MapManager {
 	        importTilesFromSpriteSheet("/itch/buildings/city/version1/stairs", 8, 9, false);
 	        importAnimatedSeasonalTiles("CityWater", 5, 3, 6);
 	        importTilesFromSpriteSheet("/buildings/Docks", 4, 8, false);
+	        importSeasonalTiles("Stairs", 2, 3);
 
 	        
 	    	tiles[1161].solid = true;

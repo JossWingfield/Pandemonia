@@ -213,7 +213,7 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new FoodStore(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
-		for(int i = 0; i < 180; i++) {
+		for(int i = 0; i < 184; i++) {
 			outdoorBuildings[totalBuildingCount] = new OutdoorDecor(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
@@ -1084,7 +1084,6 @@ public class MapBuilder {
 			    		counter++;
 			    	}
 			    }
-				
 
 			}  else if(pageNum == 5) {
 				 if (gp.keyL.isKeyPressed(GLFW.GLFW_KEY_P)) scrollOffset -= 40;
@@ -1198,6 +1197,25 @@ public class MapBuilder {
 				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
 				for(int i = 0; i < 4; i++) {
 			    	for(int j = 0; j < 8; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 8*32;
+				img = importImage("/itch/tiles/spring/stairs.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 2; i++) {
+			    	for(int j = 0; j < 3; j++) {
 			    			
 			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
 			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);

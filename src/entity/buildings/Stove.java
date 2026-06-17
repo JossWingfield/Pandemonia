@@ -105,13 +105,14 @@ public class Stove extends Building {
 	public void stopFlame() {
 		drawCooking = false;
 	}
-	private void checkBurnAndDisableLight(CookingItem item, LightSource light) {
+	private void checkBurnAndDisableLight(CookingItem item, LightSource light, int slot) {
 	    if (item == null || item.cookingItem == null) return;
 
 	    Food food = item.cookingItem;
 
 	    if (food.foodState == FoodState.BURNT) {
 	        item.stopCooking();
+	        gp.world.particleM.setSmokeParticle(slot);
 	        gp.world.lightingM.removeLight(light);
 	    }
 	}
@@ -121,11 +122,11 @@ public class Stove extends Building {
 		if(gp.world.gameM.isPowerOn()) {
 			if (leftSlot instanceof CookingItem pan) {
 			    pan.updateCooking(dt);
-			    checkBurnAndDisableLight(pan, leftLight);
+			    checkBurnAndDisableLight(pan, leftLight, 0);
 			}
 			if (rightSlot instanceof CookingItem pan) {
 			    pan.updateCooking(dt);
-			    checkBurnAndDisableLight(pan, rightLight);
+			    checkBurnAndDisableLight(pan, rightLight, 1);
 			}
 		}
 	}
@@ -587,15 +588,20 @@ public class Stove extends Building {
 	private void stopParticles(boolean isLeft) {
 		if(isLeft) {
 			gp.world.particleM.removePanEmber(0);
+			gp.world.particleM.removeStoveSteam(0);
 		} else {
 			gp.world.particleM.removePanEmber(1);
+			gp.world.particleM.removeStoveSteam(1);
 		}
 	}
 	private void startParticles(boolean isLeft) {
 		if(isLeft) {
 			gp.world.particleM.addPanEmber(0, (int) hitbox.x - xDrawOffset  + 40, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32, roomNum);
+			gp.world.particleM.addStoveSteam(0, (int) hitbox.x - xDrawOffset  + 40, (int) (hitbox.y )-yDrawOffset+48+44 - 24, roomNum);
 		} else {
 			gp.world.particleM.addPanEmber(1, (int) hitbox.x - xDrawOffset  + 48 + 48, (int) (hitbox.y )-yDrawOffset+48+44, 32, 32, roomNum);
+			gp.world.particleM.addStoveSteam(1, (int) hitbox.x - xDrawOffset  + 40 + 48+16, (int) (hitbox.y )-yDrawOffset+48+44 - 24, roomNum);
+
 		}
 	}
 	

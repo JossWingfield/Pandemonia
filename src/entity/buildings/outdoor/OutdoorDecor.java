@@ -517,6 +517,8 @@ public class OutdoorDecor extends Building {
         	hitbox.height =13*3;
         	xDrawOffset =1*3;
           	yDrawOffset =34*3 + 44*3;
+          	animated = true;
+          	isThirdLayer = true;
         	break;
         case 45:
         	animations[0][0][0] = importImage("/itch/buildings/StoneBridge2.png").getSubimage(0, 0, 64, 64);
@@ -771,13 +773,14 @@ public class OutdoorDecor extends Building {
           	yDrawOffset =47*3;
         	break;
         case 73:
-    		importFromSpriteSheet("/itch/buildings/village/Blacksmith/Blue.png", 14, 1, 0, 0, 0, 192, 144, 0);
+    		importFromSpriteSheet("/itch/buildings/village/Blacksmith/Red.png", 14, 1, 0, 0, 0, 192, 144, 0);
         	drawWidth =192*3;
         	drawHeight =144*3;
         	hitbox.width =155*3;
         	hitbox.height =43*3;
         	xDrawOffset =47*3;
           	yDrawOffset =93*3;
+          	animated = true;
         	break;
         case 74:
         	animations[0][0][0] = importImage("/itch/buildings/village/Barn.png").getSubimage(0, 0, 112, 112);
@@ -1514,10 +1517,10 @@ public class OutdoorDecor extends Building {
     		importFromSpriteSheet("/itch/buildings/bases/Windmill/Wood.png", 10, 1, 0, 0, 0, 128, 192, 0);
           	drawWidth = 128*3;
         	drawHeight = 192*3;
-        	hitbox.width=4*3;
-        	hitbox.height=6*3;
-        	xDrawOffset = 5*3;
-          	yDrawOffset = 48*3;
+        	hitbox.width=55*3;
+        	hitbox.height=46*3;
+        	xDrawOffset = 36*3;
+          	yDrawOffset = 143*3;
           	animated = true;
         	break;
         case 155:
@@ -1636,18 +1639,18 @@ public class OutdoorDecor extends Building {
         	drawWidth =240*3;
         	drawHeight =208*3;
         	hitbox.width = 69*3;
-        	hitbox.height = 57*3;
+        	hitbox.height = 37*3;
         	xDrawOffset = 34*3;
-          	yDrawOffset = 81*3;
+          	yDrawOffset = 101*3;
         	break;
         case 168:
         	animations[0][0][0] = importImage("/buildings/ArchBuilding.png").getSubimage(240*2, 0, 240, 208);
         	drawWidth =240*3;
         	drawHeight =208*3;
         	hitbox.width = 42*3;
-        	hitbox.height = 57*3;
+        	hitbox.height = 20*3;
         	xDrawOffset = 100*3;
-        	yDrawOffset = 81*3;
+        	yDrawOffset = 117*3;
         	isSolid = false;
         	break;
         case 169:
@@ -1655,9 +1658,9 @@ public class OutdoorDecor extends Building {
         	drawWidth =240*3;
         	drawHeight =208*3;
         	hitbox.width = 75*3;
-        	hitbox.height = 57*3;
+        	hitbox.height = 37*3;
         	xDrawOffset = 135*3;
-         	yDrawOffset = 81*3;
+         	yDrawOffset = 101*3;
         	break;
         case 170:
         	animations[0][0][0] = importImage("/buildings/Butcher.png").getSubimage(0, 0, 256, 144);
@@ -1677,6 +1680,7 @@ public class OutdoorDecor extends Building {
         	xDrawOffset = 6*3;
          	yDrawOffset = 14*3;
          	isSolid = false;
+         	isThirdLayer = true;
         	break;
         case 172:
         	animations[0][0][0] = importImage("/buildings/MeatCrate.png").toTextureRegion();
@@ -1753,6 +1757,42 @@ public class OutdoorDecor extends Building {
         	xDrawOffset = 39*3;
           	yDrawOffset = 38*3;
           	animated = true;
+        	break;
+        case 180:
+        	animations[0][0][0] = importImage("/buildings/Supermarket.png").toTextureRegion();
+        	drawWidth =256*3;
+        	drawHeight =256*3;
+        	hitbox.width = 236*3;
+        	hitbox.height = 165*3;
+        	xDrawOffset = 9*3;
+         	yDrawOffset = 76*3;
+        	break;
+        case 181:
+        	animations[0][0][0] = importImage("/buildings/CastleWall.png").toTextureRegion();
+        	drawWidth =96*3;
+        	drawHeight =128*3;
+        	hitbox.width = 62*3;
+        	hitbox.height = 33*3;
+        	xDrawOffset = 15*3;
+         	yDrawOffset = 78*3;
+        	break;
+        case 182:
+        	animations[0][0][0] = importImage("/buildings/WallBuilding.png").toTextureRegion();
+        	drawWidth =240*3;
+        	drawHeight =160*3;
+        	hitbox.width = 177*3;
+        	hitbox.height = 33*3;
+        	xDrawOffset = 28*3;
+         	yDrawOffset = 103*3;
+        	break;
+        case 183:
+        	animations[0][0][0] = importImage("/buildings/RiverEntrance.png").toTextureRegion();
+        	drawWidth =240*3;
+        	drawHeight =160*3;
+        	hitbox.width = 201*3;
+        	hitbox.height = 33*3;
+        	xDrawOffset = 28*3;
+         	yDrawOffset = 103*3;
         	break;
         }
         name = "Outdoor Decor";

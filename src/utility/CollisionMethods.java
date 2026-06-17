@@ -1,11 +1,10 @@
 package utility;
 
-import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
 import entity.buildings.Building;
+import entity.buildings.KitchenCounter;
 import main.GamePanel;
-import main.renderer.Texture;
 
 public class CollisionMethods {
 	
@@ -359,6 +358,44 @@ public class CollisionMethods {
 		
 		return true;
 	}
+	private static int countKitchenConnections(GamePanel gp, float x, float y) {
+
+	    int connections = 0;
+
+	    if(CollisionMethods.getBuildingAt(
+	            gp,
+	            (int)(x - gp.tileSize),
+	            (int)y,
+	            "Kitchen Counter") instanceof KitchenCounter)
+	        connections++;
+
+
+	    if(CollisionMethods.getBuildingAt(
+	            gp,
+	            (int)(x + gp.tileSize),
+	            (int)y,
+	            "Kitchen Counter") instanceof KitchenCounter)
+	        connections++;
+
+
+	    if(CollisionMethods.getBuildingAt(
+	            gp,
+	            (int)x,
+	            (int)(y - gp.tileSize),
+	            "Kitchen Counter") instanceof KitchenCounter)
+	        connections++;
+
+
+	    if(CollisionMethods.getBuildingAt(
+	            gp,
+	            (int)x,
+	            (int)(y + gp.tileSize),
+	            "Kitchen Counter") instanceof KitchenCounter)
+	        connections++;
+
+
+	    return connections;
+	}
 	public static boolean canPlaceBuilding(GamePanel gp, Building building, float x, float y, float width, float height) {
 	    if(building.isKitchenBuilding) {
 	    	if(!gp.world.mapM.isInRoom(RoomHelperMethods.KITCHEN)) {
@@ -378,8 +415,119 @@ public class CollisionMethods {
 
 		Rectangle2D.Float buildHitbox = new Rectangle2D.Float(x, y, width, height);
 	    
+		int tileSize = gp.tileSize;
+		// ---------------- Kitchen Counter connection validation ----------------
+		// ---------------- Kitchen Counter connection validation ----------------
+		if ("Kitchen Counter".equals(building.getName())) {
+
+		    // Check the four neighbours of the new counter
+		    boolean leftCounter = CollisionMethods.getBuildingAt(
+		            gp,
+		            (int)(x - tileSize),
+		            (int)y,
+		            "Kitchen Counter"
+		    ) instanceof KitchenCounter;
+
+
+		    boolean rightCounter = CollisionMethods.getBuildingAt(
+		            gp,
+		            (int)(x + tileSize),
+		            (int)y,
+		            "Kitchen Counter"
+		    ) instanceof KitchenCounter;
+
+
+		    boolean topCounter = CollisionMethods.getBuildingAt(
+		            gp,
+		            (int)x,
+		            (int)(y - tileSize),
+		            "Kitchen Counter"
+		    ) instanceof KitchenCounter;
+
+
+		    boolean bottomCounter = CollisionMethods.getBuildingAt(
+		            gp,
+		            (int)x,
+		            (int)(y + tileSize),
+		            "Kitchen Counter"
+		    ) instanceof KitchenCounter;
+
+
+		    int connections = 0;
+
+		    if(leftCounter) connections++;
+		    if(rightCounter) connections++;
+		    if(topCounter) connections++;
+		    if(bottomCounter) connections++;
+
+
+		    // New counter cannot touch more than 2 counters
+		    if(connections > 2) {
+		        return false;
+		    }
+
+
+		    // Check that adding this counter does not create
+		    // a T junction on existing counters
+
+		    if(leftCounter) {
+
+		        int neighbourConnections = countKitchenConnections(
+		                gp,
+		                x - tileSize,
+		                y
+		        );
+
+		        // +1 because the new counter will connect to it
+		        if(neighbourConnections + 1 > 2) {
+		            return false;
+		        }
+		    }
+
+
+		    if(rightCounter) {
+
+		        int neighbourConnections = countKitchenConnections(
+		                gp,
+		                x + tileSize,
+		                y
+		        );
+
+		        if(neighbourConnections + 1 > 2) {
+		            return false;
+		        }
+		    }
+
+
+		    if(topCounter) {
+
+		        int neighbourConnections = countKitchenConnections(
+		                gp,
+		                x,
+		                y - tileSize
+		        );
+
+		        if(neighbourConnections + 1 > 2) {
+		            return false;
+		        }
+		    }
+
+
+		    if(bottomCounter) {
+
+		        int neighbourConnections = countKitchenConnections(
+		                gp,
+		                x,
+		                y + tileSize
+		        );
+
+		        if(neighbourConnections + 1 > 2) {
+		            return false;
+		        }
+		    }
+		}
+		
 	    if ("Shelf".equals(building.getName())) {
-	        int tileSize = gp.tileSize;
 	        int[][] grid = gp.world.mapM.currentRoom.mapGrid[1];
 
 	        int startX = (int) Math.floor(x / tileSize);
@@ -446,7 +594,6 @@ public class CollisionMethods {
 
 	    // ---------------- Universal corner check (mapGrid == 0) ----------------
 	    int[][] grid = gp.world.mapM.currentRoom.mapGrid[1];
-	    int tileSize = gp.tileSize;
 
 	    // corners of the hitbox
 	    int[][] corners = {
@@ -498,7 +645,7 @@ public class CollisionMethods {
 	 // ---------------- Wall-only placement ----------------
 	    if (building.mustBePlacedOnWall) {
 	        for (Building b : gp.world.buildingM.getBuildings()) {
-	            if (b != null && b.hitbox.intersects(buildHitbox)) {
+	            if (b != null && b.buildHitbox.intersects(buildHitbox)) {
 	                return false;
 	            }
 	        }
@@ -525,10 +672,10 @@ public class CollisionMethods {
 
 	        for (Building b : gp.world.buildingM.getBuildings()) {
 	            if (b == null) continue;
-
+	            
 	            boolean isShelf = "Shelf".equals(b.getName());
 	            boolean isTable =
-	                "Table Piece".equals(b.getName()) ||
+	                "Kitchen Counter".equals(b.getName()) ||
 	                "Table Corner 1".equals(b.getName()) ||
 	                "Table 1".equals(b.getName()) ||
 	                "Large Table".equals(b.getName());

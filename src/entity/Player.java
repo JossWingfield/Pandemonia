@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFW;
 
 import entity.buildings.Building;
 import entity.buildings.FloorDecor_Building;
+import entity.buildings.KitchenCounter;
 import entity.items.CookingItem;
 import entity.items.Food;
 import entity.items.FoodState;
@@ -387,20 +388,22 @@ public class Player extends Entity{
         	}
     	}
     }
-    private boolean tryHorizontalCorrection(float moveX) {
+    private boolean tryHorizontalCorrection(float moveX, boolean allowCorrection) {
 
-        float correctionDistance = 4*3f;
+        if (!allowCorrection) {
+            return false;
+        }
+
+        float correctionDistance = 4 * 3f;
 
         for (float offset = 1; offset <= correctionDistance; offset++) {
 
-            // Try moving up
             if (canMove(hitbox.x + moveX, hitbox.y - offset)) {
                 hitbox.y -= offset;
                 hitbox.x += moveX;
                 return true;
             }
 
-            // Try moving down
             if (canMove(hitbox.x + moveX, hitbox.y + offset)) {
                 hitbox.y += offset;
                 hitbox.x += moveX;
@@ -411,20 +414,23 @@ public class Player extends Entity{
         return false;
     }
 
-    private boolean tryVerticalCorrection(float moveY) {
 
-        float correctionDistance = 4*3f;
+    private boolean tryVerticalCorrection(float moveY, boolean allowCorrection) {
+
+        if (!allowCorrection) {
+            return false;
+        }
+
+        float correctionDistance = 4 * 3f;
 
         for (float offset = 1; offset <= correctionDistance; offset++) {
 
-            // Try left
             if (canMove(hitbox.x - offset, hitbox.y + moveY)) {
                 hitbox.x -= offset;
                 hitbox.y += moveY;
                 return true;
             }
 
-            // Try right
             if (canMove(hitbox.x + offset, hitbox.y + moveY)) {
                 hitbox.x += offset;
                 hitbox.y += moveY;
@@ -447,11 +453,6 @@ public class Player extends Entity{
                 hitbox.width,
                 hitbox.height);
     }
-    private void moveCamera(double dt) {
-    	if(currentRoomIndex == 2) {
-    		
-    	}
-    }
     private void handleMovement(double dt) {
     	
     	boolean left = keyI.isKeyPressed(GLFW.GLFW_KEY_A);
@@ -469,6 +470,9 @@ public class Player extends Entity{
             	}
             }
     		
+    		boolean horizontalOnly = (left || right) && !(up || down);
+    		boolean verticalOnly = (up || down) && !(left || right);
+    		
     		
             if (left) { //Moving left
             	direction = 1;
@@ -483,7 +487,7 @@ public class Player extends Entity{
             	            currentAnimation = 4;
             	        }
             	    }
-            	} else if(tryHorizontalCorrection(-moveAmount)) {
+            	} else if(tryHorizontalCorrection(-moveAmount, horizontalOnly)) {
             	    if(currentAnimation != 2) {
             	        currentAnimation = 1;
             	        if(currentItem != null) {
@@ -523,7 +527,7 @@ public class Player extends Entity{
              	            currentAnimation = 4;
              	        }
              	    }
-             	} else if(tryHorizontalCorrection(moveAmount)) {
+             	} else if(tryHorizontalCorrection(moveAmount, horizontalOnly)) {
              	    if(currentAnimation != 2) {
              	        currentAnimation = 1;
              	        if(currentItem != null) {
@@ -551,7 +555,7 @@ public class Player extends Entity{
              	            currentAnimation = 4;
              	        }
              	    }
-             	} else if(tryVerticalCorrection(-moveAmount)) {
+             	} else if(tryVerticalCorrection(-moveAmount, verticalOnly)) {
              	    if(currentAnimation != 2) {
              	        currentAnimation = 1;
              	        if(currentItem != null) {
@@ -578,7 +582,7 @@ public class Player extends Entity{
             	            currentAnimation = 4;
             	        }
             	    }
-            	} else if(tryVerticalCorrection(moveAmount)) {
+            	} else if(tryVerticalCorrection(moveAmount, verticalOnly)) {
             	    if(currentAnimation != 2) {
             	        currentAnimation = 1;
             	        if(currentItem != null) {
@@ -598,9 +602,7 @@ public class Player extends Entity{
             if(!gp.world.gameM.isPowerOn()) {
             	gp.world.lightingM.moveLight(playerLight, (int)(hitbox.x + hitbox.width/2), (int)(hitbox.y +  hitbox.height/2));
             }
-            
-            moveCamera(dt);
-            
+                        
          	if (gp.multiplayer) { 
          		if(gp.socketClient != null && gp.socketClient.state == ConnectionState.IN_GAME && !isChangingRoom) {
 	                if(prevX != hitbox.x || prevY != hitbox.y) {
@@ -674,10 +676,10 @@ public class Player extends Entity{
     	if(currentItem != null) {
     		currentItem.inputUpdate(dt);
 	    	if(keyI.keyBeginPress(GLFW.GLFW_KEY_E) && clickCounter == 0) {
-	    		FloorDecor_Building b = gp.world.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
+	    		KitchenCounter b = gp.world.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {
 		    		if(gp.world.buildingM.intersectsKitchenBuilding(gp, b, b.interactHitbox)) {
-			    		FloorDecor_Building table = b;
+		    			KitchenCounter table = b;
 		    			if(table.currentItem == null) {
 		    				if(gp.multiplayer) {
 		    					gp.socketClient.send(new Packet10PlaceOnTable(gp.player.getUsername(), table.getArrayCounter(), currentItem));
@@ -812,7 +814,7 @@ public class Player extends Entity{
 	    	}
     	} else if(currentItem == null){
     		if(keyI.keyBeginPress(GLFW.GLFW_KEY_E) && clickCounter == 0) {
-	    		FloorDecor_Building b = gp.world.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
+    			KitchenCounter b = gp.world.buildingM.findTable(interactHitbox.x, interactHitbox.y, interactHitbox.width, interactHitbox.height);
 	    		if(b != null) {
 		    		if(gp.world.buildingM.intersectsKitchenBuilding(gp, b, interactHitbox)) {
 		    			if(b.currentItem != null) {
