@@ -190,7 +190,13 @@ public class Shelf extends Building {
         animations[0][0][0] = importImage("/decor/wall shelf.png").getSubimage(48, 16, 16, 16);
         updateNeighbor(hitbox.x - gp.tileSize, hitbox.y);
         updateNeighbor(hitbox.x + gp.tileSize, hitbox.y);
+        type = 11;
+		importImages();
     }
+	public void resetForCustomiser() {
+		type = 11;
+		importImages();
+	}
     private void updateNeighbor(float checkX, float checkY) {
         Building b = CollisionMethods.getBuildingAt(gp, (int)checkX, (int)checkY, "Shelf");
         if (b instanceof Shelf) {

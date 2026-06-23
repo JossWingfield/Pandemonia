@@ -265,7 +265,7 @@ public class ChoppingBoard extends Building {
 		}
 	}
 	public void drawOverlayUI(Renderer renderer) {
-		
+		/*
 	    if (currentItem == null) return;
 	    if (!currentItem.foodState.equals(FoodState.RAW)) return;
 	    if (!canChop(currentItem.getName())) return;
@@ -301,6 +301,7 @@ public class ChoppingBoard extends Building {
 
 	    // inner stable beat marker
 	    renderer.drawCircle((int)cx, (int)cy, 4, new Colour(255, 255, 255));
+	    */
 	}
 	public void clearCurrentItem() {
 	    currentItem = null;
@@ -316,7 +317,7 @@ public class ChoppingBoard extends Building {
 	public void finishChopItem() {
 		double quality = getChopQuality();
 		String grade = currentItem.getGrade(quality);
-
+		/*
 		System.out.println("Chopped: "+
 		    currentItem.getName()
 		    + " | Grade: "
@@ -325,6 +326,7 @@ public class ChoppingBoard extends Building {
 		    + String.format("%.0f", quality)
 		    + "%"
 		);
+		*/
 		currentItem.addActionScore(name, quality, grade);
 		chopCount = 0;
 		resetChopData();

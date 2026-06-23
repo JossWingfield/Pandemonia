@@ -247,6 +247,7 @@ public class Customiser {
 		}
 	}
 	public void addToInventory(Building b) {
+		b.resetForCustomiser();
 		if(b.isDecor) {
 			decorBuildingInventory.add(b);
 		} else if(b.isKitchenBuilding) {
@@ -468,7 +469,7 @@ public class Customiser {
 				for(Building b: decorBuildingInventory) {
 					if(index >= startDraw) {
 						if(b != null) {
-
+							//b.resetForCustomiser();
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
@@ -516,7 +517,7 @@ public class Customiser {
 				for(Building b: kitchenBuildingInventory) {
 					if(index >= startDraw) {
 						if(b != null) {
-
+							//b.resetForCustomiser();
 			    			if(containsMouse(xStart, yPos, 37*3, 37*3)) {
 								renderer.draw(buildFrameHighlight, xStart, yPos, 37*3, 37*3);
 			    				if(gp.mouseL.mouseButtonDown(0) && clickCounter == 0) {
@@ -1044,7 +1045,7 @@ public class Customiser {
 				Rectangle2D.Float buildHitbox = selectedBuilding.buildHitbox;
 				//boolean canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, xPos, yPos, selectedBuilding.hitbox.width, selectedBuilding.hitbox.height);
 				boolean canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, buildHitbox.x, buildHitbox.y, buildHitbox.width, buildHitbox.height);
-
+				
 				if(selectedBuilding.getName().equals("Shelf")) {
 			        selectedBuilding.hitbox.x = xPos;
 			        selectedBuilding.hitbox.y = yPos;
@@ -1057,6 +1058,17 @@ public class Customiser {
 			    	    }
 		    	    }
 				} else if(selectedBuilding.getName().equals("Kitchen Counter")) {
+			        selectedBuilding.hitbox.x = xPos;
+			        selectedBuilding.hitbox.y = yPos;
+			        selectedBuilding.onPlaced();
+		    	    if(prevX != xPos || prevY != yPos) {
+				        List<Building> counters = gp.world.buildingM.findBuildingsWithName("Kitchen Counter");
+			    	    for (Building b: counters) {
+			    	    	KitchenCounter t = (KitchenCounter)b;
+			    	    	t.updateConnections();
+			    	    }
+		    	    }
+				} else if(selectedBuilding.getName().equals("Gate")) {
 			        selectedBuilding.hitbox.x = xPos;
 			        selectedBuilding.hitbox.y = yPos;
 			        selectedBuilding.onPlaced();

@@ -108,7 +108,7 @@ public class Fridge extends Building {
         if(fridgeHitbox == null) {
         	return;
         }
-        if(fridgeHitbox.intersects(gp.player.hitbox)) {
+        if(fridgeHitbox.intersects(gp.player.interactHitbox)) {
             if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
                 // If player is holding food, try to put it straight in the fridge
                 if (gp.player.currentItem instanceof Food f) {
@@ -184,12 +184,12 @@ public class Fridge extends Building {
     public void draw(Renderer renderer) {
         if(firstUpdate) {
             firstUpdate = false;
-            fridgeHitbox = new Rectangle2D.Float(hitbox.x + 18, hitbox.y + hitbox.height, 14, 16);
+            fridgeHitbox = new Rectangle2D.Float(hitbox.x + 8, hitbox.y + 48, 32, 32);
         }
         
 		renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight); 
 
-        if(fridgeHitbox.intersects(gp.player.hitbox)) {
+        if(fridgeHitbox.intersects(gp.player.interactHitbox)) {
             renderer.draw(animations[0][0][1], 
                 (int) hitbox.x - xDrawOffset , 
                 (int) (hitbox.y ) - yDrawOffset, 

@@ -52,14 +52,16 @@ public class KitchenCounter extends Building {
 		
         name = "Kitchen Counter";
         
-    	hitbox.height = 14*3;
-    	hitbox.width = 10*3;
+    	hitbox.height = 11*3;
+    	hitbox.width = 12*3;
     	xDrawOffset = 3*3;
     	yDrawOffset = 1*3;
 		isBottomLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
 		interactHitbox = buildHitbox;
+		
+		xDrawOffset = 0*3;
 
 		
 	    // Assign sprites
@@ -117,28 +119,44 @@ public class KitchenCounter extends Building {
 	            gp,
 	            (int)(hitbox.x - gp.tileSize),
 	            (int)(hitbox.y),
-	            "Kitchen Counter") instanceof KitchenCounter;
+	            "Kitchen Counter") instanceof KitchenCounter || CollisionMethods.getBuildingAt(
+	    	            gp,
+	    	            (int)(hitbox.x - gp.tileSize),
+	    	            (int)(hitbox.y),
+	    	            "Gate") instanceof Gate;
 
 
 	    boolean rightCounter = CollisionMethods.getBuildingAt(
 	            gp,
 	            (int)(hitbox.x + gp.tileSize),
 	            (int)(hitbox.y),
-	            "Kitchen Counter") instanceof KitchenCounter;
+	            "Kitchen Counter") instanceof KitchenCounter || CollisionMethods.getBuildingAt(
+	    	            gp,
+	    	            (int)(hitbox.x + gp.tileSize),
+	    	            (int)(hitbox.y),
+	    	            "Gate") instanceof Gate;
 
 
 	    boolean topCounter = CollisionMethods.getBuildingAt(
 	            gp,
 	            (int)(hitbox.x),
 	            (int)(hitbox.y - gp.tileSize),
-	            "Kitchen Counter") instanceof KitchenCounter;
+	            "Kitchen Counter") instanceof KitchenCounter || CollisionMethods.getBuildingAt(
+	    	            gp,
+	    	            (int)(hitbox.x),
+	    	            (int)(hitbox.y - gp.tileSize),
+	    	            "Gate") instanceof Gate;
 
 
 	    boolean bottomCounter = CollisionMethods.getBuildingAt(
 	            gp,
 	            (int)(hitbox.x),
 	            (int)(hitbox.y + gp.tileSize),
-	            "Kitchen Counter") instanceof KitchenCounter;
+	            "Kitchen Counter") instanceof KitchenCounter || CollisionMethods.getBuildingAt(
+	    	            gp,
+	    	            (int)(hitbox.x),
+	    	            (int)(hitbox.y + gp.tileSize),
+	    	            "Gate") instanceof Gate;
 
 
 
@@ -150,7 +168,7 @@ public class KitchenCounter extends Building {
 
 
 	    if(gp.world.customiser.selectedBuilding != null &&
-	       gp.world.customiser.selectedBuilding.getName().equals("Kitchen Counter")) {
+	       (gp.world.customiser.selectedBuilding.getName().equals("Kitchen Counter") || gp.world.customiser.selectedBuilding.getName().equals("Gate"))) {
 
 
 	        if ((int)(hitbox.x - gp.tileSize) == xPos 
@@ -185,7 +203,7 @@ public class KitchenCounter extends Building {
 
 	    // Prevent T junctions / crosses
 	    if(gp.world.customiser.selectedBuilding != null &&
-	       gp.world.customiser.selectedBuilding.getName().equals("Kitchen Counter")) {
+	       (gp.world.customiser.selectedBuilding.getName().equals("Kitchen Counter") || gp.world.customiser.selectedBuilding.getName().equals("Gate"))) {
 
 	        if(connections > 2) {
 
@@ -299,20 +317,28 @@ public class KitchenCounter extends Building {
 	                }
 	            }
 	        }
+			type = 5;
+			importImages();
+	}
+	public void resetForCustomiser() {
+		type = 5;
+		importImages();
 	}
     private void updateNeighbor(float checkX, float checkY) {
         Building b = CollisionMethods.getBuildingAt(gp, (int)checkX, (int)checkY, "Kitchen Counter");
         if (b instanceof KitchenCounter) {
             ((KitchenCounter) b).updateConnections();
         }
+        b = CollisionMethods.getBuildingAt(gp, (int)checkX, (int)checkY, "Gate");
+	    if (b instanceof Gate) {
+	    	((Gate) b).updateConnections();
+	    }
     }
 	public void draw(Renderer renderer) {
-		
-		
 		if(currentItem != null) {
 			int newSize = 16;
 			currentItem.hitbox.x = hitbox.x - xDrawOffset;
-			currentItem.hitbox.y = hitbox.y - newSize/2;
+			currentItem.hitbox.y = hitbox.y - newSize/2 - 6;
 		}
 		
 	    renderer.draw(animations[0][0][0], (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);

@@ -127,13 +127,12 @@ public class OutdoorDecor extends Building {
          	drawWidth = 160*3;
         	drawHeight = 160*3;
         	hitbox.width=110*3;
-        	hitbox.height=89*3;
-        	xDrawOffset = 30*3;
-          	yDrawOffset = 64*3;
+        	hitbox.height=54*3;
+        	xDrawOffset = 28*3;
+          	yDrawOffset = 100*3;
         	canBePlacedOnTable = true;
             canBePlacedOnShelf = true;
             isDecor = true;
-            isSolid = false;
             cost = 10;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
@@ -159,17 +158,16 @@ public class OutdoorDecor extends Building {
             name = "Plant 1";
         	cost = 30;
         	description = "Add some greenery to the area.";
-        	animations[0][0][0] = importImage("/itch/buildings/bases/Tower/Blue.png").toTextureRegion();
+        	animations[0][0][0] = importImage("/itch/buildings/bases/Tower/Wood.png").toTextureRegion();
          	drawWidth = 80*3;
         	drawHeight = 160*3;
-        	hitbox.width=54*3;
-        	hitbox.height=46*3;
-        	xDrawOffset = 14*3;
-          	yDrawOffset = 111*3;
+        	hitbox.width=56*3;
+        	hitbox.height=50*3;
+        	xDrawOffset = 11*3;
+          	yDrawOffset = 107*3;
         	canBePlacedOnTable = true;
             canBePlacedOnShelf = true;
             isDecor = true;
-            isSolid = false;
             cost = 10;
     		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*6);
         	break;
@@ -281,6 +279,7 @@ public class OutdoorDecor extends Building {
         	xDrawOffset =10*3;
           	yDrawOffset =1*3;
           	isThirdLayer = true;
+          	isSolid = false;
         	break;
         case 19:
         	animations[0][0][0] = importImage("/itch/buildings/HangingPlants.png").getSubimage(32, 0, 32, 32);
@@ -291,6 +290,7 @@ public class OutdoorDecor extends Building {
         	xDrawOffset =10*3;
           	yDrawOffset =1*3;
         	isThirdLayer = true;
+        	isSolid = false;
         	break;
         case 20:
         	animations[0][0][0] = importImage("/itch/buildings/HangingPlants.png").getSubimage(64, 0, 32, 32);
@@ -301,6 +301,7 @@ public class OutdoorDecor extends Building {
         	xDrawOffset =10*3;
           	yDrawOffset =1*3;
         	isThirdLayer = true;
+        	isSolid = false;
         	break;
         case 21:
         	animations[0][0][0] = importImage("/itch/buildings/HayBale.png").getSubimage(0, 0, 32, 32);
@@ -310,6 +311,7 @@ public class OutdoorDecor extends Building {
         	hitbox.height =15*3;
         	xDrawOffset =1*3;
           	yDrawOffset =7*3;
+          	
         	break;
         case 22:
         	animations[0][0][0] = importImage("/itch/buildings/HayBale.png").getSubimage(32, 0, 32, 32);
@@ -776,10 +778,10 @@ public class OutdoorDecor extends Building {
     		importFromSpriteSheet("/itch/buildings/village/Blacksmith/Red.png", 14, 1, 0, 0, 0, 192, 144, 0);
         	drawWidth =192*3;
         	drawHeight =144*3;
-        	hitbox.width =155*3;
-        	hitbox.height =43*3;
-        	xDrawOffset =47*3;
-          	yDrawOffset =93*3;
+        	hitbox.width =150*3;
+        	hitbox.height =53*3;
+        	xDrawOffset =13*3;
+          	yDrawOffset =66*3;
           	animated = true;
         	break;
         case 74:
@@ -1536,10 +1538,10 @@ public class OutdoorDecor extends Building {
         	animations[0][0][0] = importImage("/itch/buildings/OutdoorDecor.png").getSubimage(80, 64, 48, 32);
         	drawWidth = 48*3;
         	drawHeight = 32*3;
-        	hitbox.width= 20*3;
-        	hitbox.height=27*3;
-        	xDrawOffset = 6*3;
-          	yDrawOffset = 1*3;
+        	hitbox.width= 25*3;
+        	hitbox.height=14*3;
+        	xDrawOffset = 4*3;
+          	yDrawOffset = 17*3;
         	break;
         case 157:
         	animations[0][0][0] = importImage("/itch/buildings/OutdoorDecor.png").getSubimage(32, 48, 32, 32);
@@ -1690,7 +1692,6 @@ public class OutdoorDecor extends Building {
         	hitbox.height = 12*3;
         	xDrawOffset = 8*3;
          	yDrawOffset = 13*3;
-         	isSolid = false;
         	break;
         case 173:
         	animations[0][0][0] = importImage("/buildings/Stool.png").toTextureRegion();
@@ -1793,6 +1794,283 @@ public class OutdoorDecor extends Building {
         	hitbox.height = 33*3;
         	xDrawOffset = 28*3;
          	yDrawOffset = 103*3;
+        	break;
+        case 184:
+    		importFromSpriteSheet("/buildings/Lighthouse.png", 6, 1, 0, 0, 0, 160, 304, 0);
+          	drawWidth = 160*3;
+        	drawHeight = 304*3;
+        	hitbox.width= 142*3;
+        	hitbox.height=58*3;
+        	xDrawOffset = 8*3;
+          	yDrawOffset = 217*3;
+          	animated = true;
+          	break;
+        case 185:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(0, 0, 48, 48);
+        	drawWidth =48*3;
+        	drawHeight =48*3;
+        	hitbox.width = 14*3;
+        	hitbox.height = 14*3;
+        	xDrawOffset = 17*3;
+         	yDrawOffset = 32*3;
+        	break;
+        case 186:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(48, 16, 16, 32);
+        	drawWidth =16*3;
+        	drawHeight =32*3;
+        	hitbox.width = 14*3;
+        	hitbox.height = 14*3;
+        	xDrawOffset = 0*3;
+         	yDrawOffset = 0*3;
+         	isSolid = false;
+        	break;
+        case 187:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(64, 16, 16, 32);
+        	drawWidth =16*3;
+        	drawHeight =32*3;
+        	hitbox.width = 4*3;
+        	hitbox.height = 6*3;
+        	xDrawOffset = 6*3;
+         	yDrawOffset = 7*3;
+        	break;
+        case 188:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(80, 16, 16, 32);
+        	drawWidth =16*3;
+        	drawHeight =32*3;
+        	hitbox.width = 4*3;
+        	hitbox.height = 6*3;
+        	xDrawOffset = 6*3;
+         	yDrawOffset = 7*3;
+        	break;
+        case 189:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(96, 16, 16, 16);
+        	drawWidth =16*3;
+        	drawHeight =16*3;
+        	hitbox.width = 4*3;
+        	hitbox.height = 6*3;
+        	xDrawOffset = 6*3;
+         	yDrawOffset = 7*3;
+        	break;
+        case 190:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(96+16, 16, 16, 16);
+        	drawWidth =16*3;
+        	drawHeight =16*3;
+        	hitbox.width = 4*3;
+        	hitbox.height = 6*3;
+        	xDrawOffset = 6*3;
+         	yDrawOffset = 7*3;
+        	break;
+        case 191:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(96+32, 16, 16, 32);
+        	drawWidth =16*3;
+        	drawHeight =32*3;
+        	hitbox.width = 12*3;
+        	hitbox.height = 8*3;
+        	xDrawOffset = 2*3;
+         	yDrawOffset = 21*3;
+        	break;
+        case 192:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(96+48, 16, 16, 32);
+        	drawWidth =16*3;
+        	drawHeight =32*3;
+        	hitbox.width = 12*3;
+        	hitbox.height = 8*3;
+        	xDrawOffset = 2*3;
+         	yDrawOffset = 21*3;
+        	break;
+        case 193:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(0, 48, 16, 32);
+        	drawWidth =16*3;
+        	drawHeight =32*3;
+        	hitbox.width = 16*3;
+        	hitbox.height = 16*3;
+        	xDrawOffset = 0*3;
+         	yDrawOffset = 16*3;
+        	break;
+        case 194:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(16, 48, 16, 32);
+        	drawWidth =16*3;
+        	drawHeight =32*3;
+        	hitbox.width = 16*3;
+        	hitbox.height = 16*3;
+        	xDrawOffset = 0*3;
+         	yDrawOffset = 16*3;
+        	break;
+        case 195:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(32, 64, 16, 16);
+        	drawWidth =16*3;
+        	drawHeight = 16*3;
+        	hitbox.width = 14*3;
+        	hitbox.height = 8*3;
+        	xDrawOffset = 0*3;
+         	yDrawOffset = 6*3;
+        	break;
+        case 196:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(48, 48, 32, 32);
+        	drawWidth =32*3;
+        	drawHeight = 32*3;
+        	hitbox.width = 20*3;
+        	hitbox.height = 26*3;
+        	xDrawOffset = 6*3;
+         	yDrawOffset = 5*3;
+         	isBottomLayer = true;
+        	break;
+        case 197:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(80, 48, 32, 32);
+        	drawWidth =32*3;
+        	drawHeight = 32*3;
+        	hitbox.width = 20*3;
+        	hitbox.height = 26*3;
+        	xDrawOffset = 6*3;
+         	yDrawOffset = 5*3;
+        	isBottomLayer = true;
+        	break;
+        case 198:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(80+32, 48, 32, 32);
+        	drawWidth =32*3;
+        	drawHeight = 32*3;
+        	hitbox.width = 20*3;
+        	hitbox.height = 26*3;
+        	xDrawOffset = 6*3;
+         	yDrawOffset = 5*3;
+        	isBottomLayer = true;
+        	break;
+        case 199:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(0, 80, 32, 32);
+        	drawWidth =32*3;
+        	drawHeight = 32*3;
+        	hitbox.width = 14*3;
+        	hitbox.height = 19*3;
+        	xDrawOffset = 8*3;
+         	yDrawOffset = 10*3;
+        	break;
+        case 200:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(32, 80, 32, 32);
+        	drawWidth =32*3;
+        	drawHeight = 32*3;
+        	hitbox.width = 14*3;
+        	hitbox.height = 19*3;
+        	xDrawOffset = 8*3;
+         	yDrawOffset = 10*3;
+        	break;
+        case 201:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(32, 80, 32, 32);
+        	drawWidth =32*3;
+        	drawHeight = 32*3;
+        	hitbox.width = 14*3;
+        	hitbox.height = 19*3;
+        	xDrawOffset = 8*3;
+         	yDrawOffset = 10*3;
+        	break;
+        case 202:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(64, 80, 32, 32);
+        	drawWidth =32*3;
+        	drawHeight = 32*3;
+        	hitbox.width = 12*3;
+        	hitbox.height = 12*3;
+        	xDrawOffset = 10*3;
+         	yDrawOffset = 12*3;
+        	break;
+        case 203:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(64+32, 80, 32, 32);
+        	drawWidth =32*3;
+        	drawHeight = 32*3;
+        	hitbox.width = 18*3;
+        	hitbox.height = 21*3;
+        	xDrawOffset = 7*3;
+         	yDrawOffset = 4*3;
+        	break;
+        case 204:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(64+32+32, 80, 32, 32);
+        	drawWidth =32*3;
+        	drawHeight = 32*3;
+        	hitbox.width = 18*3;
+        	hitbox.height = 21*3;
+        	xDrawOffset = 7*3;
+         	yDrawOffset = 4*3;
+        	break;
+        case 205:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(0, 112, 48, 48);
+        	drawWidth =48*3;
+        	drawHeight = 48*3;
+          	hitbox.width = 16*3;
+           	hitbox.height = 16*3;
+           	xDrawOffset = 16*3;
+          	yDrawOffset = 32*3;
+        	break;
+        case 206:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(48, 112, 16, 16);
+        	drawWidth = 16*3;
+        	drawHeight = 16*3;
+          	hitbox.width = 4*3;
+           	hitbox.height = 7*3;
+           	xDrawOffset = 6*3;
+          	yDrawOffset = 6*3;
+        	break;
+        case 207:
+        	animations[0][0][0] = importImage("/buildings/GraveyardProps.png").getSubimage(64, 112, 16, 16);
+        	drawWidth = 16*3;
+        	drawHeight = 16*3;
+          	hitbox.width = 4*3;
+           	hitbox.height = 7*3;
+           	xDrawOffset = 6*3;
+          	yDrawOffset = 6*3;
+        	break;
+        case 208:
+        	animations[0][0][0] = importImage("/buildings/ClothesShop.png").toTextureRegion();
+        	drawWidth = 176*3;
+        	drawHeight = 128*3;
+          	hitbox.width = 124*3;
+           	hitbox.height = 30*3;
+           	xDrawOffset = 29*3;
+          	yDrawOffset = 66*3;
+        	break;
+        case 209:
+        	animations[0][0][0] = importImage("/buildings/FurnitureShop.png").toTextureRegion();
+        	drawWidth = 192*3;
+        	drawHeight = 144*3;
+          	hitbox.width = 149*3;
+           	hitbox.height = 44*3;
+           	xDrawOffset = 13*3;
+          	yDrawOffset = 89*3;
+        	break;
+        case 210:
+        	animations[0][0][0] = importImage("/buildings/FabricCrate.png").toTextureRegion();
+        	drawWidth = 32*3;
+        	drawHeight = 32*3;
+          	hitbox.width = 14*3;
+           	hitbox.height = 11*3;
+           	xDrawOffset = 9*3;
+          	yDrawOffset = 13*3;
+        	break;
+        case 211:
+        	animations[0][0][0] = importImage("/buildings/FurnitureSign.png").toTextureRegion();
+        	drawWidth = 32*3;
+        	drawHeight = 32*3;
+          	hitbox.width = 14*3;
+           	hitbox.height = 11*3;
+           	xDrawOffset = 9*3;
+          	yDrawOffset = 13*3;
+          	isSolid = false;
+          	isThirdLayer = true;
+        	break;
+        case 212:
+        	animations[0][0][0] = importImage("/buildings/SaleSign.png").toTextureRegion();
+        	drawWidth = 32*3;
+        	drawHeight = 32*3;
+          	hitbox.width = 20*3;
+           	hitbox.height = 13*3;
+           	xDrawOffset = 5*3;
+          	yDrawOffset = 16*3;
+        	break;
+        case 213:
+        	animations[0][0][0] = importImage("/buildings/Bakery.png").toTextureRegion();
+        	drawWidth = 128*3;
+        	drawHeight = 160*3;
+          	hitbox.width = 68*3;
+           	hitbox.height = 40*3;
+           	xDrawOffset = 30*3;
+          	yDrawOffset = 114*3;
         	break;
         }
         name = "Outdoor Decor";

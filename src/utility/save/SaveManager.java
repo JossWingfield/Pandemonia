@@ -37,12 +37,25 @@ public class SaveManager {
 	
 	// Slot info stored in save/meta.json
 	private Map<Integer, Boolean> saveSlots = new HashMap<>();
+	
+	public boolean recording = false;
+	private int frameIndex = 0;
+	private String recordingFolder = "recording/";
+	
+	double captureTimer = 0;
+
+	ByteBuffer buffer;
+    ByteBuffer flipped;
 
 	
 	public SaveManager(GamePanel gp) {
 		this.gp = gp;
 		loadMeta(); // load slot states on startup
 		//System.out.println("Liadung meta");
+	    int width = gp.frameWidth;
+	    int height = gp.frameHeight;
+		buffer = ByteBuffer.allocateDirect(width * height * 4);
+	    flipped = ByteBuffer.allocateDirect(width * height * 4);
 	}
 	// --- META HANDLING ---
 	private File getMetaFile() {
@@ -197,6 +210,59 @@ public class SaveManager {
 	    String path = "save/preview" + slot + ".png";
 	    savePNG(path, scaled, previewW, previewH);
 
+	}
+	public void update(double dt) {
+	    if (recording) {
+	    	//glFinish();
+	        captureTimer += dt;
+            captureFrame();
+
+	        if (captureTimer >= 1.0 / 16.0) {
+	           // captureFrame();
+	            //captureTimer -= 1.0 / 16.0;
+	        }
+	    }
+	}
+	private void captureFrame() {
+
+	    int width = gp.frameWidth;
+	    int height = gp.frameHeight;
+
+	    glBindFramebuffer(GL_FRAMEBUFFER, gp.exportFbo);
+	    glReadBuffer(org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0);
+	    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+	    glReadPixels(
+	            0, 0,
+	            width, height,
+	            GL_RGBA,
+	            GL_UNSIGNED_BYTE,
+	            buffer
+	    );
+
+	    // Flip vertically
+	    int stride = width * 4;
+	    flipped.clear();
+	    
+	    for (int y = 0; y < height; y++) {
+	        int srcY = height - 1 - y;
+	        for (int x = 0; x < stride; x++) {
+	            flipped.put(y * stride + x, buffer.get(srcY * stride + x));
+	        }
+	    }
+
+	    String path = recordingFolder + String.format("frame_%04d.png", frameIndex++);
+	    savePNG(path, flipped, width, height);
+	}
+	public void startRecording() {
+	    recording = true;
+	    frameIndex = 0;
+
+	    new File(recordingFolder).mkdirs();
+	}
+
+	public void stopRecording() {
+	    recording = false;
 	}
 	public boolean isSlotEmpty(int slot) {
 	    return !saveSlots.getOrDefault(slot, false);

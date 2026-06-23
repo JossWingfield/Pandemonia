@@ -200,7 +200,7 @@ public class CookingItem extends Item {
 		        // apply gameplay impact (important part)
 		        double quality = 100* (0.4 + flipAccuracy * 0.6);
 		        finalGrade = cookingItem.getGrade(quality);
-		        System.out.println("Flip: " + quality + "  " + finalGrade);
+		        //System.out.println("Flip: " + quality + "  " + finalGrade);
 		        cookingItem.addActionScore(name, quality, finalGrade);
 		    }
 		}
@@ -246,7 +246,7 @@ public class CookingItem extends Item {
 	        double quality = 100*(0.4 + averageAccuracy * 0.6);
 	        finalGrade = cookingItem.getGrade(quality);
 	        cookingItem.addActionScore(name, quality, finalGrade);
-	        System.out.println("Stir: " + quality + "  " + finalGrade);
+	        //System.out.println("Stir: " + quality + "  " + finalGrade);
 
 	        // --- Overcooking still possible ---
 	        if (cookTime >= maxBurnTime) {
@@ -312,7 +312,7 @@ public class CookingItem extends Item {
 	        double quality = (100*(0.4 + finalScore / 250.0));
 	        finalGrade = cookingItem.getGrade(quality);
 	        cookingItem.addActionScore(name, quality, finalGrade);
-	        System.out.println("Saute: " + quality + "  " + finalGrade);
+	        //System.out.println("Saute: " + quality + "  " + finalGrade);
 
 	        cooking = false;
 	    }
@@ -376,7 +376,7 @@ public class CookingItem extends Item {
 	    double quality = 100*(0.4 + accuracy * 0.6);
 	    finalGrade = getPassiveCookGrade(quality);
         cookingItem.addActionScore(name, quality, finalGrade);
-        System.out.println("Passive: " + quality + "  " + finalGrade);
+        //System.out.println("Passive: " + quality + "  " + finalGrade);
 	}
 	public String getPassiveCookGrade(double score) {
 		

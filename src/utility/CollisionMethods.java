@@ -396,6 +396,9 @@ public class CollisionMethods {
 
 	    return connections;
 	}
+	private static boolean isCounterCorner(KitchenCounter counter) {
+	    return counter.type >= 6 && counter.type <= 9;
+	}
 	public static boolean canPlaceBuilding(GamePanel gp, Building building, float x, float y, float width, float height) {
 	    if(building.isKitchenBuilding) {
 	    	if(!gp.world.mapM.isInRoom(RoomHelperMethods.KITCHEN)) {
@@ -414,9 +417,52 @@ public class CollisionMethods {
 	    }
 
 		Rectangle2D.Float buildHitbox = new Rectangle2D.Float(x, y, width, height);
-	    
 		int tileSize = gp.tileSize;
-		// ---------------- Kitchen Counter connection validation ----------------
+		
+		// ---------------- Gate placement ----------------
+		if ("Gate".equals(building.getName())) {
+
+		    Building counter = CollisionMethods.getBuildingAt(
+		            gp,
+		            (int)x,
+		            (int)y,
+		            "Kitchen Counter"
+		    );
+
+
+		    // Must be placed on a kitchen counter
+		    if (!(counter instanceof KitchenCounter)) {
+		        return false;
+		    }
+
+
+		    KitchenCounter kitchenCounter = (KitchenCounter) counter;
+
+
+		    // Cannot be placed on corner counters
+		    if (isCounterCorner(kitchenCounter)) {
+		        return false;
+		    }
+
+
+		    // Prevent putting gate on top of another object
+		    for(Building b : gp.world.buildingM.getBuildings()) {
+
+		        if(b == null)
+		            continue;
+
+
+		        if(b.buildHitbox.intersects(buildHitbox)
+		           && !b.getName().equals("Kitchen Counter")) {
+
+		            return false;
+		        }
+		    }
+
+
+		    return true;
+		}
+		
 		// ---------------- Kitchen Counter connection validation ----------------
 		if ("Kitchen Counter".equals(building.getName())) {
 

@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.lwjgl.glfw.GLFW;
 
+import entity.buildings.Gate;
 import entity.buildings.KitchenCounter;
 import entity.buildings.Shelf;
 
@@ -119,31 +120,6 @@ public class KeyListener {
         // ----- PLAY STATE -----
         if (gp.currentState == gp.playState) {
         	
-            if (isKeyPressed(GLFW.GLFW_KEY_2)) {
-            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-              	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-              	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-              	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-              	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
-            	
-              	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-            	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0, 0));
-            }
             /*
             if (isKeyPressed(GLFW.GLFW_KEY_1)) {
             	gp.renderer.intensity+=0.01f;
@@ -188,6 +164,10 @@ public class KeyListener {
             	plate.addIngredient(t);
             	gp.gui.addRecipeGrading(plate);
             }*/
+        	
+            //if (keyBeginPress(GLFW.GLFW_KEY_P)) gp.saveM.startRecording();
+            //if (keyBeginPress(GLFW.GLFW_KEY_O)) gp.saveM.stopRecording();
+        	
             if (keyBeginPress(GLFW.GLFW_KEY_6)) {
             	gp.world.gameM.setSeason("Spring");
             }
@@ -235,7 +215,9 @@ public class KeyListener {
             if (keyBeginPress(GLFW.GLFW_KEY_BACKSPACE)) gp.world.mapB.switchSides();
             if (keyBeginPress(GLFW.GLFW_KEY_UP)) gp.world.mapB.upLayer();
             if (keyBeginPress(GLFW.GLFW_KEY_DOWN)) gp.world.mapB.downLayer();
-            if (keyBeginPress(GLFW.GLFW_KEY_P)) gp.world.buildingM.outputMap();
+            if (keyBeginPress(GLFW.GLFW_KEY_P)) {
+            	gp.world.buildingM.outputMap();
+            }
 
             // Page selection
             if (keyBeginPress(GLFW.GLFW_KEY_1)) gp.world.mapB.pageNum = 1;
@@ -272,16 +254,25 @@ public class KeyListener {
         // ----- CUSTOMISE RESTAURANT -----
         else if (gp.currentState == gp.customiseRestaurantState) {
             if (keyBeginPress(GLFW.GLFW_KEY_C)) {
+            	if(gp.world.customiser.selectedBuilding != null) {
+            		gp.world.customiser.selectedBuilding.resetForCustomiser();
+            	}
                 gp.world.customiser.selectedBuilding = null;
                 gp.world.customiser.showBuildings = true;
                 gp.currentState = gp.playState;
+                gp.world.buildingM.checkBuildingConnections();
             }
             if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
                 if (!gp.world.customiser.showBuildings) {
+                   	if(gp.world.customiser.selectedBuilding != null) {
+                    	gp.world.customiser.selectedBuilding.resetForCustomiser();
+                   	}
                     gp.world.customiser.showBuildings = true;
                     gp.world.customiser.selectedBuilding = null;
+                    gp.world.buildingM.checkBuildingConnections();
                 } else {
                     gp.currentState = gp.playState;
+                    gp.world.buildingM.checkBuildingConnections();
                 }
             }
         }

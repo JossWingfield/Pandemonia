@@ -388,23 +388,62 @@ public class Player extends Entity{
         	}
     	}
     }
+    private float maxSafeDeltaX(float desiredDeltaX) {
+        if (desiredDeltaX == 0) return 0;
+        if (canMove(hitbox.x + desiredDeltaX, hitbox.y)) return desiredDeltaX;
+
+        float sign = Math.signum(desiredDeltaX);
+        float lo = 0f, hi = Math.abs(desiredDeltaX);
+        for (int i = 0; i < 12; i++) {
+            float mid = (lo + hi) / 2f;
+            if (canMove(hitbox.x + sign * mid, hitbox.y)) {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+        return sign * lo;
+    }
+
+    private float maxSafeDeltaY(float desiredDeltaY) {
+        if (desiredDeltaY == 0) return 0;
+        if (canMove(hitbox.x, hitbox.y + desiredDeltaY)) return desiredDeltaY;
+
+        float sign = Math.signum(desiredDeltaY);
+        float lo = 0f, hi = Math.abs(desiredDeltaY);
+        for (int i = 0; i < 12; i++) {
+            float mid = (lo + hi) / 2f;
+            if (canMove(hitbox.x, hitbox.y + sign * mid)) {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+        return sign * lo;
+    }
     private boolean tryHorizontalCorrection(float moveX, boolean allowCorrection) {
 
         if (!allowCorrection) {
             return false;
         }
 
-        float correctionDistance = 4 * 3f;
+        float correctionDistance = 3 * 3f;
 
         for (float offset = 1; offset <= correctionDistance; offset++) {
 
-            if (canMove(hitbox.x + moveX, hitbox.y - offset)) {
+            // Move vertically first
+            if (canMove(hitbox.x, hitbox.y - offset)
+                    && canMove(hitbox.x + moveX, hitbox.y - offset)) {
+
                 hitbox.y -= offset;
                 hitbox.x += moveX;
                 return true;
             }
 
-            if (canMove(hitbox.x + moveX, hitbox.y + offset)) {
+
+            if (canMove(hitbox.x, hitbox.y + offset)
+                    && canMove(hitbox.x + moveX, hitbox.y + offset)) {
+
                 hitbox.y += offset;
                 hitbox.x += moveX;
                 return true;
@@ -414,24 +453,28 @@ public class Player extends Entity{
         return false;
     }
 
-
     private boolean tryVerticalCorrection(float moveY, boolean allowCorrection) {
 
         if (!allowCorrection) {
             return false;
         }
 
-        float correctionDistance = 4 * 3f;
+        float correctionDistance = 3 * 3f;
 
         for (float offset = 1; offset <= correctionDistance; offset++) {
 
-            if (canMove(hitbox.x - offset, hitbox.y + moveY)) {
+            if (canMove(hitbox.x - offset, hitbox.y)
+                    && canMove(hitbox.x - offset, hitbox.y + moveY)) {
+
                 hitbox.x -= offset;
                 hitbox.y += moveY;
                 return true;
             }
 
-            if (canMove(hitbox.x + offset, hitbox.y + moveY)) {
+
+            if (canMove(hitbox.x + offset, hitbox.y)
+                    && canMove(hitbox.x + offset, hitbox.y + moveY)) {
+
                 hitbox.x += offset;
                 hitbox.y += moveY;
                 return true;
@@ -494,25 +537,15 @@ public class Player extends Entity{
             	            currentAnimation = 4;
             	        }
             	    }
-            	} else if(!gp.world.buildingM.entityCheck(
-            	        hitbox.x-moveAmount,
-            	        hitbox.y,
-            	        hitbox.width,
-            	        hitbox.height)) {
-            	    Building b = gp.world.buildingM.findSolidBuilding(
-            	            hitbox.x-moveAmount,
-            	            hitbox.y,
-            	            hitbox.width,
-            	            hitbox.height);
-            	    if (b != null) {
-            	        hitbox.x = CollisionMethods.getBuildingPosX(
-            	                hitbox.x,
-            	                b,
-            	                moveAmount,
-            	                true);
-            	    }
             	} else {
-            	    hitbox.x = CollisionMethods.getWallPos(hitbox.x, gp);
+            	    float actualMove = maxSafeDeltaX(-moveAmount);
+            	    hitbox.x += actualMove;
+            	    if (actualMove != 0 && currentAnimation != 2) {
+            	        currentAnimation = 1;
+            	        if (currentItem != null) {
+            	            currentAnimation = 4;
+            	        }
+            	    }
             	}
             } else if (right) { //Moving right
                 direction = 0;
@@ -528,19 +561,21 @@ public class Player extends Entity{
              	        }
              	    }
              	} else if(tryHorizontalCorrection(moveAmount, horizontalOnly)) {
-             	    if(currentAnimation != 2) {
-             	        currentAnimation = 1;
-             	        if(currentItem != null) {
-             	            currentAnimation = 4;
-             	        }
-             	    }
-             	}else if(!gp.world.buildingM.entityCheck(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height)) {
-                	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x+moveAmount, hitbox.y, hitbox.width, hitbox.height);
-                	if (b != null) {
-                	    hitbox.x = CollisionMethods.getBuildingPosX(hitbox.x, b, moveAmount, false); // true if moving left
-                	}
+                    if(currentAnimation != 2) {
+                        currentAnimation = 1;
+                        if(currentItem != null) {
+                            currentAnimation = 4;
+                        }
+                    }
                 } else {
-                    hitbox.x = CollisionMethods.getWallPos(hitbox.x + hitbox.width - 1, gp) - (hitbox.width- gp.tileSize);
+                    float actualMove = maxSafeDeltaX(moveAmount);
+                    hitbox.x += actualMove;
+                    if (actualMove != 0 && currentAnimation != 2) {
+                        currentAnimation = 1;
+                        if (currentItem != null) {
+                            currentAnimation = 4;
+                        }
+                    }
                 }
             }
             if (up) {
@@ -556,19 +591,21 @@ public class Player extends Entity{
              	        }
              	    }
              	} else if(tryVerticalCorrection(-moveAmount, verticalOnly)) {
-             	    if(currentAnimation != 2) {
-             	        currentAnimation = 1;
-             	        if(currentItem != null) {
-             	            currentAnimation = 4;
-             	        }
-             	    }
-             	} else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height)) {
-                	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x, hitbox.y-moveAmount, hitbox.width, hitbox.height);
-                	if (b != null) {
-                	    hitbox.y = CollisionMethods.getBuildingPosY(hitbox.y, b, moveAmount, true); // true if moving up
-                	}
+                    if(currentAnimation != 2) {
+                        currentAnimation = 1;
+                        if(currentItem != null) {
+                            currentAnimation = 4;
+                        }
+                    }
                 } else {
-                    hitbox.y = CollisionMethods.getFloorPos(hitbox.y, gp);
+                    float actualMove = maxSafeDeltaY(-moveAmount);
+                    hitbox.y += actualMove;
+                    if (actualMove != 0 && currentAnimation != 2) {
+                        currentAnimation = 1;
+                        if (currentItem != null) {
+                            currentAnimation = 4;
+                        }
+                    }
                 }
             } else if (down) {
             	direction = 2;
@@ -583,19 +620,21 @@ public class Player extends Entity{
             	        }
             	    }
             	} else if(tryVerticalCorrection(moveAmount, verticalOnly)) {
-            	    if(currentAnimation != 2) {
-            	        currentAnimation = 1;
-            	        if(currentItem != null) {
-            	            currentAnimation = 4;
-            	        }
-            	    }
-            	} else if(!gp.world.buildingM.entityCheck(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height)) {
-                	Building b = gp.world.buildingM.findSolidBuilding(hitbox.x, hitbox.y+moveAmount, hitbox.width, hitbox.height);
-                	if (b != null) {
-                	    hitbox.y = CollisionMethods.getBuildingPosY(hitbox.y, b, moveAmount, false); // true if moving up
-                	}
+                    if(currentAnimation != 2) {
+                        currentAnimation = 1;
+                        if(currentItem != null) {
+                            currentAnimation = 4;
+                        }
+                    }
                 } else {
-                    hitbox.y = CollisionMethods.getFloorPos(hitbox.y + hitbox.height - 1, gp) - (hitbox.height- gp.tileSize);
+                    float actualMove = maxSafeDeltaY(moveAmount);
+                    hitbox.y += actualMove;
+                    if (actualMove != 0 && currentAnimation != 2) {
+                        currentAnimation = 1;
+                        if (currentItem != null) {
+                            currentAnimation = 4;
+                        }
+                    }
                 }
             }
             

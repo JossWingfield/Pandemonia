@@ -88,7 +88,7 @@ public class MapBuilder {
 		r = new Random();
 		yStart = gp.frameHeight-ySize+4;
 		buildings = new Building[500];
-		outdoorBuildings = new Building[500];
+		outdoorBuildings = new Building[800];
 		addBuildings();
 		font = AssetPool.getBitmapFont("/UI/monogram.ttf", 32);
 	}
@@ -140,7 +140,7 @@ public class MapBuilder {
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new RoomSpawn(gp, 0, 0);
 		totalBuildingCount++;
-		buildings[totalBuildingCount] = new Gate(gp, 0, 0);
+		buildings[totalBuildingCount] = new Gate(gp, 0, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new SoulLantern(gp, 0, 0);
 		totalBuildingCount++;
@@ -213,7 +213,7 @@ public class MapBuilder {
 			buildings[totalBuildingCount] = new FoodStore(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
-		for(int i = 0; i < 184; i++) {
+		for(int i = 0; i < 214; i++) {
 			outdoorBuildings[totalBuildingCount] = new OutdoorDecor(gp, 0, 0, i);
 			totalBuildingCount++;
 		}
@@ -387,7 +387,7 @@ public class MapBuilder {
 		int yOffset = 32;
 		
 		if(showTiles) {
-			renderer.drawRect(0, yStart, gp.frameWidth, ySize, c);
+			renderer.fillRect(0, yStart, gp.frameWidth, ySize, c);
 			int xStart = 20;
 			yStart = gp.frameHeight-ySize+4 - 20 + yOffset;
 
@@ -914,7 +914,7 @@ public class MapBuilder {
 			    }
 				
 				num = 3*32;
-				img = importImage("/itch/buildings/StoneWall.png").toTextureRegion();
+				img = importImage("/itch/buildings/StoneWall2.png").toTextureRegion();
 				xStart+=num;
 				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
 				
@@ -1227,6 +1227,48 @@ public class MapBuilder {
 			    		counter++;
 			    	}
 			    }
+				
+				num = 0;
+				img = importImage("/itch/tiles/GraveyardDirt.png").toTextureRegion();
+				xStart = 0;
+				yStart += 8*32;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 4; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 5*32;
+				
+				img = importImage("/itch/tiles/spring/Graveyard.png").toTextureRegion();
+				xStart+=num;
+				renderer.draw(img, xStart, yStart, img.getPixelWidth()*2, img.getPixelHeight()*2);
+				
+				for(int i = 0; i < 4; i++) {
+			    	for(int j = 0; j < 5; j++) {
+			    			
+			    		if(containsMouse(xStart + j*32, yStart + i*32, 32, 32)) {
+			    			renderer.drawRect(xStart + j*32, yStart + i*32, 32, 32, Colour.YELLOW);
+
+			    			if(gp.mouseL.mouseButtonDown(0)) {
+			    				selectedTile = counter;
+			    			}
+			    		}
+			    		counter++;
+			    	}
+			    }
+				
+				num = 5*32;
 				
 			}
 			

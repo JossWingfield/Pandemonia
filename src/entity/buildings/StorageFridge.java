@@ -23,6 +23,7 @@ import entity.items.Spaghetti;
 import entity.items.Steak;
 import entity.items.Tomato;
 import main.GamePanel;
+import main.renderer.Colour;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
@@ -123,7 +124,7 @@ public class StorageFridge extends Building {
 		    }
 		}
     	if(fridgeHitbox != null) {
-	    	if(fridgeHitbox.intersects(gp.player.hitbox)) {
+	    	if(fridgeHitbox.intersects(gp.player.interactHitbox)) {
 			    if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 			    	uiOpen = !uiOpen;
 			    	if(gp.player.currentItem != null) {
@@ -198,12 +199,15 @@ public class StorageFridge extends Building {
 		
 		if(firstUpdate) {
 			firstUpdate = false;
-			fridgeHitbox = new Rectangle2D.Float(hitbox.x + 18, hitbox.y+hitbox.height, 14, 16);
+			fridgeHitbox = new Rectangle2D.Float(hitbox.x + 8, hitbox.y + 48, 32, 32);
 		}
+		//renderer.setColour(Colour.YELLOW);
+	    //renderer.drawRect((int)fridgeHitbox.x, (int)fridgeHitbox.y, (int)fridgeHitbox.width, (int)fridgeHitbox.height);
+			 
 		
 		renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
    		 
-		if(fridgeHitbox.intersects(gp.player.hitbox)) {
+		if(fridgeHitbox.intersects(gp.player.interactHitbox)) {
 		    renderer.draw(animations[0][0][1], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 	        

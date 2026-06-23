@@ -87,7 +87,7 @@ public abstract class Entity implements Cloneable {
         float camX = camera.position.x;
         float camY = camera.position.y;
         
-        float buffer = 400;
+        float buffer = 600;
 
         return hitbox.x + hitbox.width  >= camX - buffer &&
                hitbox.x             <= camX + screenWidth + buffer &&

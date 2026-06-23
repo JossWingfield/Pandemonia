@@ -23,7 +23,6 @@ public class MenuBook extends Building {
 		drawHeight = 16*3;
 		importImages();
 		isSolid = false;
-		canBePlaced = false;
 		isBottomLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;

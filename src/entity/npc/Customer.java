@@ -415,7 +415,7 @@ public class Customer extends NPC {
     		gp.world.progressM.achievements.get("1000_served").unlock();
 	    }
 	    
-	    gp.gui.addRecipeGrading(p);
+	    //gp.gui.addRecipeGrading(p);
 
 	    // clean up
 	    RecipeManager.removeOrder(foodOrder);

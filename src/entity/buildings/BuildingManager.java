@@ -69,6 +69,7 @@ public class BuildingManager {
     		if(buildings[i] != null) {
     			if(buildings[i] == b) {
     				buildings[i].destroy();
+					gp.world.customiser.addToInventory(buildings[i].clone());
     				buildings[i] = null;
     				
     				if(gp.multiplayer) {
@@ -113,6 +114,12 @@ public class BuildingManager {
 	    List<Building> kitchenCounters = gp.world.buildingM.findBuildingsWithName("Kitchen Counter");
 	    for (Building b: kitchenCounters) {
 	    	KitchenCounter t = (KitchenCounter)b;
+	    	t.updateConnections();
+	    }
+	    
+	    List<Building> gates = gp.world.buildingM.findBuildingsWithName("Gate");
+	    for (Building b: gates) {
+	    	Gate t = (Gate)b;
 	    	t.updateConnections();
 	    }
     }

@@ -120,6 +120,9 @@ public class Building extends Entity {
 	public void updateState(double dt) {
 
 	}
+	public void resetForCustomiser() {
+		
+	}
 	public void inputUpdate(double dt) {
 		if(canBePlaced) {
 			if(hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
@@ -133,8 +136,6 @@ public class Building extends Entity {
 			}
 			if(destructionUIOpen) {
 				if(gp.mouseL.mouseButtonDown(1)) {
-					destroy();
-					gp.world.customiser.addToInventory(this);
 					gp.world.buildingM.destroyBuilding(this);
 					gp.world.buildingM.checkBuildingConnections();
 				}

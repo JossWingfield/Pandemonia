@@ -15,7 +15,6 @@ public class Window extends Building {
 	private boolean firstDraw = true;
 	private boolean lightsOn = true;
 	private LightSource light;
-	private boolean outdoorWindow = false;
 	
 	public Window(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
@@ -59,7 +58,6 @@ public class Window extends Building {
          	animations[0][0][0] = importImage("/decor/window.png").getSubimage(32, 32, 32, 32);
          	animations[0][0][1] = importImage("/decor/window.png").getSubimage(0, 32, 32, 32);
          	glowImage = importImage("/decor/WindowGlow.png").getSubimage(32, 32, 32, 32);
-         	isThirdLayer = true;
      		break;
      	case 1:
      		name = "Porthole";
@@ -100,7 +98,6 @@ public class Window extends Building {
 		}
 		
 	     renderer.draw(animations[0][0][state], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-	        
 	}
 	public void drawEmissive(Renderer renderer) {
 		if(gp.world.gameM.getTimeOfDay() != 5) {

@@ -122,7 +122,7 @@ public class MapManager {
 	        importTilesFromSpriteSheet("/itch/tiles/PavedPath2", 3, 5, false);
 	        importAnimatedSeasonalTiles("Waterfall", 3, 3, 4);
 	        importAnimatedSeasonalTiles("DirtWaterfall", 3, 3, 4);
-	        importTilesFromSpriteSheet("/itch/buildings/StoneWall", 7, 4, false);
+	        importTilesFromSpriteSheet("/itch/buildings/StoneWall2", 7, 4, false);
 	        importAnimatedSeasonalTiles("CaveWater", 5, 5, 6);
 	        importTilesFromSpriteSheet("/itch/tiles/Cave/CaveGrass", 4, 5, false);
 	        importTilesFromSpriteSheet("/itch/tiles/Cave/Cave", 7, 5, false);
@@ -136,7 +136,8 @@ public class MapManager {
 	        importAnimatedSeasonalTiles("CityWater", 5, 3, 6);
 	        importTilesFromSpriteSheet("/buildings/Docks", 4, 8, false);
 	        importSeasonalTiles("Stairs", 2, 3);
-
+	        importTilesFromSpriteSheet("/itch/tiles/GraveyardDirt", 4, 5, false); 
+	        importSeasonalTiles("Graveyard", 4, 5); 
 	        
 	    	tiles[1161].solid = true;
 	    	tiles[1124].solid = true;
@@ -356,10 +357,10 @@ public class MapManager {
 	    		}
 	    		if(door.facing == 2) {
 	    			gp.player.hitbox.x = door.hitbox.x;
-	    			gp.player.hitbox.y = door.hitbox.y+80-48;
+	    			gp.player.hitbox.y = door.hitbox.y;
 	    		} else if(door.facing == 3) {
 	    			gp.player.hitbox.x = door.hitbox.x;
-	    			gp.player.hitbox.y = door.hitbox.y+80-48;
+	    			gp.player.hitbox.y = door.hitbox.y;
 	    		}
 	    	}
 	        gp.player.currentRoomIndex = roomNum;

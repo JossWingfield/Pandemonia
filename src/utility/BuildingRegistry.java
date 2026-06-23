@@ -72,6 +72,7 @@ public class BuildingRegistry {
 		presetBuildingNames.add("Trapdoor 1");
 		presetBuildingNames.add("Shelf");
 		presetBuildingNames.add("Kitchen Counter");
+		presetBuildingNames.add("Gate");
 		presetBuildingNames.add("Window");
 		presetBuildingNames.add("Large Table");
 		presetBuildingNames.add("Bin 1");
@@ -231,7 +232,6 @@ public class BuildingRegistry {
 			case "Cauldron" -> i = new Cauldron(gp, x, y);
 			case "Clothes Rail" -> i = new ClothesRail(gp, x, y);
 			case "Escape Hole" -> i = new EscapeHole(gp, x, y);
-			case "Gate 1" -> i = new Gate(gp, x, y);
 			case "Lantern" -> i = new Lantern(gp, x, y);
 			case "Menu Sign" -> i = new MenuSign(gp, x, y);
 			case "Oven" -> i = new Oven(gp, x, y);
@@ -267,6 +267,7 @@ public class BuildingRegistry {
 			case "Trapdoor 1" -> i = new Trapdoor(gp, x, y, preset);
 			case "Shelf" -> i = new Shelf(gp, x, y, preset);
 			case "Kitchen Counter" -> i = new KitchenCounter(gp, x, y, preset);
+			case "Gate" -> i = new Gate(gp, x, y, preset);
 			case "Window" -> i = new Window(gp, x, y, preset);
 			case "Large Table" -> i = new LargeTable(gp, x, y, preset);
 			case "Bin 1" -> i = new Bin(gp, x, y, preset);

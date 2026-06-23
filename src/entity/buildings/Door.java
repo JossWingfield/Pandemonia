@@ -41,11 +41,15 @@ public class Door extends Building {
 			npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y - 48 , 48, 48);
 		} else if(facing == 2){ //LEFT
 			isThirdLayer = true;
+			hitbox.height = 48;
 			hitbox.width = 24;
+			yDrawOffset +=32;
 			npcHitbox = new Rectangle2D.Float(hitbox.x - 16, hitbox.y+80-48, 48, 48);
 		} else if(facing == 3) { //RIGHT
 			hitbox.width = 24;
+			hitbox.height = 48;
 			xDrawOffset += 24;
+			yDrawOffset +=32;
 			npcHitbox = new Rectangle2D.Float(hitbox.x - 16-24, hitbox.y+64-48, 48, 64);
 		}
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y, hitbox.width-3*7, hitbox.height-3*9);
@@ -191,9 +195,9 @@ public class Door extends Building {
 			npcVisualHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y+hitbox.height - 48+28-48, 48, 80);
 			
 			if(facing == 2) {
-				entryHitbox = new Rectangle2D.Float(hitbox.x-48, hitbox.y+32, 48, 48*2);
+				entryHitbox = new Rectangle2D.Float(hitbox.x-48, hitbox.y, 48, 48);
 			} else if(facing == 3) {
-				entryHitbox = new Rectangle2D.Float(hitbox.x+48, hitbox.y+32, 48, 48*2);
+				entryHitbox = new Rectangle2D.Float(hitbox.x+48, hitbox.y, 48, 48);
 			}
 			
 			if(preset == 1) {

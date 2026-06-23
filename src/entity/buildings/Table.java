@@ -63,7 +63,7 @@ public class Table extends Building {
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new Table(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
+		System.out.println("buildings[arrayCounter] = new Table(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + chairFacing.toString() + ", " + doubleChaired + ");");
 		System.out.println("arrayCounter++;");	
 	}
 	public void refreshImages() {

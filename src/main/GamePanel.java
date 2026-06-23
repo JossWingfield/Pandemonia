@@ -215,6 +215,9 @@ public class GamePanel {
     public int emissiveFbo;
     public int emissiveTextureId;
     
+    public int exportFbo;
+    public int exportTexture;
+    
     public int sizeX, sizeY;
     
     public int sceneFbo, litFbo;
@@ -382,6 +385,28 @@ public class GamePanel {
 
         // Optionally clear players
         if (playerList != null) playerList.clear();
+    }
+    public void createExportBuffer() {
+        exportFbo = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, exportFbo);
+
+        exportTexture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, exportTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+                     frameWidth, frameHeight, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, org.lwjgl.opengl.GL12.GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, org.lwjgl.opengl.GL12.GL_NEAREST);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, exportTexture, 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            System.err.println("ERROR: Export FBO incomplete!");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
     public void stopDiscovery() {
         if (discovery != null) {
@@ -835,6 +860,7 @@ public class GamePanel {
         createGodrayProcessedBuffer(px[0], py[0]);
         createCompositeBuffer(px[0], py[0]);
         createShadowBuffer(px[0], py[0]);
+        createExportBuffer();
     }
     public void applyGameViewport(int fbWidth, int fbHeight) {
         float gameAspect = frameWidth / (float) frameHeight;
@@ -912,6 +938,16 @@ public class GamePanel {
 
 						int w = fbw[0];
 						int h = fbh[0];
+						
+						if (saveM.recording) {
+						    glBindFramebuffer(GL_FRAMEBUFFER, exportFbo);
+						    glViewport(0, 0, frameWidth, frameHeight);
+						    glClear(GL_COLOR_BUFFER_BIT);
+
+						    renderer.beginFrame();
+						    draw(); // your world render
+						    renderer.endFrame();
+						}
 						
 						glBindFramebuffer(GL_FRAMEBUFFER, sceneFbo);
 						applyGameViewport(w, h);
@@ -1087,6 +1123,7 @@ public class GamePanel {
         //renderer.resize(width, height);
     }
     private void update(double dt) {
+    	saveM.update(dt);
     	
     	if(errorCounter > 0) {
     		errorCounter--;
