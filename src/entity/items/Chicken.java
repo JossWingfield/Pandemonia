@@ -12,7 +12,7 @@ public class Chicken extends Food {
 		foodLayer = 0;
 		cutIntoNewItem = true;
 		chopCount = 16;
-		cookTime = 24;
+		cookTime = 1.0f;
 	}
 	
 	private void importImages() {

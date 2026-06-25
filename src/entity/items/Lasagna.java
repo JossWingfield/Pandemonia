@@ -10,7 +10,7 @@ public class Lasagna extends Food {
 		name = "Lasagna";
 		importImages();
 		foodLayer = 0;
-		cookTime = 30;
+		cookTime = 1.0f;
 	}
 	
 	private void importImages() {

@@ -421,7 +421,7 @@ public class Catalogue {
 	public void resetBasket() {
 		basket.clear();
 		layer = 0;
-		pageNum = 0;
+		pageNum = 1;
 		basketCost = 0;
 	}
 	public void addToInventory(Building b) {
@@ -1544,6 +1544,9 @@ public class Catalogue {
 		}
 	}
 	public void tryPay() {
+		if(basketCost == 0) {
+			return;
+		}
 		if(canPay) {
 			gp.world.catalogue.checkingOut = false;
 			gp.world.catalogue.layer = 0;

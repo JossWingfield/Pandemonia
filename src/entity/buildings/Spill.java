@@ -14,7 +14,7 @@ import main.renderer.TextureRegion;
 public class Spill extends Building {
 	
 	private double spillCount = 0;
-	private int maxSpillTime = 8;
+	private int maxSpillTime = 5;
 	private Rectangle2D.Float effectArea;
 	private boolean removedSpill = false;
 	

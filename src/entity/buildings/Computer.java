@@ -48,8 +48,10 @@ public class Computer extends Building {
 		super.inputUpdate(dt);
 		if(hitbox.intersects(gp.player.interactHitbox)) {
 			if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_E)) {
-            	gp.currentState = gp.catalogueState;
-            	gp.gui.resetComputerAnimations();
+				if(gp.player.clickCounter <= 0) {
+	            	gp.currentState = gp.catalogueState;
+	            	gp.gui.resetComputerAnimations();
+				}
 			}
 		}
 	}

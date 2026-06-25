@@ -6,7 +6,8 @@ layout(location = 1) in vec2 aUV;
 
 out vec2 vUV;
 
-void main() {
+void main()
+{
     vUV = aUV;
     gl_Position = vec4(aPos, 0.0, 1.0);
 }
@@ -21,6 +22,9 @@ uniform sampler2D uScene;
 uniform sampler2D uEmissive;
 uniform sampler2D uOcclusion;
 uniform sampler2D uShadowCaster;
+uniform vec2 uCameraPos;
+uniform float uZoom;
+uniform vec2 uWorldSize;
 
 uniform vec2 uScreenSize;
 
@@ -29,7 +33,8 @@ uniform float uAmbientIntensity;
 
 uniform int uNumLights;
 
-struct Light {
+struct Light
+{
     vec2 position;
     vec3 color;
     float radius;
@@ -41,16 +46,14 @@ uniform Light uLights[64];
 uniform bool uOcclusionEnabled;
 uniform bool uShadowsEnabled;
 
-vec2 toUV(vec2 p)
-{
-    return vec2(
-        p.x / uScreenSize.x,
-        1.0 - (p.y / uScreenSize.y)
-    );
-}
+const int MAX_SHADOW_STEPS = 140;
 
 void main()
 {
+    // =========================================================
+    // BASE SCENE
+    // =========================================================
+
     vec4 scene = texture(uScene, vUV);
 
     vec3 baseColor = scene.rgb;
@@ -59,7 +62,28 @@ void main()
     if(alpha <= 0.001)
         discard;
 
-    // ---------------- PIXEL SNAP ----------------
+    // =========================================================
+    // OCCLUSION EARLY OUT
+    // =========================================================
+
+    float occlusion = 1.0;
+
+    if(uOcclusionEnabled)
+        occlusion = texture(uOcclusion, vUV).r;
+
+    // Fully occluded pixels skip ALL lighting/shadow work
+    if(occlusion <= 0.001)
+    {
+        vec3 emissive = texture(uEmissive, vUV).rgb;
+
+        FragColor = vec4(emissive, alpha);
+        return;
+    }
+
+    // =========================================================
+    // PIXEL SNAP
+    // =========================================================
+
     float pixelSize = 6.0;
 
     vec2 fragPos = vec2(
@@ -69,6 +93,13 @@ void main()
 
     fragPos = floor(fragPos / pixelSize) * pixelSize;
 
+    // Cached reciprocal screen size
+    vec2 invScreenSize = 1.0 / uScreenSize;
+
+    // =========================================================
+    // INITIAL LIGHTING
+    // =========================================================
+
     vec3 lighting = uAmbientColor * uAmbientIntensity;
 
     // =========================================================
@@ -76,80 +107,118 @@ void main()
     // =========================================================
 
     for(int i = 0; i < uNumLights; i++)
-{
-    Light L = uLights[i];
-
-    vec2 toFrag = fragPos - L.position;
-    float dist = length(toFrag);
-
-    if(dist >= L.radius)
-        continue;
-
-    vec2 dir = toFrag / dist;
-
-    float shadow = 1.0;
-
-    if(uShadowsEnabled)
     {
-        float stepSize = pixelSize;
+        Light L = uLights[i];
 
-        vec2 samplePos = L.position;
+        vec2 toFrag = fragPos - L.position;
 
-        bool hit = false;
-        float hitDistance = 0.0;
+        // -----------------------------------------------------
+        // DISTANCE SQUARED CHECK
+        // -----------------------------------------------------
 
-        for(float t = 0.0; t < dist; t += stepSize)
+        float distSq = dot(toFrag, toFrag);
+        float radiusSq = L.radius * L.radius;
+
+        if(distSq >= radiusSq)
+            continue;
+
+        // Only sqrt if inside radius
+        float dist = sqrt(distSq);
+
+        // Prevent divide by zero
+        if(dist <= 0.001)
+            continue;
+
+        // -----------------------------------------------------
+        // FALLOFF
+        // -----------------------------------------------------
+
+        float falloff = 1.0 - (dist / L.radius);
+
+        // Skip tiny contributions
+        if(falloff < 0.02)
+            continue;
+
+        // -----------------------------------------------------
+        // DIRECTION
+        // -----------------------------------------------------
+
+        vec2 dir = toFrag / dist;
+
+        // -----------------------------------------------------
+        // SHADOWS
+        // -----------------------------------------------------
+
+        float visibility = 1.0;
+
+        if(uShadowsEnabled)
         {
-            samplePos += dir * stepSize;
+            float stepSize = pixelSize;
 
-            vec2 uv = toUV(samplePos);
+            bool hit = false;
+            float hitDistance = 0.0;
 
-            float mask = texture(uShadowCaster, uv).r;
+            // Integer loop (faster)
+            int steps = int(dist / stepSize);
+            steps = min(steps, MAX_SHADOW_STEPS);
 
-            if(mask > 0.1)
+            vec2 samplePos = L.position;
+
+            for(int s = 0; s < steps; s++)
             {
-                hit = true;
-                hitDistance = t;
-                break;
+                float t = float(s) * stepSize;
+
+                samplePos += dir * stepSize;
+
+                vec2 uv = vec2(
+                    samplePos.x * invScreenSize.x,
+                    1.0 - (samplePos.y * invScreenSize.y)
+                );
+
+                float mask = texture(uShadowCaster, uv).r;
+
+                if(mask > 0.1)
+                {
+                    hit = true;
+                    hitDistance = t;
+                    break;
+                }
+            }
+
+            // -------------------------------------------------
+            // FINITE SHADOW LENGTH
+            // -------------------------------------------------
+
+            if(hit)
+            {
+                float shadowLength = 300.0;
+
+                float behindDist = dist - hitDistance;
+
+                if(behindDist < shadowLength)
+                {
+                    float fade = 1.0 - (behindDist / shadowLength);
+
+                    visibility = 1.0 - fade;
+                }
             }
         }
 
-        // finite shadow length
-        if(hit)
-        {
-            float shadowLength = 300.0;
+        // -----------------------------------------------------
+        // LIGHT CONTRIBUTION
+        // -----------------------------------------------------
 
-            // how far fragment is behind blocker
-            float behindDist = dist - hitDistance;
+        vec3 lightContribution =
+            L.color *
+            falloff *
+            L.intensity;
 
-            if(behindDist < shadowLength)
-            {
-                // smooth fade
-                float fade = 1.0 - (behindDist / shadowLength);
-
-                shadow = 1.0 - fade;
-            }
-        }
+        lighting += lightContribution * visibility;
     }
 
-    float falloff = 1.0 - (dist / L.radius);
-
-    vec3 lightContribution =
-        L.color *
-        falloff *
-        L.intensity;
-
-    lighting += lightContribution * shadow;
-}
-
     // =========================================================
-    // OCCLUSION
+    // FINAL LIGHTING
     // =========================================================
-
-    float occlusion = 1.0;
-
-    if(uOcclusionEnabled)
-        occlusion = texture(uOcclusion, vUV).r;
 
     vec3 litScene = baseColor * lighting * occlusion;
 
@@ -158,6 +227,7 @@ void main()
     // =========================================================
 
     vec3 emissive = texture(uEmissive, vUV).rgb;
+
     litScene += emissive;
 
     FragColor = vec4(litScene, alpha);

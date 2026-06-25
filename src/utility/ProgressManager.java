@@ -148,7 +148,6 @@ public class ProgressManager {
                 }
             }
         }
-        stoveUpgradeIII = true;
 
         setupAchievements();
     }

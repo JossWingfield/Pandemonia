@@ -17,55 +17,47 @@ public class KeyListener {
     
     public boolean showHitboxes = false;
     public boolean debugMode = false;
+    
+    // Add these fields at the top of the class
+    private double backspaceHeldTimer = 0;
+    private static final double BACKSPACE_INITIAL_DELAY = 0.4; // seconds before repeat starts
+    private static final double BACKSPACE_REPEAT_RATE = 0.05;  // seconds between repeats
 
     public KeyListener(GamePanel gp) {
         this.gp = gp;
     }
     
-
     public void keyCallback(long window, int key, int scanCode, int action, int mods) {
         if (key < 0 || key >= 350) return;
 
         if (action == GLFW.GLFW_PRESS) {
 
+            // ---- NORMAL KEY TRACKING (always runs first) ----
+            if (!keyPressed[key]) {
+                keyBeginPress[key] = true;
+            }
+            keyPressed[key] = true;  // <-- moved up here, before any early returns
+
             // ---- BACKSPACE ----
             if (key == GLFW.GLFW_KEY_BACKSPACE && gp.gui != null) {
-
-                // TextBoxes handle their own deletion
                 if (gp.currentState == gp.createWorldScreen) {
                     gp.gui.playerNameBox.onCharTyped('\b');
                     gp.gui.worldNameBox.onCharTyped('\b');
                     return;
-                } 
-                
+                }
                 if (gp.currentState == gp.createJoinPlayerScreen) {
                     gp.gui.playerNameBox.onCharTyped('\b');
                     return;
-                } 
-                
+                }
                 if (gp.currentState == gp.writeUsernameState) {
                     gp.gui.usernameBox.onCharTyped('\b');
                     return;
                 }
-
-                // Chat input (if you haven't converted it yet)
                 if (gp.currentState == gp.chatState) {
-                    String msg = gp.gui.chatBox.getText();
                     gp.gui.chatBox.onCharTyped('\b');
-
-                    if (!msg.isBlank()) {
-                        //gp.gui.sendChatMessage(msg);
-                        //gp.gui.chatBox.setText("");
-                    }
                     return;
                 }
             }
-
-            // ---- NORMAL KEY TRACKING ----
-            if (!keyPressed[key]) {
-                keyBeginPress[key] = true;
-            }
-            keyPressed[key] = true;
         }
         else if (action == GLFW.GLFW_RELEASE) {
             keyPressed[key] = false;
@@ -116,96 +108,80 @@ public class KeyListener {
     // -------------------------
     // Process input per frame
     // -------------------------
-    public void update() {
+    public void update(double dt) {
+    	
+    	// ---- HELD BACKSPACE ----
+    	// In update(), replace the held backspace block with this:
+    	if (isKeyPressed(GLFW.GLFW_KEY_BACKSPACE) && gp.gui != null) {
+    	    if (keyBeginPress(GLFW.GLFW_KEY_BACKSPACE)) {
+    	        sendBackspace(); // immediate delete on first press
+    	        backspaceHeldTimer = 0;
+    	    } else {
+    	        backspaceHeldTimer += dt;
+    	        if (backspaceHeldTimer >= BACKSPACE_INITIAL_DELAY) {
+    	            double repeatTime = backspaceHeldTimer - BACKSPACE_INITIAL_DELAY;
+    	            double prevRepeatTime = repeatTime - dt;
+    	            int prevTicks = (int)(prevRepeatTime < 0 ? 0 : prevRepeatTime / BACKSPACE_REPEAT_RATE);
+    	            int currTicks = (int)(repeatTime / BACKSPACE_REPEAT_RATE);
+    	            int fires = currTicks - prevTicks;
+    	            for (int i = 0; i < fires; i++) sendBackspace();
+    	        }
+    	    }
+    	} else {
+    	    backspaceHeldTimer = 0;
+    	}
+    	
         // ----- PLAY STATE -----
         if (gp.currentState == gp.playState) {
-        	
-            /*
-            if (isKeyPressed(GLFW.GLFW_KEY_1)) {
-            	gp.renderer.intensity+=0.01f;
+            if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
+            	gp.currentState = gp.pauseState;
             }
-            if (isKeyPressed(GLFW.GLFW_KEY_2)) {
-            	gp.renderer.intensity-=0.01f;
-            }
-            if (isKeyPressed(GLFW.GLFW_KEY_3)) {
-            	gp.renderer.decay+=0.01f;
-            }
-            if (isKeyPressed(GLFW.GLFW_KEY_4)) {
-            	gp.renderer.decay-=0.01f;
-            }
-            if (isKeyPressed(GLFW.GLFW_KEY_5)) {
-            	gp.renderer.density+=0.01f;
-            }
-            if (isKeyPressed(GLFW.GLFW_KEY_6)) {
-            	gp.renderer.density-=0.01f;
-            }
-            if (isKeyPressed(GLFW.GLFW_KEY_7)) {
-            	gp.renderer.samples +=1;
-            }
-            if (isKeyPressed(GLFW.GLFW_KEY_8)) {
-            	gp.renderer.samples -= 1;
-            }
-            if (isKeyPressed(GLFW.GLFW_KEY_9)) {
-            	gp.renderer.verticalBias +=0.1f;
-            }
-            if (isKeyPressed(GLFW.GLFW_KEY_0)) {
-            	gp.renderer.verticalBias -= 0.1f;
-            }*/
             
-            /*if (keyBeginPress(GLFW.GLFW_KEY_2)) {
-            	Plate plate = new Plate(gp);
-            	Greens g = new Greens(gp);
-            	g.setState(FoodState.PLATED);
-            	g.addStep("Chopping Board");
-            	plate.addIngredient(g);
-            	Tomato t = new Tomato(gp);
-              	t.setState(FoodState.PLATED);
-        		t.addStep("Chopping Board");
-            	plate.addIngredient(t);
-            	gp.gui.addRecipeGrading(plate);
-            }*/
-        	
-            //if (keyBeginPress(GLFW.GLFW_KEY_P)) gp.saveM.startRecording();
-            //if (keyBeginPress(GLFW.GLFW_KEY_O)) gp.saveM.stopRecording();
-        	
-            if (keyBeginPress(GLFW.GLFW_KEY_6)) {
-            	gp.world.gameM.setSeason("Spring");
-            }
-            if (keyBeginPress(GLFW.GLFW_KEY_7)) {
-            	gp.world.gameM.setSeason("Summer");
-            }
-            if (keyBeginPress(GLFW.GLFW_KEY_8)) {
-            	gp.world.gameM.setSeason("Autumn");
-            }
-            if (keyBeginPress(GLFW.GLFW_KEY_9)) {
-            	gp.world.gameM.setSeason("Winter");
-            }
-            if (keyBeginPress(GLFW.GLFW_KEY_3)) {
-            	//gp.world.catalogue.obtainAllItemsWithinCatalogue(0);
-            }
-            if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
-            if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);
-            if (keyBeginPress(GLFW.GLFW_KEY_F)) gp.gui.startLevelUpScreen();
-            if (keyBeginPress(GLFW.GLFW_KEY_Q)) gp.player.soulsServed = gp.player.nextLevelAmount;
-            
-            
-            if (keyBeginPress(GLFW.GLFW_KEY_C)) 
-            	if(gp.world.mapM.getRoom(gp.player.currentRoomIndex).canBeEdited) {
-            		gp.currentState = gp.customiseRestaurantState;
-            	}
-            if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) gp.currentState = gp.pauseState;
-
-            // Movement
-
-            // Debug
-            if (keyBeginPress(GLFW.GLFW_KEY_KP_EQUAL)) debugMode = !debugMode;
-            if (keyBeginPress(GLFW.GLFW_KEY_B)) showHitboxes = !showHitboxes;
-            if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) gp.currentState = gp.mapBuildState;
-            if (keyBeginPress(GLFW.GLFW_KEY_MINUS)) gp.world.mapM.drawPath = !gp.world.mapM.drawPath;
-            if (keyBeginPress(GLFW.GLFW_KEY_T)) {
-            	gp.currentState = gp.chatState;
-              	gp.gui.chatBox.setActive(true);
-            }
+        	if(gp.player.controlEnabled) {
+        		
+	            if (keyBeginPress(GLFW.GLFW_KEY_T)) {
+	            	gp.currentState = gp.chatState;
+	              	gp.gui.chatBox.setActive(true);
+	            }
+        		
+	            if (keyBeginPress(GLFW.GLFW_KEY_C)) {
+	            	if(gp.world.mapM.getRoom(gp.player.currentRoomIndex).canBeEdited) {
+	            		gp.currentState = gp.customiseRestaurantState;
+	            	}
+	            }
+	            
+	            
+	        	//DEBUG
+	        	if (keyBeginPress(GLFW.GLFW_KEY_1)) {
+	             	//gp.world.cutsceneM.enterDestroyedRestaurant();
+	            }
+	        	if (keyBeginPress(GLFW.GLFW_KEY_2)) {
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
+	            }
+	            if (keyBeginPress(GLFW.GLFW_KEY_3)) {
+	            	//gp.world.catalogue.obtainAllItemsWithinCatalogue(0);
+	            }
+	            if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
+	            if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);
+	            if (keyBeginPress(GLFW.GLFW_KEY_KP_EQUAL)) debugMode = !debugMode;
+	            if (keyBeginPress(GLFW.GLFW_KEY_B)) showHitboxes = !showHitboxes;
+	            if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) gp.currentState = gp.mapBuildState;
+	            if (keyBeginPress(GLFW.GLFW_KEY_MINUS)) gp.world.mapM.drawPath = !gp.world.mapM.drawPath;
+        	}
         }
         // ----- MAP BUILD STATE -----
         else if (gp.currentState == gp.mapBuildState) {
@@ -279,6 +255,7 @@ public class KeyListener {
         // ----- CATALOGUE STATE -----
         else if (gp.currentState == gp.catalogueState) {
             if (keyBeginPress(GLFW.GLFW_KEY_E)) {
+            	gp.player.clickCounter = 0.5;
                 gp.currentState = gp.playState;
                 gp.world.catalogue.resetBasket();
             }
@@ -295,6 +272,18 @@ public class KeyListener {
         // ----- ACHIEVEMENT STATE -----
         if (gp.currentState == gp.achievementState && keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
             gp.currentState = gp.pauseState;
+        }
+    }
+    private void sendBackspace() {
+        if (gp.currentState == gp.createWorldScreen) {
+            gp.gui.playerNameBox.onCharTyped('\b');
+            gp.gui.worldNameBox.onCharTyped('\b');
+        } else if (gp.currentState == gp.createJoinPlayerScreen) {
+            gp.gui.playerNameBox.onCharTyped('\b');
+        } else if (gp.currentState == gp.writeUsernameState) {
+            gp.gui.usernameBox.onCharTyped('\b');
+        } else if (gp.currentState == gp.chatState) {
+            gp.gui.chatBox.onCharTyped('\b');
         }
     }
 	

@@ -413,6 +413,34 @@ public class BuildingManager {
 		}
 		return null;
 	}
+	public Chair findRandomFreeChair() {
+
+	    List<Chair> availableChairs = new ArrayList<>();
+
+	    for (Building b : buildings) {
+	        if (b != null && b.getName().equals("Chair 1")) {
+
+	            Chair chair = (Chair) b;
+
+	            if (chair.available
+	                    && !chair.tablePlate.showDirtyPlate
+	                    && !chair.groupChair) {
+
+	                availableChairs.add(chair);
+	            }
+	        }
+	    }
+
+	    if (availableChairs.isEmpty()) {
+	        return null;
+	    }
+
+	    int index = (int) (Math.random() * availableChairs.size());
+	    Chair chosen = availableChairs.get(index);
+
+	    chosen.available = false;
+	    return chosen;
+	}
 	public Door findDoor(int roomNum) {
 		for(Building b: buildings) {
 			if(b != null) {

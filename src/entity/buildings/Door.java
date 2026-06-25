@@ -172,7 +172,7 @@ public class Door extends Building {
 
 		
 		if(entryHitbox != null) {
-			if(gp.player.interactHitbox.intersects(entryHitbox) && !locked) {
+			if(gp.player.interactHitbox.intersects(entryHitbox) && !locked && gp.player.canChangeRoom) {
 				if(doorCooldown == 0) {
 					gp.world.mapM.changeRoom(doorRoomNum, this);
 				}

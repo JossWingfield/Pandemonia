@@ -2125,6 +2125,9 @@ public class Room {
 		return data;
 	}
 	public void applySaveData(RoomSaveData data) {
+		if(data.roomNum == 2) {
+			return;
+		}
 		preset = data.roomNum;
 		lights.clear();
 		wallpaper = new WallPaper(gp, data.wallpaper);
@@ -2428,6 +2431,34 @@ public class Room {
 			}
 		}
 		return null;
+	}
+	public Chair findRandomFreeChair() {
+
+	    List<Chair> availableChairs = new ArrayList<>();
+
+	    for (Building b : buildings) {
+	        if (b != null && b.getName().equals("Chair 1")) {
+
+	            Chair chair = (Chair) b;
+
+	            if (chair.available
+	                    && !chair.tablePlate.showDirtyPlate
+	                    && !chair.groupChair) {
+
+	                availableChairs.add(chair);
+	            }
+	        }
+	    }
+
+	    if (availableChairs.isEmpty()) {
+	        return null;
+	    }
+
+	    int index = (int) (Math.random() * availableChairs.size());
+	    Chair chosen = availableChairs.get(index);
+
+	    chosen.available = false;
+	    return chosen;
 	}
 	public Toilet findFreeToilet() {
 		for(Building b: buildings) {

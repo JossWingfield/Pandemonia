@@ -103,6 +103,10 @@ public class BuildingRegistry {
 						data.preset = c.type;
 					} else if(b instanceof Shelf c) {
 						data.preset = c.type;
+					} else if(b instanceof KitchenCounter c) {
+						data.preset = c.type;
+					} else if(b instanceof Gate c) {
+						data.preset = c.type;
 					} else if(b instanceof LargeTable c) {
 						data.preset = c.tableType;
 					} else if(b instanceof Window c) {

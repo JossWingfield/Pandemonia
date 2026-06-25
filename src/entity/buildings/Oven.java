@@ -29,7 +29,8 @@ public class Oven extends Building {
 	private double clickCooldown = 0;
 	private boolean cooking = false;
     private double cookCount = 0;
-    private double maxCookCount = 20;
+    private double maxCookCount;
+    protected int baseMaxCookTime = 20;
     private TextureRegion completeSign;
     
 	private boolean destroyed = false;
@@ -112,6 +113,7 @@ public class Oven extends Building {
 				    				if (canCook(food.getName()) && food.foodState == FoodState.RAW) {
 				    					food.addStep(name);
 				    			        currentItem = food;
+				    			        maxCookCount = baseMaxCookTime * food.getMaxCookTime();
 				    			        cooking = true;
 				    			        cookCount = 0;
 				    			        gp.player.currentItem = null;
@@ -121,6 +123,7 @@ public class Oven extends Building {
 				    				if(tray.getFoodState() == FoodState.RAW) {
 				    					if(!tray.isEmpty()) {
 					    					currentItem = tray;
+					    					maxCookCount = baseMaxCookTime;
 						    			    cooking = true;
 						    			    cookCount = 0;
 						    			    gp.player.currentItem = null;

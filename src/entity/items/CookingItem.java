@@ -14,8 +14,9 @@ public class CookingItem extends Item {
     protected List<String> rawIngredients;
     protected List<String> cookedResults;
     public Food cookingItem = null;
-    protected double cookTime = 0;
-    protected int maxCookTime = 24;// 60*24;
+    protected float cookTime = 0;
+    protected int baseMaxCookTime = 16;
+    protected float maxCookTime;
     protected int flickerThreshold = 30;
     protected int maxBurnTime = 38; //60*28
     
@@ -38,9 +39,9 @@ public class CookingItem extends Item {
     private double perfectWindow = 0.4;
     
     //FLIP
-    protected int flipWindowStart; // time (ticks)
-    protected int flipWindowEnd;
-    protected int flipWindowCenter = maxCookTime / 2;
+    protected float flipWindowStart; // time (ticks)
+    protected float flipWindowEnd;
+    protected float flipWindowCenter = maxCookTime / 2;
     protected double flipWindowTolerance = maxCookTime * 0.15; // tighter window
     private double flipAccuracy = 0;
     private boolean flipEvaluated = false;
@@ -110,7 +111,7 @@ public class CookingItem extends Item {
 	    cooking = true;
 	    cookTime = 0;
 	    cookingItem = (Food)i;
-		maxCookTime = cookingItem.getMaxCookTime();
+		maxCookTime = baseMaxCookTime* cookingItem.getMaxCookTime();
 		flickerThreshold = Math.round(maxCookTime * flickerFraction);
 		maxBurnTime = Math.round(maxCookTime * burnFraction);
 		cookStyle = CookStyleResolver.resolve(cookingItem, this, gp);
@@ -410,11 +411,11 @@ public class CookingItem extends Item {
 	public void setCookTime(int time) {
 	    cookTime = time;
 	}
-	public double getCookTime() {
+	public float getCookTime() {
 	    return cookTime;
 	}
-	public int getMaxCookTime() {
-	    return cookingItem.getMaxCookTime();
+	public float getMaxCookTime() {
+	    return maxCookTime;
 	}
 	public void drawCookingWarning(Renderer renderer, int x, int y) {
 		
@@ -452,6 +453,7 @@ public class CookingItem extends Item {
 			if(isLeft) {
 				if(cookingItem != null) {
 					if(cookingItem.foodState.equals(FoodState.RAW)) {
+						System.out.println(getMaxCookTime());
 						drawPassiveCookingBar(renderer, x + 16, y + 48 + 16, getCookTime(), getMaxCookTime());
 					} else if(cookingItem.foodState.equals(FoodState.BURNT)) {
 						drawBurntSign(renderer, (int)(x), (int)y);
@@ -606,7 +608,7 @@ public class CookingItem extends Item {
 	        Colour.WHITE
 	    );
 	}
-	private void drawPassiveCookingBar(Renderer renderer, float worldX, float worldY, double cookTime, int maxCookTime) {
+	private void drawPassiveCookingBar(Renderer renderer, float worldX, float worldY, float cookTime, float maxCookTime) {
 	    float screenX = worldX - 24 ;
 	    float screenY = worldY - 72 ;
 
@@ -615,7 +617,9 @@ public class CookingItem extends Item {
 	    int xOffset = 0;
 	    int yOffset = -10; // raise the bar above the pan
 
-	    float progress = Math.min(1.0f, (float)cookTime / (float) maxCookTime);
+	    float progress = (maxCookTime <= 0f) ? 0f : (cookTime / maxCookTime);
+	    //System.out.println(cookTime + "   " + maxCookTime);
+	    progress = Math.max(0f, Math.min(1f, progress));
 
 	    // Interpolate from red to green
 	    int r = (int) ((1 - progress) * 255);
@@ -626,7 +630,7 @@ public class CookingItem extends Item {
 	    
 	    renderer.fillRect((int) screenX + xOffset, (int) screenY + yOffset, (int) (barWidth * progress), barHeight, new Colour(r, g, 0));
 	}
-	private void drawFlipCookingBar(Renderer renderer,float worldX,float worldY,double cookTime,int maxCookTime) {
+	private void drawFlipCookingBar(Renderer renderer,float worldX,float worldY,double cookTime,float maxCookTime) {
 	    float screenX = worldX - 24;
 	    float screenY = worldY - 72;
 

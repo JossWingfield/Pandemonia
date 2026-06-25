@@ -13,7 +13,7 @@ public class Gate extends Building {
 	
 	private Rectangle2D.Float hitbox2;
 	private boolean firstUpdate = true;
-	private int type;
+	public int type;
 	
 	public Gate(GamePanel gp, float xPos, float yPos, int type) {
 		super(gp, xPos, yPos, 48, 48);

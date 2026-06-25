@@ -22,6 +22,9 @@ uniform sampler2D uScene;
 uniform sampler2D uEmissive;
 uniform sampler2D uOcclusion;
 uniform sampler2D uShadowCaster;
+uniform vec2 uCameraPos;
+uniform float uZoom;
+uniform vec2 uWorldSize;
 
 uniform vec2 uScreenSize;
 
@@ -65,8 +68,21 @@ void main()
 
     float occlusion = 1.0;
 
-    if(uOcclusionEnabled)
-        occlusion = texture(uOcclusion, vUV).r;
+if(uOcclusionEnabled)
+{
+    vec2 screenPos = vec2(
+        vUV.x * uScreenSize.x,
+        vUV.y * uScreenSize.y
+    );
+
+    vec2 worldPos =
+        uCameraPos +
+        screenPos / uZoom;
+
+    vec2 occUV = worldPos / uScreenSize;
+
+    occlusion = texture(uOcclusion, occUV).r;
+}
 
     // Fully occluded pixels skip ALL lighting/shadow work
     if(occlusion <= 0.001)

@@ -74,8 +74,9 @@ public class Player extends Entity{
     public int currentHealth = maxHealth;
     private double invincibilityCounter = 0;
 
-    //SCREEN SCROLL SETTINGS
-    private boolean controlEnabled = true;
+    //CUTSCENE
+    public boolean controlEnabled = true;
+    public boolean canChangeRoom = true;
     
     public int currentRoomIndex = 0;
     
@@ -1122,6 +1123,7 @@ public class Player extends Entity{
     	if(isInvisible) {
     		return;
     	}
+    	
     	applySkinIfNeeded();
     	
     	if(direction == 3) {

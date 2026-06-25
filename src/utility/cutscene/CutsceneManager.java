@@ -455,7 +455,7 @@ public class CutsceneManager {
         		return true;
         	}
         	return false;
-        }));
+        }, false));
         
         NPC ignis = new StoryCharacter(gp, 0, 0, 5);
         NPC player = new StoryCharacter(gp, 0, 0, 2);
@@ -525,7 +525,7 @@ public class CutsceneManager {
                } else {
                	return false;
                }
-           }));
+           }, true));
         
         events.add(new ActionEvent(() -> {
         	gp.player.isInvisible = true;
@@ -685,7 +685,7 @@ public class CutsceneManager {
             } else {
             	return false;
             }
-        }));
+        }, false));
         
         events.add(new ActionEvent(() -> {
         	drawHighlight = false;
@@ -740,7 +740,7 @@ public class CutsceneManager {
             } else {
             	return false;
             }
-        }));
+        }, false));
 
         // 8. After boxes are moved, show dialogue
         events.add(new DialogueEvent(gp, owner, "Great! That mess is cleared. The builders can handle the rest. They'll get this place customer ready in no time. "));

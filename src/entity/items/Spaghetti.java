@@ -10,7 +10,7 @@ public class Spaghetti extends Food {
 		name = "Spaghetti";
 		importImages();
 		foodLayer = 0;
-		cookTime = 30;
+		cookTime = 1.0f;
 	}
 	
 	private void importImages() {

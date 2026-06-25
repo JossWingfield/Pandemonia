@@ -38,11 +38,20 @@ public class GameManager {
     private static final int MAX_DAYS_PER_SEASON = 28;
     private int dayStart = 6, openingTime = 7, closingTime = 20;
     private int leavingTime = 20;
-    private double timeSpeed = 30.0; //30.0
+    private double timeSpeed = 20.0; //20.0
     private boolean customersLeft = false;
 
+    
+    // === Wave system ===
     private double spawnTimer = 0;
-    private int customerSpawnTimer = 24;
+    private double currentSpawnInterval = 30; // seconds between customers (lower = faster)
+    private static final double BASE_INTERVAL = 30.0;   // quiet baseline
+    private static final double WAVE_INTERVAL = 14.0;   // peak of a minor wave
+    private static final double RUSH_INTERVAL = 6.0;    // dinner rush peak
+    private static final double TRICKLE_INTERVAL = 45.0; // between waves
+    private boolean rushHourMessageSent = false;
+    
+    //Level Stuff
     public int previousSoulsCollected = 0;
     private boolean waitingForLevelUp = false;
 
@@ -105,7 +114,6 @@ public class GameManager {
     public GameManager(GamePanel gp) {
         this.gp = gp;
         this.time = dayStart;
-        spawnTimer = customerSpawnTimer;
         random = new Random();
         currentSeason = Season.SUMMER;
         gp.world.mapM.setSeason(currentSeason);
@@ -118,7 +126,52 @@ public class GameManager {
         
         //gp.world.npcM.addDishWasher();
     }
+    private double getSpawnInterval() {
+        float t = time;
 
+        // -- Morning trickle (7:00–9:00) --
+        // Doors just opened, slow start
+        if (t >= 7 && t < 9) {
+            return lerp(BASE_INTERVAL, WAVE_INTERVAL, (t - 7) / 2.0); // ramp up
+
+        // -- Mid-morning lull (9:00–10:30) --
+        } else if (t >= 9 && t < 10.5) {
+            return lerp(WAVE_INTERVAL, TRICKLE_INTERVAL, (t - 9) / 1.5); // slow back down
+
+        // -- Lunch wave (10:30–13:30) --
+        // Peaks around 12:00
+        } else if (t >= 10.5 && t < 13.5) {
+            double peak = 1.0 - Math.abs((t - 12.0) / 1.5); // 0→1→0 triangle
+            return lerp(TRICKLE_INTERVAL, WAVE_INTERVAL, peak);
+
+        // -- Afternoon lull (13:30–16:00) --
+        } else if (t >= 13.5 && t < 16) {
+            return TRICKLE_INTERVAL;
+
+        // -- Pre-dinner build (16:00–17:30) --
+        // Tension building — customers start arriving more
+        } else if (t >= 16 && t < 17.5) {
+            return lerp(TRICKLE_INTERVAL, BASE_INTERVAL, (t - 16) / 1.5);
+
+        // -- DINNER RUSH (17:30–19:30) --
+        // The big finale — peaks around 18:30
+        } else if (t >= 17.5 && t < 19.5) {
+            double peak = 1.0 - Math.abs((t - 18.5) / 1.0); // sharp triangle
+            peak = Math.max(0, peak);
+            return lerp(BASE_INTERVAL, RUSH_INTERVAL, peak);
+
+        // -- Wind down (19:30–20:00) --
+        } else if (t >= 19.5 && t < 20) {
+            return lerp(RUSH_INTERVAL, TRICKLE_INTERVAL, (t - 19.5) / 0.5);
+        }
+
+        return BASE_INTERVAL;
+    }
+
+    private double lerp(double a, double b, double t) {
+        t = Math.max(0, Math.min(1, t)); // clamp
+        return a + (b - a) * t;
+    }
     // === Specials generation ===
     public void generateDailySpecials(List<Recipe> unlockedRecipes) {
         todaysSpecials.clear();
@@ -328,8 +381,16 @@ public class GameManager {
             lastTimePeriod = currentPeriod;
         }
         
+        // DINNER RUSH MESSAGE (17:30–19:30)
+        if (currentPhase == DayPhase.SERVICE) {
+            if (time >= 17.5 && time < 19.5 && !rushHourMessageSent) {
+                gp.gui.addMessage("It's Rush Hour!", Colour.YELLOW);
+                rushHourMessageSent = true;
+            }
+        }
+        
         if(gp.world.progressM.moreCustomers) {
-        	customerSpawnTimer = 12;
+        	//customerSpawnTimer = 12;
         }
         
         if ((int)time == leavingTime && !customersLeft) {
@@ -350,7 +411,9 @@ public class GameManager {
         	if(!gp.world.mapM.isInRoom(0)) {
 	            if (gp.world.mapM.getRoom(0).isFreeChair() != null) {
 	                spawnTimer+=dt;
-	                if (spawnTimer >= customerSpawnTimer) {
+	                currentSpawnInterval = getSpawnInterval();
+	                // (the rest of your spawn block stays identical, just swap the constant)
+	             if (spawnTimer >= currentSpawnInterval) {
 	                    spawnTimer = 0;
 	                    
 	                    if (queueSpecialCustomer) {
@@ -379,7 +442,9 @@ public class GameManager {
 	        } else {
 	        	if (gp.world.buildingM.isFreeChair() != null) {
 	                spawnTimer+=dt;
-	                if (spawnTimer >= customerSpawnTimer) {
+	                currentSpawnInterval = getSpawnInterval();
+	                // (the rest of your spawn block stays identical, just swap the constant)
+	                if (spawnTimer >= currentSpawnInterval) {
 	                    spawnTimer = 0;
 	                    if(queueSpecialCustomer) {
 	                    	queueSpecialCustomer = false;
@@ -488,6 +553,7 @@ public class GameManager {
         }
         
         customersLeft = false;
+        rushHourMessageSent = false;
         
         previousSoulsCollected = gp.player.soulsServed;
         

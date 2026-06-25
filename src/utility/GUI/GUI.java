@@ -214,7 +214,8 @@ public class GUI {
             boxWidth,
             boxHeight,
             font,
-            titleColour1
+            titleColour1,
+            20
         );
 
         worldNameBox = new TextBox(
@@ -224,7 +225,8 @@ public class GUI {
             boxWidth,
             boxHeight,
             font,
-            titleColour1
+            titleColour1,
+            20
         );
         
         boxWidth  = gp.frameWidth - 40;
@@ -239,7 +241,8 @@ public class GUI {
             boxWidth,
             boxHeight,
             font,
-            Colour.WHITE
+            Colour.WHITE,
+            1000
         );
         
         boxWidth  = 400;
@@ -254,7 +257,8 @@ public class GUI {
             boxWidth,
             boxHeight,
             font,
-            titleColour1
+            titleColour1,
+            20
         );
         
 		importImages();

@@ -17,7 +17,8 @@ public class CameraFollowEvent extends CutsceneEvent {
 	    }
 
 	    public void update(double dt) {
-	        gp.camera.setTarget(target);
+	        //gp.camera.setTarget(target);
+	        gp.camera.setTarget(null);
 	        // --- Smooth zoom (optional but correct) ---
 	        float currentZoom = gp.camera.getZoom();
 	        float zoomLerp = 0.08f;

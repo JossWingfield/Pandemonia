@@ -578,8 +578,8 @@ public class CollisionMethods {
 
 	        int startX = (int) Math.floor(x / tileSize);
 	        int startY = (int) Math.floor(y / tileSize);
-	        int endX   = (int) Math.ceil((x + width  / tileSize));
-	        int endY   = (int) Math.ceil((y + height / tileSize));
+	        int endX   = (int) Math.ceil((x + width) / tileSize);
+	        int endY   = (int) Math.ceil((y + height) / tileSize);
 	        
 	        //System.out.println(startX + "  " + startY + " " + endX + "  " + endY);
 
@@ -590,11 +590,22 @@ public class CollisionMethods {
 	        endY = Math.max(0, Math.min(endY, grid[0].length - 1));
 	        
 	        // ------------------- Detect left edge -------------------
+	     // ------------------- Detect left edge -------------------
 	        boolean leftEdge = true;
 	        for (int iy = startY; iy < endY; iy++) {
-	            if (grid[startX][iy] != 0) { // left void should be 0
+	            if (grid[startX-1][iy] != 0) { // left void should be 0
 	                leftEdge = false;
 	                break;
+	            }
+	        }
+
+	        // Extra check: the column immediately right of the void must be a wall
+	        if (leftEdge) {
+	            for (int iy = startY; iy < endY; iy++) {
+	                if (grid[startX ][iy] == 0) {
+	                    leftEdge = false;
+	                    break;
+	                }
 	            }
 	        }
 
@@ -606,11 +617,11 @@ public class CollisionMethods {
 	                break;
 	            }
 	        }
-
+	        
 	        // ------------------- Check if placement is valid -------------------
 	        if (leftEdge || rightEdge) {
-	            int inwardX = leftEdge ? startX + 1 : endX - 1; // column that must be wall
-
+	            int inwardX = leftEdge ? startX +1 : endX - 1; // column that must be wall
+	            
 	            boolean innerWall = true;
 	            for (int iy = startY; iy < endY; iy++) {
 	                if (grid[inwardX][iy] == 0) { // must be wall
@@ -620,12 +631,19 @@ public class CollisionMethods {
 	            }
 	            
 	            for (Building b : gp.world.buildingM.getBuildings()) {
-		            if (b != null && b.buildHitbox.intersects(buildHitbox)) {
-		            	if(b.getName().equals("Shelf")) {
-		            		return false;
-		            	}
-		            }
-		        }
+	                if (b == null) continue;
+
+	                if (b.buildHitbox.intersects(buildHitbox)) {
+
+	                    if ("Shelf".equals(b.getName())) {
+	                        return false;
+	                    }
+
+	                    if (b.mustBePlacedOnWall) {
+	                        return false;
+	                    }
+	                }
+	            }
 
 	            if (innerWall) {
 	                return true;

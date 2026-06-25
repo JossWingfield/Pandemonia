@@ -20,7 +20,8 @@ public class Fryer extends Item {
     protected List<String> cookedResults;
     public Food cookingItem = null;
     protected double cookTime = 0;
-    protected int maxCookTime = 24;// 60*24;
+    protected int baseMaxCookTime = 16;
+    protected float maxCookTime;
     protected int flickerThreshold = 30;
     protected int maxBurnTime = 38; //60*28
     
@@ -135,7 +136,7 @@ public class Fryer extends Item {
 	    cookTime = 0;
 	    cookingItem = (Food)i;
 		animations[0][0][0] = animations[0][0][4];
-		maxCookTime = cookingItem.getMaxCookTime();
+		maxCookTime = baseMaxCookTime* cookingItem.getMaxCookTime();
 		flickerThreshold = Math.round(maxCookTime * flickerFraction);
 		maxBurnTime = Math.round(maxCookTime * burnFraction);
 		cookStyle = CookStyle.FRY;
@@ -185,8 +186,8 @@ public class Fryer extends Item {
 	public double getCookTime() {
 	    return cookTime;
 	}
-	public int getMaxCookTime() {
-	    return cookingItem.getMaxCookTime();
+	public float getMaxCookTime() {
+	    return maxCookTime;
 	}
 	public void drawCookingWarning(Renderer renderer, int x, int y) {
 		
@@ -245,7 +246,7 @@ public class Fryer extends Item {
 		}
 		
 	}
-	private void drawPassiveCookingBar(Renderer renderer, float worldX, float worldY, double cookTime, int maxCookTime) {
+	private void drawPassiveCookingBar(Renderer renderer, float worldX, float worldY, double cookTime, float maxCookTime) {
 	    float screenX = worldX - 24 ;
 	    float screenY = worldY - 72 ;
 

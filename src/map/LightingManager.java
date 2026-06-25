@@ -268,7 +268,7 @@ public class LightingManager {
         }
 
         Texture texture = new Texture(width, height, pixels);
-
+        
         roomOcclusionCache.put(roomId, texture);
 
         return texture;

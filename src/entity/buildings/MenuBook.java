@@ -42,7 +42,7 @@ public class MenuBook extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
-		animations = new TextureRegion[1][1][3];
+		animations = new TextureRegion[1][1][4];
 		
 		menuCount = maxMenuCount;
 		
@@ -50,8 +50,8 @@ public class MenuBook extends Building {
     	animations[0][0][0] = importImage("/decor/MenuBooks.png").getSubimage(0, 0, 16, 16);
     	animations[0][0][1] = importImage("/decor/MenuBooks.png").getSubimage(16, 0, 16, 16);
     	animations[0][0][2] = importImage("/decor/MenuBooks.png").getSubimage(32, 0, 16, 16);
+    	animations[0][0][3] = importImage("/decor/MenuBooks.png").getSubimage(48, 0, 16, 16);
     	
-    	isThirdLayer = true;
 	}
 	public void addBook() {
 		menuCount++;
@@ -85,6 +85,8 @@ public class MenuBook extends Building {
 			firstUpdate = false;
 			menuHitbox = new Rectangle2D.Float(hitbox.x+16, hitbox.y+8, 16, 48-16);
 		}
+		
+	    renderer.draw(animations[0][0][3], (int) hitbox.x - xDrawOffset, (int) (hitbox.y )-yDrawOffset, 48, 48);
 		
 		if(menuCount == 0) {
 			

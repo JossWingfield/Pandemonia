@@ -29,7 +29,7 @@ public class Food extends Item {
     public boolean notRawItem = false;
 
     protected int chopCount = 12;
-    protected int cookTime = 24;
+    protected float cookTime = 1.0f;
     
     protected List<IngredientScore.ActionScore> actionScores = new ArrayList<>();
     
@@ -181,7 +181,7 @@ public class Food extends Item {
         return chopCount;
     }
 
-    public int getMaxCookTime() {
+    public float getMaxCookTime() {
         if (gp.world.progressM.stoveUpgradeI) return (int)(cookTime*0.75);
         if (gp.world.progressM.stoveUpgradeII) return (int)(cookTime*0.5);
         if (gp.world.progressM.stoveUpgradeIII) return (int)(cookTime*0.25);

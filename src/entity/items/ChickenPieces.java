@@ -11,7 +11,7 @@ public class ChickenPieces extends Food {
 		importImages();
 		foodLayer = 2;
 		notRawItem = true;
-		cookTime = 24;
+		cookTime = 1.0f;
 	}
 	
 	private void importImages() {

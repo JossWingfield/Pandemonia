@@ -14,7 +14,7 @@ import main.renderer.TextureRegion;
 public class Rubble extends Building {
 	
 	private double spillCount = 0;
-	private int maxSpillTime = 8;
+	private int maxSpillTime = 4;
 	private Rectangle2D.Float effectArea;
 	private boolean removedSpill = false;
 	

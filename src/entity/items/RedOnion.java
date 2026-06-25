@@ -10,7 +10,7 @@ public class RedOnion extends Food {
 		name = "Red Onion";
 		importImages();
 		foodLayer = 1;
-		cookTime = 18;
+		cookTime = 1.0f;
 	}
 	
 	private void importImages() {

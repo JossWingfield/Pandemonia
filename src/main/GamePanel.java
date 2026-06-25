@@ -243,6 +243,7 @@ public class GamePanel {
     	}
         world = new World(this, false);
         world.startGame();
+        camera.reset();
       	
         //world.progressM.unlockOldKitchen();
 		//world.progressM.unlockFreezerRoom();
@@ -1141,7 +1142,7 @@ public class GamePanel {
         }
     	
         applyScreenShake(dt);
-    	keyL.update();
+    	keyL.update(dt);
     	camera.update(dt);
     	gui.update(dt);
 

@@ -11,7 +11,7 @@ public class ChoppedTomatoes extends Food {
 		importImages();
 		foodLayer = 4;
 		notRawItem = true;
-		cookTime = 18;
+		cookTime = 0.8f;
 	}
 	
 	private void importImages() {

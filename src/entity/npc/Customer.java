@@ -279,9 +279,9 @@ public class Customer extends NPC {
 	}
 	protected void findTable() {
 		if(gp.world.mapM.currentRoom.equals(gp.world.mapM.getRoom(currentRoomNum))) {
-			currentChair = gp.world.buildingM.findFreeChair();
+			currentChair = gp.world.buildingM.findRandomFreeChair();
 		} else {
-			currentChair = gp.world.mapM.getRoom(currentRoomNum).findFreeChair();
+			currentChair = gp.world.mapM.getRoom(currentRoomNum).findRandomFreeChair();
 		}
 		if(currentChair != null) {
 			currentChair.setCustomer(this);
