@@ -26,21 +26,7 @@ public class Table extends Building {
 		isSolid = true;
 		isSecondLayer = true;
 		isKitchenBuilding = true;
-		mustBePlacedOnFloor = true;
-		switch(chairFacing) {
-    	case "Left":
-    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*4);
-    		break;
-    	case "Right":
-    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*4);
-    		break;
-    	case "Up":
-    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*2);
-    		break;
-       	case "Down":
-    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*2);
-    		break;
-    	}	
+		mustBePlacedOnFloor = true;	
 	}
 	public void onPlaced() {
 		switch(chairFacing) {
@@ -69,11 +55,29 @@ public class Table extends Building {
 	public void refreshImages() {
 		animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getTableSkin().getImage1();
 	}
-	private void importImages() {
+	public void importImages() {
 		animations = new TextureRegion[1][1][1];
 		
 		name = "Table 1";
     	
+		if(chairFacing == null) {
+			return;
+		}
+		switch(chairFacing) {
+    	case "Left":
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*4);
+    		break;
+    	case "Right":
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*4);
+    		break;
+    	case "Up":
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*2);
+    		break;
+       	case "Down":
+    		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*2);
+    		break;
+    	}
+		
     	switch(chairFacing) {
     	case "Left":
         	animations[0][0][0] = importImage("/decor/table.png").getSubimage(48, 24, 16, 40);

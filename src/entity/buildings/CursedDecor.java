@@ -6,8 +6,6 @@ import main.renderer.TextureRegion;
 
 public class CursedDecor extends Building {
 	
-	public int preset;
-	
 	public CursedDecor(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
 		this.preset = preset;
@@ -31,6 +29,9 @@ public class CursedDecor extends Building {
 	public void printOutput() {
 		System.out.println("buildings[arrayCounter] = new CursedDecor(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + preset + ");");
 		System.out.println("arrayCounter++;");	
+	}
+	public String getRegistryName() {
+		return "Cursed Decor";
 	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][10];

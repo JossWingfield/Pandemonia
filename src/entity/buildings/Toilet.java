@@ -45,6 +45,7 @@ public class Toilet extends Building {
 			buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*5, hitbox.width-3*4, hitbox.height-3*5);
 		}
 	}
+	public int getPreset() { return facing; }
 	public Building clone() {
 		Toilet building = new Toilet(gp, hitbox.x, hitbox.y, facing);
 		return building;

@@ -394,7 +394,7 @@ public class MapManager {
 	    	Trapdoor newTrapdoor = (Trapdoor)gp.world.buildingM.findTrapdoor();
 	    	if(newTrapdoor != null) {
     			gp.player.hitbox.x = newTrapdoor.hitbox.x + newTrapdoor.hitbox.width/2 - gp.player.hitbox.width/2;
-	    		if(newTrapdoor.type == 0) {
+	    		if(newTrapdoor.preset == 0) {
 	    			gp.player.hitbox.y = newTrapdoor.hitbox.y;
 	    			gp.player.hitbox.x -= 24;
 	    		} else {

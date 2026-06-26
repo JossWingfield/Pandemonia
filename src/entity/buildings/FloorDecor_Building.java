@@ -10,8 +10,6 @@ import main.renderer.TextureRegion;
 import utility.CollisionMethods;
 
 public class FloorDecor_Building extends Building {
-
-	public int type;
 	
 	public Item currentItem = null;
 	private boolean firstUpdate = true;
@@ -21,7 +19,7 @@ public class FloorDecor_Building extends Building {
 	
 	public FloorDecor_Building(GamePanel gp, float xPos, float yPos, int type) {
 		super(gp, xPos, yPos, 48, 48);
-		this.type = type;
+		this.preset = type;
 		
 		isSolid = true;
 		
@@ -35,18 +33,21 @@ public class FloorDecor_Building extends Building {
 		importImages();
 	}
 	public Building clone() {
-		FloorDecor_Building building = new FloorDecor_Building(gp, hitbox.x, hitbox.y, type);
+		FloorDecor_Building building = new FloorDecor_Building(gp, hitbox.x, hitbox.y, preset);
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new FloorDecor_Building(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + type + ");");
+		System.out.println("buildings[arrayCounter] = new FloorDecor_Building(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + preset + ");");
 		System.out.println("arrayCounter++;");	
+	}
+	public String getRegistryName() {
+		return "Floor Decor";
 	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][1];
 		buildHitbox = hitbox;
 		
-        switch(type) {
+        switch(preset) {
         case 0:
             name = "Plant 1";
         	cost = 30;
@@ -1838,7 +1839,7 @@ public class FloorDecor_Building extends Building {
 		
 	}
 	public void refreshImages() {
-		switch(type) {
+		switch(preset) {
 		case 4:
            	animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(0, 0, 16, 32);
 			break;
@@ -1915,7 +1916,7 @@ public class FloorDecor_Building extends Building {
 	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
-			switch(type) {
+			switch(preset) {
 			case 23:
 				invisHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, 68, hitbox.height);
 				break;

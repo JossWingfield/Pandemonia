@@ -17,12 +17,11 @@ public class LargeTable extends Building {
 	private Chair chair4;
 	
 	private boolean firstUpdate = true;
-	public int tableType;
 	public int tableSize;
 	
 	public LargeTable(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48*2);
-		this.tableType = preset;
+		this.preset = preset;
 		
 		importImages();
 		isSolid = true;
@@ -34,11 +33,11 @@ public class LargeTable extends Building {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*3, hitbox.width-3*3, hitbox.height-3*4);
 	}
 	public Building clone() {
-		LargeTable building = new LargeTable(gp, hitbox.x, hitbox.y, tableType);
+		LargeTable building = new LargeTable(gp, hitbox.x, hitbox.y, preset);
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new LargeTable(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + tableType + ");");
+		System.out.println("buildings[arrayCounter] = new LargeTable(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + preset + ");");
 		System.out.println("arrayCounter++;");	
 	}
 	public void refreshImages() {
@@ -49,7 +48,7 @@ public class LargeTable extends Building {
 		
 		name = "Large Table";
 		
-		switch(tableType) {
+		switch(preset) {
 		case 0:
 	    	animations[0][0][0] = importImage("/decor/table.png").getSubimage(160, 64, 32, 48);
 	    	chair1 = new Chair(gp, hitbox.x -48, hitbox.y + hitbox.height/2 - 24 - 24, 2);

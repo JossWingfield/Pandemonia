@@ -10,16 +10,14 @@ import map.Room;
 
 public class CornerTable extends Building {
 	
-	public int presetNum;
-	
 	public Rectangle2D.Float interactHitbox1, interactHitbox2;
 	private boolean firstUpdate = true;
 	public Item slot1, slot2;
 	
-	public CornerTable(GamePanel gp, float xPos, float yPos, int presetNum) {
+	public CornerTable(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
 		
-		this.presetNum = presetNum;
+		this.preset = preset;
 		isSolid = true;
 		
 		drawWidth = 16*3;
@@ -34,11 +32,11 @@ public class CornerTable extends Building {
 		buildHitbox = hitbox;
 	}
 	public Building clone() {
-		CornerTable building = new CornerTable(gp, hitbox.x, hitbox.y, presetNum);
+		CornerTable building = new CornerTable(gp, hitbox.x, hitbox.y, preset);
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new CornerTable(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + presetNum +  ");");
+		System.out.println("buildings[arrayCounter] = new CornerTable(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + preset +  ");");
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
@@ -48,7 +46,7 @@ public class CornerTable extends Building {
 	    interactHitbox1 = new Rectangle2D.Float(0, 0, 1, 1);
 	    interactHitbox2 = new Rectangle2D.Float(0, 0, 1, 1);
 
-	    switch(presetNum) {
+	    switch(preset) {
 	        case 0: // Top Left
 	            animations[0][0][0] = importImage("/decor/connected table 2.png").getSubimage(64, 0, 32, 32);
 	            hitbox.width = 48 + 24;
@@ -101,7 +99,7 @@ public class CornerTable extends Building {
 	    }
 	}
 	public void refreshImages() {
-		switch(presetNum) {
+		switch(preset) {
 		case 0:
 			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getCounterSkin().getTableImage(64, 0, 32, 32);
 			break;
@@ -177,7 +175,7 @@ public class CornerTable extends Building {
 			firstUpdate = false;
 			int hitboxWidth = 24;
 			int hitboxHeight = 40;
-			switch(presetNum) {
+			switch(preset) {
 			case 0:
 	            // Horizontal arm (rightward)
 	            interactHitbox1 = new Rectangle2D.Float(hitbox.x, hitbox.y + 40, hitboxHeight, hitboxWidth);

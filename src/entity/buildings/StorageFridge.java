@@ -100,7 +100,7 @@ public class StorageFridge extends Building {
 	public Food getRandomItem() {
 		return (Food)gp.world.itemRegistry.getItemFromName(contents.get(random.nextInt(contents.size())).getName(), 0);
 	}
-	private void importImages() {
+	public void importImages() {
 		animations = new TextureRegion[1][1][2];
 		
 		name = "Storage Fridge";

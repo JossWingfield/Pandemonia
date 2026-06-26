@@ -12,11 +12,10 @@ public class Candle extends Building{
 	
 	private LightSource light;
 	private boolean firstUpdate = true;
-	private int type;
 	
-	public Candle(GamePanel gp, float xPos, float yPos, int type) {
+	public Candle(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
-		this.type = type;
+		this.preset = preset;
 		
 		drawWidth = 48;
         drawHeight = 48;
@@ -33,24 +32,24 @@ public class Candle extends Building{
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*4, hitbox.y+3*4, hitbox.width-3*8, hitbox.height-3*8);
 	}
 	public Building clone() {
-		Candle building = new Candle(gp, hitbox.x, hitbox.y, type);
+		Candle building = new Candle(gp, hitbox.x, hitbox.y, preset);
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new Candle(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + this.type + ");");
+		System.out.println("buildings[arrayCounter] = new Candle(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + this.preset + ");");
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][1];
 		
-		switch(type) {
+		name = "Candle";
+		
+		switch(preset) {
 		case 0:
-			name = "Candle 1";
 	    	animations[0][0][0] = importImage("/decor/Candles.png").getSubimage(0, 0, 16, 16);
 			cost = 8;
 			break;
 		case 1:
-			name = "Candle 2";
 	    	animations[0][0][0] = importImage("/decor/Candles.png").getSubimage(16, 0, 16, 16);
 			cost = 20;
 			break;

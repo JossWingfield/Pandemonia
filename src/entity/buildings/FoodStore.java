@@ -30,6 +30,7 @@ public class FoodStore extends Building {
 		importImages();
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*1, hitbox.width-3*5, hitbox.height-3*3);
 	}
+	public int getPreset() { return foodType; }
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*1, hitbox.width-3*5, hitbox.height-3*3);
 	}

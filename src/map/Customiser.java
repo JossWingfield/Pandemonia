@@ -1044,8 +1044,13 @@ public class Customiser {
 			    //TODO only works with hitbox for shelves
 				Rectangle2D.Float buildHitbox = selectedBuilding.buildHitbox;
 				//boolean canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, xPos, yPos, selectedBuilding.hitbox.width, selectedBuilding.hitbox.height);
-				boolean canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, buildHitbox.x, buildHitbox.y, buildHitbox.width, buildHitbox.height);
-				
+				boolean canPlace;
+				if(mouseX<0 || mouseX > gp.frameWidth || mouseY < 0 || mouseY > gp.frameHeight) {
+					canPlace = false;
+				} else {
+					canPlace = CollisionMethods.canPlaceBuilding(gp, selectedBuilding, buildHitbox.x, buildHitbox.y, buildHitbox.width, buildHitbox.height);
+				}
+					
 				if(selectedBuilding.getName().equals("Shelf")) {
 			        selectedBuilding.hitbox.x = xPos;
 			        selectedBuilding.hitbox.y = yPos;

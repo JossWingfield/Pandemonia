@@ -32,6 +32,7 @@ import utility.Achievement;
 import utility.Constants;
 import utility.ProgressManager.RewardType;
 import utility.Settings;
+import utility.Statistics;
 import utility.Upgrade;
 import utility.UpgradeManager;
 import utility.Weather;
@@ -2639,6 +2640,9 @@ public class GUI {
 		case 22:
 			drawCustomiseOutfitScreen(renderer);
 			break;
+		case 23:
+			drawStatisticsScreen(renderer);
+			break;
 		}
 		
 		drawAchievementNotification(renderer);
@@ -2961,6 +2965,55 @@ public class GUI {
 	        }
 	    }
 	}
+	private void drawStatisticsScreen(Renderer renderer) {
+		
+		renderer.setColour(darkened);
+		renderer.fillRect(0, 0, gp.frameWidth, gp.frameHeight);
+		
+		
+		renderer.setColour(Colour.WHITE);
+		renderer.setFont(font);
+		String text = "Statistics";
+		renderer.drawString(text, getXforCenteredText(text, font), 200);
+		
+		int y = 200;
+		int spacing = 40;
+		
+		text = "Ingredients Chopped:" + Integer.toString(Statistics.ingredientsChopped);
+		y+=spacing;
+		renderer.drawString(text, getXforCenteredText(text, font), y);
+		
+		text = "Customers Served:" + Integer.toString(Statistics.servedCustomers);
+		y+=spacing;
+		renderer.drawString(text, getXforCenteredText(text, font), y);
+		
+		text = "Kitchen Upgrades:" + Integer.toString(Statistics.kitchenUpgradeCount);
+		y+=spacing;
+		renderer.drawString(text, getXforCenteredText(text, font), y);
+		
+		text = "Decorations Placed:" + Integer.toString(Statistics.decorationsPlaced);
+		y+=spacing;
+		renderer.drawString(text, getXforCenteredText(text, font), y);
+		
+		
+		
+		text = "Back";
+		int x =getXforCenteredText(text, font);
+		if(isHovering(text, x, 640-24, font)) {
+			renderer.setColour(craftColour1);
+			if(gp.mouseL.mouseButtonDown(0)) {
+				if(clickCooldown == 0) {
+					//QUIT
+					gp.currentState = gp.pauseState;
+					clickCooldown = 0.33;
+				}
+			}
+	}else {
+		renderer.setColour(Colour.WHITE);
+	}
+	renderer.drawString(text, getXforCenteredText(text, font), 640);
+	
+	}
 	private void drawPauseScreen(Renderer renderer) {
 		
 		renderer.setColour(darkened);
@@ -2985,7 +3038,7 @@ public class GUI {
 		
 		text = "Settings";
 		x =getXforCenteredText(text, font);
-		if(isHovering(text, x, 500-24, font)) {
+		if(isHovering(text, x, 460-24, font)) {
 			renderer.setColour(craftColour1);
 			if(gp.mouseL.mouseButtonDown(0)) {
 				if(clickCooldown == 0) {
@@ -2998,11 +3051,11 @@ public class GUI {
 		}else {
 			renderer.setColour(Colour.WHITE);
 		}
-		renderer.drawString(text, getXforCenteredText(text, font), 500);
+		renderer.drawString(text, getXforCenteredText(text, font), 460);
 		
 		text = "Achievements";
 		x =getXforCenteredText(text, font);
-		if(isHovering(text, x, 600-24, font)) {
+		if(isHovering(text, x, 520-24, font)) {
 			renderer.setColour(craftColour1);
 			if(gp.mouseL.mouseButtonDown(0)) {
 				if(clickCooldown == 0) {
@@ -3011,14 +3064,30 @@ public class GUI {
 					currentTitleAnimation = 0;
 				}
 			}
-		} else {
+		} else { 
 			renderer.setColour(Colour.WHITE);
 		}
-			renderer.drawString(text, getXforCenteredText(text, font), 600);
+			renderer.drawString(text, getXforCenteredText(text, font), 520);
+			
+			text = "Statistics";
+			x =getXforCenteredText(text, font);
+			if(isHovering(text, x, 580-24, font)) {
+				renderer.setColour(craftColour1);
+				if(gp.mouseL.mouseButtonDown(0)) {
+					if(clickCooldown == 0) {
+						gp.currentState = gp.statisticsState;
+						clickCooldown = 0.33;
+						currentTitleAnimation = 0;
+					}
+				}
+			} else {
+				renderer.setColour(Colour.WHITE);
+			}
+				renderer.drawString(text, getXforCenteredText(text, font), 580);
 			
 			text = "Quit";
 			x =getXforCenteredText(text, font);
-			if(isHovering(text, x, 700-24, font)) {
+			if(isHovering(text, x, 640-24, font)) {
 				renderer.setColour(craftColour1);
 				if(gp.mouseL.mouseButtonDown(0)) {
 					if(clickCooldown == 0) {
@@ -3055,7 +3124,7 @@ public class GUI {
 		}else {
 			renderer.setColour(Colour.WHITE);
 		}
-		renderer.drawString(text, getXforCenteredText(text, font), 700);
+		renderer.drawString(text, getXforCenteredText(text, font), 640);
 		
 		
 		int mouseX = (int)gp.mouseL.getScreenX();

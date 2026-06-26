@@ -10,7 +10,6 @@ public class ToiletDoor extends Building {
 	
 	private Rectangle2D.Float doorHitbox, npcVisualHitbox;
 	private boolean firstUpdate = true;
-	public int preset = 0;
 	
 	public ToiletDoor(GamePanel gp, float xPos, float yPos, int presetNum) {
 		super(gp, xPos, yPos, 48*2, 48*2);

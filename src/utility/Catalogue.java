@@ -202,57 +202,68 @@ public class Catalogue {
     }
     public TextureRegion getCatalogueIconFor(Object target) {
         if (target == null) return null;
-        
-        String targetName = "";
-    	if(target instanceof Building build) {
-    		targetName = build.getName();
-		} else if(target instanceof WallPaper wall) {
-			targetName = wall.name;
-		} else if(target instanceof FloorPaper wall) {
-			targetName = wall.name;
-		} else if(target instanceof Beam wall) {
-			targetName = wall.name;
-		} else if(target instanceof ChairSkin chair) {
-			targetName = chair.name;
-		} else if(target instanceof CounterSkin chair) {
-			targetName = chair.name;
-		} else if(target instanceof TableSkin chair) {
-			targetName = chair.name;
-		} else if(target instanceof PanSkin chair) {
-			targetName = chair.name;
-		} else if(target instanceof DoorSkin chair) {
-			targetName = chair.name;
-		}
+
+        String targetName = null;
+        int targetPreset = -1;
+
+        if (target instanceof Building build) {
+            targetName = build.getName();
+        } else if (target instanceof WallPaper wall) {
+            targetPreset = wall.preset;
+        } else if (target instanceof FloorPaper floor) {
+            targetPreset = floor.preset;
+        } else if (target instanceof Beam beam) {
+            targetPreset = beam.preset;
+        } else if (target instanceof ChairSkin chair) {
+            targetPreset = chair.preset;
+        } else if (target instanceof CounterSkin counter) {
+            targetPreset = counter.preset;
+        } else if (target instanceof TableSkin table) {
+            targetPreset = table.preset;
+        } else if (target instanceof PanSkin pan) {
+            targetPreset = pan.preset;
+        } else if (target instanceof DoorSkin door) {
+            targetPreset = door.preset;
+        }
 
         for (ShopCatalogue catalogue : allCatalogues) {
-            for (Object b : catalogue.getContents()) {
-            	String name = "";
-            	if(b instanceof Building build) {
-        			name = build.getName();
-        		} else if(b instanceof WallPaper wall) {
-        			name = wall.name;
-        		} else if(b instanceof FloorPaper wall) {
-        			name = wall.name;
-        		} else if(b instanceof Beam wall) {
-        			name = wall.name;
-        		} else if(b instanceof ChairSkin chair) {
-        			name = chair.name;
-        		} else if(b instanceof CounterSkin chair) {
-        			name = chair.name;
-        		} else if(b instanceof TableSkin chair) {
-        			name = chair.name;
-        		} else if(b instanceof PanSkin chair) {
-        			name = chair.name;
-        		} else if(b instanceof DoorSkin chair) {
-        			name = chair.name;
-        		}
-                if (name.equals(targetName)) {
+            for (Object item : catalogue.getContents()) {
+
+                String name = null;
+                int preset = -1;
+
+                if (item instanceof Building build) {
+                    name = build.getName();
+                } else if (item instanceof WallPaper wall) {
+                    preset = wall.preset;
+                } else if (item instanceof FloorPaper floor) {
+                    preset = floor.preset;
+                } else if (item instanceof Beam beam) {
+                    preset = beam.preset;
+                } else if (item instanceof ChairSkin chair) {
+                    preset = chair.preset;
+                } else if (item instanceof CounterSkin counter) {
+                    preset = counter.preset;
+                } else if (item instanceof TableSkin table) {
+                    preset = table.preset;
+                } else if (item instanceof PanSkin pan) {
+                    preset = pan.preset;
+                } else if (item instanceof DoorSkin door) {
+                    preset = door.preset;
+                }
+
+                // Buildings use names, skins/papers use presets
+                if (targetName != null && targetName.equals(name)) {
+                    return catalogue.getIcon();
+                }
+
+                if (targetPreset != -1 && targetPreset == preset) {
                     return catalogue.getIcon();
                 }
             }
         }
 
-        return null; // Not found in any catalogue
+        return null;
     }
     public void unlockById(int id) {
         unlockedIds.add(id);

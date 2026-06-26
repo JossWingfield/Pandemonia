@@ -16,11 +16,10 @@ public class Trapdoor extends Building {
 	private boolean firstUpdate = true;
 	public int roomNum = 6;
 	public double cooldown = 0;
-	public int type;
 	
 	public Trapdoor(GamePanel gp, float xPos, float yPos, int type) {
 		super(gp, xPos, yPos, 48*2, 48*2);
-		this.type = type;
+		this.preset = type;
 		
 		isSolid = false;
 		
@@ -37,7 +36,7 @@ public class Trapdoor extends Building {
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3, hitbox.y+3, hitbox.width-6, hitbox.height-9);
 	}
 	public Building clone() {
-		Trapdoor building = new Trapdoor(gp, hitbox.x, hitbox.y, type);
+		Trapdoor building = new Trapdoor(gp, hitbox.x, hitbox.y, preset);
 		return building;
     }
 	public void printOutput() {
@@ -51,7 +50,7 @@ public class Trapdoor extends Building {
 		animations = new TextureRegion[1][1][2];
 		
 		name = "Trapdoor 1";
-		if(type == 0) {
+		if(preset == 0) {
 			animations[0][0][0] = importImage("/decor/trapdoor.png").getSubimage(64, 32, 32, 32);
     		animations[0][0][1] = importImage("/decor/trapdoor.png").getSubimage(64+32, 32, 32, 32);
     		isBottomLayer = true;
@@ -72,7 +71,7 @@ public class Trapdoor extends Building {
 		if(firstUpdate) {
 			firstUpdate = false;
 			entryHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, 48, 48);
-			if(type == 1) {
+			if(preset == 1) {
 				entryHitbox.width = 96;
 				entryHitbox.height = 48*3;
 			}
@@ -98,7 +97,7 @@ public class Trapdoor extends Building {
 		}
 	}
 	public void draw(Renderer renderer) { 
-		if(RecipeManager.areHauntedRecipesPresent() || type == 1) {
+		if(RecipeManager.areHauntedRecipesPresent() || preset == 1) {
 			
 	        //g2.setColor(Color.YELLOW);
 	      	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);

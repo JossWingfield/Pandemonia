@@ -34,7 +34,7 @@ public class Chair extends Building {
 		mustBePlacedOnFloor = true;
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*4, hitbox.width-3*7, hitbox.height-3*6);
 	}
-	
+	public int getPreset() { return facing; }
 	public void setGroupChair(LargeTable table) {
 		this.table = table;
 		this.groupChair = true;

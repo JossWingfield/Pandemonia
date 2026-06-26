@@ -1,7 +1,9 @@
 package utility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import entity.buildings.Bed;
 import entity.buildings.Bin;
@@ -56,232 +58,160 @@ import main.GamePanel;
 import utility.save.BuildingSaveData;
 
 public class BuildingRegistry {
-	
-	GamePanel gp;
-	
-	List<String> presetBuildingNames;
-	
-	public BuildingRegistry(GamePanel gp) {
-		this.gp = gp;
-		
-		presetBuildingNames = new ArrayList<>();
-		presetBuildingNames.add("Table Corner 1");
-		presetBuildingNames.add("Food Store");
-		presetBuildingNames.add("Toilet 1");
-		presetBuildingNames.add("Toilet Door 1");
-		presetBuildingNames.add("Trapdoor 1");
-		presetBuildingNames.add("Shelf");
-		presetBuildingNames.add("Kitchen Counter");
-		presetBuildingNames.add("Gate");
-		presetBuildingNames.add("Window");
-		presetBuildingNames.add("Large Table");
-		presetBuildingNames.add("Bin 1");
-	}
-	
-	public List<BuildingSaveData> saveBuildings(List<Building> buildings) {
-		
-		List<BuildingSaveData> savedBuildings = new ArrayList<>();
-		
-		for(Building b: buildings) {
-			if(b != null) {
-				BuildingSaveData data = new BuildingSaveData();
-				data.x = (int)b.hitbox.x;
-				data.y = (int)b.hitbox.y;
-				data.name = b.getName();
-				if(isPresetBuilding(b)) {
-					if(b instanceof Bin c) {
-						data.preset = c.preset;
-					}  else if(b instanceof CornerTable c) {
-						data.preset = c.presetNum;
-					} else if(b instanceof FoodStore c) {
-						data.preset = c.foodType;
-					} else if(b instanceof Toilet c) {
-						data.preset = c.facing;
-					} else if(b instanceof ToiletDoor c) {
-						data.preset = c.preset;
-					} else if(b instanceof Trapdoor c) {
-						data.preset = c.type;
-					} else if(b instanceof Shelf c) {
-						data.preset = c.type;
-					} else if(b instanceof KitchenCounter c) {
-						data.preset = c.type;
-					} else if(b instanceof Gate c) {
-						data.preset = c.type;
-					} else if(b instanceof LargeTable c) {
-						data.preset = c.tableType;
-					} else if(b instanceof Window c) {
-						data.preset = c.getPresetNum();
-					} else if(b instanceof FloorDecor_Building c) {
-						data.preset = c.type;
-						data.decorType = 0;
-					}  else if(b instanceof WallDecor_Building c) {
-						data.preset = c.type;
-						data.decorType = 1;
-					} else if(b instanceof CursedDecor c) {
-						data.preset = c.preset;
-						data.decorType = 2;
-					} else if(b instanceof Rubble c) {
-						data.preset = c.preset;
-						data.attribute1 = 0;
-						data.decorType = 3;
-						if(c.barricade) {
-							data.attribute1 = 1;
-						}
-					}
-				} else if(b instanceof Door d) {
-					data.preset = d.preset;
-					data.attribute1 = d.facing;
-					data.attribute2 = d.doorRoomNum;
-				} else if(b instanceof Fridge d) {
-					data.fridgeType = 0;
-					for(Food f: d.getContents()) {
-						data.fridgeContents.add(f.getName());
-						data.fridgeContentStates.add(f.getState());
-					}
-				} else if(b instanceof StorageFridge d) {
-					data.fridgeType = 1;
-					if(d.starterFridge) {
-						data.attribute1 = 1;
-					}
-					for(Food f: d.contents) {
-						data.fridgeContents.add(f.getName());
-						data.fridgeContentStates.add(f.getState());
-					}
-				} else if(b instanceof Table c) {
-					data.string1 = c.chairFacing;
-					data.boolean1 = c.doubleChaired;
-				} 
-				savedBuildings.add(data);
-			}
-		}
-		
-		return savedBuildings;
-	}
-	public List<Building> unpackSavedBuildings(List<BuildingSaveData> savedBuildings) {
-		
-		List<Building> buildings = new ArrayList<>();
-		
-		for(BuildingSaveData b: savedBuildings) {
-			if(b.preset != -1) {
-				if(b.decorType != -1) {
-					if(b.decorType == 0) {
-						Building build = new FloorDecor_Building(gp, b.x, b.y, b.preset);
-						buildings.add(build);
-					} else if(b.decorType == 1) {
-						Building build = new WallDecor_Building(gp, b.x, b.y, b.preset);
-						buildings.add(build);
-					} else if(b.decorType == 2) {
-						Building build = new CursedDecor(gp, b.x, b.y, b.preset);
-						buildings.add(build);
-					} else if(b.decorType == 3) {
-						Rubble build = new Rubble(gp, b.x, b.y, b.preset);
-						if(b.attribute1 == 1) {
-							build.setBarricade();
-						}
-						buildings.add(build);
-					}
-				} else {
-					if(b.name.equals("Door 1")) {
-						Door build = new Door(gp, b.x, b.y, b.attribute1, b.preset);
-						build.setDoorNum(b.attribute2);
-						buildings.add(build);
-					} else {
-						Building build = getBuildingFromName(b.name, b.x, b.y, b.preset);
-						buildings.add(build);
-					}
-				}
-			} else if(b.name.equals("Table 1")) {
-				Table table = new Table(gp, b.x, b.y, b.string1, b.boolean1);
-				buildings.add(table);
-			} else if(b.fridgeType != -1) {
-				if(b.fridgeType == 0) {
-					Fridge build = new Fridge(gp, b.x, b.y);
-					build.setContents(b.fridgeContents, b.fridgeContentStates);
-					buildings.add(build);
-				} else if(b.fridgeType == 1) {
-					boolean starterFridge = false;
-					if(b.attribute1 == 1) {
-						starterFridge = true;
-					}
-					StorageFridge build = new StorageFridge(gp, b.x, b.y, starterFridge);
-					build.setContents(b.fridgeContents, b.fridgeContentStates);
-					buildings.add(build);
-				}
-			} else {
-				Building build = getBuildingFromName(b.name, b.x, b.y);
-				buildings.add(build);
-			}
-		}
-		
-		return buildings;
-	}
-	public boolean isPresetBuilding(Building b) {
-		String n = b.getName();
-		if(presetBuildingNames.contains(n)) {
-			return true;
-		}
-		if(b instanceof FloorDecor_Building || b instanceof WallDecor_Building || b instanceof CursedDecor  || b instanceof Rubble) {
-			return true;
-		}
-		return false;
-	}
-	public Building getBuildingFromName(String name, int x, int y) {
-		Building i = null;
-		switch(name) {
-			case "Bed" -> i = new Bed(gp, x, y);
-			case "Breaker" -> i = new Breaker(gp, x, y);
-			case "Calendar" -> i = new Calendar(gp, x, y);
-			case "Candle 1" -> i = new Candle(gp, x, y, 0);
-			case "Candle 2" -> i = new Candle(gp, x, y, 1);
-			case "Cauldron" -> i = new Cauldron(gp, x, y);
-			case "Clothes Rail" -> i = new ClothesRail(gp, x, y);
-			case "Escape Hole" -> i = new EscapeHole(gp, x, y);
-			case "Lantern" -> i = new Lantern(gp, x, y);
-			case "Menu Sign" -> i = new MenuSign(gp, x, y);
-			case "Oven" -> i = new Oven(gp, x, y);
-			case "Kitchen Sink 1" -> i = new Sink(gp, x, y);
-			case "Menu Book" -> i = new MenuBook(gp, x, y);
-			case "Soul Lantern" -> i = new SoulLantern(gp, x, y);
-			case "Stove" -> i = new Stove(gp, x, y);
-			case "Frying Station" -> i = new FryingStation(gp, x, y);
-			case "Chopping Board" -> i = new ChoppingBoard(gp, x, y);
-			case "Turntable" -> i = new Turntable(gp, x, y);
-			case "Tip Jar" -> i = new TipJar(gp, x, y);
-			case "Herb Basket" -> i = new HerbBasket(gp, x, y);
-			case "Room Spawn" -> i = new RoomSpawn(gp, x, y);
-			case "Chef Portrait" -> i = new ChefPortrait(gp, x, y);
-			case "Torch" -> i = new Torch(gp, x, y);
-			case "Computer" -> i = new Computer(gp, x, y);
-			case "Fireplace" -> i = new Fireplace(gp, x, y);
-			case "Stairs" -> i = new Stairs(gp, x, y);
-			case "Freezer" -> i = new Freezer(gp, x, y);
-			case "Freezer Light" -> i = new FreezerLight(gp, x, y);
-			case "Spice Table" -> i = new SpiceTable(gp, x, y);
-		}
 
-		return i;
-	}
-	public Building getBuildingFromName(String name, int x, int y, int preset) {
-		Building i = null;
-		switch(name) {
-			case "Table Corner 1" -> i = new CornerTable(gp, x, y, preset);
-			case "Food Store" -> i = new FoodStore(gp, x, y, preset);
-			case "Toilet 1" -> i = new Toilet(gp, x, y, preset);
-			case "Toilet Door 1" -> i = new ToiletDoor(gp, x, y, preset);
-			case "Trapdoor 1" -> i = new Trapdoor(gp, x, y, preset);
-			case "Shelf" -> i = new Shelf(gp, x, y, preset);
-			case "Kitchen Counter" -> i = new KitchenCounter(gp, x, y, preset);
-			case "Gate" -> i = new Gate(gp, x, y, preset);
-			case "Window" -> i = new Window(gp, x, y, preset);
-			case "Large Table" -> i = new LargeTable(gp, x, y, preset);
-			case "Bin 1" -> i = new Bin(gp, x, y, preset);
-		}
+    @FunctionalInterface
+    interface BuildingFactory {
+        Building create(int x, int y, int preset);
+    }
 
-		return i;
-	}
-	public Building getBuildingFromName(String name) {
-		return getBuildingFromName(name, 0, 0);
-	}
-	
-	
+    private final Map<String, BuildingFactory> registry = new HashMap<>();
+    private final GamePanel gp;
+
+    public BuildingRegistry(GamePanel gp) {
+        this.gp = gp;
+
+        // ---- No preset ----
+        registry.put("Bed",             (x, y, p) -> new Bed(gp, x, y));
+        registry.put("Breaker",         (x, y, p) -> new Breaker(gp, x, y));
+        registry.put("Calendar",        (x, y, p) -> new Calendar(gp, x, y));
+        registry.put("Candle",        (x, y, p) -> new Candle(gp, x, y, p));
+        registry.put("Cauldron",        (x, y, p) -> new Cauldron(gp, x, y));
+        registry.put("Clothes Rail",    (x, y, p) -> new ClothesRail(gp, x, y));
+        registry.put("Escape Hole",     (x, y, p) -> new EscapeHole(gp, x, y));
+        registry.put("Lantern",         (x, y, p) -> new Lantern(gp, x, y));
+        registry.put("Menu Sign",       (x, y, p) -> new MenuSign(gp, x, y));
+        registry.put("Oven",            (x, y, p) -> new Oven(gp, x, y));
+        registry.put("Kitchen Sink 1",  (x, y, p) -> new Sink(gp, x, y));
+        registry.put("Menu Book",       (x, y, p) -> new MenuBook(gp, x, y));
+        registry.put("Soul Lantern",    (x, y, p) -> new SoulLantern(gp, x, y));
+        registry.put("Stove",           (x, y, p) -> new Stove(gp, x, y));
+        registry.put("Frying Station",  (x, y, p) -> new FryingStation(gp, x, y));
+        registry.put("Chopping Board",  (x, y, p) -> new ChoppingBoard(gp, x, y));
+        registry.put("Turntable",       (x, y, p) -> new Turntable(gp, x, y));
+        registry.put("Tip Jar",         (x, y, p) -> new TipJar(gp, x, y));
+        registry.put("Herb Basket",     (x, y, p) -> new HerbBasket(gp, x, y));
+        registry.put("Room Spawn",      (x, y, p) -> new RoomSpawn(gp, x, y));
+        registry.put("Chef Portrait",   (x, y, p) -> new ChefPortrait(gp, x, y));
+        registry.put("Torch",           (x, y, p) -> new Torch(gp, x, y));
+        registry.put("Computer",        (x, y, p) -> new Computer(gp, x, y));
+        registry.put("Fireplace",       (x, y, p) -> new Fireplace(gp, x, y));
+        registry.put("Stairs",          (x, y, p) -> new Stairs(gp, x, y));
+        registry.put("Freezer",         (x, y, p) -> new Freezer(gp, x, y));
+        registry.put("Freezer Light",   (x, y, p) -> new FreezerLight(gp, x, y));
+        registry.put("Spice Table",     (x, y, p) -> new SpiceTable(gp, x, y));
+
+        // ---- With preset ----
+        registry.put("Table Corner 1",  (x, y, p) -> new CornerTable(gp, x, y, p));
+        registry.put("Food Store",      (x, y, p) -> new FoodStore(gp, x, y, p));
+        registry.put("Toilet 1",        (x, y, p) -> new Toilet(gp, x, y, p));
+        registry.put("Toilet Door 1",   (x, y, p) -> new ToiletDoor(gp, x, y, p));
+        registry.put("Trapdoor 1",      (x, y, p) -> new Trapdoor(gp, x, y, p));
+        registry.put("Shelf",           (x, y, p) -> new Shelf(gp, x, y, p));
+        registry.put("Kitchen Counter", (x, y, p) -> new KitchenCounter(gp, x, y, p));
+        registry.put("Gate",            (x, y, p) -> new Gate(gp, x, y, p));
+        registry.put("Window",          (x, y, p) -> new Window(gp, x, y, p));
+        registry.put("Large Table",     (x, y, p) -> new LargeTable(gp, x, y, p));
+        registry.put("Bin 1",           (x, y, p) -> new Bin(gp, x, y, p));
+
+        // ---- Decor ----
+        registry.put("Floor Decor",     (x, y, p) -> new FloorDecor_Building(gp, x, y, p));
+        registry.put("Wall Decor",      (x, y, p) -> new WallDecor_Building(gp, x, y, p));
+        registry.put("Cursed Decor",    (x, y, p) -> new CursedDecor(gp, x, y, p));
+        registry.put("Rubble",          (x, y, p) -> new Rubble(gp, x, y, p));
+
+        // ---- Special cases handled via saveTo/loadFrom ----
+        registry.put("Door 1",          (x, y, p) -> new Door(gp, x, y, 0, p));
+        registry.put("Fridge",          (x, y, p) -> new Fridge(gp, x, y));
+        registry.put("Storage Fridge",  (x, y, p) -> new StorageFridge(gp, x, y, false));
+        registry.put("Table 1",         (x, y, p) -> new Table(gp, x, y, null, false));
+    }
+
+    public Building create(String name, int x, int y) {
+        return create(name, x, y, -1);
+    }
+
+    public Building create(String name, int x, int y, int preset) {
+        BuildingFactory factory = registry.get(name);
+        //if (factory == null) throw new IllegalArgumentException("Unknown building: " + name);
+        if (factory == null) return null;
+        return factory.create(x, y, preset);
+    }
+
+    // ----------------------------------------------------------------
+    //  SAVE
+    // ----------------------------------------------------------------
+    public List<BuildingSaveData> saveBuildings(List<Building> buildings) {
+        List<BuildingSaveData> saved = new ArrayList<>();
+        for (Building b : buildings) {
+            if (b == null) continue;
+
+            BuildingSaveData data = new BuildingSaveData();
+            data.name   = b.getRegistryName();
+            data.x      = (int) b.hitbox.x;
+            data.y      = (int) b.hitbox.y;
+            data.preset = b.getPreset(); // works for everything now
+
+            // Only keep special cases that have EXTRA data beyond preset
+            if (b instanceof Rubble c) {
+                data.attribute1 = c.barricade ? 1 : 0;
+            } else if (b instanceof Door d) {
+                data.attribute1 = d.facing;
+                data.attribute2 = d.doorRoomNum;
+            } else if (b instanceof Fridge d) {
+                data.fridgeType = 0;
+                for (Food f : d.getContents()) {
+                    data.fridgeContents.add(f.getName());
+                    data.fridgeContentStates.add(f.getState());
+                }
+            } else if (b instanceof StorageFridge d) {
+                data.fridgeType = 1;
+                data.attribute1 = d.starterFridge ? 1 : 0;
+                for (Food f : d.contents) {
+                    data.fridgeContents.add(f.getName());
+                    data.fridgeContentStates.add(f.getState());
+                }
+            } else if (b instanceof Table c) {
+                data.string1  = c.chairFacing;
+                data.boolean1 = c.doubleChaired;
+            }
+
+            saved.add(data);
+        }
+        return saved;
+    }
+
+    // ----------------------------------------------------------------
+    //  LOAD
+    // ----------------------------------------------------------------
+    public List<Building> unpackSavedBuildings(List<BuildingSaveData> savedBuildings) {
+        List<Building> buildings = new ArrayList<>();
+
+        for (BuildingSaveData data : savedBuildings) {
+            Building b = create(data.name, data.x, data.y, data.preset);
+            if (b == null) continue;
+
+            if (b instanceof Rubble r && data.attribute1 == 1) {
+                r.setBarricade();
+            } else if (b instanceof Door d) {
+                d.facing = data.attribute1;
+                d.setDoorNum(data.attribute2);
+                d.importImages();
+            } else if (b instanceof Fridge d) {
+                d.setContents(data.fridgeContents, data.fridgeContentStates);
+                d.importImages();
+            } else if (b instanceof StorageFridge d) {
+                d.starterFridge = data.attribute1 == 1;
+                d.setContents(data.fridgeContents, data.fridgeContentStates);
+                d.importImages();
+            } else if (b instanceof Table t) {
+                t.chairFacing   = data.string1;
+                t.doubleChaired = data.boolean1;
+                t.importImages();
+            }
+
+            buildings.add(b);
+        }
+
+        return buildings;
+    }
 }

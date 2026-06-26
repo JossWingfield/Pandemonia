@@ -19,7 +19,7 @@ public class OutdoorWindow extends Building {
 	
 	public OutdoorWindow(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
-		this.presetNum = preset;
+		this.preset = preset;
 		
 		isSolid = false;
 		
@@ -38,11 +38,11 @@ public class OutdoorWindow extends Building {
 		buildHitbox = new Rectangle2D.Float(hitbox.x + 3*2, hitbox.y+3, hitbox.width-3*2, hitbox.height-3*4);
 	}
 	public Building clone() {
-		OutdoorWindow calendar = new OutdoorWindow(gp, hitbox.x, hitbox.y, presetNum);
+		OutdoorWindow calendar = new OutdoorWindow(gp, hitbox.x, hitbox.y, preset);
 		return calendar;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new OutdoorWindow(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + this.presetNum + ");");
+		System.out.println("buildings[arrayCounter] = new OutdoorWindow(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + this.preset + ");");
 		System.out.println("arrayCounter++;");	
 	}
 	public void destroy() {
@@ -54,7 +54,7 @@ public class OutdoorWindow extends Building {
 		animations = new TextureRegion[1][1][2];
 		
      	
-     	switch(presetNum) {
+     	switch(preset) {
      	case 0:
          	animations[0][0][0] = importImage("/buildings/ButcherWindow.png").getSubimage(0, 0, 16, 16);
         	animations[0][0][1] = importImage("/buildings/ButcherWindow.png").getSubimage(32, 0, 16, 16);

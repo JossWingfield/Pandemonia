@@ -10,13 +10,12 @@ import utility.CollisionMethods;
 
 public class WallDecor_Building extends Building {
 
-	public int type;
 	private boolean firstUpdate = true;
 	private Rectangle2D.Float invisHitbox;
 	
 	public WallDecor_Building(GamePanel gp, float xPos, float yPos, int type) {
 		super(gp, xPos, yPos, 48, 48);
-		this.type = type;
+		this.preset = type;
 		
 		isSolid = false;
 		
@@ -30,11 +29,14 @@ public class WallDecor_Building extends Building {
 		importImages();
 	}
 	public Building clone() {
-		WallDecor_Building building = new WallDecor_Building(gp, hitbox.x, hitbox.y, type);
+		WallDecor_Building building = new WallDecor_Building(gp, hitbox.x, hitbox.y, preset);
 		return building;
     }
+	public String getRegistryName() {
+		return "Wall Decor";
+	}
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new WallDecor_Building(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + type + ");");
+		System.out.println("buildings[arrayCounter] = new WallDecor_Building(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + preset + ");");
 		System.out.println("arrayCounter++;");
 	}
 	
@@ -42,7 +44,7 @@ public class WallDecor_Building extends Building {
 		animations = new TextureRegion[1][1][1];
 		buildHitbox = hitbox;
 		
-		switch(type) {
+		switch(preset) {
 		 case 0:
 			 name = "Painting 1";
 	         animations[0][0][0] = importImage("/decor/painting.png").getSubimage(64, 0, 16, 16);
@@ -409,7 +411,7 @@ public class WallDecor_Building extends Building {
 	public void draw(Renderer renderer) {
 		if(firstUpdate) {
 			firstUpdate = false;
-			switch(type) {
+			switch(preset) {
 			case 11, 12, 13:
 				invisHitbox = new Rectangle2D.Float(hitbox.x, hitbox.y, 80, hitbox.height);
 				break;

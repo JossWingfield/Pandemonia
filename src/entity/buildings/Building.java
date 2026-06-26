@@ -10,6 +10,7 @@ import main.GamePanel;
 import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
+import utility.save.BuildingSaveData;
 
 public class Building extends Entity {
 	
@@ -29,7 +30,6 @@ public class Building extends Entity {
 	public boolean isFourthLayer = false;
 	public boolean isFifthLayer = false;
 	public boolean isBottomLayer = false;
-	protected int presetNum = -1;
 	protected boolean destructionUIOpen = false;
 	protected transient Texture destructionImage;
 	public boolean isDecor = false;
@@ -55,6 +55,8 @@ public class Building extends Entity {
 	public Rectangle2D.Float npcHitbox;
 	public Rectangle2D.Float buildHitbox;
 	private Vector4f deleteColour = new Vector4f(206f/255f, 63f/255f, 111f/255f, 80f/255f);
+	
+	public int preset;
 
 	public Building(GamePanel gp, float xPos, float yPos, float width, float height) {
 		super(gp, xPos, yPos, width, height);
@@ -72,6 +74,13 @@ public class Building extends Entity {
 	public Building(GamePanel gp, Building b, float xPos, float yPos, float width, float height) {
 		super(gp, xPos, yPos, width, height);
 	}
+	
+	public void saveTo(BuildingSaveData data) {}
+	public void loadFrom(BuildingSaveData data) {}
+	public int getPreset() { return preset; }
+    public void applyPreset(int preset) {
+    	this.preset = preset;
+    }  // override to restore preset on load
 	public String getDescription() {
 		return description;
 	}
@@ -113,9 +122,6 @@ public class Building extends Entity {
 		return hitbox;
 	}
 	public void checkTilableTiles(Rectangle2D.Float h, boolean original) {}
-	public int getPresetNum() {
-		return presetNum;
-	}
 	
 	public void updateState(double dt) {
 
@@ -131,7 +137,7 @@ public class Building extends Entity {
 				}
 			}
 			
-			if(!hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
+			if(!hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY()) || !gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 				closeDestructionUI();
 			}
 			if(destructionUIOpen) {
@@ -155,6 +161,9 @@ public class Building extends Entity {
 	}
 	
 	public String getName() {
+		return name;
+	}
+	public String getRegistryName() {
 		return name;
 	}
 	

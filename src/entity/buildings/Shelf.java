@@ -119,6 +119,7 @@ public class Shelf extends Building {
 		}
 	}
     public void updateConnections() {
+    	
         boolean leftShelf = CollisionMethods.getBuildingAt(gp, (int)(hitbox.x - gp.tileSize), (int)(hitbox.y),"Shelf") instanceof Shelf;
         boolean rightShelf = CollisionMethods.getBuildingAt(gp, (int)(hitbox.x + gp.tileSize), (int)(hitbox.y),"Shelf") instanceof Shelf;
         boolean topShelf   = CollisionMethods.getBuildingAt(gp, (int)(hitbox.x), (int)(hitbox.y - gp.tileSize), "Shelf") instanceof Shelf;
@@ -131,6 +132,13 @@ public class Shelf extends Building {
         int tileX = (int)(hitbox.x / gp.tileSize)-1;
         int tileYStart = (int)(hitbox.y / gp.tileSize);
         int tileYEnd = (int)((hitbox.y + hitbox.height) / gp.tileSize);
+        
+        int tileXStart = (int)(hitbox.x / gp.tileSize)-1;
+        int tileXEnd = (int)((hitbox.x + hitbox.width) / gp.tileSize);
+        
+        if(tileXStart < 0 || tileXEnd >= 24 || tileYStart < 1 || tileYEnd >= 16) {
+        	return;
+        }
 
         for (int ty = tileYStart; ty < tileYEnd; ty++) {
             if (gp.world.mapM.currentRoom.mapGrid[1][tileX][ty] == 0) onRightWall = true;

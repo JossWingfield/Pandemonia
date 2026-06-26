@@ -155,25 +155,8 @@ public class KeyListener {
 	        	if (keyBeginPress(GLFW.GLFW_KEY_1)) {
 	             	//gp.world.cutsceneM.enterDestroyedRestaurant();
 	            }
-	        	if (keyBeginPress(GLFW.GLFW_KEY_2)) {
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	             	gp.world.customiser.addToInventory(new Shelf(gp, 0, 0));
-	            }
 	            if (keyBeginPress(GLFW.GLFW_KEY_3)) {
-	            	//gp.world.catalogue.obtainAllItemsWithinCatalogue(0);
+	            	
 	            }
 	            if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
 	            if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);

@@ -128,7 +128,25 @@ public class Sink extends Building {
 
 	}
 	public void inputUpdate(double dt) {
-		super.inputUpdate(dt);
+		if(canBePlaced) {
+			if(hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+					openDestructionUI();
+				}
+			}
+			
+			if(!hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY()) || !gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+				closeDestructionUI();
+			}
+			if(destructionUIOpen) {
+				if(gp.mouseL.mouseButtonDown(1)) {
+					if(currentPlate != null && currentPlate.getCurrentStackCount() == cleanedPlateCount) {
+						gp.world.buildingM.destroyBuilding(this);
+						gp.world.buildingM.checkBuildingConnections();
+					}
+				}
+			}
+		}
 		
 		if(gp.world.progressM.sinkUpgradeI) {
 			maxWashCount = 6;

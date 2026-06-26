@@ -63,7 +63,25 @@ public class MenuBook extends Building {
 		gp.player.resetAnimation(4);
 	}
 	public void inputUpdate(double dt) {
-		super.inputUpdate(dt);
+		if(canBePlaced) {
+			if(hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+					openDestructionUI();
+				}
+			}
+			
+			if(!hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY()) || !gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+				closeDestructionUI();
+			}
+			if(destructionUIOpen) {
+				if(gp.mouseL.mouseButtonDown(1)) {
+					if(menuCount == maxMenuCount) {
+						gp.world.buildingM.destroyBuilding(this);
+						gp.world.buildingM.checkBuildingConnections();
+					}
+				}
+			}
+		}
 		
 		if(menuHitbox != null) {
 			if(menuHitbox.intersects(gp.player.interactHitbox)) {

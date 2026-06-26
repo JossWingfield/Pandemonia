@@ -131,7 +131,25 @@ public class Stove extends Building {
 		}
 	}
 	public void inputUpdate(double dt) {
-		super.inputUpdate(dt);
+		if(canBePlaced) {
+			if(hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+					openDestructionUI();
+				}
+			}
+			
+			if(!hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY()) || !gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+				closeDestructionUI();
+			}
+			if(destructionUIOpen) {
+				if(gp.mouseL.mouseButtonDown(1)) {
+					if(leftSlot != null && rightSlot != null) {
+						gp.world.buildingM.destroyBuilding(this);
+						gp.world.buildingM.checkBuildingConnections();
+					}
+				}
+			}
+		}
 		
 		if(gp.world.mapM.isInRoom(roomNum)) { 
 		if(leftSlot != null) {
@@ -568,13 +586,6 @@ public class Stove extends Building {
 			renderer.draw(rightCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
 		}
 		
-		if(leftSlot != null) {
-			leftSlot.drawCookingUI(renderer, (int)hitbox.x, (int)hitbox.y, true);
-		}
-		if(rightSlot != null) {
-			rightSlot.drawCookingUI(renderer, (int)hitbox.x, (int)hitbox.y, false);
-		}
-		
 		if(drawCooking) {
 			if(rightSlot instanceof SmallPan pan) {
 				renderer.draw(rightCooking, (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
@@ -584,6 +595,15 @@ public class Stove extends Building {
 			}
 		}
 		
+	}
+	public void drawOverlayUI(Renderer renderer) {
+		super.drawOverlayUI(renderer);
+		if(leftSlot != null) {
+			leftSlot.drawCookingUI(renderer, (int)hitbox.x, (int)hitbox.y, true);
+		}
+		if(rightSlot != null) {
+			rightSlot.drawCookingUI(renderer, (int)hitbox.x, (int)hitbox.y, false);
+		}
 	}
 	private void stopParticles(boolean isLeft) {
 		if(isLeft) {

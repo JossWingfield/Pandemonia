@@ -13,11 +13,11 @@ public class Gate extends Building {
 	
 	private Rectangle2D.Float hitbox2;
 	private boolean firstUpdate = true;
-	public int type;
+	public int preset;
 	
 	public Gate(GamePanel gp, float xPos, float yPos, int type) {
 		super(gp, xPos, yPos, 48, 48);
-		this.type = type;
+		this.preset = type;
 		
 		isSolid = true;
 		
@@ -42,18 +42,18 @@ public class Gate extends Building {
         }
 	}
 	public Building clone() {
-		Gate building = new Gate(gp, hitbox.x, hitbox.y, type);
+		Gate building = new Gate(gp, hitbox.x, hitbox.y, preset);
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new Gate(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + type +  ");");
+		System.out.println("buildings[arrayCounter] = new Gate(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + preset +  ");");
 		System.out.println("arrayCounter++;");	
 	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][2];
 		
 		name = "Gate";
-		switch(type) {
+		switch(preset) {
 		case 0:
 			animations[0][0][0] = importImage("/decor/Counter.png").getSubimage(64, 64, 32, 32);
 			animations[0][0][1] = importImage("/decor/Counter.png").getSubimage(96, 64, 32, 32);
@@ -119,17 +119,17 @@ public class Gate extends Building {
 
 	    // Horizontal counter line
 	    if(leftCounter || rightCounter) {
-	        type = 0;
+	    	preset = 0;
 	    }
 
 	    // Vertical counter line
 	    else if(topCounter || bottomCounter) {
-	        type = 1;
+	    	preset = 1;
 	    }
 
 	    // Default fallback
 	    else {
-	        type = 0;
+	    	preset = 0;
 	    }
 
 
@@ -147,12 +147,12 @@ public class Gate extends Building {
 	    }
 	}
 	public void destroy() {
-		type = 0;
+		preset = 0;
 		importImages();
         gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
 	}
 	public void resetForCustomiser() {
-		type = 0;
+		preset = 0;
 		importImages();
 	}
 	public void draw(Renderer renderer) {

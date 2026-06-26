@@ -13,12 +13,11 @@ public class KitchenCounter extends Building {
 	
 	public Item currentItem = null;
 	public Rectangle2D.Float interactHitbox;
-	public int type;
 	private int interactSize = 32;
 	
-	public KitchenCounter(GamePanel gp, float xPos, float yPos, int type) {
+	public KitchenCounter(GamePanel gp, float xPos, float yPos, int preset) {
 		super(gp, xPos, yPos, 48, 48);
-		this.type = type;
+		this.preset = preset;
 		
 		isSolid = true;
 		
@@ -34,11 +33,11 @@ public class KitchenCounter extends Building {
 		buildHitbox = hitbox;
 	}
 	public Building clone() {
-		KitchenCounter building = new KitchenCounter(gp, hitbox.x, hitbox.y, type);
+		KitchenCounter building = new KitchenCounter(gp, hitbox.x, hitbox.y, preset);
 		return building;
     }
 	public void printOutput() {
-		System.out.println("buildings[arrayCounter] = new KitchenCounter(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + type + ");");
+		System.out.println("buildings[arrayCounter] = new KitchenCounter(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ", " + preset + ");");
 		System.out.println("arrayCounter++;");	
 	}
 	public void onPlaced() {
@@ -76,7 +75,7 @@ public class KitchenCounter extends Building {
 	    // 7 = top-right corner
 	    // 8 = bottom-left corner
 	    // 9 = bottom-right corner
-		switch(type) {
+		switch(preset) {
 		case 0:
 	    	animations[0][0][0] = importImage("/decor/Counter.png").getSubimage(0, 16, 16, 16);
 			break;
@@ -218,12 +217,12 @@ public class KitchenCounter extends Building {
 
 	    if(leftCounter && rightCounter) {
 
-	        type = 1; // horizontal middle
+	        preset = 1; // horizontal middle
 
 	    }
 	    else if(topCounter && bottomCounter) {
 
-	        type = 10; // vertical middle
+	        preset = 10; // vertical middle
 
 	    }
 
@@ -231,22 +230,22 @@ public class KitchenCounter extends Building {
 	    // Corners
 	    else if(rightCounter && bottomCounter) {
 
-	        type = 6; // top-left corner
+	        preset = 6; // top-left corner
 
 	    }
 	    else if(leftCounter && bottomCounter) {
 
-	        type = 7; // top-right corner
+	        preset = 7; // top-right corner
 
 	    }
 	    else if(rightCounter && topCounter) {
 
-	        type = 8; // bottom-left corner
+	        preset = 8; // bottom-left corner
 
 	    }
 	    else if(leftCounter && topCounter) {
 
-	        type = 9; // bottom-right corner
+	        preset = 9; // bottom-right corner
 
 	    }
 
@@ -254,27 +253,27 @@ public class KitchenCounter extends Building {
 	    // Single direction pieces
 	    else if(leftCounter) {
 
-	        type = 2; // connects left
+	        preset = 2; // connects left
 
 	    }
 	    else if(rightCounter) {
 
-	        type = 0; // connects right
+	        preset = 0; // connects right
 
 	    }
 	    else if(topCounter) {
 
-	        type = 3; // connects up
+	        preset = 3; // connects up
 
 	    }
 	    else if(bottomCounter) {
 
-	        type = 4; // connects down
+	        preset = 4; // connects down
 
 	    }
 	    else {
 
-	        type = 5; // single
+	        preset = 5; // single
 	    }
 
 
@@ -317,11 +316,11 @@ public class KitchenCounter extends Building {
 	                }
 	            }
 	        }
-			type = 5;
+			preset = 5;
 			importImages();
 	}
 	public void resetForCustomiser() {
-		type = 5;
+		preset = 5;
 		importImages();
 	}
     private void updateNeighbor(float checkX, float checkY) {

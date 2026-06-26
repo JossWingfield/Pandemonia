@@ -397,7 +397,7 @@ public class CollisionMethods {
 	    return connections;
 	}
 	private static boolean isCounterCorner(KitchenCounter counter) {
-	    return counter.type >= 6 && counter.type <= 9;
+	    return counter.getPreset() >= 6 && counter.getPreset() <= 9;
 	}
 	public static boolean canPlaceBuilding(GamePanel gp, Building building, float x, float y, float width, float height) {
 	    if(building.isKitchenBuilding) {
@@ -590,7 +590,12 @@ public class CollisionMethods {
 	        endY = Math.max(0, Math.min(endY, grid[0].length - 1));
 	        
 	        // ------------------- Detect left edge -------------------
-	     // ------------------- Detect left edge -------------------
+	        if(startX - 1 < 0 || startX + 1 > 24 || startY - 1 < 0 || startY + 1 > 16) {
+	        	return false;
+	        }
+	        if(startY >=15) {
+	        	return false;
+	        }
 	        boolean leftEdge = true;
 	        for (int iy = startY; iy < endY; iy++) {
 	            if (grid[startX-1][iy] != 0) { // left void should be 0

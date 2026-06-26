@@ -168,7 +168,7 @@ public class World {
     }
     
     public void draw(Renderer renderer) {
-        if(gp.currentState == gp.playState || gp.currentState == gp.pauseState ||  gp.currentState == gp.mapBuildState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.chatState || gp.currentState == gp.customiseOutfitScreen) {
+        if(gp.currentState == gp.playState || gp.currentState == gp.pauseState ||  gp.currentState == gp.mapBuildState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.chatState || gp.currentState == gp.customiseOutfitScreen || gp.currentState == gp.statisticsState) {
     		mapM.draw(renderer);
     		
     		Building[] bottomLayer = buildingM.getBottomLayer();
@@ -359,7 +359,7 @@ public class World {
 
     }
     public void drawEmissiveBuffers(Renderer renderer) {
-        if(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.customiseOutfitScreen) {
+        if(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.statisticsState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.customiseOutfitScreen) {
 	    	Building[] builds = buildingM.getBuildingsToDraw();
 	        for(int i = 0; i < builds.length-1; i++) {
 	        	if(builds[i] != null) {
@@ -373,7 +373,7 @@ public class World {
         }
     }
     public void drawGUI(Renderer renderer) {
-    	 if(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.customiseOutfitScreen) {
+    	 if(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.statisticsState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.customiseOutfitScreen) {
 	            Building[] thirdLayer = buildingM.getThirdLayer();
 	        	for (int i = 0; i < thirdLayer.length; i++) {
 	            if (thirdLayer[i] != null) {
@@ -431,7 +431,7 @@ public class World {
 	    }
     }
     public void drawShadows(Renderer renderer) {
-    	if(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.customiseOutfitScreen) {
+    	if(gp.currentState == gp.playState || gp.currentState == gp.pauseState || gp.currentState == gp.achievementState || gp.currentState == gp.statisticsState || gp.currentState == gp.settingsState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.xpState || gp.currentState == gp.dialogueState || gp.currentState == gp.customiseOutfitScreen) {
     	
     		renderer.setShadowShader();
     		if(gp.multiplayer) {

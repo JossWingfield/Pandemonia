@@ -61,7 +61,7 @@ public class Fridge extends Building {
     		counter++;
     	}
     }
-    private void importImages() {
+    public void importImages() {
         animations = new TextureRegion[1][1][2];
 
         name = "Fridge";
