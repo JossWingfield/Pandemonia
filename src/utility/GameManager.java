@@ -110,7 +110,63 @@ public class GameManager {
     private float fadeSpeed = 0.7f; // tweak for faster/slower fade
     
     private int groupChance = 20;
-
+    
+    //SCORING
+    private int currentScore = 0;
+    private int talismansReceived = 0;
+    private float currentMultiplier = 1.0f;
+    private int requiredScore = 0;
+    public final ScoringManager scoring = new ScoringManager();
+    public final SynergyManager synergyM;
+    public boolean activateBossDay = false;
+    private boolean resettingRun = false;
+    private static final DayConfig[] DAY_SCHEDULE = {
+        // Day  1  — tutorial ease-in
+        new DayConfig( 50,  DayConfig.DayType.EASY),
+        // Day  2
+        new DayConfig( 80,  DayConfig.DayType.EASY),
+        // Day  3
+        new DayConfig(120,  DayConfig.DayType.NORMAL),
+        // Day  4  💀 first skull
+        new DayConfig(200,  DayConfig.DayType.SKULL),
+        // Day  5  — recovery
+        new DayConfig(150,  DayConfig.DayType.EASY),
+        // Day  6
+        new DayConfig(180,  DayConfig.DayType.NORMAL),
+        // Day  7  💀
+        new DayConfig(280,  DayConfig.DayType.SKULL),
+        // Day  8  — recovery
+        new DayConfig(200,  DayConfig.DayType.EASY),
+        // Day  9
+        new DayConfig(240,  DayConfig.DayType.NORMAL),
+        // Day 10
+        new DayConfig(270,  DayConfig.DayType.NORMAL),
+        // Day 11  💀
+        new DayConfig(380,  DayConfig.DayType.SKULL),
+        // Day 12  — recovery
+        new DayConfig(260,  DayConfig.DayType.EASY),
+        // Day 13
+        new DayConfig(310,  DayConfig.DayType.NORMAL),
+        // Day 14
+        new DayConfig(350,  DayConfig.DayType.NORMAL),
+        // Day 15  💀
+        new DayConfig(480,  DayConfig.DayType.SKULL),
+        // Day 16  — recovery
+        new DayConfig(340,  DayConfig.DayType.EASY),
+        // Day 17
+        new DayConfig(390,  DayConfig.DayType.NORMAL),
+        // Day 18
+        new DayConfig(430,  DayConfig.DayType.NORMAL),
+        // Day 19  💀
+        new DayConfig(580,  DayConfig.DayType.SKULL),
+        // Day 20
+        new DayConfig(480,  DayConfig.DayType.NORMAL),
+        // Day 21  — FINAL GAUNTLET
+        new DayConfig(800,  DayConfig.DayType.FINAL),
+        // Day 22  — BOSS (score irrelevant, triggers boss fight)
+        new DayConfig(0,    DayConfig.DayType.BOSS),
+    };
+    //TODO was checking if synergies worked
     public GameManager(GamePanel gp) {
         this.gp = gp;
         this.time = dayStart;
@@ -124,7 +180,28 @@ public class GameManager {
         currentWeather = Weather.SUNNY;
         resetWeatherTimer();
         
+        synergyM = new SynergyManager(gp);
+        scoring.setSynergyManager(synergyM);
         //gp.world.npcM.addDishWasher();
+    }
+    /** Returns the config for the current day (1-indexed). */
+    public DayConfig getCurrentDayConfig() {
+        int index = day - 1;
+        if (index < 0 || index >= DAY_SCHEDULE.length) {
+            // Beyond the schedule — treat as a normal day with the last known target
+            return DAY_SCHEDULE[DAY_SCHEDULE.length - 1];
+        }
+        return DAY_SCHEDULE[index];
+    }
+ 
+    /** Convenience — required score for today. */
+    public int getRequiredScore() {
+        return getCurrentDayConfig().requiredScore;
+    }
+ 
+    /** True if today shows a skull icon in the UI. */
+    public boolean isTodaySkullDay() {
+        return getCurrentDayConfig().isSkull();
     }
     private double getSpawnInterval() {
         float t = time;
@@ -167,7 +244,13 @@ public class GameManager {
 
         return BASE_INTERVAL;
     }
-
+    public void addTalisman() {
+    	talismansReceived++;
+    	if(talismansReceived == 3) {
+            gp.gui.addMessage("The ghosts are not pleased!", Colour.RED);
+    		startReset();
+    	}
+    }
     private double lerp(double a, double b, double t) {
         t = Math.max(0, Math.min(1, t)); // clamp
         return a + (b - a) * t;
@@ -356,15 +439,57 @@ public class GameManager {
             	break;
         }
     }
+    public void onDayEnd() {
+        DayConfig config = getCurrentDayConfig();
+ 
+        if (config.isBossDay()) {
+            activateBossDay = true;
+            // TODO: transition to boss fight
+            return;
+        }
+ 
+        if (scoring.getCurrentScore() >= config.requiredScore) {
+            // Player passed — show level-up screen as normal
+            scoring.reset();           // clear score for next day
+            gp.gui.startLevelUpScreen();
+        } else {
+            // Player failed — reset the entire run
+            gp.gui.addMessage("Not enough score! Run over.", main.renderer.Colour.RED);
+            scoring.reset();
+            startReset();
+        }
+    }
     // === Game loop ===
     public void update(double dt) {
+    	if(resettingRun) {
+    		if(fadingIn) {
+        		fadeAlpha -= fadeSpeed*dt;
+                if (fadeAlpha <= 0f) {
+                    fadeAlpha = 0f;
+                    fadingIn = false;
+                    resettingRun = false;
+                }
+        	} 
+    		if (fadingOut) {
+                fadeAlpha += fadeSpeed*dt;
+                if (fadeAlpha >= 1f) {
+                    fadeAlpha = 1f;
+                    fadingOut = false;
+                    resetRun();
+                    //gp.gui.addMessage("A new day begins!", Colour.YELLOW);
+                }
+            }
+    		return;
+    	}
+    	
         if(gp.world.cutsceneM.cutsceneActive) {
             updateCutsceneEffects(dt);
         	return;
         }
         
         if (paused) return;
-
+        
+        synergyM.update(dt);
         updateSleep(dt);
         
         time += dt/timeSpeed;
@@ -513,7 +638,7 @@ public class GameManager {
              
              // Either trigger instantly OR wait
              if (gp.world.mapM.isRoomEmpty(0)) {
-                 gp.gui.startLevelUpScreen();
+            	 onDayEnd();
              } else {
                  waitingForLevelUp = true;
              }
@@ -533,7 +658,7 @@ public class GameManager {
 
      // Outside that, in update():
      if (waitingForLevelUp && gp.world.mapM.isRoomEmpty(0)) {
-         gp.gui.startLevelUpScreen();
+    	 onDayEnd();
          waitingForLevelUp = false; // reset
      }
      
@@ -544,13 +669,71 @@ public class GameManager {
     	}
     	return true;
     }
+    public void startReset() {
+    	startFadeOut();
+    	resettingRun = true;
+    }
+    private void resetRun() {
+    	day = 1;
+    	fadingOut = false;
+    	talismansReceived = 0;
+    	time = dayStart;
+    	previousSoulsCollected = 0;
+    	waitingForLevelUp = false;
+        customersLeft = false;
+        activateBossDay = false;
+        scoring.reset();
+        synergyM.resetRound();
+        rushHourMessageSent = false;
+        menuChosen = false;
+        spawnTimer = 0;
+        lastPhase = DayPhase.AFTER_HOURS;
+        currentWeather = Weather.SUNNY;
+        currentSpawnInterval = 30;
+        lightningSpawned = false;
+        lightningCounter = 0;
+        lightningTime = 5;
+        queueSpecialCustomer = false;
+        spawnRats = false;
+        ratCount = 0;
+        ratSpawnTimer = 0;
+        maxRatSpawnTime = 0;
+        ratsSpawned = 0;
+        animalPresent = false;
+        sleeping = false;
+        currentScore = 0;
+        currentMultiplier = 1.0f;
+        requiredScore = 0;
+        // If there was an order waiting, deliver a package
+        if (orderList != null && !orderList.isEmpty()) {
+        	addParcel();
+        }
+        if(crateOrdered) {
+        	addCrate();
+        }
+        
+        gp.world.buildingM.resetRun();
+        gp.world.npcM.resetRun();
+        gp.world.mapM.resetRun();
+        gp.player.resetToSpawn();
+        
+        resetWeatherTimer();
+        resetMenu();
+        resetEventTimer();
+        
+        startFadeIn();
+    }
     private void advanceDay() {
         day++;
+        /*
         if (day > MAX_DAYS_PER_SEASON) {
             day = 1;
             currentSeason = currentSeason.next();
             gp.world.mapM.setSeason(currentSeason);
         }
+        */
+        synergyM.resetRound();
+        scoring.reset();
         
         customersLeft = false;
         rushHourMessageSent = false;
@@ -587,10 +770,12 @@ public class GameManager {
         return String.format("%02d:%02d", hours, minutes);
     }
 
+    //public String getDate() {
+        //return String.format("%s Day %d", currentSeason.toString(), day);
+    //}
     public String getDate() {
-        return String.format("%s Day %d", currentSeason.toString(), day);
+    	return "Day " + day;
     }
-
     // === Getters/Setters ===
     public void setTime(float newTime) {
         this.time = newTime % 24.0f;

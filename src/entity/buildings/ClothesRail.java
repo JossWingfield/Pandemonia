@@ -59,6 +59,7 @@ public class ClothesRail extends Building{
 	        	gp.gui.clickCooldown = 0.33;
 	        	//ENTER CUSTOMISATION STATE
 	        	gp.currentState = gp.customiseOutfitScreen;
+	        	gp.mouseCursor.showCursor();
         	}
         }
         	

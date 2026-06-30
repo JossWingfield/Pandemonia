@@ -356,6 +356,7 @@ public class SaveManager {
 	    loadFromFile("save/customiser" + save + ".json", CustomiserSaveData.class);
 	    loadFromFile("save/progress" + save + ".json", ProgressSaveData.class);
 	    loadFromFile("save/statistics" + save + ".json", StatisticsSaveData.class);
+	    gp.mouseCursor.hideCursor();
 	}
 	public void startGame() {
 		gp.startGame();

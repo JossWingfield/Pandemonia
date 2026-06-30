@@ -74,9 +74,6 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -93,50 +90,27 @@ import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.opengl.GL;
 
-import ai.PathFinder;
-import entity.Entity;
 import entity.Player;
 import entity.PlayerMP;
-import entity.buildings.Building;
-import entity.buildings.BuildingManager;
-import entity.items.Item;
-import entity.items.ItemManager;
-import entity.npc.NPC;
-import entity.npc.NPCManager;
 import main.renderer.AssetPool;
 import main.renderer.DebugDraw;
 import main.renderer.GLSLCamera;
+import main.renderer.MouseCursor;
 import main.renderer.Renderer;
-import map.Customiser;
-import map.LightingManager;
-import map.MapBuilder;
-import map.MapManager;
-import map.particles.ParticleSystem;
-import net.ClientHandler;
 import net.DiscoveryManager;
 import net.GameClient;
 import net.GameServer;
 import net.packets.Packet00Login;
 import net.packets.Packet01Disconnect;
-import utility.BuildingRegistry;
-import utility.Catalogue;
 import utility.Debug;
-import utility.ItemRegistry;
-import utility.ProgressManager;
-import utility.RoomHelperMethods;
 import utility.Settings;
-import utility.UpgradeManager;
 import utility.GUI.GUI;
-import utility.GameManager;
-import utility.cutscene.CutsceneManager;
-import utility.minigame.MiniGameManager;
-import utility.recipe.RecipeManager;
 import utility.save.SaveManager;
 
 
 public class GamePanel {
 
-    private long window;
+    public long window;
 	private String title;
 	public GLSLCamera camera;
 	private DebugDraw debugDraw;
@@ -157,6 +131,7 @@ public class GamePanel {
     
     public KeyListener keyL = new KeyListener(this);
     public MouseListener mouseL = new MouseListener(this);
+    public MouseCursor mouseCursor = new MouseCursor(this);
     
 	// NETWORKING
     public GameClient socketClient;
@@ -245,6 +220,7 @@ public class GamePanel {
         world = new World(this, false);
         world.startGame();
         camera.reset();
+        mouseCursor.hideCursor();
       	
         //world.progressM.unlockOldKitchen();
 		//world.progressM.unlockFreezerRoom();
@@ -853,6 +829,8 @@ public class GamePanel {
         if (!alCapabilities.OpenAL10) {
             throw new IllegalStateException("Audio library not supported.");
         }
+        
+     	mouseCursor.createCursor("res/UI/Cursor1.png");
         
         createEmissiveBuffer(px[0], py[0]);
         createSceneBuffer(px[0], py[0]);

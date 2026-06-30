@@ -238,6 +238,12 @@ public class Player extends Entity{
     	hitbox.x = xPos;
     	hitbox.y = yPos;
     }
+    public void resetToSpawn() {
+    	gp.world.mapM.switchRoom(0);
+    	hitbox.x = gp.tileSize*10;
+    	hitbox.y = gp.tileSize*10;
+    	currentItem = null;
+    }
     public int getCurrentAnimation() {
     	return currentAnimation;
     }
@@ -428,7 +434,7 @@ public class Player extends Entity{
             return false;
         }
 
-        float correctionDistance = 3 * 3f;
+        float correctionDistance = 4 * 3f;
 
         for (float offset = 1; offset <= correctionDistance; offset++) {
 
@@ -453,14 +459,13 @@ public class Player extends Entity{
 
         return false;
     }
-
     private boolean tryVerticalCorrection(float moveY, boolean allowCorrection) {
 
         if (!allowCorrection) {
             return false;
         }
 
-        float correctionDistance = 3 * 3f;
+        float correctionDistance = 4 * 3f;
 
         for (float offset = 1; offset <= correctionDistance; offset++) {
 

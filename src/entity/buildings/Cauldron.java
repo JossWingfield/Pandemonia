@@ -58,9 +58,9 @@ public class Cauldron extends Building {
 			if(activeCounter >= activeTime) {
 				activeCounter = 0;
 				isActive = false;
-				Item item = gp.world.itemRegistry.getItemFromName(RecipeManager.getCurrentHauntedIngredient(), 0);
-				gp.player.currentItem = item;
-				gp.world.lightingM.removeLight(light);
+				//Item item = gp.world.itemRegistry.getItemFromName(RecipeManager.getCurrentHauntedIngredient(), 0);
+				//gp.player.currentItem = item;
+				//gp.world.lightingM.removeLight(light);
 			}
 		}
 		

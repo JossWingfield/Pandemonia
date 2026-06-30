@@ -16,10 +16,12 @@ import main.renderer.Renderer;
 import main.renderer.Texture;
 import main.renderer.TextureRegion;
 import utility.RoomHelperMethods;
+import utility.ScoringManager;
 import utility.Statistics;
 import utility.recipe.Order;
 import utility.recipe.Recipe;
 import utility.recipe.RecipeManager;
+import utility.recipe.RecipeTag;
 
 public class Customer extends NPC {
 	
@@ -321,11 +323,7 @@ public class Customer extends NPC {
 	private void makeOrder() {
 		Recipe template;
 
-		if (isGhost) {
-		    template = RecipeManager.getRandomCursedRecipe();
-		} else {
-		    template = gp.world.gameM.getRandomMenuRecipe();
-		}
+	    template = gp.world.gameM.getRandomMenuRecipe();
 
 		Order order = new Order(template, this);
 
@@ -357,7 +355,7 @@ public class Customer extends NPC {
 	    // tip logic based on patience
 	    float progress = (float)(patienceCounter / maxPatienceTime);
 	    int tip = 0;
-
+	    
 	    if(progress <= 0.33f) { // green zone
 	        tip = (int)(foodOrder.getRecipe().getCost(gp.world.gameM.isRecipeSpecial(foodOrder.getRecipe())) * greenTipMultiplier);
 	    } else if(progress <= 0.66f) { // orange zone
@@ -403,6 +401,47 @@ public class Customer extends NPC {
 	    }
 	    
 	    gp.player.soulsServed++;
+	    
+	    // --- SCORING ---
+        float patienceRatio  = (float)(patienceCounter / maxPatienceTime);
+        ScoringManager.RecordResult scoreResult =
+                gp.world.gameM.scoring.recordDish(foodOrder.getRecipe(), patienceRatio);
+ 
+        int scoreGained = scoreResult.pointsEarned;
+ 
+        // Bistro Special — auto-mark as chef's special for cost bonus
+        boolean autoSpecial = gp.world.gameM.synergyM.consumeBistroSpecial();
+ 
+        // Sunday Roast — double the money paid out
+        if (gp.world.gameM.synergyM.isTipDoubled()) {
+            gp.player.wealth += baseCost;   // extra payment equal to base
+        }
+ 
+        // Fine Dining — flag for a star review (hook into your review system)
+        if (gp.world.gameM.synergyM.consumeFineDining()) {
+            // TODO: gp.gui.awardStarReview();
+            gp.gui.addMessage("Star review earned!", new Colour(255, 220, 60));
+        }
+ 
+        // Sear & Seal — caramelise bonus: +20% score on this dish
+        if (gp.world.gameM.synergyM.consumeSearAndSeal()) {
+            int sealBonus = (int)(scoreGained * 0.2f);
+            scoreGained  += sealBonus;
+            gp.world.gameM.scoring.addFlatScore(sealBonus);
+        }
+ 
+        // Golden Crust — extra tip per crispy dish
+        if (foodOrder.getRecipe().hasTag(RecipeTag.CRISPY)) {
+            int crustBonus = gp.world.gameM.synergyM.goldenCrustTipBonus;
+            if (crustBonus > 0) {
+                gp.player.wealth += crustBonus;
+                gp.world.gameM.scoring.addFlatScore(crustBonus);
+            }
+        }
+ 
+        // GUI pop
+        boolean synergyFired = scoreResult.synergy != null && scoreResult.synergy.triggered;
+        gp.gui.addScorePop(scoreGained, patienceRatio, synergyFired);
 	    
 	    Statistics.servedCustomers++;
 	    if(Statistics.servedCustomers == 50) {
@@ -623,6 +662,8 @@ public class Customer extends NPC {
 	            // Original single-customer behaviour
 	            leave(dt);
 	            RecipeManager.removeOrder(foodOrder);
+	            gp.world.gameM.scoring.recordWalkout(gp);
+	            gp.world.gameM.synergyM.recordWalkout();
 
 	            if (currentChair != null) {
 	                currentChair.available = true;
@@ -663,6 +704,8 @@ public class Customer extends NPC {
 	      }
 	}
 	private void makeWholeTableLeave() {
+	    gp.world.gameM.scoring.recordWalkout(gp);
+        gp.world.gameM.synergyM.recordWalkout();
 	    for (Customer c : getCustomersAtSameTable()) {
 
 	        // Cancel any active orders

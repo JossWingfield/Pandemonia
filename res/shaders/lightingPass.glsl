@@ -228,19 +228,16 @@ if(uOcclusionEnabled)
 
         lighting += lightContribution * visibility;
     }
+    
+    vec3 emissive = texture(uEmissive, vUV).rgb;
+    float emissiveMask = dot(emissive, vec3(1.0)) > 0.001 ? 1.0 : 0.0;
 
     // =========================================================
     // FINAL LIGHTING
     // =========================================================
 
-    vec3 litScene = baseColor * lighting * occlusion;
-
-    // =========================================================
-    // EMISSIVE
-    // =========================================================
-
-    vec3 emissive = texture(uEmissive, vUV).rgb;
-
+    // Where emissive exists, skip lighting entirely and just show raw emissive
+    vec3 litScene = baseColor * lighting * occlusion * (1.0 - emissiveMask);
     litScene += emissive;
 
     FragColor = vec4(litScene, alpha);

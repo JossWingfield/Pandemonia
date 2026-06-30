@@ -54,6 +54,14 @@ public class FryingStation extends Building {
 		leftSlot = new Fryer(gp);
 		rightSlot = new Fryer(gp);
 	}
+	public void resetRun() {
+		leftSlot = new Fryer(gp);
+		rightSlot = new Fryer(gp);
+		gp.world.lightingM.removeLight(leftLight);
+		gp.world.lightingM.removeLight(rightLight);
+		stopParticles(true);
+		stopParticles(false);
+	}
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*6);
 	}

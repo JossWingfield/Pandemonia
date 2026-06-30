@@ -32,6 +32,13 @@ public class Spill extends Building {
 		canBePlaced = false;
 		effectArea = new Rectangle2D.Float(hitbox.x - 32, hitbox.y - 32, hitbox.width + 64, hitbox.height + 64);
 	}
+	public void resetRun() {
+		if(gp.player.currentRoomIndex == roomNum) {
+			gp.world.buildingM.removeBuilding(this);
+		} else {
+			gp.world.mapM.getRoom(roomNum).removeBuilding(this);
+		}
+	}
 	public Building clone() {
 		Spill building = new Spill(gp, hitbox.x, hitbox.y);
 		return building;

@@ -22,6 +22,8 @@ public class KeyListener {
     private double backspaceHeldTimer = 0;
     private static final double BACKSPACE_INITIAL_DELAY = 0.4; // seconds before repeat starts
     private static final double BACKSPACE_REPEAT_RATE = 0.05;  // seconds between repeats
+    
+    public boolean shiftHeldForMouse = false;
 
     public KeyListener(GamePanel gp) {
         this.gp = gp;
@@ -131,23 +133,34 @@ public class KeyListener {
     	    backspaceHeldTimer = 0;
     	}
     	
+    	
         // ----- PLAY STATE -----
         if (gp.currentState == gp.playState) {
             if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
             	gp.currentState = gp.pauseState;
+            	gp.mouseCursor.showCursor();
             }
             
         	if(gp.player.controlEnabled) {
         		
 	            if (keyBeginPress(GLFW.GLFW_KEY_T)) {
 	            	gp.currentState = gp.chatState;
+	            	gp.mouseCursor.showCursor();
 	              	gp.gui.chatBox.setActive(true);
 	            }
         		
 	            if (keyBeginPress(GLFW.GLFW_KEY_C)) {
 	            	if(gp.world.mapM.getRoom(gp.player.currentRoomIndex).canBeEdited) {
 	            		gp.currentState = gp.customiseRestaurantState;
+	            		gp.mouseCursor.showCursor();
 	            	}
+	            }
+	            if (isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+	            	gp.mouseCursor.showCursor();
+	            	shiftHeldForMouse = true;
+	            } else if(shiftHeldForMouse) {
+	            	gp.mouseCursor.hideCursor();
+	            	shiftHeldForMouse = false;
 	            }
 	            
 	            
@@ -155,20 +168,30 @@ public class KeyListener {
 	        	if (keyBeginPress(GLFW.GLFW_KEY_1)) {
 	             	//gp.world.cutsceneM.enterDestroyedRestaurant();
 	            }
-	            if (keyBeginPress(GLFW.GLFW_KEY_3)) {
-	            	
+	            if (keyBeginPress(GLFW.GLFW_KEY_9)) {
+	            	gp.world.progressM.unlockOldKitchen();
+	            }
+	            
+	            if (keyBeginPress(GLFW.GLFW_KEY_2)) {
+	            	gp.world.customiser.addToInventory(new KitchenCounter(gp, 0, 0, 0));
 	            }
 	            if (keyBeginPress(GLFW.GLFW_KEY_4)) gp.saveM.saveGame();
 	            if (keyBeginPress(GLFW.GLFW_KEY_5)) gp.saveM.loadGame(gp.saveM.currentSave);
 	            if (keyBeginPress(GLFW.GLFW_KEY_KP_EQUAL)) debugMode = !debugMode;
 	            if (keyBeginPress(GLFW.GLFW_KEY_B)) showHitboxes = !showHitboxes;
-	            if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) gp.currentState = gp.mapBuildState;
+	            if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) {
+	            	gp.currentState = gp.mapBuildState;
+	            	gp.mouseCursor.showCursor();
+	            }
 	            if (keyBeginPress(GLFW.GLFW_KEY_MINUS)) gp.world.mapM.drawPath = !gp.world.mapM.drawPath;
         	}
         }
         // ----- MAP BUILD STATE -----
         else if (gp.currentState == gp.mapBuildState) {
-            if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) gp.currentState = gp.playState;
+            if (keyBeginPress(GLFW.GLFW_KEY_ENTER)) {
+            	gp.currentState = gp.playState;
+            	gp.mouseCursor.hideCursor();
+            }
 
             if (keyBeginPress(GLFW.GLFW_KEY_E)) gp.world.mapB.showTiles = !gp.world.mapB.showTiles;
             if (keyBeginPress(GLFW.GLFW_KEY_BACKSPACE)) gp.world.mapB.switchSides();
@@ -198,11 +221,15 @@ public class KeyListener {
         }
         // ----- PAUSE STATE -----
         else if (gp.currentState == gp.pauseState) {
-            if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) gp.currentState = gp.playState;
+            if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
+            	gp.currentState = gp.playState;
+            	gp.mouseCursor.hideCursor();
+            }
         } else if (gp.currentState == gp.chatState) {
             if (keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
             	gp.currentState = gp.playState;
              	gp.gui.chatActive = false;
+             	gp.mouseCursor.hideCursor();
             }
             if(keyBeginPress(GLFW.GLFW_KEY_ENTER)) {
             	gp.gui.sendChatMessage(gp.gui.chatBox.getText());
@@ -218,6 +245,7 @@ public class KeyListener {
             	}
                 gp.world.customiser.selectedBuilding = null;
                 gp.world.customiser.showBuildings = true;
+                gp.mouseCursor.hideCursor();
                 gp.currentState = gp.playState;
                 gp.world.buildingM.checkBuildingConnections();
             }
@@ -230,6 +258,7 @@ public class KeyListener {
                     gp.world.customiser.selectedBuilding = null;
                     gp.world.buildingM.checkBuildingConnections();
                 } else {
+                	gp.mouseCursor.hideCursor();
                     gp.currentState = gp.playState;
                     gp.world.buildingM.checkBuildingConnections();
                 }
@@ -250,8 +279,8 @@ public class KeyListener {
             }
             if (isKeyPressed(GLFW.GLFW_KEY_S) || isKeyPressed(GLFW.GLFW_KEY_DOWN)) gp.world.catalogue.downLayer();
             if (isKeyPressed(GLFW.GLFW_KEY_W) || isKeyPressed(GLFW.GLFW_KEY_UP)) gp.world.catalogue.upLayer();
-        }
-
+        } 
+        
         // ----- ACHIEVEMENT STATE -----
         if (gp.currentState == gp.achievementState && keyBeginPress(GLFW.GLFW_KEY_ESCAPE)) {
             gp.currentState = gp.pauseState;

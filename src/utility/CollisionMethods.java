@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 
 import entity.buildings.Building;
 import entity.buildings.KitchenCounter;
+import entity.npc.NPC;
 import main.GamePanel;
 
 public class CollisionMethods {
@@ -415,9 +416,25 @@ public class CollisionMethods {
 	    		return false;
 	    	}
 	    }
+	    if(building.isBedroomBuilding) {
+	    	if(!gp.world.mapM.isInRoom(RoomHelperMethods.BEDROOM)) {
+	    		return false;
+	    	}
+	    }
 
 		Rectangle2D.Float buildHitbox = new Rectangle2D.Float(x, y, width, height);
 		int tileSize = gp.tileSize;
+		
+		 for (NPC npc : gp.world.npcM.getNPCs()) {
+             if (npc == null) continue;
+             if (npc.hitbox.intersects(buildHitbox)) {
+                 return false;
+             }
+         }
+		 
+		 if(gp.player.hitbox.intersects(buildHitbox)) {
+			 return false;
+		 }
 		
 		// ---------------- Gate placement ----------------
 		if ("Gate".equals(building.getName())) {

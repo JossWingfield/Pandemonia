@@ -30,7 +30,7 @@ public class AddNPCEvent extends CutsceneEvent {
 	        	npc.hitbox.x = spawnX*gp.tileSize;
 	          	npc.hitbox.y = spawnY*gp.tileSize;
 	    	}
-	    	
+	    	npc.currentRoomNum = gp.player.currentRoomIndex;
 	    	gp.world.npcM.addNPC(npc);
 	        finished = true;
 	    }

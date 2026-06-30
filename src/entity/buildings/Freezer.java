@@ -52,6 +52,13 @@ public class Freezer extends Building {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*1, hitbox.width-3*5, hitbox.height-3*3);
 		setUp();
 	}
+	public void resetRun() {
+		freezing = false;
+		freezeTime = 0;
+		maxFreezeTime = 8;
+		currentFood = null;
+		clickCounter = 0;
+	}
 	private void setUp() {
 		allowInFreezer("Potato", FoodState.CHOPPED);
 		allowInFreezer("Chicken Pieces", FoodState.COATED);

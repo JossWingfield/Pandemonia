@@ -47,7 +47,7 @@ public class ChoppingBoard extends Building {
 		importImages();
 		isSolid = false;
 		setupRecipes();
-		canBePlaced = false;
+		canBePlaced = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*3, hitbox.y+3*3, hitbox.width-3*7, hitbox.height-3*7);
@@ -62,6 +62,14 @@ public class ChoppingBoard extends Building {
 	public void printOutput() {
 		System.out.println("buildings[arrayCounter] = new ChoppingBoard(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
 		System.out.println("arrayCounter++;");
+	}
+	public void resetRun() {
+		currentItem = null;
+		chopCount = 0;
+		chopping = false;
+		clickCooldown = 0;
+		currentChopCount = 12;
+		chopTimings.clear();
 	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][3];

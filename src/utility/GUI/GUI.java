@@ -31,6 +31,7 @@ import net.packets.Packet04Chat;
 import utility.Achievement;
 import utility.Constants;
 import utility.ProgressManager.RewardType;
+import utility.ScoringManager;
 import utility.Settings;
 import utility.Statistics;
 import utility.Upgrade;
@@ -39,11 +40,11 @@ import utility.Weather;
 import utility.recipe.CookStep;
 import utility.recipe.IngredientScore;
 import utility.recipe.Order;
-import utility.recipe.PreparedIngredient;
 import utility.recipe.Recipe;
 import utility.recipe.RecipeIngredient;
 import utility.recipe.RecipeManager;
 import utility.recipe.RecipeRenderData;
+import utility.recipe.RecipeTag;
 
 public class GUI {
 	
@@ -66,7 +67,8 @@ public class GUI {
 	private TextureRegion achievementBorder, achievement, lockedAchievement, achievementPopup, mysteryIcon, mysteryCrateUI, catalogueButton, catalogueMenu;
     private TextureRegion  PanIcon, choppedIcon, PotIcon, ovenIcon, fryerIcon, freezerIcon, seasoningIcon, ovenTrayIcon, coatedIcon;
     private TextureRegion  sFrame, aFrame, bFrame, cFrame, dFrame, fFrame, gradingFrameOverlay;
-	
+    private TextureRegion skullDayImage, finalDayImage, bossDayImage;
+    
 	//COLOURS
 	private Colour darkened;
 	private Colour craftColour1;
@@ -188,6 +190,31 @@ public class GUI {
 		    new Colour("#61ab6a"), // A
 		    new Colour("#c960d4")  // S
 		};
+		
+	//SCORE
+	private final List<ScorePop> scorePops = new ArrayList<>();
+	private float displayedScoreFill = 0f;   // 0.0 – 1.0
+		 
+	// Multiplier pulse animation
+	private float multiplierPulse    = 0f;   // 0 = normal, 1 = peak flash
+	private float multiplierPulseDir = 0f;   // 1 = growing, -1 = shrinking
+    private float lastMultiplier     = 1.0f;
+	 
+	// Score pop-ups (separate from messages — always show, float upward)
+	private static class ScorePop {
+		String text;
+	    float  x, y;
+	    float  lifetime;
+	    float  maxLifetime = 60f;  // frames
+	    Colour colour;
+	    ScorePop(String text, float x, float y, Colour colour) {
+	    	this.text      = text;
+	        this.x         = x;
+	        this.y         = y;
+	        this.lifetime  = maxLifetime;
+	        this.colour    = colour;
+	    }
+	}
 	
 	public GUI(GamePanel gp) {
 		this.gp = gp;
@@ -423,6 +450,10 @@ public class GUI {
 	    dFrame = importImage("/UI/recipe/grading/Frame.png").getSubimage(64, 0, 64, 16);
 	    fFrame = importImage("/UI/recipe/grading/Frame.png").getSubimage(0, 0, 64, 16);
 	    gradingFrameOverlay = importImage("/UI/recipe/grading/Frame.png").getSubimage(64*6, 0, 64, 16);
+	    
+	    skullDayImage = importImage("/UI/Skulls.png").getSubimage(0, 0, 16, 16);
+	    finalDayImage = importImage("/UI/Skulls.png").getSubimage(16, 0, 16, 16);
+	    bossDayImage = importImage("/UI/Skulls.png").getSubimage(32, 0, 16, 16);
 	}
 	private TextureRegion createHorizontalFlipped(TextureRegion original) {
 	        // Swap U coordinates (flip horizontally)
@@ -1303,8 +1334,8 @@ public class GUI {
 	    //EXIT
 	    if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 	    	clickCooldown = 0.33;
-        	//ENTER CUSTOMISATION STATE
         	gp.currentState = gp.playState;
+        	gp.mouseCursor.hideCursor();
     	}
 	    
 	    
@@ -2193,6 +2224,7 @@ public class GUI {
 			if (gp.mouseL.mouseButtonDown(0)) {
 				if (clickCooldown == 0) {
 					gp.currentState = gp.pauseState;
+					gp.mouseCursor.showCursor();
 					clickCooldown = 0.16;
 				}
 			}
@@ -2208,7 +2240,12 @@ public class GUI {
 		// =========================
 		
 		List<Achievement> achievementList =
-				new ArrayList<>(gp.world.progressM.achievements.values());
+		        gp.world.progressM.achievements.values()
+		                .stream()
+		                .filter(a -> !a.hidden || a.isUnlocked())
+		                .toList();
+
+		achievementList = new ArrayList<>(achievementList);
 
 		// unlocked first
 		achievementList.sort((a, b) -> {
@@ -2714,11 +2751,7 @@ public class GUI {
 	    	}
 	    	 
 
-	        if(!order.isCursed) {
-		        renderer.setColour(orderTextColour);
-	        } else {
-	        	renderer.setColour(Colour.WHITE);
-	        }
+	        renderer.setColour(orderTextColour);
 
 	        renderer.setFont(font);
 		    for (int j = 0; j < data.nameLines.size(); j++) {
@@ -2751,7 +2784,184 @@ public class GUI {
 	    // PATIENCE
 	    drawPatienceBar(renderer, x + 5*recipeScale, y + 43*recipeScale, (int)data.customer.getPatienceCounter(), (int)data.customer.getMaxPatienceTime());
 
+	    if (data.tags != null && !data.tags.isEmpty()) {
+	        int tagSize = 16 * recipeScale;
+	        int tagSpacing = 18 * recipeScale;
+	        int totalTagWidth = data.tags.size() * tagSize + (data.tags.size() - 1) * (tagSpacing - tagSize);
+	        int cardWidth = 64 * recipeScale;
+	        int tagStartX = x + (cardWidth - totalTagWidth) / 2;
+	        int tagY = y + 73 * recipeScale;
+
+	        for (int t = 0; t < data.tags.size(); t++) {
+	            int tagX = tagStartX + t * tagSpacing;
+	            renderer.draw(data.tags.get(t), tagX, tagY, tagSize, tagSize);
+	        }
+	    }
 	}
+	private void updateScoreUI(double dt) {
+        ScoringManager scoring = gp.world.gameM.scoring;
+        int   required = gp.world.gameM.getRequiredScore();
+        float target   = required > 0
+                ? Math.min(1f, (float) scoring.getCurrentScore() / required)
+                : 0f;
+ 
+        // Smooth fill — lerp toward target
+        displayedScoreFill += (target - displayedScoreFill) * (float)(dt * 0.08f);
+ 
+        // Multiplier pulse
+        float currentMult = scoring.getCurrentMultiplier();
+        if (currentMult != lastMultiplier) {
+            multiplierPulse    = 1f;
+            multiplierPulseDir = -1f;
+            lastMultiplier     = currentMult;
+        }
+        if (multiplierPulse > 0f) {
+            multiplierPulse += multiplierPulseDir * (float)(dt * 0.05f);
+            if (multiplierPulse <= 0f) {
+                multiplierPulse    = 0f;
+                multiplierPulseDir = 0f;
+            }
+        }
+ 
+        // Score pops
+        scorePops.removeIf(p -> p.lifetime <= 0);
+        for (ScorePop p : scorePops) {
+            p.lifetime -= dt;
+            p.y        -= dt * 0.4f;   // float upward
+        }
+    }
+	private void drawScoreUI(Renderer renderer) {
+        ScoringManager scoring  = gp.world.gameM.scoring;
+        int   required          = gp.world.gameM.getRequiredScore();
+        int   current           = scoring.getCurrentScore();
+        float multiplier        = scoring.getCurrentMultiplier();
+ 
+        int scale  = 3;
+        int left   = 20;
+        int bottom = gp.frameHeight - 48 - 20 - 10;   // just above the coin row
+ 
+        // ── Score bar background ──────────────────────────────────────────────
+        int barW = 160 * scale / 3;   // ~160px
+        int barH = 8  * scale / 3;    // ~8px
+        int barX = left;
+        int barY = bottom - barH - 6;
+ 
+        // Border
+        renderer.fillRect(barX - 2, barY - 2, barW + 4, barH + 4, new Colour(20, 20, 20));
+ 
+        // Background track
+        renderer.fillRect(barX, barY, barW, barH, new Colour(50, 40, 40));
+ 
+        // Fill — colour shifts green→orange→red as you get closer to target
+        float fill  = Math.min(1f, displayedScoreFill);
+        int fillW   = (int)(barW * fill);
+        Colour barColour = lerpColour(
+                new Colour(80, 180, 100),   // low score — calm green
+                new Colour(240, 200, 60),   // mid — warm yellow
+                new Colour(100, 200, 255),  // near target — cool blue flash
+                fill
+        );
+        if (fillW > 0)
+            renderer.fillRect(barX, barY, fillW, barH, barColour);
+ 
+        // Score text:  "247 / 380"
+        renderer.setFont(font);
+        renderer.setColour(Colour.WHITE);
+        renderer.drawString(current + " / " + required, barX, barY - 18, 0.6f);
+ 
+        // Skull / final / boss icon inline with score text
+        if (gp.world.gameM.isTodaySkullDay()) {
+            // already drawn near date — optionally draw a tiny one here too
+            // renderer.draw(skullDayImage, barX + barW - 16, barY - 20, 16, 16);
+        }
+ 
+        // ── Multiplier display ────────────────────────────────────────────────
+        int multX = barX + barW + 12;
+        int multY = barY;
+ 
+        // Pulse: scale up slightly when it changes
+        float pulseScale = 1f + multiplierPulse * 0.3f;
+        float textScale  = 0.85f * pulseScale;
+ 
+        // Glow box behind multiplier — brighter when high
+        float multNorm   = (multiplier - 1f) / 4f;  // 0 at ×1, 1 at ×5
+        int   glowAlpha  = (int)(40 + 140 * multNorm);
+        Colour glowCol   = new Colour(255, 200, 60, glowAlpha);
+        renderer.fillRect(multX - 4, multY - 2, 52, barH + 4, new Colour(20, 20, 20));
+        renderer.fillRect(multX - 2, multY,     48, barH,     glowCol);
+ 
+        // Text: "×2.1"
+        String multText  = "×" + String.format("%.1f", multiplier);
+        Colour multColour;
+        if      (multiplier >= 4f) multColour = new Colour(255, 80,  80);   // red — extreme
+        else if (multiplier >= 2f) multColour = new Colour(255, 200, 60);   // gold
+        else                       multColour = Colour.WHITE;
+ 
+        renderer.setColour(multColour);
+        renderer.drawString(multText, multX + 2, multY - 16, textScale);
+ 
+        // ── Streak indicator ──────────────────────────────────────────────────
+        int streak = scoring.getSameTagStreak();
+        RecipeTag streakTag = scoring.getStreakTag();
+ 
+        if (streak > 0 && streakTag != null) {
+            int streakX = barX;
+            int streakY = barY - 38;
+ 
+            renderer.setColour(new Colour(180, 180, 255));
+            renderer.drawString(
+                streakTag.displayName() + " ×" + streak,
+                streakX, streakY, 0.55f
+            );
+        }
+ 
+        // ── Score pop-ups ─────────────────────────────────────────────────────
+        for (ScorePop pop : scorePops) {
+            float lifeRatio = pop.lifetime / pop.maxLifetime;
+            float alpha     = Math.min(1f, lifeRatio * 2f);   // fade out last half
+            renderer.setColour(new Colour(pop.colour.r, pop.colour.g, pop.colour.b, alpha));
+            renderer.drawString(pop.text, (int)pop.x, (int)pop.y, 0.75f);
+        }
+ 
+        renderer.setColour(Colour.WHITE);  // reset
+    }
+ 
+    // ── Colour lerp helper ────────────────────────────────────────────────────
+    // Three-stop gradient:  low → mid → high  mapped to t ∈ [0,1]
+    private Colour lerpColour(Colour low, Colour mid, Colour high, float t) {
+        if (t < 0.5f) {
+            float s = t * 2f;
+            return new Colour(
+                (int)(low.r + (mid.r - low.r) * s),
+                (int)(low.g + (mid.g - low.g) * s),
+                (int)(low.b + (mid.b - low.b) * s)
+            );
+        } else {
+            float s = (t - 0.5f) * 2f;
+            return new Colour(
+                (int)(mid.r + (high.r - mid.r) * s),
+                (int)(mid.g + (high.g - mid.g) * s),
+                (int)(mid.b + (high.b - mid.b) * s)
+            );
+        }
+    }
+    /** Call this when a dish is scored to spawn a pop-up. */
+    public void addScorePop(int points, float patienceRatio, boolean synergy) {
+        // Colour by patience zone
+        Colour col;
+        if      (patienceRatio <= 0.33f) col = new Colour(80, 220, 80);   // green
+        else if (patienceRatio <= 0.66f) col = new Colour(240, 180, 40);  // orange
+        else                             col = new Colour(220, 80,  80);   // red
+ 
+        String text = "+" + points;
+        if (synergy) text += " SYNERGY!";
+ 
+        // Spawn near the score bar (bottom-left area), with slight random x offset
+        float popX = 24 + (float)(Math.random() * 40);
+        float popY = gp.frameHeight - 160;
+ 
+        scorePops.add(new ScorePop(text, popX, popY, col));
+    }
 	private void drawPlayScreen(Renderer renderer) {
 		updateMessages();
 		List<Order> currentOrders = new ArrayList<>(RecipeManager.getCurrentOrders());
@@ -2798,12 +3008,25 @@ public class GUI {
 		renderer.setFont(font);
 		renderer.setColour(Colour.WHITE);
 		renderer.drawString(gp.world.gameM.getDate(), gp.frameWidth - (75*3) + 28, 4 + (69*3) + 28);
+		if(gp.world.gameM.getCurrentDayConfig().isSkull()) {
+			renderer.draw(skullDayImage, gp.frameWidth - (75*3) + 28 + 3*42, 4 + (69*3) + 28 - 3*10, 16*3, 16*3);
+		} else if(gp.world.gameM.getCurrentDayConfig().isFinalDay()) {
+			renderer.draw(finalDayImage, gp.frameWidth - (75*3) + 28 + 3*42, 4 + (69*3) + 28 - 3*10, 16*3, 16*3);
+		} else if(gp.world.gameM.getCurrentDayConfig().isBossDay()) {
+			renderer.draw(bossDayImage, gp.frameWidth - (75*3) + 28 + 3*42, 4 + (69*3) + 28 - 3*10, 16*3, 16*3);
+		}
+		
 		renderer.drawString(gp.world.gameM.getTime24h(), gp.frameWidth - (75*3) + 112, 4 + (71*3) + 26 + (16*3));
 		
 		renderer.setColour(Colour.WHITE);
 		renderer.setFont(font);
 		renderer.draw(coinImage, 20,  gp.frameHeight - 48 - 20, 48, 48);
 		renderer.drawString(Integer.toString(gp.player.wealth), 20 + 48+8, gp.frameHeight - 48 - 20 +32);
+		
+		
+		//SCORE
+		drawScoreUI(renderer);
+		
 		
 		// === Messages ===
 		int msgX = 20+20;
@@ -2856,12 +3079,16 @@ public class GUI {
 		data.customer = customer;
 		
 		// Base images
-		data.borderImage = recipe.isCursed ? cursedRecipeBorder : recipeBorder2;
+		data.borderImage = recipeBorder2;
 		data.starLevel = recipe.getStarLevel();
 		data.mysteryOrderImage = mysteryOrder;
 		data.coinImage = coinImage;
 		data.plateImage = recipe.finishedPlate;
 		data.faceIcon = customer.faceIcon;
+		
+		for(RecipeTag tag: recipe.getTags()) {
+			data.tags.add(gp.world.recipeM.getTagIconFromName(tag));
+		}
 		
 		float textScale = 0.7f;
 		int scale = 2;
@@ -2892,8 +3119,7 @@ public class GUI {
 		for (CookStep step : req.getRequiredSteps()) {
 		TextureRegion icon =
 		gp.world.recipeM.getIconFromName(
-		step.getStation(),
-		recipe.isCursed
+		step.getStation()
 		);
 		ingredientStepIcons.add(icon);
 		}
@@ -3030,7 +3256,8 @@ public class GUI {
 			renderer.setColour(craftColour1);
 			if(gp.mouseL.mouseButtonDown(0)) {
 				//RESUME
-				gp.currentState = 1;
+				gp.currentState = gp.playState;
+		    	gp.mouseCursor.hideCursor();
 			}
 		}
 		renderer.setFont(font);
@@ -3664,6 +3891,7 @@ public class GUI {
 	    	if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	    		RecipeManager.unlockRecipe(recipeChoices[0]);
 	    		gp.currentState = gp.playState;
+	        	gp.mouseCursor.hideCursor();
 	    		gp.world.progressM.checkRecipeCollect();
 	    	}
 	    }
@@ -3674,6 +3902,7 @@ public class GUI {
 	    	if(gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	       		RecipeManager.unlockRecipe(recipeChoices[1]);
 	    		gp.currentState = gp.playState;
+	        	gp.mouseCursor.hideCursor();
 	    		gp.world.progressM.checkRecipeCollect();
 	    	}
 	    }
@@ -3709,6 +3938,7 @@ public class GUI {
 	    		}
 	    		clickCooldown = 0.33;
 	    		gp.currentState = gp.chooseRecipeState;
+	        	gp.mouseCursor.showCursor();
 	    	}
 	    }
 	    drawUpgrade(renderer, upgradeChoices[0], x, y);
@@ -3722,6 +3952,7 @@ public class GUI {
 	    			gp.world.progressM.checkKitchenUpgrade();
 	    		}
 	    		gp.currentState = gp.chooseRecipeState;
+	        	gp.mouseCursor.showCursor();
 	    	}
 	    }
 	    drawUpgrade(renderer, upgradeChoices[1], x, y);
@@ -3839,6 +4070,7 @@ public class GUI {
 			    }
 			}
 			updateGradingAnimation(dt);
+			updateScoreUI(dt);
 		}
 		
 		if(gp.currentState == gp.writeUsernameState) {
@@ -4319,7 +4551,7 @@ public class GUI {
 	    if (currentTalkingNPC != null && currentTalkingNPC.getName() != null && !currentTalkingNPC.getName().isEmpty()) {
 	        renderer.drawString(font, currentTalkingNPC.getName(), x + 20, y - 10, 1.0f, Colour.WHITE);
 	        
-	        renderer.draw(currentTalkingNPC.portrait, x + 20 - 24, y + 110, 32*3, 32*3);
+	        renderer.draw(currentTalkingNPC.portrait, x + 20 - 16, y - 42*3, 32*3, 32*3);
 	    }
 
 	    // Handle click: skip or finish

@@ -64,6 +64,13 @@ public class Stove extends Building {
 		leftHitbox = new Rectangle2D.Float(hitbox.x - xDrawOffset + 24 + hitboxWidth/2 - 3, (int) (hitbox.y)-yDrawOffset + 24+16, hitboxWidth + 6, 64);
 		rightHitbox = new Rectangle2D.Float((int) hitbox.x - xDrawOffset + 48 + 30 + hitboxWidth/2 - 3, (int) (hitbox.y)-yDrawOffset + 24+16, hitboxWidth + 6, 64);
 	}
+	public void resetRun() {
+		drawCooking = false;
+		leftSlot = new SmallPan(gp);
+		rightSlot = new FryingPan(gp);
+		stopParticles(false);
+		stopParticles(true);
+	}
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*4, hitbox.width-3*4, hitbox.height-3*6);
 		//addCookStation();

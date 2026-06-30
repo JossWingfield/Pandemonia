@@ -132,7 +132,7 @@ public class MapBuilder {
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Computer(gp, 0, 0);
 		totalBuildingCount++;
-		buildings[totalBuildingCount] = new ChefPortrait(gp, 0, 0);
+		buildings[totalBuildingCount] = new ChefPortrait(gp, 0, 0, 0);
 		totalBuildingCount++;
 		buildings[totalBuildingCount] = new Torch(gp, 0, 0);
 		totalBuildingCount++;

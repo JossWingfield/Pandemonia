@@ -640,6 +640,13 @@ public class BuildingManager {
 			counter++;
 		}
 	}
+	public void resetRun() {
+		for(Building b: buildings) {
+			if(b != null) {
+				b.resetRun();
+			}
+		}
+	}
 	public Building getBuilding(int index) {
 		return buildings[index];
 	}

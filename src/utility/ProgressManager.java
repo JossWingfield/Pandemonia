@@ -8,6 +8,7 @@ import java.util.Random;
 import entity.buildings.Building;
 import entity.buildings.FloorDecor_Building;
 import entity.buildings.FryingStation;
+import entity.buildings.KitchenCounter;
 import entity.buildings.LargeTable;
 import entity.buildings.MenuBook;
 import entity.buildings.MenuSign;
@@ -157,7 +158,8 @@ public class ProgressManager {
     	    "first_steps",
     	    "First Steps",
     	    "Reach level 1",
-    	    basicReward
+    	    basicReward,
+    	    false
     	);
 
     	a.setOnUnlock(() -> {
@@ -170,7 +172,8 @@ public class ProgressManager {
         	    "steady_pace",
         	    "Steady Pace",
         	    "Reach level 5",
-        	    basicReward
+        	    basicReward,
+        	    false
         	);
 
         	a.setOnUnlock(() -> {
@@ -183,7 +186,8 @@ public class ProgressManager {
             	    "veteran_chef",
             	    "Veteran Chef",
             	    "Reach level 20",
-            	    basicReward
+            	    basicReward,
+            	    false
             	);
 
             	a.setOnUnlock(() -> {
@@ -196,7 +200,8 @@ public class ProgressManager {
     		   "experienced_chef",
     		   "Experienced Chef",
     		   "Reach level 50",
-    		   basicReward
+    		   basicReward,
+       	    	false
     		   );
         a.setOnUnlock(() -> {
     	   gp.player.wealth +=30;
@@ -208,7 +213,8 @@ public class ProgressManager {
      		   "head_chef",
      		   "Head Chef",
      		   "Reach level 75",
-     		   basicReward
+     		   basicReward,
+     		   false
      		   );
          a.setOnUnlock(() -> {
      	   gp.player.wealth +=40;
@@ -220,7 +226,8 @@ public class ProgressManager {
        		   "kitchen_legend",
        		   "Kitchen Legend",
        		   "Reach level 100",
-       		   basicReward
+       		   basicReward,
+       		   false
        		   );
            a.setOnUnlock(() -> {
        	   gp.player.wealth +=50;
@@ -233,7 +240,8 @@ public class ProgressManager {
     	    "10_recipes",
     	    "Collector",
     	    "Collect 10 Recipes",
-    	    emptyReward
+    	    emptyReward,
+    	    false
     	);
    		
     	a.setOnUnlock(() -> {
@@ -245,7 +253,8 @@ public class ProgressManager {
    	    	    "20_recipes",
    	    	    "Cook Book",
    	    	    "Collect 20 Recipes",
-   	    	    emptyReward
+   	    	    emptyReward,
+   	    	    false
    	    	);
    	   		
    	    	a.setOnUnlock(() -> {
@@ -257,7 +266,8 @@ public class ProgressManager {
    	   	    	    "50_recipes",
    	   	    	    "Versatile Chef",
    	   	    	    "Collect 50 Recipes",
-   	   	    	    emptyReward
+   	   	    	    emptyReward,
+   	   	    	    false
    	   	    	);
    	   	    	a.setOnUnlock(() -> {
    	   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
@@ -268,7 +278,8 @@ public class ProgressManager {
    	   	    	    "75_recipes",
    	   	    	    "Recipe Archive",
    	   	    	    "Collect 75 Recipes",
-   	   	    	    emptyReward
+   	   	    	    emptyReward,
+   	   	    	    false
    	   	    	);
    	   	    	a.setOnUnlock(() -> {
    	   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
@@ -280,7 +291,8 @@ public class ProgressManager {
    	   	    	    "100_recipes",
    	   	    	    "Culinary Wizard",
    	   	    	    "Collect 100 Recipes",
-   	   	    	    emptyReward
+   	   	    	    emptyReward,
+   	   	    	    false
    	   	    	);
    	   	    	a.setOnUnlock(() -> {
    	   	    		gp.gui.addMessage("Random recipe unlocked!", Colour.YELLOW);
@@ -292,7 +304,8 @@ public class ProgressManager {
    	        	    "cat_lover",
    	        	    "Cat Lover",
    	        	    "Have 2 cats in the restaurant at one time!",
-   	        	    importImage("/npcs/pet/Cat1.png").getSubimage(0, 0, 48, 48)
+   	        	    importImage("/npcs/pet/Cat1.png").getSubimage(0, 0, 48, 48),
+   	        	    false
    	        	);
 
    	        	a.setOnUnlock(() -> {
@@ -306,7 +319,8 @@ public class ProgressManager {
    	        	    "cat_cafe",
    	        	    "Cat cafe",
    	        	    "Have 3 cats in the restaurant at one time!",
-   	        	    importImage("/npcs/pet/Cat1.png").getSubimage(0, 0, 48, 48)
+   	        	    importImage("/npcs/pet/Cat1.png").getSubimage(0, 0, 48, 48),
+   	        	    false
    	        	);
 
    	        	a.setOnUnlock(() -> {
@@ -319,7 +333,8 @@ public class ProgressManager {
    	   	    	    "100_chopped",
    	   	    	    "Knife Skills",
    	   	    	    "Cut 100 ingredients",
-   	   	    	    kitchenReward
+   	   	    	    kitchenReward,
+   	   	    	    false
    	   	    );
    	   	   a.setOnUnlock(() -> {
    	   		   gp.player.wealth +=5;
@@ -332,7 +347,8 @@ public class ProgressManager {
   	   	    	    "50_served",
   	   	    	    "Small Business",
   	   	    	    "Serve 50 customers",
-  	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(0, 0, 32, 32)
+  	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(0, 0, 32, 32),
+  	   	    	    false
   	   	    );
   	   	   a.setOnUnlock(() -> {
   	   		   gp.player.wealth +=5;
@@ -345,7 +361,8 @@ public class ProgressManager {
  	   	    	    "100_served",
  	   	    	    "Popular Local",
  	   	    	    "Serve 100 customers",
- 	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(32, 0, 32, 32)
+ 	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(32, 0, 32, 32),
+ 	   	    	    false
  	   	    );
  	   	   a.setOnUnlock(() -> {
  	   		   gp.player.wealth +=5;
@@ -358,7 +375,8 @@ public class ProgressManager {
 	   	    	    "500_served",
 	   	    	    "Hot Spot",
 	   	    	    "Serve 500 customers",
-	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(64, 0, 32, 32)
+	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(64, 0, 32, 32),
+	   	    	    false
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	   		   gp.player.wealth +=5;
@@ -371,7 +389,8 @@ public class ProgressManager {
 	   	    	    "1000_served",
 	   	    	    "Critically Acclaimed",
 	   	    	    "Serve 1000 customers",
-	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(96, 0, 32, 32)
+	   	    	    importImage("/npcs/FaceIcons.png").getSubimage(96, 0, 32, 32),
+	   	    	    false
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	   		   gp.player.wealth +=5;
@@ -384,7 +403,8 @@ public class ProgressManager {
 	   	    	    "free_tip",
 	   	    	    "Free Tip!",
 	   	    	    "Claim your first tip!",
-	   	 		    importImage("/decor/kitchen props.png").getSubimage(0, 0, 16, 16)
+	   	 		    importImage("/decor/kitchen props.png").getSubimage(0, 0, 16, 16),
+	   	    	    false
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	   		   gp.player.wealth +=10;
@@ -396,7 +416,8 @@ public class ProgressManager {
 	   	    	    "sweet_talk",
 	   	    	    "Sweet Talk",
 	   	    	    "Earn 200% more than the base value for an order.",
-	   	 		    importImage("/UI/coin.png").toTextureRegion()
+	   	 		    importImage("/UI/coin.png").toTextureRegion(),
+	   	    	    false
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	   		   gp.player.wealth +=20;
@@ -408,7 +429,8 @@ public class ProgressManager {
 	   	    	    "music_to_my_ears",
 	   	    	    "Music to my ears",
 	   	    	    "Place a turntable.",
-	   	 		    importImage("/decor/turntable.png").getSubimage(0, 0, 48, 48)
+	   	 		    importImage("/decor/turntable.png").getSubimage(0, 0, 48, 48),
+	   	    	    false
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
@@ -420,7 +442,8 @@ public class ProgressManager {
 	   	    	    "about_time",
 	   	    	    "About Time",
 	   	    	    "Upgrade a kitchen station.",
-	   	 		    kitchenReward
+	   	 		    kitchenReward,
+	   	    	    false
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
@@ -432,7 +455,8 @@ public class ProgressManager {
 	   	    	    "reinforced_workplace",
 	   	    	    "Reinforced Workplace",
 	   	    	    "Upgrade 5 kitchen stations.",
-	   	 		    kitchenReward
+	   	 		    kitchenReward,
+	   	    	    false
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
@@ -444,7 +468,8 @@ public class ProgressManager {
 	   	    	    "interior_designer",
 	   	    	    "Interior Designer",
 	   	    	    "Place 20 decorations",
-	   	    	 importImage("/decor/plants.png").getSubimage(16, 64, 16, 32)
+	   	    	 importImage("/decor/plants.png").getSubimage(16, 64, 16, 32),
+	     	    false
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
@@ -456,7 +481,8 @@ public class ProgressManager {
 	   	    	    "master_of_heat",
 	   	    	    "Master of Heat",
 	   	    	    "Free Ignis",
-	   	    	 importImage("/npcs/special/BasicFaceIcon.png").toTextureRegion()
+	   	    	 importImage("/npcs/ignis/FaceIcon.png").toTextureRegion(),
+	     	    true
 	   	    );
 	   	   a.setOnUnlock(() -> {
 	       	   //gp.gui.addMessage("Earned +20 coins!", Colour.YELLOW);
@@ -625,7 +651,7 @@ public class ProgressManager {
 		unlockedKitchen = true;
 		RoomHelperMethods.KITCHEN = RoomHelperMethods.OLDKITCHEN;
 		gp.gui.addMessage("Ignis has found peace.", Colour.GREEN);
-		//achievements.get("master_of_heat").unlock();
+		achievements.get("master_of_heat").unlock();
 		
 		currentPhase = 2;
 		
@@ -677,21 +703,19 @@ public class ProgressManager {
 	    	gp.world.buildingM.removeAllWithName("Sink 1");
 	      	gp.world.buildingM.removeAllWithName("Table Corner 1");
 	      	gp.world.buildingM.removeAllWithName("Storage Fridge");
-	      	gp.world.buildingM.removeAllWithName("Gate 1");
-	    	gp.world.buildingM.removeAllWithName("Table Piece");
+	      	gp.world.buildingM.removeAllWithName("Gate");
+	    	gp.world.buildingM.removeAllWithName("Kitchen Counter");
 	    	
 	    	gp.world.buildingM.addBuilding(new LargeTable(gp, 492, 252, 1));
 	     	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 576, 216, 137));
 	     	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 576, 276, 137));
 	    	gp.world.buildingM.addBuilding(new Table(gp, 348, 264, "Left", false));
 	    	
-	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 384, 9));
-	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 324, 8));
-	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 276, 8));
-	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
-	    	gp.world.buildingM.addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
-	    	gp.world.buildingM.addBuilding(new MenuSign(gp, 612, 336));
-	    	gp.world.buildingM.addBuilding(new MenuBook(gp, 612, 288));
+	    	gp.world.buildingM.addBuilding(new KitchenCounter(gp, 624, 240, 4));
+	    	gp.world.buildingM.addBuilding(new KitchenCounter(gp, 624, 288, 10));
+	    	gp.world.buildingM.addBuilding(new KitchenCounter(gp, 624, 336, 3));
+	    	gp.world.buildingM.addBuilding(new MenuBook(gp, 624, 240));
+	    	gp.world.buildingM.addBuilding(new MenuSign(gp, 624, 306));
 	   
 		} else {
 			gp.world.mapM.getRoom(0).removeAllWithName("Chopping Board");
@@ -701,8 +725,8 @@ public class ProgressManager {
 			gp.world.mapM.getRoom(0).removeAllWithName("Table Corner 1");
 			gp.world.mapM.getRoom(0).removeAllWithName("Storage Fridge");
 			gp.world.mapM.getRoom(0).removeAllWithName("Menu Sign");
-			gp.world.mapM.getRoom(0).removeAllWithName("Gate 1");
-			gp.world.mapM.getRoom(0).removeAllWithName("Table Piece");
+			gp.world.mapM.getRoom(0).removeAllWithName("Gate");
+			gp.world.mapM.getRoom(0).removeAllWithName("Kitchen Counter");
 			
 			gp.world.mapM.getRoom(0).addBuilding(new MenuSign(gp, 636, 228));
 			gp.world.mapM.getRoom(0).addBuilding(new LargeTable(gp, 492, 252, 1));
@@ -710,13 +734,12 @@ public class ProgressManager {
 			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 576, 276, 137));
 			gp.world.mapM.getRoom(0).addBuilding(new Table(gp, 348, 264, "Left", false));
 			
-			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 384, 9));
-			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 324, 8));
-			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 276, 8));
-			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
-			gp.world.mapM.getRoom(0).addBuilding(new FloorDecor_Building(gp, 612, 264, 7));
-			gp.world.mapM.getRoom(0).addBuilding(new MenuSign(gp, 612, 336));
-			gp.world.mapM.getRoom(0).addBuilding(new MenuBook(gp, 612, 288));
+	
+			gp.world.mapM.getRoom(0).addBuilding(new KitchenCounter(gp, 624, 240, 4));
+			gp.world.mapM.getRoom(0).addBuilding(new KitchenCounter(gp, 624, 288, 10));
+			gp.world.mapM.getRoom(0).addBuilding(new KitchenCounter(gp, 624, 336, 3));
+			gp.world.mapM.getRoom(0).addBuilding(new MenuBook(gp, 624, 240));
+			gp.world.mapM.getRoom(0).addBuilding(new MenuSign(gp, 624, 306));
 		}
 		
 		//Restore old corridor

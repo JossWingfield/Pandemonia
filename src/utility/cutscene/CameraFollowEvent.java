@@ -44,7 +44,7 @@ public class CameraFollowEvent extends CutsceneEvent {
 	        float dx = desiredX - gp.camera.position.x;
 	        float dy = desiredY - gp.camera.position.y;
 	        float dz = Math.abs(gp.camera.getZoom() - zoomTarget);
-
+	        
 	        if (Math.abs(dx) < 0.5f && Math.abs(dy) < 0.5f && dz < 0.01f) {
 	            gp.camera.setPosition(desiredX, desiredY);
 	            gp.camera.setZoom(zoomTarget);

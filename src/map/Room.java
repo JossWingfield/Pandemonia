@@ -464,7 +464,7 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 480, 492, 19);
 			arrayCounter++;
-			buildings[arrayCounter] = new Table(gp, 756, 276, "Right", false);
+			buildings[arrayCounter] = new Table(gp, 756, 276, "Right", true);
 			arrayCounter++;
 			buildings[arrayCounter] = new Lantern(gp, 636, 144);
 			arrayCounter++;
@@ -1783,17 +1783,17 @@ public class Room {
 			door.setDoorNum(12);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
-			buildings[arrayCounter] = new ChefPortrait(gp, 312-32, 216-32);
+			buildings[arrayCounter] = new ChefPortrait(gp, 312-32, 216-32, 0);
 			arrayCounter++;
-			buildings[arrayCounter] = new ChefPortrait(gp, 420-32, 216-32);
+			buildings[arrayCounter] = new ChefPortrait(gp, 420-32, 216-32, 1);
 			arrayCounter++;
-			buildings[arrayCounter] = new ChefPortrait(gp, 528-32, 216-32);
+			buildings[arrayCounter] = new ChefPortrait(gp, 528-32, 216-32, 2);
 			arrayCounter++;
-			buildings[arrayCounter] = new ChefPortrait(gp, 636-32, 216-32);
+			buildings[arrayCounter] = new ChefPortrait(gp, 636-32, 216-32, 3);
 			arrayCounter++;
-			buildings[arrayCounter] = new ChefPortrait(gp, 744-32, 216-32);
+			buildings[arrayCounter] = new ChefPortrait(gp, 744-32, 216-32, 4);
 			arrayCounter++;
-			buildings[arrayCounter] = new ChefPortrait(gp, 852-32, 216-32);
+			buildings[arrayCounter] = new ChefPortrait(gp, 852-32, 216-32, 5);
 			arrayCounter++;
 			buildings[arrayCounter] = new CursedDecor(gp, 288, 324, 0);
 			arrayCounter++;
@@ -1880,58 +1880,6 @@ public class Room {
 			door.setDoorNum(10);
 			buildings[arrayCounter] = door;
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 384, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 432, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 480, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 732, 516, 16);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 684, 516, 5);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 636, 516, 5);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 588, 516, 5);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 564, 516, 4);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 756, 372, 7);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 516, 15);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 372, 516, 5);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 420, 516, 6);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 348, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 444, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 396, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new Sink(gp, 300, 432);
-			arrayCounter++;
-			buildings[arrayCounter] = new Sink(gp, 300, 336);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 312, 8);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 300, 300, 7);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 408, 408, 4);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 432, 408, 5);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 480, 408, 5);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 528, 408, 5);
-			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 576, 408, 5);
-			arrayCounter++;
-			buildings[arrayCounter] = new ChoppingBoard(gp, 408, 396);
-			arrayCounter++;
-			buildings[arrayCounter] = new ChoppingBoard(gp, 468, 396);
-			arrayCounter++;
 			buildings[arrayCounter] = new Stove(gp, 456, 300);
 			arrayCounter++;
 			buildings[arrayCounter] = new Oven(gp, 564, 300);
@@ -1944,14 +1892,60 @@ public class Room {
 			arrayCounter++;
 			buildings[arrayCounter] = new FloorDecor_Building(gp, 720, 300, 29);
 			arrayCounter++;
-			buildings[arrayCounter] = new CornerTable(gp, 300, 516, 2);
+			buildings[arrayCounter] = new KitchenCounter(gp, 672, 528, 1);
 			arrayCounter++;
-			buildings[arrayCounter] = new CornerTable(gp, 732, 516, 3);
+			buildings[arrayCounter] = new KitchenCounter(gp, 720, 528, 1);
 			arrayCounter++;
-			buildings[arrayCounter] = new Bin(gp, 756, 372, 2);
+			buildings[arrayCounter] = new KitchenCounter(gp, 768, 528, 9);
 			arrayCounter++;
-			buildings[arrayCounter] = new FloorDecor_Building(gp, 624, 408, 6);
+			buildings[arrayCounter] = new KitchenCounter(gp, 768, 480, 10);
 			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 768, 432, 10);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 768, 384, 10);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 768, 336, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new Bin(gp, 768, 345, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 624, 528, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 576, 528, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 432, 432, 0);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 480, 432, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 528, 432, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 576, 432, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 624, 432, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 384, 528, 2);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 336, 528, 1);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 288, 528, 8);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 288, 480, 10);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 288, 432, 10);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 288, 384, 10);
+			arrayCounter++;
+			buildings[arrayCounter] = new KitchenCounter(gp, 288, 336, 4);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChoppingBoard(gp, 516, 420);
+			arrayCounter++;
+			buildings[arrayCounter] = new ChoppingBoard(gp, 444, 420);
+			arrayCounter++;
+			buildings[arrayCounter] = new Sink(gp, 288, 345);
+			arrayCounter++;
+			buildings[arrayCounter] = new Sink(gp, 288, 438);
+			arrayCounter++;
+
+
 			break;
 		case 10: //Freezer
 			door = new Door(gp, 456, 600, 1, 0);
@@ -2668,6 +2662,14 @@ public class Room {
 	            }
 	        }
 	    }
+	   public void resetRun() {
+		   for(Building i: buildings) { //Loops through the items on the current map
+		           if(i != null) {
+		        	   i.resetRun();
+		           }
+		   }
+		   npcs.clear();
+	   }
     public void updateState(double dt) {
     	if(buildings == null) {
     		return;

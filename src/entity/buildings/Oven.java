@@ -52,6 +52,12 @@ public class Oven extends Building {
 		OvenTray ot = new OvenTray(gp);
 		currentItem = ot;
 	}
+	public void resetRun() {
+		OvenTray ot = new OvenTray(gp);
+		currentItem = ot;
+		cooking = false;
+		cookCount = 0;
+	}
 	public void onPlaced() {
 		buildHitbox = hitbox;
 	}

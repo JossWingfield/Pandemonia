@@ -91,7 +91,7 @@ public class BuildingRegistry {
         registry.put("Tip Jar",         (x, y, p) -> new TipJar(gp, x, y));
         registry.put("Herb Basket",     (x, y, p) -> new HerbBasket(gp, x, y));
         registry.put("Room Spawn",      (x, y, p) -> new RoomSpawn(gp, x, y));
-        registry.put("Chef Portrait",   (x, y, p) -> new ChefPortrait(gp, x, y));
+        registry.put("Chef Portrait",   (x, y, p) -> new ChefPortrait(gp, x, y, p));
         registry.put("Torch",           (x, y, p) -> new Torch(gp, x, y));
         registry.put("Computer",        (x, y, p) -> new Computer(gp, x, y));
         registry.put("Fireplace",       (x, y, p) -> new Fireplace(gp, x, y));

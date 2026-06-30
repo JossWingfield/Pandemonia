@@ -22,7 +22,6 @@ public class Building extends Entity {
 	public boolean isWall = false;
 	public boolean isWireable = false;
 	public boolean canBePlaced = true;
-	public boolean castsShadow = true;
 	
 	public boolean isSecondLayer = false;
 	public boolean isMiddleLayer = false;
@@ -36,6 +35,7 @@ public class Building extends Entity {
 	public boolean isKitchenBuilding = false;
 	public boolean isStoreBuilding = false;
 	public boolean isBathroomBuilding = false;
+	public boolean isBedroomBuilding = false;
 	public boolean mustBePlacedOnFloor = false;
 	public boolean mustBePlacedOnWall = false;
 	public boolean canBePlacedOnTable = false;
@@ -170,7 +170,7 @@ public class Building extends Entity {
 	public void onPlaced() {
 	}
 	public void interact() {}
-
+	public void resetRun() {}
 	public void drawOverlayUI(Renderer renderer) {
 		 if(destructionUIOpen) {
 			//renderer.draw(destructionImage, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, 48, 48);
@@ -182,8 +182,6 @@ public class Building extends Entity {
 		
 		renderer.draw(animations[0][0][0], (int) (hitbox.x - xDrawOffset), (int) (hitbox.y)-yDrawOffset, drawWidth, drawHeight);
 	        
-	}
-	public void drawEmissive(Renderer renderer) {
 	}
 	public void drawGodRay(Renderer renderer) {
 	}

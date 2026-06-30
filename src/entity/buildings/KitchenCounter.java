@@ -2,9 +2,10 @@ package entity.buildings;
 
 import java.awt.geom.Rectangle2D;
 
+import org.lwjgl.glfw.GLFW;
+
 import entity.items.Item;
 import main.GamePanel;
-import main.renderer.Colour;
 import main.renderer.Renderer;
 import main.renderer.TextureRegion;
 import utility.CollisionMethods;
@@ -27,10 +28,13 @@ public class KitchenCounter extends Building {
 		isKitchenBuilding = true;
 		mustBePlacedOnTable = true;
 		tileGrid = true;
-		buildHitbox = hitbox;
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 6, hitbox.y, hitbox.width, hitbox.height);
+	}
+	public void resetRun() {
+		currentItem = null;
 	}
 	public void setBuildHitbox() {
-		buildHitbox = hitbox;
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 6, hitbox.y, hitbox.width, hitbox.height);
 	}
 	public Building clone() {
 		KitchenCounter building = new KitchenCounter(gp, hitbox.x, hitbox.y, preset);
@@ -51,16 +55,16 @@ public class KitchenCounter extends Building {
 		
         name = "Kitchen Counter";
         
-    	hitbox.height = 11*3;
-    	hitbox.width = 12*3;
-    	xDrawOffset = 3*3;
-    	yDrawOffset = 1*3;
 		isBottomLayer = true;
 		isKitchenBuilding = true;
 		mustBePlacedOnFloor = true;
-		interactHitbox = buildHitbox;
 		
+    	hitbox.height = 11*3;
+    	hitbox.width = 12*3;
+    	yDrawOffset = 1*3;
 		xDrawOffset = 0*3;
+		buildHitbox = new Rectangle2D.Float(hitbox.x + 6, hitbox.y, hitbox.width, hitbox.height);
+		interactHitbox = buildHitbox;
 
 		
 	    // Assign sprites
@@ -275,9 +279,65 @@ public class KitchenCounter extends Building {
 
 	        preset = 5; // single
 	    }
+	    
+	    boolean leftGate =  CollisionMethods.getBuildingAt(
+	    	            gp,
+	    	            (int)(hitbox.x - gp.tileSize),
+	    	            (int)(hitbox.y),
+	    	            "Gate") instanceof Gate;
+
+
+	    boolean rightGate =  CollisionMethods.getBuildingAt(
+	    	            gp,
+	    	            (int)(hitbox.x + gp.tileSize),
+	    	            (int)(hitbox.y),
+	    	            "Gate") instanceof Gate;
+
+
+	    boolean topGate = CollisionMethods.getBuildingAt(
+	    	            gp,
+	    	            (int)(hitbox.x),
+	    	            (int)(hitbox.y - gp.tileSize),
+	    	            "Gate") instanceof Gate;
+
+
+	    boolean bottomGate = CollisionMethods.getBuildingAt(
+	    	            gp,
+	    	            (int)(hitbox.x),
+	    	            (int)(hitbox.y + gp.tileSize),
+	    	            "Gate") instanceof Gate;
+	    
 
 
 	    importImages();
+	    if(rightGate) {
+	    	//hitbox.width+=3*4;
+	    } else if(leftGate) {
+	    	//hitbox.width+=3*3;
+	    	//hitbox.x -= 3*3;
+	    	//xDrawOffset -= 3*3;
+	    }
+	}
+	public void inputUpdate(double dt) {
+		if(canBePlaced) {
+			if(hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY())) {
+				if(gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+					openDestructionUI();
+				}
+			}
+			
+			if(!hitbox.contains(gp.mouseL.getScreenX(), gp.mouseL.getScreenY()) || !gp.keyL.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+				closeDestructionUI();
+			}
+			if(destructionUIOpen) {
+				if(gp.mouseL.mouseButtonDown(1)) {
+					if(currentItem == null) {
+						gp.world.buildingM.destroyBuilding(this);
+						gp.world.buildingM.checkBuildingConnections();
+					}
+				}
+			}
+		}
 	}
 	public void destroy() {
 
@@ -336,7 +396,7 @@ public class KitchenCounter extends Building {
 	public void draw(Renderer renderer) {
 		if(currentItem != null) {
 			int newSize = 16;
-			currentItem.hitbox.x = hitbox.x - xDrawOffset;
+			currentItem.hitbox.x = hitbox.x - xDrawOffset + 9;
 			currentItem.hitbox.y = hitbox.y - newSize/2 - 6;
 		}
 		

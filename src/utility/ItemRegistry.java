@@ -110,7 +110,6 @@ public class ItemRegistry {
 			case "Seasoning Blend" -> i = new SeasoningBlend(gp);
 			case "Bread Crumbs" -> i = new BreadCrumbs(gp);
 			case "Ice Block" -> i = new IceBlock(gp, null);
-			case "Cursed Greens" -> i = new CursedGreens(gp);
 			case "Burnt Food" -> i = new BurntFood(gp);
 			case "Plate" -> i = new Plate(gp);
 			case "Frying Pan" -> i = new FryingPan(gp);

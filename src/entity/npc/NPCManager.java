@@ -97,6 +97,9 @@ public class NPCManager {
     public List<NPC> getNPCs() {
     	return npcs;
     }
+    public void resetRun() {
+    	npcs.clear();
+    }
     public void checkInteractions(int simulationDistance, float xDiff, float yDiff) {
    	 for (NPC i: npcs) { //Loops through the items on the current map
             if (i != null) {

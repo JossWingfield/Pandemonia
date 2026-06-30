@@ -257,6 +257,15 @@ public class MapManager {
 	    	}
 	    	
 	    }
+	    public void resetRun() {
+	    	for(Room room: rooms) {
+	    		if(room != null) {
+	    			if(currentRoom != room) {
+	    				room.resetRun();
+	    			}
+	    		}
+	    	}
+	    }
 	    public void addNPCToRoom(NPC npc, int roomCounter) {
 	        Room room = rooms[roomCounter];
 	        if (!room.getNPCs().contains(npc)) {
@@ -404,7 +413,7 @@ public class MapManager {
 	    	gp.world.buildingM.setDoorCooldowns();
 	       	gp.player.updateInteractHitbox();
 	    }
-	    private void switchRoom(int roomNum) {
+	    public void switchRoom(int roomNum) {
 	     	gp.world.lightingM.removeLight(gp.player.playerLight);
 	    	gp.world.gameM.removeLightning();
 	    	currentRoom.editBuildings(gp.world.buildingM.getBuildings(), gp.world.buildingM.getArrayIndex());

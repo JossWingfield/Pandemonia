@@ -8,6 +8,7 @@ import main.renderer.Colour;
 import main.renderer.Renderer;
 import main.renderer.TextureRegion;
 import map.LightSource;
+import map.particles.EmberParticle;
 
 public class StoryCharacter extends NPC {
 	
@@ -19,6 +20,11 @@ public class StoryCharacter extends NPC {
 	
 	private LightSource ghostLight;
 	private boolean hasLight = false;
+	private boolean isGhost = false;
+	
+	//PARTICLES
+	private float emberTimer = 0;
+	private boolean emberFlames = false;
 
 	public StoryCharacter(GamePanel gp, float xPos, float yPos, int type) {
 		super(gp, xPos, yPos, 48, 48);
@@ -30,6 +36,7 @@ public class StoryCharacter extends NPC {
         yDrawOffset = 36*drawScale;
 		speed = (float)(1.2*60);
 		npcType = "Story Character";
+		currentRoomNum = gp.player.currentRoomIndex;
 		this.type = type;
 		
 		talkHitbox = new Rectangle2D.Float(hitbox.x - 16, hitbox.y - 16, hitbox.width + 32, hitbox.height + 32);
@@ -64,11 +71,15 @@ public class StoryCharacter extends NPC {
 		case 3: //GHOSTS
 			name = "???";
 			hasLight = true;
+			isGhost = true;
+			castsShadow = false;
 			switch(r.nextInt(1)) {
 			case 0:
-				importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
-			    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
-			    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
+		        importItchSpriteSheet("/npcs/ghosts/variant1/Idle", 4, 1, 0, 0, 0, 80, 80);
+		        importItchSpriteSheet("/npcs/ghosts/variant1/Idle", 4, 1, 1, 0, 0, 80, 80);
+			    faceIcon = importImage("/npcs/ghosts/variant1/GhostFaceIcon.png").toTextureRegion();
+				ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.BLUE, 32);
+				ghostLight.setIntensity(7.4f);
 				break;
 			}
 			break;
@@ -81,9 +92,15 @@ public class StoryCharacter extends NPC {
 		case 5:
 			name = "Ignis";
 			hasLight = true;
-			importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
-		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
-		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
+			isGhost = true;
+			castsShadow = false;
+			importItchSpriteSheet("/npcs/ignis/Idle", 4, 1, 0, 0, 0, 80, 80);
+		    importItchSpriteSheet("/npcs/ignis/Idle", 4, 1, 1, 0, 0, 80, 80);
+		    importItchSpriteSheet("/npcs/ignis/Emissive", 4, 1, 2, 0, 0, 80, 80); //EMISSIVE
+		    faceIcon = importImage("/npcs/ignis/FaceIcon.png").toTextureRegion();
+			ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.ORANGE, 48);
+			ghostLight.setIntensity(1.0f);
+		    emberFlames = true;
 			break;
 		case 6:
 			name = "Flashback Chef";
@@ -99,6 +116,7 @@ public class StoryCharacter extends NPC {
 			break;
 		case 8: //Restored IGNIS
 			name = "Ignis";
+			isGhost = true;
 			importPlayerSpriteSheet("/npcs/ghosts/variant1/idle", 4, 1, 0, 0, 0, 80, 80);
 		    importPlayerSpriteSheet("/npcs/ghosts/variant1/walk", 4, 1, 1, 0, 0, 80, 80);
 		    faceIcon = importImage("/npcs/ghosts/variant1/BasicFaceIcon.png").toTextureRegion();
@@ -118,20 +136,6 @@ public class StoryCharacter extends NPC {
 		super.leave(dt);
 	}
 	public void updateState(double dt) {
-		talkHitbox.x = hitbox.x - 16;
-	    talkHitbox.y = hitbox.y - 16;
-	    if(npcToFollow != null) {
-			followNPC(dt, npcToFollow);
-		}
-
-	}
-	public void inputUpdate(double dt) {
-	    if(walking) {
-	    	currentAnimation = 1;
-	    } else {
-	    	currentAnimation = 0;
-	    }
-	    
 		  animationSpeed+=animationUpdateSpeed*dt; //Update the animation frame
 	      if(animationSpeed >= animationSpeedFactor) {
 	    	  animationSpeed = 0;
@@ -143,11 +147,53 @@ public class StoryCharacter extends NPC {
 	    		  animationCounter = 0; //Loops the animation
 	    	  }
 	      }
+		talkHitbox.x = hitbox.x - 16;
+	    talkHitbox.y = hitbox.y - 16;
+	    if(npcToFollow != null) {
+			followNPC(dt, npcToFollow);
+		}
+	    
+	    if(emberFlames) {
+	        emberTimer -= dt;
+
+	        if(emberTimer <= 0) {
+	            emberTimer = 0.12f; // spawn rate
+
+	            spawnGhostEmber();
+	        }
+	    }
+
+	}
+	private void spawnGhostEmber() {
+
+	    float centerX = hitbox.x + hitbox.width / 2;
+	    float centerY = hitbox.y + hitbox.height / 2;
+
+	    float offsetX = (float)(Math.random() - 0.5f) * 30;
+	    float offsetY = (float)(Math.random() - 0.5f) * 20;
+
+	    boolean flare = Math.random() < 0.15f;
+
+	    gp.world.particleM.addParticle(
+	        new EmberParticle(
+	            gp,
+	            currentRoomNum,
+	            centerX + offsetX,
+	            centerY + offsetY,
+	            flare
+	        )
+	    );
+	}
+	public void inputUpdate(double dt) {
+	    if(walking) {
+	    	currentAnimation = 1;
+	    } else {
+	    	currentAnimation = 0;
+	    }
 	}
 	public void draw(Renderer renderer) {
 		if(firstDraw) {
 			if(hasLight) {
-				ghostLight = new LightSource((int)(hitbox.x+ hitbox.width/2), (int)(hitbox.y + hitbox.height/2), Colour.BLUE, 48);
 				gp.world.lightingM.addLight(ghostLight);
 			}
 			firstDraw = false;
@@ -189,5 +235,45 @@ public class StoryCharacter extends NPC {
 	      }
 	      
 	  }
-	
+	public void drawEmissive(Renderer renderer) {
+		if(!isGhost) {
+			return;
+		}
+		
+		if(hasLight) {
+			ghostLight.x = (int)(hitbox.x + hitbox.width / 2) - 8;
+	    	ghostLight.y = (int)(hitbox.y + hitbox.height / 2) - 8;
+		}
+	      
+	      if(animations != null) {
+	    	  TextureRegion img = animations[0][currentAnimation][animationCounter];
+	    	  int a = 0;
+	    	  if(direction != null) {
+	    	  switch(direction) {
+	    	  case "Left":
+	    		  a = 1;
+	    		  break;
+	    	  case "Right":
+	    		  a = 0;
+	    		  break;
+	    	  case "Up":
+	    		  a = 3;
+	    	  	  break;
+	    	  case "Down":
+	    		  a = 2;
+	    	  	  break;
+	    	  }
+	    	  img = animations[a][currentAnimation][animationCounter];
+		    	  if(direction.equals("Left")){
+		          	img = createHorizontalFlipped(img);
+		          }
+	    	  }
+	    	  
+	    	  renderer.draw(img, (int)(hitbox.x - xDrawOffset ), (int) (hitbox.y - yDrawOffset ), (int)(drawWidth), (int)(drawHeight));
+	      }
+	      if(talking) {
+	    	  //gp.gui.drawDialogueScreen(g2, (int)hitbox.x - gp.tileSize*2, (int)hitbox.y - 48*3, dialogues[dialogueIndex], this);
+	      }
+	      
+	  }
 }

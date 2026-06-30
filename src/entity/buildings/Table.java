@@ -53,7 +53,11 @@ public class Table extends Building {
 		System.out.println("arrayCounter++;");	
 	}
 	public void refreshImages() {
-		animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getTableSkin().getImage1();
+		if(chairFacing.equals("Right") || chairFacing.equals("Left")) {
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getTableSkin().getImage1();
+		} else {
+			animations[0][0][0] = gp.world.mapM.getRooms()[roomNum].getTableSkin().getImage2();
+		}
 	}
 	public void importImages() {
 		animations = new TextureRegion[1][1][1];

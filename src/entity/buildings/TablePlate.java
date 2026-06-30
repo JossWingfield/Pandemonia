@@ -52,6 +52,12 @@ public class TablePlate extends Building {
 		}
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*4, hitbox.width-3*8, hitbox.height-3*8);
 	}
+	public void resetRun() {
+		plate = null;
+		showDirtyPlate = false;
+		orderCompleted = false;
+		currentCustomer = null;
+	}
 	public Building clone() {
 		TablePlate building = new TablePlate(gp, hitbox.x, hitbox.y, direction, chair);
 		return building;

@@ -30,4 +30,6 @@ public class RecipeRenderData {
 
     // Cached cost string
     public String cost;
+    
+    public List<TextureRegion> tags = new ArrayList<>();; 
 }

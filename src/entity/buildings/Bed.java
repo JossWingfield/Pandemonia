@@ -21,6 +21,7 @@ public class Bed extends Building{
 		drawWidth = 32*3;
 		drawHeight = 48*3;
 		yDrawOffset = 24;
+		isBedroomBuilding = true;
 		importImages();
 		interactHitbox = new Rectangle2D.Float(hitbox.x+56, hitbox.y+48, 32, hitbox.height);
 		isDecor = true;

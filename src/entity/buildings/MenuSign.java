@@ -60,6 +60,10 @@ public class MenuSign extends Building {
     	mustBePlacedOnTable = true;
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*4);
     }
+	public void resetRun() {
+		uiOpen = false;
+		selectedRecipes.clear();
+	}
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*1, hitbox.y+3*2, hitbox.width-3*3, hitbox.height-3*4);
 	}
@@ -102,7 +106,7 @@ public class MenuSign extends Building {
             firstUpdate = false;
             interactHitbox = new Rectangle2D.Float(hitbox.x + 18, hitbox.y+hitbox.height, 14, 16);
         }
-
+        
         // Interact highlight
         boolean canInteract = gp.world.gameM.getCurrentPhase() == DayPhase.PREPARATION
                 || (gp.world.gameM.getCurrentPhase() == DayPhase.SERVICE && !gp.world.gameM.isMenuChosen());
@@ -114,6 +118,12 @@ public class MenuSign extends Building {
             // Open UI on key press
             if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0 && !gp.world.cutsceneM.cutsceneActive) {
                 uiOpen = !uiOpen;
+                
+                if(uiOpen) {
+                	gp.mouseCursor.showCursor();
+                } else {
+                  	gp.mouseCursor.hideCursor();
+                }
                 clickCooldown = 0.1;
                 if(uiOpen) {
                     //gp.pauseTime(); // freeze world time while selecting menu
@@ -123,7 +133,9 @@ public class MenuSign extends Building {
             }
         } else {
   		    renderer.draw(animations[0][0][0], (int) hitbox.x - xDrawOffset , (int) (hitbox.y )-yDrawOffset, drawWidth, drawHeight);
-         
+  		    if(uiOpen) {
+  	  		    gp.mouseCursor.hideCursor();
+  		    }
         	uiOpen = false;
         }
 
@@ -173,8 +185,7 @@ public class MenuSign extends Building {
 		
 		TextureRegion icon =
 		gp.world.recipeM.getIconFromName(
-		step.getStation(),
-		recipe.isCursed
+		step.getStation()
 		);
 		
 		ingredientStepIcons.add(icon);
@@ -371,6 +382,7 @@ public class MenuSign extends Building {
 	        if (gp.mouseL.mouseButtonDown(0) && clickCooldown == 0) {
 	            uiOpen = false;
 	            clickCooldown = 0.1;
+	  	  		gp.mouseCursor.hideCursor();
 	            gp.world.gameM.checkDoneMenu();
 	        }
 	    }

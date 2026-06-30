@@ -97,7 +97,7 @@ public class Trapdoor extends Building {
 		}
 	}
 	public void draw(Renderer renderer) { 
-		if(RecipeManager.areHauntedRecipesPresent() || preset == 1) {
+		if(preset == 1) {
 			
 	        //g2.setColor(Color.YELLOW);
 	      	//g2.drawRect((int)entryHitbox.x, (int)entryHitbox.y, (int)entryHitbox.width, (int)entryHitbox.height);

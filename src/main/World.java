@@ -104,6 +104,7 @@ public class World {
           lightingM = new LightingManager(gp, gp.camera);
           customiser = new Customiser(gp);
           cutsceneM = new CutsceneManager(gp);
+          pathF = new PathFinder(gp);
           catalogue = new Catalogue(gp);
           recipeM = new RecipeManager();
           upgradeM = new UpgradeManager(gp);
@@ -117,7 +118,7 @@ public class World {
     public void serverUpdate(double dt) {
         if (!isServer) return;
 
-        if(gp.currentState == gp.playState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.catalogueState || gp.currentState == gp.xpState || gp.currentState == gp.chatState || gp.currentState == gp.customiseOutfitScreen) {
+        if(gp.currentState == gp.playState || gp.currentState == gp.customiseRestaurantState || gp.currentState == gp.dialogueState || gp.currentState == gp.catalogueState || gp.currentState == gp.xpState || gp.currentState == gp.chatState || gp.currentState == gp.customiseOutfitScreen) {
 	    		    	
 	    	mapM.updateState(dt);
 	    	buildingM.updateState(dt);
@@ -306,6 +307,7 @@ public class World {
 	        for(NPC npc: copy) {
 	        	if(npc != null) {
 	        		npc.drawOverlay(renderer);
+	        		npc.drawNextNode(renderer);
 	        	}
 	        }
 	    
@@ -365,6 +367,14 @@ public class World {
 	        	if(builds[i] != null) {
 	        		entityList.add(builds[i]);
 	        		builds[i].drawEmissive(renderer);
+	        	}
+	        }
+	        
+	        List<NPC> copy = new ArrayList<NPC>(npcM.getNPCs());
+	        
+	        for(NPC npc: copy) {
+	        	if(npc != null) {
+	        		npc.drawEmissive(renderer);
 	        	}
 	        }
 	        
@@ -454,7 +464,9 @@ public class World {
    	        
    	        for(NPC npc: copy) {
    	        	if(npc != null) {
-   	        		shadowList.add(npc);
+   	        		if(npc.castsShadow) {
+   	        			shadowList.add(npc);
+   	        		}
    	        	}
    	        }
     		

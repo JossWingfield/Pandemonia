@@ -323,8 +323,10 @@ public abstract class NPC extends Entity {
 
     }
     public void searchPath(double dt, int goalCol, int goalRow) {
-
+    	
         Room currentRoom = gp.world.mapM.getRooms()[currentRoomNum];
+        
+        
 
         // Rebuild path only when needed (goal changed or no current path)
         boolean needNewPath =
@@ -362,7 +364,7 @@ public abstract class NPC extends Entity {
 
         // Move towards this sub-node
         flyTowardsPoint(dt, targetX, targetY);
-
+        
         // If close enough to this sub-node, consume it
         float cx = hitbox.x + hitbox.width  * 0.5f;
         float cy = hitbox.y + hitbox.height * 0.5f;
@@ -378,28 +380,33 @@ public abstract class NPC extends Entity {
         }
     }
     protected void flyTowardsPoint(double dt, float xPos, float yPos) {
+        float enemyX = hitbox.x + hitbox.width / 2f;
+        float enemyY = hitbox.y + hitbox.height / 2f;
 
-        float enemyX = (int)((hitbox.x + hitbox.width/2));
-        float enemyY = (int)((hitbox.y + hitbox.height/2));
-        if (enemyX < xPos) {
-        	hitbox.x += speed*dt; 
-        	direction = "Right";
-        }
-        if (enemyX > xPos) {
-        	hitbox.x -= speed*dt;
-      		direction = "Left";
-        }
-        if (enemyY < yPos) {
-        	hitbox.y += speed*dt;
-        	direction = "Down";
-        }
-        if (enemyY > yPos) {
-        	hitbox.y -= speed*dt;
-           	direction = "Up";
-        }
+        float dx = xPos - enemyX;
+        float dy = yPos - enemyY;
         
+        float absDx = Math.abs(dx);
+        float absDy = Math.abs(dy);
+        float threshold = 0.3f;
+        float deadZone = 2f; // don't nudge if already close enough on that axis
+
+        if (absDx > absDy * (1 + threshold)) {
+            direction = dx > 0 ? "Right" : "Left";
+        } else if (absDy > absDx * (1 + threshold)) {
+            direction = dy > 0 ? "Down" : "Up";
+        }
+
+        if (absDx > deadZone) {
+            hitbox.x += (dx > 0 ? 1 : -1) * speed * dt;
+        }
+        if (absDy > deadZone) {
+            hitbox.y += (dy > 0 ? 1 : -1) * speed * dt;
+        }
     }
-    protected void drawNextNode(Renderer renderer) {
+    public void drawNextNode(Renderer renderer) {
+    	//gp.world.mapM.drawPath = true;
+    	//System.out.println(pathF.pathList.size());
         if (gp.world.mapM.drawPath) {
             renderer.fillRect(nextX * gp.tileSize, nextY * gp.tileSize, 48, 48, new Colour(100, 255, 150, 80));
         }

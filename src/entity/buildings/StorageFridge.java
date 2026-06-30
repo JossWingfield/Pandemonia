@@ -127,12 +127,23 @@ public class StorageFridge extends Building {
 	    	if(fridgeHitbox.intersects(gp.player.interactHitbox)) {
 			    if(gp.keyL.keyBeginPress(GLFW.GLFW_KEY_E) && clickCooldown == 0) {
 			    	uiOpen = !uiOpen;
+			        if(uiOpen) {
+	                	gp.mouseCursor.showCursor();
+	                } else {
+	     	  		    gp.mouseCursor.hideCursor();
+	                }
 			    	if(gp.player.currentItem != null) {
+			    		if(uiOpen) {
+			  	  		    gp.mouseCursor.hideCursor();
+			  		  	}
 			    		uiOpen = false;
 			    	}
 			    	clickCooldown = 0.16;
 			    }
 			} else {
+				if(uiOpen) {
+					gp.mouseCursor.hideCursor();
+		  		}
 				uiOpen = false;
 			}
     	}
@@ -174,6 +185,9 @@ public class StorageFridge extends Building {
 	                         if (gp.multiplayer) {
 	                             gp.socketClient.send(new Packet09PickFridgeItem(gp.player.getUsername(), food.getName(),food.getState()));
 	                             clickCooldown = 0.3;
+	                             if(uiOpen) {
+	                            	 gp.mouseCursor.hideCursor();
+	                             }
 	                             uiOpen = false;
 	                         } else {
 	                             applyPickup(food);
@@ -192,6 +206,9 @@ public class StorageFridge extends Building {
 	        );
 
 	    clickCooldown = 0.3;
+	    if(uiOpen) {
+	    	gp.mouseCursor.hideCursor();
+	    }
 	    uiOpen = false;
 	    gp.player.resetAnimation(4);
 	}

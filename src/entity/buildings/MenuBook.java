@@ -30,6 +30,9 @@ public class MenuBook extends Building {
 		npcHitbox = new Rectangle2D.Float(hitbox.x + 24, hitbox.y, 24, hitbox.height);
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*5, hitbox.height-3*4);
 	}
+	public void resetRun() {
+		menuCount = maxMenuCount;
+	}
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*2, hitbox.y+3*2, hitbox.width-3*5, hitbox.height-3*4);
 	}

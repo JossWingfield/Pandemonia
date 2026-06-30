@@ -57,6 +57,11 @@ public class SpiceTable extends Building {
 		mustBePlacedOnWall = true;
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
 	}
+	public void resetRun() {
+		ingredients.clear();
+		ingredientImages.clear();
+		blendIngredientImages.clear();
+	}
 	public void onPlaced() {
 		buildHitbox = new Rectangle2D.Float(hitbox.x+3*4, hitbox.y+3*2, hitbox.width-3*8, hitbox.height-3*6);
 	}

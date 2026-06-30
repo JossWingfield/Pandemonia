@@ -52,6 +52,11 @@ public class Fridge extends Building {
         System.out.println("buildings[arrayCounter] = new Fridge(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
         System.out.println("arrayCounter++;");
     }
+	public void resetRun() {
+		contents.clear();
+		uiOpen = false;
+		clickCooldown = 0;
+	}
     public void setContents(List<String> fridgeContents, List<Integer> fridgeContentsStates) {
     	contents.clear();
     	int counter = 0;
@@ -116,12 +121,20 @@ public class Fridge extends Building {
                         contents.add((Food) f.clone());
                         gp.player.currentItem = null;
                         clickCooldown = 0.333; 
+                        if(uiOpen) {
+                        	gp.mouseCursor.hideCursor();
+                        }
                         uiOpen = false; // keep fridge closed
                     } else {
                     	clickCooldown = 0.1; 
                     }
                 } else {
                     uiOpen = !uiOpen;
+                    if(uiOpen) {
+	                	gp.mouseCursor.showCursor();
+	                } else {
+	                  	gp.mouseCursor.hideCursor();
+	                }
                    	clickCooldown = 0.1; 
                 }
             }
@@ -160,6 +173,9 @@ public class Fridge extends Building {
                             Food food = contents.remove(i);
                             gp.player.currentItem = (Food) gp.world.itemRegistry.getItemFromName(food.getName(), food.getState());
                             clickCooldown = 0.1;
+                            if(uiOpen) {
+                            	gp.mouseCursor.hideCursor();
+                            }
                             uiOpen = false;
                         	gp.player.resetAnimation(4);
                         } else {
@@ -169,6 +185,9 @@ public class Fridge extends Building {
                                     contents.add(f);
                                     gp.player.currentItem = null;
                                     clickCooldown = 0.1;
+                                    if(uiOpen) {
+                                    	gp.mouseCursor.hideCursor();
+                                    }
                                     uiOpen = false;
                                 } else {
                                     clickCooldown = 0.1;
@@ -195,6 +214,9 @@ public class Fridge extends Building {
                 (int) (hitbox.y ) - yDrawOffset, 
                 drawWidth, drawHeight);
         } else {
+        	if(uiOpen) {
+              	gp.mouseCursor.hideCursor();
+            }
             uiOpen = false;
         }
 

@@ -262,8 +262,8 @@ public class CutsceneManager {
         	chef2.hitbox.y = 48*10;
         	chef1.setDirection("Left");
         	
-        	chef3.hitbox.x = 48*16;
-        	chef3.hitbox.y = 48*10;
+        	chef3.hitbox.x = 48*13;
+        	chef3.hitbox.y = 48*7;
         	chef3.setDirection("Right");
         }));
         events.add(new CameraFollowEvent(gp, playerNPC, 1.7f));
@@ -310,7 +310,7 @@ public class CutsceneManager {
 
         
         events.add(new WaitEvent(0.33));  
-        events.add(new NPCMoveEvent(gp, ignis, 14, 7));
+        //events.add(new NPCMoveEvent(gp, ignis, 14, 7));
         events.add(new DialogueEvent(gp, ignis, "This place once fed laughter. Hands moved fast. Voices overlapped. The heat was comfort to them"));
         events.add(new WaitEvent(0.33));  
         events.add(new NPCMoveEvent(gp, ignis, 10, 7));
@@ -680,7 +680,7 @@ public class CutsceneManager {
         
         events.add(new ConditionalWaitEvent(gp, () -> {
         	Building plant = gp.world.buildingM.findBuildingWithName("Plant 1");
-            if(plant != null && plant.hitbox.x == 756 && plant.hitbox.y == 372) {
+            if(plant != null && highlightArea.contains(plant.buildHitbox)) {
             	return true;
             } else {
             	return false;
@@ -784,7 +784,7 @@ public class CutsceneManager {
         events.add(new WaitEvent(0.33)); 
         events.add(new DialogueEvent(gp, owner, "Behind this door leads to some older parts of the restaurant, its a bit creepy back there, but don't worry! We've blocked it up for you."));
 
-        
+        events.add(new CameraFollowEvent(gp, owner, 1.6f));
         events.add(new NPCMoveEvent(gp, owner, 10, 6));
         events.add(new DialogueEvent(gp, owner, "This is the kitchen, where you'll be cutting, cooking and washing dishes."));
 

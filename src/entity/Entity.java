@@ -26,6 +26,8 @@ public abstract class Entity implements Cloneable {
     protected double animationSpeedFactor = 0.1;
     public int xDrawOffset, yDrawOffset, drawWidth, drawHeight;
     protected int drawScale = 3;
+    
+	public boolean castsShadow = true;
 
     public Entity(GamePanel gp, float xPos, float yPos, float width, float height) {
         this.gp = gp;
@@ -56,7 +58,73 @@ public abstract class Entity implements Cloneable {
     	animationCounter = 0;
     	animationSpeed = 0;
     }
-    
+	 protected void importItchSpriteSheet(String filePath, int columnNumber, int rowNumber,
+	            int currentAnimation, int startX, int startY,
+	            int width, int height) {
+
+	        Texture img = importImage(filePath + ".png");
+
+	        for (int k = 0; k < 3; k++) { // rows: down, side, up
+
+	            int[] dirs;
+	            if (k == 0) {
+	                dirs = new int[]{2}; // DOWN
+	            } else if (k == 1) {
+	                dirs = new int[]{0, 1}; // SIDE
+	            } else {
+	                dirs = new int[]{3}; // UP
+	            }
+	            
+	            int y = startY + k * height;
+
+	            // 🔑 Loop frames LEFT → RIGHT
+	            for (int i = 0; i < columnNumber; i++) {
+
+	                int x = startX + i * width;
+	                int arrayIndex = i; // frame index = column
+
+	                for (int dir : dirs) {
+	                    animations[dir][currentAnimation][arrayIndex] =
+	                        img.getSubimage(x, y, width, height);
+	                }
+	            }
+	        }
+	    }
+	    protected void importNonUniformItchSpriteSheet(
+	            String filePath,
+	            int[] framesPerRow, // [down, side, up]
+	            int currentAnimation,
+	            int startX, int startY,
+	            int width, int height) {
+
+	        Texture img = importImage(filePath + ".png");
+
+	        for (int k = 0; k < 3; k++) { // rows: down, side, up
+
+	            int[] dirs;
+	            if (k == 0) {
+	                dirs = new int[]{2}; // DOWN
+	            } else if (k == 1) {
+	                dirs = new int[]{0, 1}; // SIDE
+	            } else {
+	                dirs = new int[]{3}; // UP
+	            }
+
+	            int frameCount = framesPerRow[k];
+	            int y = startY + k * height;
+
+	            for (int i = 0; i < frameCount; i++) {
+
+	                int x = startX + i * width;
+	                int frameIndex = i;
+
+	                for (int dir : dirs) {
+	                	animations[dir][currentAnimation][frameIndex] =
+	                        img.getSubimage(x, y, width, height);
+	                }
+	            }
+	        }
+	    }
     public int getDirection() {
     	return direction;
     }
@@ -144,7 +212,8 @@ public abstract class Entity implements Cloneable {
             }
         }
     }
-    
+	public void drawEmissive(Renderer renderer) {
+	}
     public void draw(Renderer renderer) {}
 
 }

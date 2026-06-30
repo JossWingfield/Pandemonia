@@ -11,7 +11,6 @@ public class Order {
     private final Customer customer;   // Who ordered it
 
     private String seasoning;          // Optional
-    public boolean isCursed;    // If needed later
 
     public Order(Recipe recipe, Customer customer) {
         this.id = NEXT_ID++;

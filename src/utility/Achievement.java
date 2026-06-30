@@ -14,14 +14,16 @@ public class Achievement {
     
     private boolean unlocked;             // unlocked state
     private Runnable onUnlock;            // optional callback
+    public boolean hidden = false;
 
-    public Achievement(GamePanel gp, String id, String name, String description, TextureRegion icon) {
+    public Achievement(GamePanel gp, String id, String name, String description, TextureRegion icon, boolean hidden) {
         this.gp = gp;
     	this.id = id;
         this.name = name;
         this.description = description;
         this.icon = icon;
         this.unlocked = false;
+        this.hidden = hidden;
     }
 
     // --- Getters ---

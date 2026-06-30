@@ -5,6 +5,7 @@ import java.awt.geom.Rectangle2D;
 import entity.buildings.Building;
 import entity.npc.NPC;
 import main.GamePanel;
+import main.renderer.Colour;
 
 public class NPCMoveEvent extends CutsceneEvent {
 

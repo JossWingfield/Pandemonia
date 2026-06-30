@@ -45,6 +45,12 @@ public class Breaker extends Building{
 		System.out.println("buildings[arrayCounter] = new Breaker(gp, " + (int)hitbox.x + ", " + (int)hitbox.y + ");");
 		System.out.println("arrayCounter++;");	
 	}
+	public void resetRun() {
+		powerOn = true;
+    	gp.world.lightingM.removeLight(gp.player.playerLight);
+    	gp.world.lightingM.setPowerOn();
+    	gp.world.lightingM.updateLightColor(3, light, Colour.GREEN);
+	}
 	private void importImages() {
 		animations = new TextureRegion[1][1][4];
 		
@@ -53,7 +59,6 @@ public class Breaker extends Building{
     	animations[0][0][1] = importImage("/decor/Breaker.png").getSubimage(32, 0, 32, 48);
     	animations[0][0][2] = importImage("/decor/Breaker.png").getSubimage(64, 0, 32, 48);
      	animations[0][0][3] = importImage("/decor/Breaker.png").getSubimage(96, 0, 32, 48);
-     	     	
     }
 	public void cutPower() {
 		powerOn = false;
